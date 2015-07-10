@@ -1,0 +1,26 @@
+@(user: models.user.User)
+
+@main("Play Silhouette Postgres Async Seed") {
+  <p>You're running the Postgres Async Sihouette Seed!</p>
+
+  <p>If you've made it this far, everything is set up and ready to go.</p>
+
+  <p>Your database should have seven new tables for storing profiles, feel free to explore.</p>
+
+  <ul>
+  @if(user.profiles.isEmpty) {
+    <li>You are currently signed in as guest [@user.id].</li>
+    <li><a href="@routes.RegistrationController.registrationForm">Register</a></li>
+    <li><a href="@routes.AuthenticationController.signInForm">Sign In</a></li>
+  } else {
+    <li>You're signed in as user [@user.id]@user.username.map { un =>: @{un} }</li>
+    <li>
+      Profiles:
+      @user.profiles.map { p =>
+        <div>@p.providerID: @p.providerKey</div>
+      }
+    </li>
+    <li><a href="@routes.ProfileController.profile">View Profile</a></li>
+  }
+  </ul>
+}
