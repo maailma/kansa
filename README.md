@@ -24,22 +24,22 @@ You can associate any number of profiles to a User.
 
 ## Configuring social providers 
   
-  Social providers need to be configured in the application.conf file. 
-  ```
-  // Facebook
-  facebook {
-    clientId = "CHANGEME"
-    clientSecret = "CHANGEME"
-  }
-      
-  // Google
-  google {
-    clientId = "CHANGEME"
-    clientSecret = "CHANGEME"
-  }
-  
-  etc...
-  ```
+Social providers need to be configured in the application.conf file. 
+```
+// Facebook
+facebook {
+  clientId = "CHANGEME"
+  clientSecret = "CHANGEME"
+}
+    
+// Google
+google {
+  clientId = "CHANGEME"
+  clientSecret = "CHANGEME"
+}
+
+etc...
+```
   
 ## Activator
 

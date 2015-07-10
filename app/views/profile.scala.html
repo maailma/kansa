@@ -3,7 +3,7 @@
   profiles: Seq[com.mohiva.play.silhouette.impl.providers.CommonSocialProfile]
 )(
   implicit request: Request[AnyContent], session: Session, flash: Flash, messages: Messages
-)@main("Profile") {
+)@layout.bootstrap("Profile") {
   <div class="profile">
     @if(user.isGuest) {
       <p>

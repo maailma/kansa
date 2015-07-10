@@ -1,6 +1,6 @@
 @(user: models.user.User, form: Form[com.mohiva.play.silhouette.api.util.Credentials])(
   implicit request: Request[AnyContent], session: Session, flash: Flash, messages: Messages
-)@main("Sign In") {
+)@layout.bootstrap("Sign In") {
   <div class="sign-in">
     @if(flash.get("error").isDefined) {
       <div class="flash-error">@flash("error")</div>

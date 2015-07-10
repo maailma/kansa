@@ -1,6 +1,6 @@
 @(user: models.user.User, form: Form[models.user.RegistrationData])(
   implicit request: Request[AnyContent], session: Session, flash: Flash, messages: Messages
-)@main("Register") {
+)@layout.bootstrap("Register") {
   <div class="sign-up">
     @flash.get("error").map { e =>
       <div class="error">@e</div>
