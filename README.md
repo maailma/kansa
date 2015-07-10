@@ -22,56 +22,28 @@ You can associate any number of profiles to a User.
 * Minimal Dependency Injection with Guice
 * Publishing Events
 
-## Documentation
-
-Consulate the [Silhouette documentation](http://silhouette.mohiva.com/docs) for more information. If you need help with the integration of Silhouette into your project, don't hesitate and ask questions in our [mailing list](https://groups.google.com/forum/#!forum/play-silhouette) or on [Stack Overflow](http://stackoverflow.com/questions/tagged/playframework).
-
 ## Configuring social providers 
   
   Social providers need to be configured in the application.conf file. 
   ```
   // Facebook
-  $authProvider.facebook({
-    clientId: 'your-client-id',
-    ...
-  });
-  
-  // Google
-  $authProvider.google({
-    clientId: 'your-client-id',
-    ...
-  });
-  ...
-  ```
-  If you are using Heroku Update the "~\app.json" file with your client secret and client ID.
-  ```
-  "env": {
-    "BUILDPACK_URL": "https://github.com/heroku/heroku-buildpack-multi",
-    "NPM_CONFIG_PRODUCTION": "false",
-    "PLAY_CONF_FILE": "application.conf",
-    "PLAY_APP_SECRET": "changeme",
-    "FACEBOOK_CLIENT_ID": "",
-    "FACEBOOK_CLIENT_SECRET": "",
-    "GOOGLE_CLIENT_ID": "",
-    "GOOGLE_CLIENT_SECRET": "",
-    "TWITTER_CONSUMER_KEY": "",
-    "TWITTER_CONSUMER_SECRET": ""
+  facebook {
+    clientId = "CHANGEME"
+    clientSecret = "CHANGEME"
   }
+      
+  // Google
+  google {
+    clientId = "CHANGEME"
+    clientSecret = "CHANGEME"
+  }
+  
+  etc...
   ```
   
-  To test social providers on localhost, you can either set your system environment variables as defined in the app.json "env" section or manually update the "~\conf\silhouette.conf" file directly with your client ID and client secret.
-  ```
-  # Google provider
-  google.accessTokenURL="https://accounts.google.com/o/oauth2/token"
-  google.redirectURL="http://localhost:9000"
-  google.clientID="your-client-id"
-  google.clientSecret="your-client-secret"
-  google.scope="profile email"
-  ```
-
 ## Activator
 
-See https://typesafe.com/activator/template/play-silhouette-angular-seed
+See https://typesafe.com/activator/template/play-silhouette-postgres-async-seed
 
 # License
 
