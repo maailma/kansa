@@ -13,7 +13,7 @@ object PlayGlobalSettings extends GlobalSettings {
     TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
 
     val cnf = play.api.Play.current.configuration
-    val host = cnf.getString("db.host").getOrElse("localhost")
+    val host = cnf.getString("db.host").getOrElse("127.0.0.1")
     val port = 5432
     val database = cnf.getString("db.database")
     val username = cnf.getString("db.username").getOrElse("silhouette")
