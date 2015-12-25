@@ -1,4 +1,4 @@
-# Worldcon 75 API Service [![DockerPulls](https://img.shields.io/docker/stars/worldcon75/api.svg)]
+# Worldcon 75 API Service ![DockerPulls](https://img.shields.io/docker/stars/worldcon75/api.svg)
 
 ## Development Environment
 
