@@ -11,6 +11,7 @@ api:
   links:
     - postgres
     - redis
+    - consul
 postgres:
   image: postgres:9.4
   dns:
@@ -21,5 +22,13 @@ redis:
     - 8.8.8.8
   env_file: .env
   image: redis:2.8
-  volumes:
-    - ./fixtures/redis:/data
+consul:
+  image: progrium/consul
+  dns:
+    - 8.8.8.8
+  env_file: .env
+  ports:
+    - "8400:8400"
+    - "8500:8500"
+    - "8600:53/udp"
+  command: -server -bootstrap -ui-dir /ui
