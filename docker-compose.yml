@@ -8,4 +8,8 @@ api:
     - "8080:8080"
   volumes:
     - ./target/webapp:/usr/local/tomcat/webapps/ROOT
-
+postgres:
+  image: postgres:9.4
+  dns:
+    - 8.8.8.8
+  env_file: .env

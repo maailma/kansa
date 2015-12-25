@@ -1,5 +1,9 @@
 ### https://raw.github.com/github/gitignore/8c9b77cb5c85f6464c0bb31abdf4cfcfdf6833bb/Scala.gitignore
 
+# app specific
+.env
+fixtures/*
+
 *.class
 *.log
 
