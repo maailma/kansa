@@ -8,8 +8,18 @@ api:
     - "8080:8080"
   volumes:
     - ./target/webapp:/usr/local/tomcat/webapps/ROOT
+  links:
+    - postgres
+    - redis
 postgres:
   image: postgres:9.4
   dns:
     - 8.8.8.8
   env_file: .env
+redis:
+  dns:
+    - 8.8.8.8
+  env_file: .env
+  image: redis:2.8
+  volumes:
+    - ./fixtures/redis:/data
