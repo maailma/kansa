@@ -16,7 +16,7 @@ The environment is provisioned via [Docker](https://www.docker.com/) containers.
 
 5. Run `docker-compose up`.  You should see several containers start up and output logs to the terminal.
 
-6. Confirm that your environment started correctly by running `docker-compose ps` in another terminal.  A healthy environment looks like this:
+6. Confirm that your environment started correctly by running `docker-compose ps` in another terminal. If the command could not connect to Docker daemon, run `eval "$(docker-machine env default)"` to set Docker environment variables.  A healthy environment looks like this:
 ```
 $ docker-compose ps
 Name                    Command                         State     Ports
