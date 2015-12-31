@@ -78,7 +78,7 @@ docker-compose up &
 # Get the IP of your Docker Machine
 MACHINE_IP=$(docker-machine ip worldcon-api)
 echo 
-echo "The IP address of your docker machine is: ${MACHINE_IP}
+echo "The IP address of your docker machine is: ${MACHINE_IP}"
 echo 
 ```
 At this point you should be ready to follow the deployment [instructions here](https://github.com/worldcon75/api#deploying-code).
