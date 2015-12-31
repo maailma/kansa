@@ -2,7 +2,7 @@
 
 
 In case one wishes to set up the development environment to use local boot2docker virtualbox, instead of running containers directly on the host system, these steps will help you to set one up in Ubuntu based operating system.<br>
-** IMHO, This is a horrible hack, and you'd be much better off by running the containers directly on your host machine**
+**IMHO, This is a horrible hack, and you'd be much better off by running the containers directly on your host machine**
 
 
 ### Install all needed programs
@@ -32,7 +32,7 @@ $ sudo mv docker-machine /usr/local/bin/.
 ```
 
 
-### Set up the environment in a VirtualBox machine
+### Set up the environment for the VirtualBox Docker Machine
 Get the base code from github:
 ```
 $ git clone git@github.com:worldcon75/api.git
@@ -41,6 +41,7 @@ If you prefer another than "api" as the project folder, please add target folder
 
 
 Create the docker machine:
+
 **NOTE!** In order for docker-compose to mount needed folder in the docker-machine, you may need to add yourself to the "vboxsf" group by,
 ```
 $ sudo usermod -aG vboxsf <your username>
@@ -81,6 +82,7 @@ echo "The IP address of your docker machine is: ${MACHINE_IP}
 echo 
 ```
 At this point you should be ready to follow the deployment [instructions here](https://github.com/worldcon75/api#deploying-code).
+
 
 
 #### Snippets
