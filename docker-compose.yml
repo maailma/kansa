@@ -12,16 +12,19 @@ api:
     - postgres
     - redis
     - consul
+  restart: always
 postgres:
   image: postgres:9.4
   dns:
     - 8.8.8.8
   env_file: .env
+  restart: always
 redis:
   dns:
     - 8.8.8.8
   env_file: .env
   image: redis:2.8
+  restart: always
 consul:
   image: progrium/consul
   dns:
@@ -32,3 +35,4 @@ consul:
     - "8500:8500"
     - "8600:53/udp"
   command: -server -bootstrap -ui-dir /ui
+  restart: always
