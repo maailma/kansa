@@ -6,7 +6,7 @@ In case one wishes to set up the development environment to use local boot2docke
 
 **IMHO, This is a horrible hack, and you'd be much better off by running the containers directly on your host machine via `docker-compose up &`**, in which case you'll get the IP of the api via command:<br>
 `docker inspect --format '{{ .NetworkSettings.IPAddress }}' <api_name>_api_1`<br>
-(by default, the <api_name> seems to be set based on the project folder name, where all non-ascii characters have been removed. Verify via `docker-compose ps` command.)
+(by default, the `<api_name>` seems to be set based on the project folder name, where all non-ascii characters have been removed. Verify via `docker-compose ps` command.)
 
 
 ### Install all needed programs
