@@ -5,9 +5,19 @@
     <servlet-class>servlets.HelloServlet</servlet-class>
   </servlet>
 
+  <servlet>
+    <servlet-name>Stripe</servlet-name>
+    <servlet-class>servlets.StripeServlet</servlet-class>
+  </servlet>
+
   <servlet-mapping>
     <servlet-name>Hello world</servlet-name>
     <url-pattern>/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>Stripe</servlet-name>
+    <url-pattern>/stripe/*</url-pattern>
   </servlet-mapping>
 
 </web-app>
