@@ -1,8 +1,10 @@
 ## Installing dev environment in Linux (docker-toolbox-like option)
 
 
-In case one wishes to set up the development environment to use local boot2docker virtualbox, instead of running containers directly on the host system, these steps will help you to set one up in Ubuntu based operating system.<br>
-**IMHO, This is a horrible hack, and you'd be much better off by running the containers directly on your host machine**
+In case one wishes to set up the development environment to use local boot2docker virtualbox, instead of running containers directly on the host system, these steps will help you to set one up in Ubuntu based operating system.
+
+
+**IMHO, This is a horrible hack, and you'd be much better off by running the containers directly on your host machine via `docker-compose up &`**, in which case you'll get the IP of the api via command: `docker inspect --format '{{ .NetworkSettings.IPAddress }}' <api_name>_api_1` (by defaultm, the <api_name> seems to be set based on the project folder name, where all non-ascii characters have been removed. Verify via `docker-compose ps` command.)
 
 
 ### Install all needed programs
@@ -48,53 +50,17 @@ $ sudo usermod -aG vboxsf <your username>
 # Log out and back in after this command
 ```
 
-You can copy this code block into a bash script and run all the commands at once.
+I've created a shell script for your convenience.<br>
+in the file `setup-linux.sh`, please adjust the variable `VM_NAME`to your liking.<br>
+Then run:
 ```
-#!/bin/bash
-# In your project folder (My docker VM name is "worldcon-api")
-docker-machine create -d virtualbox worldcon-api
-
-# Create and copy needed mount process to VM. 
-cat << EOF > bootlocal.sh
-mkdir -p LFOLDER
-mount -t vboxsf -o defaults,uid=\`id -u docker\`,gid=\`id -g docker\` webapp LFOLDER
-EOF
-export LFOLDER=$(pwd)/target/webapp
-sed -i "s#LFOLDER#${LFOLDER}#g" ./bootlocal.sh
-chmod +x ./bootlocal.sh
-docker-machine scp ./bootlocal.sh worldcon-api:.
-docker-machine ssh worldcon-api "sudo mv ./bootlocal.sh /mnt/sda1/var/lib/boot2docker/."
-rm -f ./bootlocal.sh
-
-# Stop machine in order to create shared folder
-docker-machine stop worldcon-api
-VBoxManage sharedfolder add worldcon-api --name webapp --hostpath $(pwd)/target/webapp/ --automount
-docker-machine start worldcon-api
-
-# Finally start the containers
-eval $(docker-machine env worldcon-api)
-docker-compose up &
-
-# Get the IP of your Docker Machine
-MACHINE_IP=$(docker-machine ip worldcon-api)
-echo 
-echo "The IP address of your docker machine is: ${MACHINE_IP}"
-echo 
+./setup-linux.sh
 ```
 At this point you should be ready to follow the deployment [instructions here](https://github.com/worldcon75/api#deploying-code).
 
 
-
-#### Snippets
-Find the IP address of your local Docker VM by running `docker-machine ip worldcon-api`.
-
-To log-on to the Docker VM, `docker-machine ssh worldcon-api`.
-
-You can check the status of your docker containers by running `docker-compose ps`.
-
-
 ## Possible Problems
-In case after removing the docker machine you may encounter errors with docker-compose command<br>
+In case after removing the docker machine you may encounter errors with `docker-compose` command.<br>
 For instance:
 ```
 $ docker-compose ps
@@ -120,6 +86,12 @@ unset DOCKER_HOST \
 unset DOCKER_MACHINE_NAME \
 unset DOCKER_TLS_VERIFY
 ```
+In case the Docker Machine has been shut down incorrectly, or the dev containers have gotten somehow into the haywired state, just remove the folder "~/.docker/machine/", and run the `setup-linux.sh` script again. **Be careful with removing the "machine" folder, in case you have other Docker MAchines set up**. In which case you may or may need to try to recreate the SSL certificates for the Docker VM again.
+
+#### Snippets
+Find the IP address of your local Docker VM by running `docker-machine ip worldcon-api`.<br>
+To log-on to the Docker VM, `docker-machine ssh worldcon-api`.<br>
+You can check the status of your docker containers by running `docker-compose ps`.
 
 #### References
 How to mount local volumes in docker machine [StackOverflow](http://stackoverflow.com/questions/30040708/how-to-mount-local-volumes-in-docker-machine)
