@@ -6,6 +6,7 @@ api:
   env_file: .env
   ports:
     - "8080:8080"
+    - "8443:8443"
   volumes:
     - ./target/webapp:/usr/local/tomcat/webapps/ROOT
   links:
