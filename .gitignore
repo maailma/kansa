@@ -4,6 +4,7 @@
 .env
 fixtures/postgres/*
 fixtures/redis/*
+fixtures/ssl/*
 
 *.class
 *.log
