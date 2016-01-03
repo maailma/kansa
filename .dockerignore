@@ -1,2 +1,4 @@
 *
 !target/webapp
+!server.xml
+!worldcon.pfx
