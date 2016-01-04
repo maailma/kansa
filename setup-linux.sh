@@ -4,13 +4,17 @@
 # My docker VM name is "default"
 VM_NAME="default"
 
-# Get rid of the HostOnly Adapter which is a showstopper with boot2docker environment recreation.
-eval a=\$$(VBoxManage showvminfo ${VM_NAME} --machinereadable | grep hostonlyadapter)
-ADAPTER=${a#*=}
-VBoxManage hostonlyif remove ${ADAPTER}
+VBoxManage list vms | grep ${VM_NAME}
 
-docker-machine stop ${VM_NAME}
-docker-machine rm ${VM_NAME}
+if [[ "$?" == "0" ]]; then
+  # Get rid of the HostOnly Adapter which is a showstopper with boot2docker environment recreation.
+  eval a=\$$(VBoxManage showvminfo ${VM_NAME} --machinereadable | grep hostonlyadapter)
+  ADAPTER=${a#*=}
+  VBoxManage hostonlyif remove ${ADAPTER}
+
+  docker-machine stop ${VM_NAME}
+  docker-machine rm ${VM_NAME}
+fi
 
 # Just in case, get rid of previous VM and ENV variables
 unset DOCKER_CERT_PATH
@@ -41,6 +45,7 @@ rm -f ./bootlocal.sh
 
 # Stop machine in order to create shared folder
 docker-machine stop ${DOCKER_MACHINE_NAME}
+echo "Adding shared folder to ${DOCKER_MACHINE_NAME} VM"
 VBoxManage sharedfolder add ${DOCKER_MACHINE_NAME} --name webapp --hostpath $(pwd)/target/webapp/ --automount
 docker-machine start ${DOCKER_MACHINE_NAME}
 
