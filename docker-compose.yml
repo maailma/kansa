@@ -27,6 +27,7 @@ proxy:
   volumes:
     - /var/run/docker.sock:/tmp/docker.sock:ro
     - ./fixtures/ssl/certs:/etc/nginx/certs
+  restart: always
 postgres:
   image: postgres:9.4
   dns:
