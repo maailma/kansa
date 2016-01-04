@@ -3,7 +3,7 @@ app:
   build: .
   dns:
     - 8.8.8.8
-  env_file: .env
+  env_file: .env-proxy
 #  ports:
 #    - "8080:8080"
 #    - "8443:8443"

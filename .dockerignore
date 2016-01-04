@@ -1,5 +1,5 @@
 *
 !target/webapp
-!fixtures
+!fixtures/ssl/certs
 !server.xml
 !worldcon.pfx
