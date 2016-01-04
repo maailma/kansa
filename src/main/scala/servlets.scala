@@ -17,10 +17,8 @@ class HelloServlet extends HttpServlet {
 
 class StripeServlet extends HttpServlet {
 
-  // def logger = LoggerFactory.getLogger(this.getClass) 
-  
   /*
-  println("- About to log!")
+  def logger = LoggerFactory.getLogger(this.getClass) 
   logger.info("Pietu's log test STDOUT")
   logger.debug("Pietu's log test FILE")
   */
