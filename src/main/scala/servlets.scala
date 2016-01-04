@@ -1,9 +1,11 @@
 package servlets
 
 import javax.servlet.http._
+/*
 import org.slf4j.LoggerFactory
 import ch.qos.logback.core.util.StatusPrinter
 import ch.qos.logback.classic.LoggerContext
+*/
 
 class HelloServlet extends HttpServlet {
 
@@ -33,16 +35,16 @@ class StripeServlet extends HttpServlet {
     response.setHeader("Access-Control-Max-Age", "300");          // Cache response for 5 minutes
     response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept"); // Ensure this header is also allowed!  
 
-    // response.getWriter.write("<h2>There will be stripe stuff here!</h2>")
-    // response.getWriter.write("Request Method: <strong>" + request.getMethod() + "</strong><br>")
-    println("Request Method: " + request.getMethod())
+    val reqMethod = "Request Method: " + request.getMethod()
+    // response.getWriter.write(reqMethod)
+    println(reqMethod)
 
     var params = request.getParameterNames() 
     while(params.hasMoreElements()){
       val paramName = params.nextElement()
-      // val myOutput = "Attribute Name: <strong>"+paramName+"</strong>, Value: <strong>"+request.getParameter(paramName)+"</strong><br>"
+      val myOutput = "POST VAR: " + paramName + " = " + request.getParameter(paramName)
       // response.getWriter.write(myOutput)
-      println("POST VAR: " + paramName + " = " + request.getParameter(paramName))
+      println(myOutput)
     }
   }
 
