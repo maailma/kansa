@@ -63,3 +63,11 @@ sleep 2
 
 # Finally start the containers
 docker-compose up &
+
+# For some reason the certificates folder is not shared via boot2docker abomination.
+# You may need to enter these commands after the nginx proxy is up and running. 
+# NOTE! Remember to substitute "worldconapi_proxy_1" below with the name of your proxy.
+#
+# docker cp ./fixtures/ssl/certs/worldcon.fi.key worldconapi_proxy_1:/etc/nginx/certs/.
+# docker cp ./fixtures/ssl/certs/worldcon.fi.crt worldconapi_proxy_1:/etc/nginx/certs/.
+# docker-compose restart proxy
