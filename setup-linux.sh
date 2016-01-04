@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # In your project folder
-# My docker VM name is "worldcon-api"
-VM_NAME="worldcon-api"
+# My docker VM name is "default"
+VM_NAME="default"
 
 # Get rid of the HostOnly Adapter which is a showstopper with boot2docker environment recreation.
 eval a=\$$(VBoxManage showvminfo ${VM_NAME} --machinereadable | grep hostonlyadapter)
