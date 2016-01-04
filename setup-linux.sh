@@ -48,6 +48,8 @@ docker-machine stop ${DOCKER_MACHINE_NAME}
 echo "Adding shared folder to ${DOCKER_MACHINE_NAME} VM"
 VBoxManage sharedfolder add ${DOCKER_MACHINE_NAME} --name webapp --hostpath $(pwd)/target/webapp/ --automount
 docker-machine start ${DOCKER_MACHINE_NAME}
+# Run this just in case as instructed
+eval "$(docker-machine env ${VM_NAME})"
 
 # Get the IP of your Docker Machine
 MACHINE_IP=$(docker-machine ip ${DOCKER_MACHINE_NAME})
