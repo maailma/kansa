@@ -52,7 +52,7 @@ class StripeServlet extends HttpServlet {
     }
   }
 
-  def getSecretKey() : [return String] = {
+  def getSecretKey() : String = {
     // Read Stripe secret key from the filesystem.
     // import scala.io.Source
    
