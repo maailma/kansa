@@ -25,4 +25,4 @@ project/plugins/project/
 .worksheet
 
 # Stripe spesific
-secret-key.txt
+*secret-key.txt
