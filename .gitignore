@@ -24,4 +24,5 @@ project/plugins/project/
 .scala_dependencies
 .worksheet
 
-
+# Stripe spesific
+secret-key.txt
