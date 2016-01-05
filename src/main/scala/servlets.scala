@@ -25,6 +25,10 @@ class StripeServlet extends HttpServlet {
   logger.debug("Pietu's log test FILE")
   */
 
+  // read secret key from filesystem
+  val secret_key = getSecretKey()
+  println("Secret Key: " + secret_key)
+
   // override def doGet(request: HttpServletRequest, response: HttpServletResponse) {
   override def doPost(request: HttpServletRequest, response: HttpServletResponse) {
 
@@ -48,4 +52,22 @@ class StripeServlet extends HttpServlet {
     }
   }
 
+}
+
+getSecretKey() {
+  // Read Stripe secret key from the filesystem.
+  // import scala.io.Source
+ 
+  val stream : InputStream = getClass.getResourceAsStream("/secret-key.txt")
+  val lines = scala.io.Source.fromInputStream( stream ).getLines
+
+  try {
+    // for (line <- Source.fromFile(filename).getLines()) {
+    for (line <- lines) {
+      //println(line)
+    }
+  } catch {
+    case ex: Exception => println("Where is my secret-key value?")
+  }
+  return line
 }
