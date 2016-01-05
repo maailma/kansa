@@ -20,6 +20,7 @@
     <url-pattern>/stripe/*</url-pattern>
   </servlet-mapping>
 
+  <!-- Remove the CorsFilter(s) when everything is under the same domain SSL -->
   <filter>
     <filter-name>CorsFilter</filter-name>
     <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
