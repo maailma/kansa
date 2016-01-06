@@ -53,21 +53,27 @@ class StripeServlet extends HttpServlet {
   }
 
   def getSecretKey() : String = {
-    // Read Stripe secret key from the filesystem.
-    // import scala.io.Source
-   
+    import scala.io.Source
+    import java.io.InputStream
+
+    val file = getClass.getResource("/secret-key.txt")
+    if (file != null) {
+      println("Found File !!!")
+    } else {
+      println("NO file found. WTF!!!")
+    }
+    /*
+    // val myString = Source.fromInputStream(getClass.getResourceAsStream("/secret-key.txt")).mkString
     val stream : InputStream = getClass.getResourceAsStream("/secret-key.txt")
     val lines = scala.io.Source.fromInputStream( stream ).getLines
-
-    try {
-      // for (line <- Source.fromFile(filename).getLines()) {
-      for (line <- lines) {
-        //println(line)
-      }
-    } catch {
-      case ex: Exception => println("Where is my secret-key value?")
+    for(line <- lines) {
+      println(line)
     }
-    return line
+
+    myString = scala.io.Source.fromInputStream(stream).mkString
+    */
+    val myString = "some output, since the function expects output"
+    return myString
   }
 
 }
