@@ -1,0 +1,60 @@
+@(
+  user: models.user.User,
+  profiles: Seq[com.mohiva.play.silhouette.impl.providers.CommonSocialProfile]
+)(
+  implicit request: Request[AnyContent], session: Session, flash: Flash, messages: Messages
+)@layout.bootstrap("Profile") {
+  <div class="profile">
+    @if(user.isGuest) {
+      <p>
+        You're playing as a guest. Why not
+        <a href="@controllers.routes.RegistrationController.registrationForm()">register</a> or
+        <a href="@controllers.routes.AuthenticationController.signInForm()">sign in</a>
+        ?
+      </p>
+    } else {
+      @user.username.map { un =>
+        <div class="username">@un</div>
+      }.getOrElse {
+        <div class="username">Guest</div>
+      }
+      <div class="logout">
+        <a class="sign-out-link" href="@controllers.routes.AuthenticationController.signOut">Sign Out</a>
+      </div>
+      @defining(profiles.find(_.loginInfo.providerID == "credentials")) { credentials =>
+        <div class="profile-detail">
+          @if(credentials.isDefined) {
+            <em>@credentials.get.email</em>
+          } else {
+            <a href="@controllers.routes.RegistrationController.registrationForm()">Create Account</a>
+          }
+        </div>
+      }
+      @services.user.SocialAuthProviders.providers.map { provider =>
+        @defining(profiles.find(_.loginInfo.providerID == provider._1)) { profile =>
+          <div class="profile-detail">
+            @if(profile.isDefined) {
+              <div class="provider @provider._1">
+                <img src="@routes.Assets.versioned("images/providers/" + provider._1 + ".png")">
+              </div>
+              <div class="profile-links">
+                <strong>@profile.get.fullName</strong><br/>
+                @profile.get.email<br/>
+              </div>
+            } else {
+              @defining(controllers.routes.AuthenticationController.authenticateSocial(provider._1)) { url =>
+                <a href="@url" class="provider @provider._1">
+                  <img src="@routes.Assets.versioned("images/providers/" + provider._1 + ".png")">
+                </a>
+                <div class="profile-links">
+                  <a href="@url">Connect your @provider._2 account</a>
+                </div>
+              }
+            }
+            <div class="clear"></div>
+          </div>
+        }
+      }
+    }
+  </div>
+}

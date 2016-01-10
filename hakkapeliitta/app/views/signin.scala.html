@@ -1,0 +1,40 @@
+@(user: models.user.User, form: Form[com.mohiva.play.silhouette.api.util.Credentials])(
+  implicit request: Request[AnyContent], session: Session, flash: Flash, messages: Messages
+)@layout.bootstrap("Sign In") {
+  <div class="sign-in">
+    @if(flash.get("error").isDefined) {
+      <div class="flash-error">@flash("error")</div>
+    }
+    <h4>Sign In</h4>
+    <form method="post" action="@controllers.routes.AuthenticationController.authenticateCredentials()">
+      <input type="text" class="form-control" name="email" value="@form("email").value" placeholder="Username" />
+      @if(form.error("email").isDefined) {
+        <em>@Messages(form.error("email").get.message)</em>
+      }
+      <input type="password" class="form-control" name="password" placeholder="Password" />
+      @if(form.error("password").isDefined) {
+        <em>@Messages(form.error("password").get.message)</em>
+      }
+      <input type="submit" class="submit" value="Sign in" />
+    </form>
+
+    <div>
+      <p>Not a member? <a href="@controllers.routes.RegistrationController.registrationForm()">Sign up now</a></p>
+    </div>
+
+    @defining(services.user.SocialAuthProviders.providers) { providers =>
+      @if(providers.nonEmpty) {
+        <div>
+          <p>Or sign in using these providers</p>
+          <div>
+          @for(p <- providers if p._1 != "credentials") {
+            <a title="Sign in with @p._2" href="@controllers.routes.AuthenticationController.authenticateSocial(p._1)" class="provider @p._1">
+              <img src="@routes.Assets.versioned("images/providers/" + p._1 + ".png")">
+            </a>
+          }
+          </div>
+        </div>
+      }
+    }
+  </div>
+}
