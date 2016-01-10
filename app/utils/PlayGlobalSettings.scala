@@ -9,6 +9,7 @@ import services.database.Schema
 
 object PlayGlobalSettings extends GlobalSettings {
   override def onStart(app: Application) = {
+    println("here we are")
     DateTimeZone.setDefault(DateTimeZone.UTC)
     TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
 
@@ -21,6 +22,7 @@ object PlayGlobalSettings extends GlobalSettings {
 
     Database.open(username, host, port, password, database)
     Schema.update()
+    println("schema updated")
 
     super.onStart(app)
   }
