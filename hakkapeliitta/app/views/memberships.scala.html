@@ -1,0 +1,171 @@
+@(user: models.user.User)@layout.bootstrap("Not Dynamic Title") {
+  <div class="container-fluid">
+    <div class="row">
+      <!-- 
+      https://getbootstrap.com/getting-started/#examples 
+      http://getbootstrap.com/components/
+      -->
+      <p>TEST PAGE FOR MEMBERSHIP BUY BUTTONS</p>
+    </div>
+    <div class="row">
+      <div class="col-xs-6">
+        <p>
+            We welcome you to join us as a member of Worldcon 75! Members who join before January of 2017 may nominate for the Hugo Awards, whether they are attending or supporting members. A non-attending membership is also known as a 'supporting membership.'
+        </p>
+        <p>
+            Membership payment is currently available on our Holvi store, via Visa, Mastercard, Discover, Diners Club International, JCB and Finnish online bank services. We intend to have a PayPal option up soon, although it may take several weeks. We apologize for the delay.
+        </p>
+
+        <table class="uk-table">
+            <caption></caption>
+            <thead>
+                <tr>
+                    <th class="bg-orange"></th>
+                    <th class="bg-orange">NEW</th>
+                    <th class="bg-orange">I VOTED</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>Adult</td>
+                    <td>95€ / $110</td>
+                    <td>60€ / $70</td>
+                </tr>
+                <tr>
+                    <td>Youth (16-25)</td>
+                    <td>80€ / $92</td>
+                    <td>45€ / $52</td>
+                </tr>
+                <tr>
+                    <td>Child (6-15)</td>
+                    <td>55€ / $65</td>
+                    <td>N/A</td>
+                </tr>
+                <tr>
+                    <td>Kid-in-tow (5 and under)</td>
+                    <td>0€</td>
+                    <td>0€</td>
+                </tr>
+                <tr>
+                    <td>Support</td>
+                    <td>35€ / $40</td>
+                    <td>automatic</td>
+                </tr>
+
+            </tbody>
+        </table>
+        <table class="uk-table">
+            <caption></caption>
+            <tbody>
+                <tr>
+                    <td>Paper Publications</td>
+                    <!-- <td>10€ / $12</td> -->
+                    <td>
+                    <!--
+                        <form action="" method="POST">
+                          <script
+                            src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                            data-key="pk_test_6pRNASCoBOKtIshFeQd4XMUh"
+                            data-amount="1200"
+                            data-name="Worldcon 75"
+                            data-description="Paper publications ( 10€ / $12 )"
+                            data-image="/img/icons/android-icon-192x192.png"
+                            data-locale="auto">
+                          </script>
+                        </form>
+                    -->
+                    <script src="https://checkout.stripe.com/checkout.js"></script>
+
+                    <button id="customButton" class="btn">Get for 10€/$12</button>
+                    <button id="customButton2" class="btn">publications</button>
+                    <button id="customButton3" data-values="{name: 'Worldcon 75', amount:1200 , description: 'Paper publications ( 10€ / $12 )'}" class="btn">This Teeest</button>
+                    
+                    <script>
+                      var handler = StripeCheckout.configure({
+                        key: 'pk_test_LoOP8RB3gIlLkSYIyM9G6skn',
+                        image: '/img/icons/android-icon-192x192.png',
+                        locale: 'auto',
+                        token: function(token) {
+                          // Use the token to create the charge with a server-side script.
+                          // You can access the token ID with `token.id`
+                          console.log("Received token ID: " + token.id);
+                          // Consider! Does this e-mail match to the one currently logged in person used?
+                          console.log("Token E-mail: " + token.email);
+                          // devapi.worldcon.fi resides on Pietu's local computer
+                          $.post( "https://devapi.worldcon.fi/stripe/", { tokenId: token.id, email: token.email } );
+                        }
+                      });
+
+                      $('#customButton').on('click', function(e) {
+                        // Open Checkout with further options
+                        handler.open({
+                          name: 'Worldcon 75',
+                          description: 'Paper publications ( 10€ / $12 )',
+                          amount: 1200
+                        });
+                        e.preventDefault();
+                      });
+
+                      $('#customButton2').on('click', function(e) {
+                        // Open Checkout with further options
+                        handler.open({
+                          name: 'publications',
+                          description: 'Paper versions of the published items.',
+                          amount: 1202
+                        });
+                        e.preventDefault();
+                      });
+
+                      $('#customButton3').on('click', function(e) {
+                        jsondata = $('#customButton3').data('values');
+                        console.log("JSON Data: " + jsondata);
+                        // Open Checkout with further options
+                        handler.open($.param(jsondata));
+                        e.preventDefault();
+                      });
+
+                      // Close Checkout on page navigation
+                      $(window).on('popstate', function() {
+                        handler.close();
+                      });
+                    </script>
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div>
+            <a class="uk-button register-button" href="https://holvi.com/shop/worldcon/">REGISTER</a>
+        </div>
+
+    </div>
+
+      <div class="col-xs-6">
+        <img height="400" width="400" src="@routes.Assets.versioned("images/polarbear-transp.png")" alt="">
+      </div>
+    </div>
+    <!--
+    <div class="row">
+      <div class="col-md-12">
+        <ul>
+        @if(user.profiles.isEmpty) {
+          <li>You are currently signed in as guest [@user.id].</li>
+          <li><a href="@routes.RegistrationController.registrationForm">Register</a></li>
+          <li><a href="@routes.AuthenticationController.signInForm">Sign In</a></li>
+        } else {
+          <li>You're signed in as user [@user.id]@user.username.map { un =>: @{un} }</li>
+          <li>
+            Profiles:
+            @user.profiles.map { p =>
+              <div>@p.providerID: @p.providerKey</div>
+            }
+          </li>
+          <li><a href="@routes.ProfileController.profile">View Profile</a></li>
+        }
+        </ul>
+      </div>
+    </div>
+    -->
+  </div>
+}
