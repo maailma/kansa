@@ -11,6 +11,8 @@ proxy:
     - "443:443"
   links:
    - app
+  volumes:
+   - ../fixtures/ssl/certs:/etc/nginx/certs
 
 postgres:
   image: postgres:9.4
