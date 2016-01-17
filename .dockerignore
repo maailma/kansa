@@ -1,6 +1,0 @@
-*
-!hakkapeliitta/target/universal/
-!target/webapp
-!fixtures/ssl/certs
-!server.xml
-!worldcon.pfx
