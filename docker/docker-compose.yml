@@ -12,7 +12,7 @@ proxy:
   links:
    - app
   volumes:
-   - ../fixtures/ssl/certs:/etc/nginx/certs
+   - /etc/letsencrypt:/etc/letsencrypt
 
 postgres:
   image: postgres:9.4
