@@ -1,3 +1,15 @@
+#
+## Stripe call-back
+#
+
+POST        /stripe                 controllers.StripeWebHook.webHook
+
+
+#
+## Stuff from the 'seed', we'll want to get rid of some of this and convert other
+## parts to REST-based api. Currently it is using HTML templates which we don't want.
+#
+
 GET         /                        controllers.HomeController.index
 GET         /admin-test              controllers.HomeController.adminTest
 
