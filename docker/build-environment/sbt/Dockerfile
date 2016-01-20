@@ -2,10 +2,11 @@ FROM java:8
 
 
 ENV PATH ${PATH}:/home/imonroe/bin
+ENV DEV_GID 100
+ENV DEV_UID 1000
 
-RUN groupadd -g 1002 -r imonroe && \
-    useradd -m -u 1002 -r -g imonroe imonroe
-
+RUN groupadd -g $DEV_GID -r imonroe || true
+RUN useradd -m -u $DEV_UID -r -g $DEV_GID imonroe
 
 USER imonroe
 
