@@ -1,25 +1,10 @@
---- 
 app:
   build: .
-  dns:
-    - 8.8.8.8
-  env_file: .env-proxy
-#  ports:
-#    - "8080:8080"
-#    - "8443:8443"
-  expose:
-    - "8080"
-  volumes:
-    - ./target/webapp:/usr/local/tomcat/webapps/ROOT
   links:
     - postgres
-    - redis
-    # - consul
-  restart: always
+
 proxy:
   image: jwilder/nginx-proxy:latest
-  dns:
-    - 8.8.8.8
   env_file: .env
   ports:
     - "80:80"
@@ -28,26 +13,10 @@ proxy:
     - /var/run/docker.sock:/tmp/docker.sock:ro
     - ./fixtures/ssl/certs:/etc/nginx/certs
   restart: always
+  links:
+   - app
+
 postgres:
   image: postgres:9.4
-  dns:
-    - 8.8.8.8
   env_file: .env
   restart: always
-redis:
-  dns:
-    - 8.8.8.8
-  env_file: .env
-  image: redis:2.8
-  restart: always
-# consul:
-#   image: progrium/consul
-#   dns:
-#     - 8.8.8.8
-#   env_file: .env
-#   ports:
-#     - "8400:8400"
-#     - "8500:8500"
-#     - "8600:53/udp"
-#   command: -server -bootstrap -ui-dir /ui
-#   restart: always
