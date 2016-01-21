@@ -16,7 +16,7 @@
             Membership payment is currently available on our Holvi store, via Visa, Mastercard, Discover, Diners Club International, JCB and Finnish online bank services. We intend to have a PayPal option up soon, although it may take several weeks. We apologize for the delay.
         </p>
 
-        <table class="uk-table">
+        <table class="table table-hover">
             <caption></caption>
             <thead>
                 <tr>
@@ -27,145 +27,197 @@
             </thead>
 
             <tbody>
-                <tr>
-                    <td>Adult</td>
-                    <td>95€ / $110</td>
-                    <td>60€ / $70</td>
-                </tr>
-                <tr>
-                    <td>Youth (16-25)</td>
-                    <td>80€ / $92</td>
-                    <td>45€ / $52</td>
-                </tr>
-                <tr>
-                    <td>Child (6-15)</td>
-                    <td>55€ / $65</td>
-                    <td>N/A</td>
-                </tr>
-                <tr>
-                    <td>Kid-in-tow (5 and under)</td>
-                    <td>0€</td>
-                    <td>0€</td>
-                </tr>
-                <tr>
-                    <td>Support</td>
-                    <td>35€ / $40</td>
-                    <td>automatic</td>
-                </tr>
-
+              <tr>
+                <td colspan="3" class="uk-text-small">Payment system will automatically determine the amount based on your local currency</td>
+              </tr>
+              <tr>
+                <td>Adult</td>
+                <td><button id="membership-adult-new" class="btn btn-default btn-110"></button></td>
+                <td><button id="membership-adult-voted" class="btn btn-default btn-110"></button></td>
+              </tr>
+              <tr>
+                <td>Youth (16-25)</td>
+                <td><button id="membership-youth-new" class="btn btn-default btn-110"></button></td>
+                <td><button id="membership-youth-voted" class="btn btn-default btn-110"></button></td>
+              </tr>
+              <tr>
+                <td>Child (6-15)</td>
+                <td><button id="membership-child" class="btn btn-default btn-110"></button></td>
+                <td>N/A</td>
+              </tr>
+              <tr>
+                <td>Kid-in-tow (5 and under)</td>
+                <td><button id="membership-kid-in-tow" class="btn btn-default btn-110"></button></td>
+                <td>N/A</td>
+              </tr>
+              <tr>
+                <td>Support</td>
+                <td><button id="membership-support" class="btn btn-default btn-110"></button></td>
+                <td>automatic</td>
+              </tr>
             </tbody>
+
         </table>
-        <table class="uk-table">
-            <caption></caption>
-            <tbody>
-                <tr>
-                    <td>Paper Publications</td>
-                    <!-- <td>10€ / $12</td> -->
-                    <td>
-                    <!--
-                        <form action="" method="POST">
-                          <script
-                            src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                            data-key="pk_test_6pRNASCoBOKtIshFeQd4XMUh"
-                            data-amount="1200"
-                            data-name="Worldcon 75"
-                            data-description="Paper publications ( 10€ / $12 )"
-                            data-image="/img/icons/android-icon-192x192.png"
-                            data-locale="auto">
-                          </script>
-                        </form>
-                    -->
-                    <script src="https://checkout.stripe.com/checkout.js"></script>
 
-                    <button id="customButton" class="btn">Get for 10€/$12</button>
-                    <button id="customButton2" class="btn">publications</button>
-                    <button id="customButton3" data-values="{name: 'Worldcon 75', amount:1200 , description: 'Paper publications ( 10€ / $12 )'}" class="btn">This Teeest</button>
-                    
-                    <script>
-                      var handler = StripeCheckout.configure({
-                        key: 'pk_test_LoOP8RB3gIlLkSYIyM9G6skn',
-                        image: '/img/icons/android-icon-192x192.png',
-                        locale: 'auto',
-                        token: function(token) {
-                          // Use the token to create the charge with a server-side script.
-                          // You can access the token ID with `token.id`
-                          console.log("Received token ID: " + token.id);
-                          // Consider! Does this e-mail match to the one currently logged in person used?
-                          console.log("Token E-mail: " + token.email);
-                          // devapi.worldcon.fi resides on Pietu's local computer
-                          $.post( "https://devapi.worldcon.fi/stripe/", { tokenId: token.id, email: token.email } );
-                        }
-                      });
-
-                      $('#customButton').on('click', function(e) {
-                        // Open Checkout with further options
-                        handler.open({
-                          name: 'Worldcon 75',
-                          description: 'Paper publications ( 10€ / $12 )',
-                          amount: 1200
-                        });
-                        e.preventDefault();
-                      });
-
-                      $('#customButton2').on('click', function(e) {
-                        // Open Checkout with further options
-                        handler.open({
-                          name: 'publications',
-                          description: 'Paper versions of the published items.',
-                          amount: 1202
-                        });
-                        e.preventDefault();
-                      });
-
-                      $('#customButton3').on('click', function(e) {
-                        jsondata = $('#customButton3').data('values');
-                        console.log("JSON Data: " + jsondata);
-                        // Open Checkout with further options
-                        handler.open($.param(jsondata));
-                        e.preventDefault();
-                      });
-
-                      // Close Checkout on page navigation
-                      $(window).on('popstate', function() {
-                        handler.close();
-                      });
-                    </script>
-
-                    </td>
-                </tr>
-            </tbody>
+        <table class="table">
+          <caption></caption>
+          <tbody>
+            <tr>
+              <td>Paper Publications</td>
+              <td>
+                <button id="paper-publications" class="btn btn-default btn-110"></button>
+              </td>
+            </tr>
+          </tbody>        
         </table>
-        <div>
-            <a class="uk-button register-button" href="https://holvi.com/shop/worldcon/">REGISTER</a>
-        </div>
-
-    </div>
 
       <div class="col-xs-6">
         <img height="400" width="400" src="@routes.Assets.versioned("images/polarbear-transp.png")" alt="">
       </div>
     </div>
-    <!--
-    <div class="row">
-      <div class="col-md-12">
-        <ul>
-        @if(user.profiles.isEmpty) {
-          <li>You are currently signed in as guest [@user.id].</li>
-          <li><a href="@routes.RegistrationController.registrationForm">Register</a></li>
-          <li><a href="@routes.AuthenticationController.signInForm">Sign In</a></li>
-        } else {
-          <li>You're signed in as user [@user.id]@user.username.map { un =>: @{un} }</li>
-          <li>
-            Profiles:
-            @user.profiles.map { p =>
-              <div>@p.providerID: @p.providerKey</div>
-            }
-          </li>
-          <li><a href="@routes.ProfileController.profile">View Profile</a></li>
-        }
-        </ul>
+
+      <hr>
+
+      <div class="row">
+        <div class="col-xs-6">
+            <p>
+                People who voted in Worldcon site selection in 2015 (administered by <a href="http://www.sasquan.org/" target="_blank">Sasquan</a>) have, at minimum, an automatic supporting membership to Worldcon 75. This entitles you to a discounted attending membership if you wish to upgrade to attending our convention. See the column above titled 'I Voted'.
+            </p>
+            <p>
+                Friends and subscribers of the <a href="http://www.helsinkiin2017.org/" target="_blank">Helsinki in 2017 Worldcon bid</a> who voted on site selection in 2015 are automatic full attending members of Worldcon 75. This is regardless of how you voted, and we appreciate each of the 2624 people who participated in the vote! If you were a friend or subscriber who didn't manage to vote, please contact us at <a href="mailto:info@@worldcon.fi" target="_top">info@@worldcon.fi</a> to discuss.
+            </p>
+            <p>
+                Pre-supporters of the Helsinki in 2017 Worldcon bid are very much appreciated, but the 20 euros of pre-support was entirely used up by the bid's efforts to win the race. We regret that we are not able to offer you a discount for pre-supporting the bid. However, your reward is that we've won the Worldcon to be placed in Helsinki! If you voted on site selection in 2015,  you do have an automatic non-attending (supporting) membership to Worldcon 75. This can be upgraded to an attending membership as above.
+            </p>
+            <p>
+                If you wish to receive paper copies of the convention's publications, we'll be happy to send those to you for an additional €10 / $12 fee. Our convention default is to receive your pre-convention publications at no additional charge via email or download from this website.
+            </p>
+            <p>
+                If you wish to begin an installment plan for an attending membership, please purchase a supporting membership at this time and email <a href="mailto:registration@@worldcon.fi?Subject=Installment" target="_top">registration@@worldcon.fi</a> with "Installment" in the subject header.
+            </p>
+            <p>
+                Your membership is personal, but it is possible to transfer your membership (of any kind) to another person. Please contact us at <a href="mailto:registration@@worldcon.fi" target="_top">registration@@worldcon.fi</a> if you wish to do this. The type of membership will be retained -- child membership for children only, etc.
+            </p>
+            <p>
+                All membership rates which are age-bound refer to a person's age on the first day of the convention, 9 August 2017. Although a Kid-in-Tow is free of charge, please remember to register your wee ones as members. 
+            </p>
+            <p>
+                Child and Kid-in-Tow memberships do not include voting rights. It is possible to buy a membership that is for an older age group, however, if you are under 16 but want to have voting rights.
+            </p>
+            <p>
+                We intend to have day memberships available, if you can't join us for all 5 days but wish to pop in for a day or two. The prices will be published in 2017.            
+            </p>
+        </div>
+
       </div>
     </div>
-    -->
   </div>
+
+  <script src="https://checkout.stripe.com/checkout.js"></script>
+
+  <script>
+    /*
+    Some pointers for sending additional values to the backend
+    http://stackoverflow.com/questions/22546050/stripe-checkout-custom-button-not-charging
+    */
+
+    // global variable for relaying information
+    var currProduct = [];
+
+    // Speed up calls to hasOwnProperty
+    var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+    function isEmpty(obj) {
+      // null and undefined are "empty"
+      if (obj == null) return true;
+
+      // Assume if it has a length property with a non-zero value
+      // that that property is correct.
+      if (obj.length > 0)    return false;
+      if (obj.length === 0)  return true;
+
+      // Otherwise, does it have any properties of its own?
+      // Note that this doesn't handle
+      // toString and valueOf enumeration bugs in IE < 9
+      for (var key in obj) {
+        if (hasOwnProperty.call(obj, key)) return false;
+      }
+      return true;
+    }
+
+    function getProduct(myId) {
+      for (var i = 0, len = memberships.length; i < len; i++) {
+        if (memberships[i].id === myId)
+          return memberships[i]; // Return as soon as the object is found
+      }
+      return null; // The object was not found
+    }
+
+    // Set button texts
+    $(function () {
+      $('button').each(function() {
+        // console.log("Setting text for button ID: " + this.id);
+        var product = getProduct(this.id);
+        if (isEmpty(product)) { 
+          console.log("Product is empty for setting up the text. ID: " + this.id);
+        } else {
+          $("#" + this.id).html(product.buttonText);
+        }
+      });
+    });
+
+    // Stripe handler
+    var handler = StripeCheckout.configure({
+      key: 'pk_test_LoOP8RB3gIlLkSYIyM9G6skn',
+      image: '@routes.Assets.versioned("images/icons/android-icon-192x192.png")',
+      locale: 'auto',
+      name: 'Worldcon 75',
+      token: function(token) {
+        // Use the token to create the charge with a server-side script.
+        console.log("Received token ID: " + token.id);
+        // Consider! Does this e-mail match to the one currently logged in person used?
+        console.log("Token E-mail: " + token.email);
+        // see if global var has values
+        console.log("Product    ID: " + currProduct.id);
+        console.log("Product Price: " + currProduct.price);
+        console.log("Product Descr: " + currProduct.descr);
+        // Our processing backend
+        $.post( "https://shop.worldcon.fi/stripe/", { tokenId: token.id, email: token.email, productId: currProduct.id, amount: currProduct.price, descr: currProduct.descr } );
+      }
+    });
+
+    $('button').on('click', function(e) {
+      
+      // Open Checkout with further options
+      console.log("Clicked button with ID: " + this.id);
+      
+      // Extract the product based on its ID
+      var product = getProduct(this.id);
+
+      if (isEmpty(product)) { 
+        console.log("Product is empty after button click");
+      } else {
+        // set the current product values into the global variable for being sent to the server.
+        currProduct = product;
+        console.log(
+          "ID: " + product.id + "\n" +
+          "Price: " + product.price + "\n" +
+          "Descr: " + product.descr
+        );
+        handler.open({
+          currency: "eur",
+          description: product.descr,
+          amount: product.price
+        });
+
+      } 
+      e.preventDefault();
+    });
+
+    // Close Checkout on page navigation
+    $(window).on('popstate', function() {
+      handler.close();
+    });
+
+  </script>
 }
