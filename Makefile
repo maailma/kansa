@@ -3,8 +3,10 @@
 # Last, start the application and dependent containers.
 
 all:
+	cd docker; docker-compose kill && docker-compose rm -f app
 	cd hakkapeliitta; sbt copyPackage
 	cd docker/build-environment; docker-compose run --rm sbt
 	cd docker; docker-compose build; docker-compose up -d
 
 run: all
+build: all
