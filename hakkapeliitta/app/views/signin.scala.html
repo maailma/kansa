@@ -7,7 +7,7 @@
     }
     <h4>Sign In</h4>
     <form method="post" action="@controllers.routes.AuthenticationController.authenticateCredentials()">
-      <input type="text" class="form-control" name="email" value="@form("email").value" placeholder="Username" />
+      <input type="text" class="form-control" name="email" value="@form("email").value" placeholder="Email" />
       @if(form.error("email").isDefined) {
         <em>@Messages(form.error("email").get.message)</em>
       }
