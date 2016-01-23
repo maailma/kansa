@@ -173,18 +173,7 @@
       locale: 'auto',
       name: 'Worldcon 75',
       token: function(token) {
-        // Use the token to create the charge with a server-side script.
-        console.log("Received token ID: " + token.id);
-        // Consider! Does this e-mail match to the one currently logged in person used?
-        console.log("Token E-mail: " + token.email);
-        // see if global var has values
-        console.log("Product    ID: " + currProduct.id);
-        console.log("Product Price: " + currProduct.price);
-        console.log("Product Descr: " + currProduct.descr);
-        // Our processing backend
-        /* 
-        $.post( "https://shop.worldcon.fi/stripe/", { "tokenId": token.id, "email": token.email, "productId": currProduct.id, "amount": currProduct.price, "descr": currProduct.descr } );
-        */
+        // Send the data to our processing backend
         $.ajax({
             url: "https://shop.worldcon.fi/stripe",
             type: "POST",
@@ -201,22 +190,6 @@
         });
       }
     });
-
-    /* Debugging for now */
-    function cbSuccess(data) {
-        console.log("Received cbSuccess:" + JSON.stringify(data));
-        //do some stuff
-    }
-
-    function cbError(data) {
-        console.log("Received cbError:" + JSON.stringify(data));
-        //do some stuff
-    }
-
-    function cbComplete(data) {
-        console.log("Received cbComplete:" + JSON.stringify(data));
-        //do some stuff
-    }
 
     $('button').on('click', function(e) {
       
@@ -245,6 +218,22 @@
       } 
       e.preventDefault();
     });
+
+    /* Debugging for now */
+    function cbSuccess(data) {
+        console.log("Received cbSuccess:" + JSON.stringify(data));
+        //do some stuff
+    }
+
+    function cbError(data) {
+        console.log("Received cbError:" + JSON.stringify(data));
+        //do some stuff
+    }
+
+    function cbComplete(data) {
+        console.log("Received cbComplete:" + JSON.stringify(data));
+        //do some stuff
+    }
 
     // Close Checkout on page navigation
     $(window).on('popstate', function() {
