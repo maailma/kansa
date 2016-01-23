@@ -188,14 +188,35 @@
         $.ajax({
             url: "https://shop.worldcon.fi/stripe",
             type: "POST",
-            data: JSON.stringify({"tokenId" : token.id, "email": token.email, "productId": currProduct.id, "amount": currProduct.price, "descr": currProduct.descr }),
+            data: JSON.stringify({"tokenId" : token.id, 
+                                  "email": token.email, 
+                                  "productId": currProduct.id, 
+                                  "amount": currProduct.price, 
+                                  "descr": currProduct.descr 
+                                }),
             contentType: "application/json",
+            success: cbSuccess,
+            error: cbError,
+            complete: cbComplete
         });
-        /*
-        complete: callback
-        */
       }
     });
+
+    /* Debugging for now */
+    function cbSuccess(data) {
+        console.log("Received cbSuccess:" + JSON.stringify(data));
+        //do some stuff
+    }
+
+    function cbError(data) {
+        console.log("Received cbError:" + JSON.stringify(data));
+        //do some stuff
+    }
+
+    function cbComplete(data) {
+        console.log("Received cbComplete:" + JSON.stringify(data));
+        //do some stuff
+    }
 
     $('button').on('click', function(e) {
       
