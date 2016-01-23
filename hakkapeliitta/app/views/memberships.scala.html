@@ -182,7 +182,18 @@
         console.log("Product Price: " + currProduct.price);
         console.log("Product Descr: " + currProduct.descr);
         // Our processing backend
+        /* 
         $.post( "https://shop.worldcon.fi/stripe/", { tokenId: token.id, email: token.email, productId: currProduct.id, amount: currProduct.price, descr: currProduct.descr } );
+        */
+        $.ajax({
+            url: "https://shop.worldcon.fi/stripe",
+            type: "POST",
+            data: JSON.stringify({"tokenId" : token.id, "email": token.email, "productId": currProduct.id, "amount": currProduct.price, "descr": currProduct.descr }),
+            contentType: "application/json",
+        });
+        /*
+        complete: callback
+        */
       }
     });
 
