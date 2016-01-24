@@ -27,8 +27,8 @@
     <link rel="manifest" href="@routes.Assets.versioned("images/icons/manifest.json")">
 
     <script src="@routes.Assets.versioned("scripts/local.js")"></script>
-    <script src="@routes.Assets.versioned("scripts/alertify.js")"></script>
-    @for(script <- scripts) {<script src="@script"></script>}
+    <script src="@routes.Assets.versioned("scripts/alertify.js")"></script>@for(script <- scripts) {
+    <script src="@script"></script>}
 
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/alertify.min.css")">
