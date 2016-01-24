@@ -35,23 +35,27 @@ function getProduct(myId) {
   return null; // The object was not found
 }
 
-// Set button texts
-$(function () {
-  $('button').each(function() {
-    // console.log("Setting text for button ID: " + this.id);
-    var product = getProduct(this.id);
-    if (isEmpty(product)) {
-      console.log("Product is empty for setting up the text. ID: " + this.id);
-    } else {
-      $("#" + this.id).html(product.buttonText);
-    }
-  });
-});
+/* Debugging for now */
+function cbSuccess(data) {
+    console.log("Received cbSuccess:" + JSON.stringify(data));
+    alertify.success('Payment processing completed successfully!');
+}
+
+function cbError(data) {
+    console.log("Received cbError:" + JSON.stringify(data));
+    alertify.error('Payment processing failed!');
+    //do some stuff
+}
+
+function cbComplete(data) {
+    console.log("Received cbComplete:" + JSON.stringify(data));
+    /* alertify.success('Payment processing completed successfully!'); */
+}
 
 // Stripe handler
 var handler = StripeCheckout.configure({
   key: 'pk_test_LoOP8RB3gIlLkSYIyM9G6skn',
-  image: '@routes.Assets.versioned("images/icons/android-icon-192x192.png")',
+  image: 'https://shop.worldcon.fi/assets/images/icons/android-icon-192x192.png',
   locale: 'auto',
   name: 'Worldcon 75',
   token: function(token) {
@@ -73,50 +77,38 @@ var handler = StripeCheckout.configure({
   }
 });
 
-$('button').on('click', function(e) {
+// Set button texts
+$(function () {
+  $('button').each(function() {
+    // console.log("Setting text for button ID: " + this.id);
+    var product = getProduct(this.id);
+    if (isEmpty(product)) {
+      console.log("Product is empty for setting up the text. ID: " + this.id);
+    } else {
+      $("#" + this.id).html(product.buttonText);
+    }
+  }).on('click', function(e) {
+    // Open Checkout with further options
+    console.log("Clicked button with ID: " + this.id);
+    e.preventDefault();
 
-  // Open Checkout with further options
-  console.log("Clicked button with ID: " + this.id);
+    // Extract the product based on its ID
+    var product = getProduct(this.id);
+    if (isEmpty(product)) {
+      console.log("Product is empty after button click");
+      return;
+    }
 
-  // Extract the product based on its ID
-  var product = getProduct(this.id);
-
-  if (isEmpty(product)) {
-    console.log("Product is empty after button click");
-  } else {
     // set the current product values into the global variable for being sent to the server.
     currProduct = product;
-    console.log(
-      "ID: " + product.id + "\n" +
-      "Price: " + product.price + "\n" +
-      "Descr: " + product.descr
-    );
+    console.log(JSON.stringify(product, null, 2));
     handler.open({
       currency: "eur",
       description: product.descr,
       amount: product.price
     });
-
-  }
-  e.preventDefault();
+  });
 });
-
-/* Debugging for now */
-function cbSuccess(data) {
-    console.log("Received cbSuccess:" + JSON.stringify(data));
-    alertify.success('Payment processing completed successfully!');
-}
-
-function cbError(data) {
-    console.log("Received cbError:" + JSON.stringify(data));
-    alertify.error('Payment processing failed!');
-    //do some stuff
-}
-
-function cbComplete(data) {
-    console.log("Received cbComplete:" + JSON.stringify(data));
-    /* alertify.success('Payment processing completed successfully!'); */
-}
 
 // Close Checkout on page navigation
 $(window).on('popstate', function() {
