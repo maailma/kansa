@@ -2,7 +2,8 @@
 ## Stripe call-back
 #
 
-POST        /stripe                 controllers.StripeWebHook.webHook
+POST        /stripeWebHook                 controllers.StripeController.webHook
+POST        /orderMembership               controllers.StripeController.orderMembership
 
 
 #

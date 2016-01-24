@@ -175,7 +175,7 @@
       token: function(token) {
         // Send the data to our processing backend
         $.ajax({
-            url: "https://shop.worldcon.fi/stripe",
+            url: "https://shop.worldcon.fi/orderMembership",
             type: "POST",
             data: JSON.stringify({"tokenId" : token.id, 
                                   "email": token.email, 
