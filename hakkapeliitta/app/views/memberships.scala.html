@@ -222,17 +222,18 @@
     /* Debugging for now */
     function cbSuccess(data) {
         console.log("Received cbSuccess:" + JSON.stringify(data));
-        //do some stuff
+        alertify.success('Payment processing completed successfully!');
     }
 
     function cbError(data) {
         console.log("Received cbError:" + JSON.stringify(data));
+        alertify.error('Payment processing failed!');
         //do some stuff
     }
 
     function cbComplete(data) {
         console.log("Received cbComplete:" + JSON.stringify(data));
-        //do some stuff
+        /* alertify.success('Payment processing completed successfully!'); */
     }
 
     // Close Checkout on page navigation
