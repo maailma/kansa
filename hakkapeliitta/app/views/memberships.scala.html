@@ -1,6 +1,11 @@
 @(user: models.user.User)@layout.bootstrap(
   title = "Not Dynamic Title",
-  scripts = Seq("https://checkout.stripe.com/checkout.js", routes.Assets.versioned("scripts/stripe.js").url)
+  scripts = Seq(
+    "https://checkout.stripe.com/checkout.js",
+    routes.Assets.versioned("scripts/alertify.js").url,
+    routes.Assets.versioned("scripts/local.js").url,
+    routes.Assets.versioned("scripts/stripe.js").url
+  )
 ) {
   <div class="container-fluid">
     <div class="row">
