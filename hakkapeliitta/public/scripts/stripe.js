@@ -11,9 +11,46 @@ var purchase = {
 };
 
 /* Debugging for now */
+function cbBeforeSend() {
+    // Show alert and dim background
+    var hpos = ($(window).width() / 2) - 300;
+    var vpos = ($(window).height() / 2) - 94;
+    alertify.alert('Please wait while we process the payment').set({'label': null,
+                                                                    'modal': true, 
+                                                                    'closable': false, 
+                                                                    'closableByDimmer': false,
+                                                                    'basic': true,
+                                                                    'movable': false
+                                                                    }).moveTo(hpos,vpos); 
+    /*
+    //get the closable setting value.
+    var stripeAlert = alertify.alert().setting('closable');
+    //grab the dialog instance using its parameter-less constructor then set multiple settings at once.
+    alertify.alert()
+        .setting({
+            'label': null,
+            'modal', true,
+            'closable', false,
+            'closableByDimmer': false,
+            'basic': true,
+            'movable': false
+            'message': 'Please wait while we process the payment'
+        }).moveTo(hpos,vpos).show();
+    */
+}
+
+function cbTimeout() {
+    if (alertify.alert().isOpen()) alertify.alert().close();
+    alertify.alert('Payment processing timed out! Please check your connectivity.');
+}
+
 function cbSuccess(data) {
     console.log("Received cbSuccess", data);
-    alertify.success('Payment processing completed successfully!');
+    if (alertify.alert().isOpen()) {
+        alertify.alert().close();
+        alertify.success('Payment processing completed successfully!');
+    }
+    // alertify.alert().destroy();
 }
 
 function cbError(data) {
@@ -45,6 +82,8 @@ var handler = StripeCheckout.configure({
                                   descr: purchase.description
                                 }),
             contentType: "application/json",
+            beforeSend: cbBeforeSend,
+            timeout: cbTimeout,
             success: cbSuccess,
             error: cbError,
             complete: cbComplete
@@ -148,7 +187,7 @@ function markValidDetails(ev) {
     });
 }
 
-function scrollTo(sel) {
+function myScrollTo(sel) {
     $('html, body').animate({ scrollTop: $(sel).offset().top - 20 }, 1000);
 }
 
@@ -168,7 +207,7 @@ $(function () {
                 var prevUpgrade = $('#upgrade .active');
                 if (prevUpgrade.length) prevUpgrade.click();
                 else {
-                    scrollTo('#upgrade');
+                    myScrollTo('#upgrade');
                     $('#upgrade-btn').focus();
                 }
                 break;
@@ -176,7 +215,7 @@ $(function () {
             case 'child-btn':
                 $('#upgrade').hide();
                 $('#details').show();
-                scrollTo('#details');
+                myScrollTo('#details');
                 $('#name').focus();
                 break;
             default:
@@ -196,7 +235,7 @@ $(function () {
         }
         setPurchaseAmountAndDescription();
         $('#details').show();
-        scrollTo('#details');
+        myScrollTo('#details');
         $('#name').focus();
     });
 
