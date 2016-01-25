@@ -1,5 +1,5 @@
 @(user: models.user.User)@layout.bootstrap(
-  title = "Not Dynamic Title",
+  title = "TEST - Worldcon 75 - Buy membership",
   scripts = Seq(
     "https://checkout.stripe.com/checkout.js",
     routes.Assets.versioned("scripts/alertify.js").url,
@@ -7,117 +7,179 @@
     routes.Assets.versioned("scripts/stripe.js").url
   )
 ) {
-  <div class="container-fluid">
-    <div class="row">
-      <!-- 
-      https://getbootstrap.com/getting-started/#examples 
-      http://getbootstrap.com/components/
-      -->
-      <p>TEST PAGE FOR MEMBERSHIP BUY BUTTONS</p>
+<style>
+h3 { margin-top: 0; }
+input[type="checkbox"] {
+    margin: 4px 8px 8px 0;
+    display: block;
+    float: left;
+}
+label { display: inline; }
+@@media(max-width:767px) {
+    #type > div { margin-bottom: 30px; }
+}
+@@media(min-width:768px) {
+    div.help-block { margin-top: -3px; }
+}
+.btn { white-space: normal; }
+.container { margin-bottom: 50px; }
+.glyphicon { right: 15px; }
+.form-group .glyphicon { right: 0; }
+.form-control { margin-bottom: 5px; }
+.row { margin-top: 20px; }
+#bear { margin-top: 20px; }
+</style>
+
+<div class="container">
+<!-- 
+https://getbootstrap.com/getting-started/#examples 
+http://getbootstrap.com/components/
+-->
+
+<div class="row">
+<div class="col-sm-8">
+<h1>Buy a Worldcon 75 membership</h1>
+<p>As a supporting, adult, or youth member of Worldcon 75, you are eligible to:
+<ul>
+<li>Nominate for the 2016 Hugo Awards, if you join by 31 January 2016
+<li>Nominate and vote for the 2017 Hugo Awards
+<li>Nominate for the 2018 Hugo Awards
+<li>Participate in the 2019 Worldcon Site Selection
+</ul>
+</div>
+<img class="hidden-xs col-sm-4" id="bear" src="@routes.Assets.versioned("images/polarbear-transp.png")">
+</div>
+
+
+<div class="row" id="type">
+<div class="col-sm-3">
+<input type="button" class="btn btn-primary btn-lg btn-block" tabindex="1" id="support-btn" value="Supporting" aria-describedby="support-help" />
+<p class="help-block" id="support-help">A non-attending membership of Worldcon 75 which will grant you the right to participate in the above-mentioned functions of the World Science Fiction Society. Participants of the 2017 Worldcon Site Selection have been automatically granted supporting membership. Supporting memberships may be upgraded to attending memberships.
+</div>
+
+<div class="col-sm-3">
+<input type="button" class="btn btn-primary btn-lg btn-block" tabindex="2" id="adult-btn" value="Adult attending" aria-describedby="adult-help" />
+<p class="help-block" id="adult-help">A full attending membership of Worldcon 75.
+</div>
+
+<div class="col-sm-3">
+<input type="button" class="btn btn-primary btn-lg btn-block" tabindex="3" id="youth-btn" value="Youth attending" aria-describedby="youth-help" />
+<p class="help-block" id="youth-help">A full attending membership of Worldcon 75, available for those born on <b>10 August 1991 or later</b>.
+</div>
+
+<div class="col-sm-3">
+<input type="button" class="btn btn-primary btn-lg btn-block" tabindex="4" id="child-btn" value="Child attending" aria-describedby="child-help" />
+<p class="help-block" id="child-help">A child attending membership of Worldcon 75, available for those born on <b>10 August 2001 or later</b>. Child members are not eligible to participate in the Hugo Awards or Site Selection processes. Children born on <b>10 August 2011 or later</b> are eligible for a free kid-in-tow membership.
+</div>
+</div>
+
+<div class="row" id="upgrade" style="display:none">
+<div class="col-sm-6">
+<h3>Do you already have a Worldcon 75 supporting membership?</h3>
+If you participated in the 2017 Worldcon Site Selection, you have been automatically granted a supporting membership, which you may upgrade.
+</div>
+<div class="col-sm-6">
+<input type="button" class="btn btn-primary btn-block" tabindex="11" id="upgrade-btn" value="Yes, I want to upgrade my membership" />
+<input type="button" class="btn btn-primary btn-block" tabindex="12" id="new-btn" value="No, I want to buy a new membership" />
+</div>
+</div>
+
+<div id="details" style="display:none">
+<div class="row">
+<div class="col-sm-12">We'll need a few details to get you sorted:</div>
+</div>
+
+<div class="row">
+<label for="name" class="col-sm-2">Official name</label>
+<div class="col-sm-4 has-feedback">
+    <input type="text" class="form-control" tabindex="21" id="name" aria-describedby="name-help" required />
+    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+</div>
+<div class="col-sm-6 help-block" id="name-help">We'll need to check this against an official ID at the con, but otherwise it'll stay confidential.</div>
+</div>
+
+<div class="row">
+<label for="email" class="col-sm-2">E-mail address</label>
+<div class="col-sm-4 has-feedback">
+    <input type="email" class="form-control" tabindex="22" id="email" aria-describedby="email-help" required />
+    <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+</div>
+<div class="col-sm-6 help-block" id="email-help">How we'll get in touch with you before the con, and where we'll send important information about the Hugo Awards and Worldcon Site Selection.</div>
+</div>
+
+<div class="row">
+<label for="city" class="col-sm-2">Home location</label>
+<div class="col-sm-4">
+<label class="sr-only" for="city">City</label>
+<input type="text" class="form-control" tabindex="23" id="city" placeholder="City" aria-describedby="location-help" />
+<label class="sr-only" for="state">State / Province</label>
+<input type="text" class="form-control" tabindex="24" id="state" placeholder="State / Province" aria-describedby="location-help" />
+<label class="sr-only" for="country">Country</label>
+<input type="text" class="form-control" tabindex="25" id="country" placeholder="Country" aria-describedby="location-help" />
+</div>
+<div class="col-sm-6 help-block" id="location-help">Where you're from. Not strictly speaking necessary, but we'd love to know how much world is coming to our Worldcon. Be as specific as you wish; not all fields will apply to everyone.</div>
+</div>
+
+<div class="row">
+<label for="public-first" class="col-sm-2">Public name</label>
+<div class="col-sm-4">
+<input type="text" class="form-control" tabindex="26" id="public-first" placeholder="First" aria-describedby="public-help" />
+<input type="text" class="form-control" tabindex="27" id="public-last" placeholder="Last" aria-describedby="public-help" />
+</div>
+<div class="col-sm-6 help-block" id="public-help">How shall we list you in public? Leave these fields blank if you'd prefer we don't list you at all. If you give us two names, we'll use the second for alphabetization (either can contain spaces). A few months before the con, you'll be able to separately customize the text of your badge.</div>
+</div>
+
+<div class="row">
+<label for="hugo-2016" class="col-sm-2">2016 Hugo Awards</label>
+<div class="col-sm-4">
+    <input type="checkbox" tabindex="28" id="hugo-2016" value="true" checked aria-describedby="hugo-2016-help" />
+    <label for="hugo-2016">Yes, I want to nominate!</label>
+</div>
+<div class="col-sm-6 help-block" id="hugo-2016-help">If you join by 31 January 2016, you have the right to nominate works and authors for the 2016 Hugo Awards. Uncheck this to stop us from sharing your information with <a href="http://midamericon2.org/" target="_blank">MidAmeriCon II</a>, the 2016 Worldcon.</div>
+</div>
+
+<div class="row">
+<label for="paper-pubs" class="col-sm-2">Paper publications</label>
+<div class="col-sm-4">
+    <input type="checkbox" tabindex="29" id="paper-pubs" value="true" aria-describedby="paper-help" />
+    <label for="paper-pubs">Yes, I want paper publications (€10)</label>
+</div>
+<div class="col-sm-6 help-block" id="paper-help">By default, we'll be in touch with you electronically to let you know how our preparations are progressing. If you'd prefer to receive our progress reports and other publications by post, select this option (note the additional fee).</div>
+</div>
+
+<div class="row" id="paper-details" style="display:none">
+<div class="col-sm-6 form-horizontal">
+<div class="form-group">
+    <label for="paper-name" class="col-sm-4">Name</label>
+    <div class="col-sm-8 has-feedback">
+        <input type="text" class="form-control" tabindex="31" id="paper-name" aria-describedby="paper-details-help" />
+        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
     </div>
-    <div class="row">
-      <div class="col-xs-6">
-        <p>
-            We welcome you to join us as a member of Worldcon 75! Members who join before January of 2017 may nominate for the Hugo Awards, whether they are attending or supporting members. A non-attending membership is also known as a 'supporting membership.'
-        </p>
-        <p>
-            Membership payment is currently available on our Holvi store, via Visa, Mastercard, Discover, Diners Club International, JCB and Finnish online bank services. We intend to have a PayPal option up soon, although it may take several weeks. We apologize for the delay.
-        </p>
-
-        <table class="table table-hover">
-            <caption></caption>
-            <thead>
-                <tr>
-                    <th class="bg-orange"></th>
-                    <th class="bg-orange">NEW</th>
-                    <th class="bg-orange">I VOTED</th>
-                </tr>
-            </thead>
-
-            <tbody>
-              <tr>
-                <td colspan="3" class="uk-text-small">Payment system will automatically determine the amount based on your local currency</td>
-              </tr>
-              <tr>
-                <td>Adult</td>
-                <td><button id="membership-adult-new" class="btn btn-default btn-110"></button></td>
-                <td><button id="membership-adult-voted" class="btn btn-default btn-110"></button></td>
-              </tr>
-              <tr>
-                <td>Youth (16-25)</td>
-                <td><button id="membership-youth-new" class="btn btn-default btn-110"></button></td>
-                <td><button id="membership-youth-voted" class="btn btn-default btn-110"></button></td>
-              </tr>
-              <tr>
-                <td>Child (6-15)</td>
-                <td><button id="membership-child" class="btn btn-default btn-110"></button></td>
-                <td>N/A</td>
-              </tr>
-              <tr>
-                <td>Kid-in-tow (5 and under)</td>
-                <td><button id="membership-kid-in-tow" class="btn btn-default btn-110"></button></td>
-                <td>N/A</td>
-              </tr>
-              <tr>
-                <td>Support</td>
-                <td><button id="membership-support" class="btn btn-default btn-110"></button></td>
-                <td>automatic</td>
-              </tr>
-            </tbody>
-
-        </table>
-
-        <table class="table">
-          <caption></caption>
-          <tbody>
-            <tr>
-              <td>Paper Publications</td>
-              <td>
-                <button id="paper-publications" class="btn btn-default btn-110"></button>
-              </td>
-            </tr>
-          </tbody>        
-        </table>
-
-      <div class="col-xs-6">
-        <img height="400" width="400" src="@routes.Assets.versioned("images/polarbear-transp.png")" alt="">
-      </div>
+</div>
+<div class="form-group">
+    <label for="paper-address" class="col-sm-4">Address</label>
+    <div class="col-sm-8 has-feedback">
+        <textarea id="paper-address" class="form-control" tabindex="32" rows="4" aria-describedby="paper-details-help"></textarea>
+        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
     </div>
-
-      <hr>
-
-      <div class="row">
-        <div class="col-xs-6">
-            <p>
-                People who voted in Worldcon site selection in 2015 (administered by <a href="http://www.sasquan.org/" target="_blank">Sasquan</a>) have, at minimum, an automatic supporting membership to Worldcon 75. This entitles you to a discounted attending membership if you wish to upgrade to attending our convention. See the column above titled 'I Voted'.
-            </p>
-            <p>
-                Friends and subscribers of the <a href="http://www.helsinkiin2017.org/" target="_blank">Helsinki in 2017 Worldcon bid</a> who voted on site selection in 2015 are automatic full attending members of Worldcon 75. This is regardless of how you voted, and we appreciate each of the 2624 people who participated in the vote! If you were a friend or subscriber who didn't manage to vote, please contact us at <a href="mailto:info@@worldcon.fi" target="_top">info@@worldcon.fi</a> to discuss.
-            </p>
-            <p>
-                Pre-supporters of the Helsinki in 2017 Worldcon bid are very much appreciated, but the 20 euros of pre-support was entirely used up by the bid's efforts to win the race. We regret that we are not able to offer you a discount for pre-supporting the bid. However, your reward is that we've won the Worldcon to be placed in Helsinki! If you voted on site selection in 2015,  you do have an automatic non-attending (supporting) membership to Worldcon 75. This can be upgraded to an attending membership as above.
-            </p>
-            <p>
-                If you wish to receive paper copies of the convention's publications, we'll be happy to send those to you for an additional €10 / $12 fee. Our convention default is to receive your pre-convention publications at no additional charge via email or download from this website.
-            </p>
-            <p>
-                If you wish to begin an installment plan for an attending membership, please purchase a supporting membership at this time and email <a href="mailto:registration@@worldcon.fi?Subject=Installment" target="_top">registration@@worldcon.fi</a> with "Installment" in the subject header.
-            </p>
-            <p>
-                Your membership is personal, but it is possible to transfer your membership (of any kind) to another person. Please contact us at <a href="mailto:registration@@worldcon.fi" target="_top">registration@@worldcon.fi</a> if you wish to do this. The type of membership will be retained -- child membership for children only, etc.
-            </p>
-            <p>
-                All membership rates which are age-bound refer to a person's age on the first day of the convention, 9 August 2017. Although a Kid-in-Tow is free of charge, please remember to register your wee ones as members. 
-            </p>
-            <p>
-                Child and Kid-in-Tow memberships do not include voting rights. It is possible to buy a membership that is for an older age group, however, if you are under 16 but want to have voting rights.
-            </p>
-            <p>
-                We intend to have day memberships available, if you can't join us for all 5 days but wish to pop in for a day or two. The prices will be published in 2017.            
-            </p>
-        </div>
-
-      </div>
+</div>
+<div class="form-group">
+    <label for="paper-country" class="col-sm-4">Country</label>
+    <div class="col-sm-8 has-feedback">
+        <input type="text" class="form-control" tabindex="33" id="paper-country" aria-describedby="paper-details-help" />
+        <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
     </div>
-  </div>
+</div>
+</div>
+<div class="col-sm-6 help-block" id="paper-details-help">We'll need to know where to send your mail. Please enter your address details here as you'd wish them to be printed onto a postal label.</div>
+</div>
+
+<div class="row">
+<div class="col-sm-2"><label for="stripe-checkout">Pay now with Stripe</label></div>
+<div class="col-sm-4"><button id="stripe-checkout" class="btn btn-primary btn-block" tabindex="101" disabled></button></div>
+<div class="col-sm-6 help-block" id="checkout-help">For other payment options, please contact us at <a href="mailto:registration@@worldcon.fi">registration@@worldcon.fi</a></div>
+</div>
+
+</div> <!-- /details -->
+</div> <!-- /container -->
 }
