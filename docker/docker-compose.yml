@@ -4,7 +4,8 @@ app:
   links:
     - postgres
   volumes:
-   - ../transactions:/transactions
+   - ./transactions:/hakkapeliitta/transactions
+   - ./logs:/hakkapeliitta/logs
 
 proxy:
   build: proxy/

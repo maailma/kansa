@@ -1,19 +1,5 @@
-#!/bin/sh
+#!/bin/bash
 
-echo "Waiting for Postgresql Database to start"
+chown hakkapeliitta:hakkapeliitta logs transactions
 
-until nc -z postgres 5432
-do
-  sleep 1
-done
-
-sleep 2
-
-echo "Starting hakkapeliitta"
-
-./app/bin/hakkapeliitta -Ddb.host=postgres\
-    -Ddb.username=$POSTGRES_USER\
-    -Ddb.password=$POSTGRES_PASSWORD\
-    -Dstripe.apiKey=$STRIPE_SECRET_APIKEY
-    -Dplay.http.forwarded.trustedProxies=proxy
-
+su -c ./hakkapeliitta-user.sh hakkapeliitta

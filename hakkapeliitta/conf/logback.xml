@@ -7,11 +7,22 @@
     </encoder>
   </appender>
 
+
+  <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <file>/hakkapeliitta/logs/hakkapeliitta.log</file>
+    <append>true</append>
+    <encoder>
+      <pattern>%coloredLevel - %logger - %message%n%xException</pattern>
+    </encoder>
+  </appender>
+
+
   <logger name="play" level="INFO" />
   <logger name="application" level="DEBUG" />
 
-  <root level="ERROR">
+  <root level="INFO">
     <appender-ref ref="STDOUT" />
+    <appender-ref ref="FILE" />
   </root>
 
 </configuration>
