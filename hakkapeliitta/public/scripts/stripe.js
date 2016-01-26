@@ -187,8 +187,9 @@ function markValidDetails(ev) {
     });
 }
 
-function myScrollTo(sel) {
-    $('html, body').animate({ scrollTop: $(sel).offset().top - 20 }, 1000);
+function myScrollTo(scrollTo, focus) {
+    $('html, body').animate({ scrollTop: $(scrollTo).offset().top - 20 }, 1000,
+                            function() { $(focus).focus(); });
 }
 
 // Set button texts
@@ -199,6 +200,7 @@ $(function () {
         purchase.type = this.id.split('-', 1)[0];
         purchase.upgrade = null;
         setPurchaseAmountAndDescription();
+        $('.no-kids').show();
         switch (this.id) {
             case 'adult-btn':
             case 'youth-btn':
@@ -206,17 +208,15 @@ $(function () {
                 $('#details').hide();
                 var prevUpgrade = $('#upgrade .active');
                 if (prevUpgrade.length) prevUpgrade.click();
-                else {
-                    myScrollTo('#upgrade');
-                    $('#upgrade-btn').focus();
-                }
+                else myScrollTo('#upgrade', '#upgrade-btn');
                 break;
-            case 'support-btn':
             case 'child-btn':
+                $('.no-kids').hide();
+                // fallthrough
+            case 'support-btn':
                 $('#upgrade').hide();
                 $('#details').show();
-                myScrollTo('#details');
-                $('#name').focus();
+                myScrollTo('#details', '#name')
                 break;
             default:
                 $('#upgrade').hide();
@@ -235,8 +235,7 @@ $(function () {
         }
         setPurchaseAmountAndDescription();
         $('#details').show();
-        myScrollTo('#details');
-        $('#name').focus();
+        myScrollTo('#details', '#name')
     });
 
     $('#paper-pubs').on('change', function() {
@@ -250,9 +249,13 @@ $(function () {
     $('#stripe-checkout').on('click', function() {
         setPurchaseDetails();
         console.log("Let's make a purchase!", purchase);
+        var desc = purchase.description
+                       .replace('membership', 'member')
+                       .replace('publications', 'pubs')
+                       .replace(/ \([^)]*\d+\)$/, '');
         handler.open({
             currency: purchase.currency,
-            description: purchase.description,
+            description: desc,
             amount: purchase.amount,
             email: purchase.details.email
         });
