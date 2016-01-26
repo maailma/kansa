@@ -13,6 +13,7 @@ proxy:
    - app
   volumes:
    - /etc/letsencrypt:/etc/letsencrypt
+   - ../hakkapeliitta/public/:/usr/share/nginx/html
 
 postgres:
   image: postgres:9.4
