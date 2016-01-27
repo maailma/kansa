@@ -20,3 +20,9 @@
 .btn-110 {
     width:110px;
 }
+
+/* overwrite the alertify dimmer value for Stripe payments */
+.alertify .ajs-dimmer {
+    background-color: #ffffff !important;
+    opacity: 1 !important;
+}
