@@ -3,6 +3,8 @@ app:
   env_file: .env
   links:
     - postgres
+  volumes:
+   - ../transactions:/transactions
 
 proxy:
   build: proxy/
