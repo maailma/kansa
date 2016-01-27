@@ -15,7 +15,8 @@ libraryDependencies ++= Seq(
   "com.mohiva" %% "play-silhouette" % "3.0.2",
   "com.kyleu" %% "jdub-async" % "1.0",
   "org.webjars" % "bootstrap" % "3.3.5",
-  "com.stripe" % "stripe-java" % "1.42.0"
+  "com.stripe" % "stripe-java" % "1.42.0",
+  "com.sendgrid" % "sendgrid-java" % "2.2.1"
 )
 
 routesGenerator := InjectedRoutesGenerator

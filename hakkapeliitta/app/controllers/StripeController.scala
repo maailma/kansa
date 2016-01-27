@@ -8,6 +8,7 @@ import java.util.HashMap
 
 import com.google.common.reflect.TypeToken
 import com.google.gson.internal.LinkedTreeMap
+import com.sendgrid.SendGrid
 import com.stripe.Stripe
 import com.stripe.exception._
 import com.stripe.model.Charge
@@ -28,6 +29,7 @@ import scala.collection.JavaConverters._
 
 class StripeController {
   val log = Logger(this.getClass())
+  val sendgrid = new SendGrid(Play.application.configuration.getString("sendgrid.apiKey").get)
 
   def notJsonResult= {
     val errorStr = "Invalid, request not made in JSON"
@@ -47,6 +49,22 @@ class StripeController {
       Files.write(path, s"${Json.prettyPrint(logJson)}\n".getBytes(StandardCharsets.UTF_8))
     } catch {
       case error : Throwable => log.error(s"Error writing transaction log for $chargeId", error)
+    }
+  }
+
+  def sendEmail = {
+    val email = new SendGrid.Email()
+    email.addTo("ian.monroe@worldcon.fi")
+    email.setFrom("eemeli@worldcon.fi")
+    email.setSubject("Here's An Email")
+    email.setText("My first email with SendGrid Java!")
+
+    try {
+      val response = sendgrid.send(email)
+      log.debug(response.getMessage)
+    }
+    catch {
+      case e: Throwable => log.error("Something went wrong with sendgrid", e)
     }
   }
 
@@ -74,6 +92,7 @@ class StripeController {
             val timestamp = Try(Instant.ofEpochSecond(result.getCreated)).toOption.getOrElse(Instant.now).toString
             val resultJson = Json.parse(APIResource.GSON.toJson(result))
             writeTransactionFile(chargeId, timestamp, requestJson, resultJson, request.headers)
+            sendEmail
             log.info(s"$email successfully created Charge ID $chargeId. $description $price")
             Ok(resultJson)
           case Failure(e: CardException) =>
