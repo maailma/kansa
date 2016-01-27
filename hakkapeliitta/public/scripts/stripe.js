@@ -71,16 +71,10 @@ var handler = StripeCheckout.configure({
     name: 'Worldcon 75',
     zipCode: true,
     token: function(token) {
-        // Send the data to our processing backend
         $.ajax({
             url: "https://shop.worldcon.fi/orderMembership",
             type: "POST",
-            data: JSON.stringify({tokenId : token.id,
-                                  email: token.email,
-                                  productId: "nonesuch",
-                                  amount: purchase.amount,
-                                  descr: purchase.description
-                                }),
+            data: JSON.stringify({ token: token, purchase: purchase }),
             contentType: "application/json",
             beforeSend: cbBeforeSend,
             timeout: cbTimeout,

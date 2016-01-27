@@ -35,28 +35,29 @@ class StripeController {
     BadRequest(Json.obj("result"->errorStr))
   }
 
-  def writeTransactionFile(tokenId: String, requestJson: JsValue, result: Charge, headers: Headers) = {
+  def writeTransactionFile(chargeId: String, timestamp: String, requestJson: JsValue, resultJson: JsValue, headers: Headers) = {
     try {
-      val jsonResult  = Json.parse(APIResource.GSON.toJson(result))
-      val jsonHeaders = Json.toJson(headers.toSimpleMap)
-      val jsonLog = Json.obj("request" -> requestJson, "result" -> jsonResult, "headers" -> jsonHeaders)
-      val logFileName = s"$tokenId--${Instant.now}"
+      val logJson = Json.obj(
+        "headers" -> Json.toJson(headers.toSimpleMap),
+        "request" -> requestJson,
+        "result" -> resultJson
+      )
+      val logFileName = s"$chargeId--$timestamp"
       val path = Paths.get(s"/hakkapeliitta/transactions/$logFileName")
-      Files.write(path, s"${Json.prettyPrint(jsonLog)}\n".getBytes(StandardCharsets.UTF_8))
+      Files.write(path, s"${Json.prettyPrint(logJson)}\n".getBytes(StandardCharsets.UTF_8))
     } catch {
-      case error : Throwable => log.error(s"Error writing transaction log for ${result.getId}", error)
+      case error : Throwable => log.error(s"Error writing transaction log for $chargeId", error)
     }
   }
 
   def orderMembership = Action { request =>
-    request.body.asJson.map { json =>
+    request.body.asJson.map { requestJson =>
       (for {
         apiKey <- Play.application.configuration.getString("stripe.apiKey")
-        tokenId <- (json \ "tokenId").asOpt[String]
-        email <-  (json \ "email").asOpt[String]
-        productId <- (json \ "productId").asOpt[String]
-        price <- (json \ "amount").asOpt[BigDecimal]
-        description <- (json \ "descr").asOpt[String]
+        tokenId <- (requestJson \ "token" \ "id").asOpt[String]
+        email <-  (requestJson \ "token" \ "email").asOpt[String]
+        price <- (requestJson \ "purchase" \ "amount").asOpt[BigDecimal]
+        description <- (requestJson \ "purchase" \ "description").asOpt[String]
       } yield {
         log.info(s"$email is ordering $description for $price")
         Stripe.apiKey = apiKey
@@ -69,10 +70,12 @@ class StripeController {
 
         Try(Charge.create(chargeParams)) match {
           case Success(result) =>
-            writeTransactionFile(tokenId, json, result, request.headers)
-            log.info(s"$email successfully created Charge ID ${result.getId}. $description $price")
-            val instant = Try(Instant.ofEpochSecond(result.getCreated)).toOption.getOrElse(Instant.now)
-            Ok(Json.obj("result" -> "successful", "time" -> instant.toString))
+            val chargeId = result.getId
+            val timestamp = Try(Instant.ofEpochSecond(result.getCreated)).toOption.getOrElse(Instant.now).toString
+            val resultJson = Json.parse(APIResource.GSON.toJson(result))
+            writeTransactionFile(chargeId, timestamp, requestJson, resultJson, request.headers)
+            log.info(s"$email successfully created Charge ID $chargeId. $description $price")
+            Ok(resultJson)
           case Failure(e: StripeException) =>
             val errorStr = s"Error making Strip request for $email.\nRequest id: ${e.getRequestId}\nStatus code${e.getStatusCode}"
             log.error(errorStr, e)
