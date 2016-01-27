@@ -76,19 +76,41 @@ class StripeController {
             writeTransactionFile(chargeId, timestamp, requestJson, resultJson, request.headers)
             log.info(s"$email successfully created Charge ID $chargeId. $description $price")
             Ok(resultJson)
+          case Failure(e: CardException) =>
+            val errorJson = Json.obj(
+              "status" -> "declined",
+              "code" -> e.getCode,
+              "message" -> e.getMessage,
+              "email" -> email
+            )
+            log.error(errorJson.toString, e)
+            InternalServerError(errorJson)
           case Failure(e: StripeException) =>
-            val errorStr = s"Error making Strip request for $email.\nRequest id: ${e.getRequestId}\nStatus code${e.getStatusCode}"
-            log.error(errorStr, e)
-            InternalServerError(Json.obj("result"-> errorStr))
+            val errorJson = Json.obj(
+              "status" -> "error",
+              "code" -> e.getStatusCode.toString,
+              "message" -> e.toString,
+              "email" -> email
+            )
+            log.error(errorJson.toString, e)
+            InternalServerError(errorJson)
           case Failure(e: Throwable) =>
-            val errorStr = s"Unknown issue making Stripe request for $email."
-            log.error(errorStr, e)
-            InternalServerError(Json.obj("result" -> errorStr))
+            val errorJson = Json.obj(
+              "status" -> "error",
+              "message" -> e.toString,
+              "email" -> email
+            )
+            log.error(errorJson.toString, e)
+            InternalServerError(errorJson)
         }
       }).getOrElse {
-        val errorStr = "Missing parameters in request"
-        log.error(errorStr)
-        BadRequest(Json.obj("result" -> errorStr))
+        val errorJson = Json.obj(
+          "status" -> "error",
+          "message" -> "Missing parameters in request",
+          "request" -> requestJson
+        )
+        log.error(errorJson.toString)
+        BadRequest(errorJson)
       }
     }.getOrElse(notJsonResult)
   }
