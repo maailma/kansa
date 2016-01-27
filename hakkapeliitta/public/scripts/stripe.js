@@ -12,16 +12,18 @@ var purchase = {
 
 /* Debugging for now */
 function cbBeforeSend() {
+    var processingMssage = 'Card details verified. Please wait while we process the payment'
     // Show alert and dim background
     var hpos = ($(window).width() / 2) - 300;
     var vpos = ($(window).height() / 2) - 94;
-    alertify.alert('Please wait while we process the payment').set({'label': null,
-                                                                    'modal': true, 
-                                                                    'closable': false, 
-                                                                    'closableByDimmer': false,
-                                                                    'basic': true,
-                                                                    'movable': false
-                                                                    }).moveTo(hpos,vpos); 
+    alertify.alert(processingMssage).set({'label': null,
+                                          'modal': true, 
+                                          'closable': false, 
+                                          'closableByDimmer': false,
+                                          'basic': true,
+                                          'movable': false,
+                                        //  'transition': 'fade'
+                                        }).moveTo(hpos,vpos); 
     /*
     //get the closable setting value.
     var stripeAlert = alertify.alert().setting('closable');
@@ -41,22 +43,50 @@ function cbBeforeSend() {
 
 function cbTimeout() {
     if (alertify.alert().isOpen()) alertify.alert().close();
-    alertify.alert('Payment processing timed out! Please check your connectivity.');
+    alertify.alert('Please check your connectivity.').setHeader('<em>Payment processing timed out!</em> ');
 }
 
 function cbSuccess(data) {
     console.log("Received cbSuccess", data);
-    if (alertify.alert().isOpen()) {
-        alertify.alert().close();
-        alertify.success('Payment processing completed successfully!');
-    }
-    // alertify.alert().destroy();
+
+    var amount = data.amount/100
+    var date = new Date(data.created*1000);
+    var retMessage  = 'Description: ' + data.description + '<br>';
+        retMessage += 'Amount: ' + amount + ' ' + data.currency + '<br>';
+        retMessage += 'Transaction ID: ' + data.id + '<br>';
+        retMessage += 'Transaction Time: ' + date + '<br>';
+
+    var hpos = ($(window).width() / 2) - 300;
+    var vpos = ($(window).height() / 2) - 94;
+    alertify.alert(retMessage).set({'label': 'Close',
+                                    'modal': true, 
+                                    'closable': true, 
+                                    'closableByDimmer': false,
+                                    'basic': false,
+                                    'movable': false,
+                                //    'transition': 'fade',
+                                    'onok': function(){ location.replace("//www.worldcon.fi");}
+                                    }).setHeader('<em>Payment processing completed successfully!</em> ')
+                                      .moveTo(hpos,vpos); 
 }
 
 function cbError(data) {
     console.log("Received cbError", data);
-    alertify.error('Payment processing failed!');
-    //do some stuff
+
+    var errMessage  = 'Status : ' + data.responseJSON.status + '<br>'; 
+        errMessage += 'Message: ' + data.responseJSON.message; 
+
+    var hpos = ($(window).width() / 2) - 300;
+    var vpos = ($(window).height() / 2) - 94;
+    alertify.alert(errMessage).set({'label': 'Close',
+                                    'modal': true, 
+                                    'closable': true, 
+                                    'closableByDimmer': false,
+                                    'basic': false,
+                                    'movable': false,
+                                //    'transition': 'fade',
+                                    }).setHeader('<em>Payment processing error!</em> ')
+                                      .moveTo(hpos,vpos);
 }
 
 function cbComplete(data) {
