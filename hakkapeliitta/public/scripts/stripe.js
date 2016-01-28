@@ -1,101 +1,63 @@
-/*
-Some pointers for sending additional values to the backend
-http://stackoverflow.com/questions/22546050/stripe-checkout-custom-button-not-charging
-*/
+var stripePublicKey = 'pk_test_LoOP8RB3gIlLkSYIyM9G6skn';
 
-// global variable for relaying information
 var purchase = {
     type: null, upgrade: null, inclPaper: false,
     currency: null, amount: null, description: null,
     details: {}
 };
 
-/* Debugging for now */
-function cbBeforeSend() {
-    var processingMssage = 'Card details verified. Please wait while we process the payment'
-    // Show alert and dim background
-    var hpos = ($(window).width() / 2) - 300;
-    var vpos = ($(window).height() / 2) - 94;
-    alertify.alert(processingMssage).set({'label': null,
-                                          'modal': true, 
-                                          'closable': false, 
-                                          'closableByDimmer': false,
-                                          'basic': true,
-                                          'movable': false,
-                                        //  'transition': 'fade'
-                                        }).moveTo(hpos,vpos); 
-    /*
-    //get the closable setting value.
-    var stripeAlert = alertify.alert().setting('closable');
-    //grab the dialog instance using its parameter-less constructor then set multiple settings at once.
-    alertify.alert()
-        .setting({
-            'label': null,
-            'modal', true,
-            'closable', false,
+function prettyAlert(error, message) {
+    return alertify
+        .alert(message)
+        .setHeader(error || '')
+        .set({
+            'modal': true,
+            'transition': 'fade',
+            'movable': false })
+        .set(error ? {
+            'label': 'Return to form',
+            'closable': true,
             'closableByDimmer': false,
-            'basic': true,
-            'movable': false
-            'message': 'Please wait while we process the payment'
-        }).moveTo(hpos,vpos).show();
-    */
+            'basic': false
+        } : {
+            'label': null,
+            'closable': false,
+            'closableByDimmer': false,
+            'basic': true
+        });
 }
 
-function cbTimeout() {
-    if (alertify.alert().isOpen()) alertify.alert().close();
-    alertify.alert('Please check your connectivity.').setHeader('<em>Payment processing timed out!</em> ');
+function stripeBeforeSend() {
+    prettyAlert(null, 'Card details verified. Please wait while we process the payment...');
 }
 
-function cbSuccess(data) {
-    console.log("Received cbSuccess", data);
-
-    var amount = data.amount/100
-    var date = new Date(data.created*1000);
-    var retMessage  = 'Description: ' + data.description + '<br>';
-        retMessage += 'Amount: ' + amount + ' ' + data.currency + '<br>';
-        retMessage += 'Transaction ID: ' + data.id + '<br>';
-        retMessage += 'Transaction Time: ' + date + '<br>';
-
-    var hpos = ($(window).width() / 2) - 300;
-    var vpos = ($(window).height() / 2) - 94;
-    alertify.alert(retMessage).set({'label': 'Close',
-                                    'modal': true, 
-                                    'closable': true, 
-                                    'closableByDimmer': false,
-                                    'basic': false,
-                                    'movable': false,
-                                //    'transition': 'fade',
-                                    'onok': function(){ location.replace("//www.worldcon.fi");}
-                                    }).setHeader('<em>Payment processing completed successfully!</em> ')
-                                      .moveTo(hpos,vpos); 
+function stripeTimeout() {
+    prettyAlert('Payment processing timed out!', 'Please check your connectivity.');
 }
 
-function cbError(data) {
-    console.log("Received cbError", data);
-
-    var errMessage  = 'Status : ' + data.responseJSON.status + '<br>'; 
-        errMessage += 'Message: ' + data.responseJSON.message; 
-
-    var hpos = ($(window).width() / 2) - 300;
-    var vpos = ($(window).height() / 2) - 94;
-    alertify.alert(errMessage).set({'label': 'Close',
-                                    'modal': true, 
-                                    'closable': true, 
-                                    'closableByDimmer': false,
-                                    'basic': false,
-                                    'movable': false,
-                                //    'transition': 'fade',
-                                    }).setHeader('<em>Payment processing error!</em> ')
-                                      .moveTo(hpos,vpos);
+function stripeSuccess(data) {
+    console.log('stripe success', data);
+    var msgLines = [
+        'Payment processing completed successfully.<br>',
+        'Description: ' + data.description,
+        'Price: ' + prettyPrice(data.currency, data.amount),
+        'Transaction ID: ' + data.id,
+        'Transaction Time: ' + new Date(data.created * 1000)
+    ];
+    prettyAlert(null, msgLines.join('<br>\n'));
 }
 
-function cbComplete(data) {
-    //console.log("Received cbComplete", data);
+function stripeError(data) {
+    console.log('stripe error', data);
+    var msgLines = [
+        'Status: ' + data.responseJSON.status,
+        'Message: ' + data.responseJSON.message
+    ];
+    prettyAlert('Payment processing error!', msgLines.join('<br>\n'));
 }
 
-// Stripe handler
-var handler = StripeCheckout.configure({
-    key: 'pk_test_LoOP8RB3gIlLkSYIyM9G6skn',
+var stripeHandler = StripeCheckout.configure({
+    key: stripePublicKey,
     image: 'https://shop.worldcon.fi/assets/images/icons/android-icon-192x192.png',
     locale: 'auto',
     name: 'Worldcon 75',
@@ -106,11 +68,10 @@ var handler = StripeCheckout.configure({
             type: "POST",
             data: JSON.stringify({ token: token, purchase: purchase }),
             contentType: "application/json",
-            beforeSend: cbBeforeSend,
-            timeout: cbTimeout,
-            success: cbSuccess,
-            error: cbError,
-            complete: cbComplete
+            beforeSend: stripeBeforeSend,
+            timeout: stripeTimeout,
+            success: stripeSuccess,
+            error: stripeError
         });
     }
 });
@@ -280,7 +241,7 @@ $(function () {
                        .replace('membership', 'member')
                        .replace('publications', 'pubs')
                        .replace(/ \([^)]*\d+\)$/, '');
-        handler.open({
+        stripeHandler.open({
             currency: purchase.currency,
             description: desc,
             amount: purchase.amount,
@@ -291,5 +252,5 @@ $(function () {
 
 // Close Checkout on page navigation
 $(window).on('popstate', function() {
-    handler.close();
+    stripeHandler.close();
 });
