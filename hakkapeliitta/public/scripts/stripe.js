@@ -37,14 +37,7 @@ function stripeTimeout() {
 
 function stripeSuccess(data) {
     console.log('stripe success', data);
-    var msgLines = [
-        'Payment processing completed successfully.<br>',
-        'Description: ' + data.description,
-        'Price: ' + prettyPrice(data.currency, data.amount),
-        'Transaction ID: ' + data.id,
-        'Transaction Time: ' + new Date(data.created * 1000)
-    ];
-    prettyAlert(null, msgLines.join('<br>\n'));
+    prettyAlert(null, '<h1>Payment processing completed successfully</h1><div style="white-space:pre-wrap">' + data.message + '</div>');
 }
 
 function stripeError(data) {

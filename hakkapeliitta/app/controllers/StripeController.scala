@@ -104,41 +104,41 @@ class StripeController {
     }
   }
 
-  def sendEmail(mailTo: String, description: String, requestJson: JsValue, result: Charge) = {
-    val email = new SendGrid.Email()
-    email.addTo(mailTo)
-    email.setFrom("registration@worldcon.fi")
-    email.setFromName("Worldcon 75 Registration")
-    if (result.getLivemode) {
-      email.addBcc("registration@worldcon.fi")
-      email.setSubject("Welcome to Worldcon 75!")
-    } else {
-      email.setSubject("TEST - Welcome to Worldcon 75!")
-    }
-
+  def successMessage(description: String, requestJson: JsValue, result: Charge) = {
     val price = prettyPrice(result.getCurrency, result.getAmount)
     val details = prettyPurchaseDetails(description, requestJson)
-    email.setText(s"""
+    s"""
 Tervetuloa Maailmanconiin! Welcome to Worldcon!
 
-Thank you for joining us! We have now received your payment of ${price} for a
-Worldcon 75 ${description}.
+Thank you for joining us! We have now received your payment of ${price} for a Worldcon 75 ${description}.
 
 Here are the details we have for you:
 ${details}
 
-The charge will appear on your statement as "WORLDCON 75". Our internal ID
-for this transaction is ${result.getId}.
+The charge will appear on your statement as "WORLDCON 75". Our internal ID for this transaction is ${result.getId}.
 
-Please double check your order and inform us immediately of any errors,
-omissions, or changes at registration@worldcon.fi.
+Please double check your order and inform us immediately of any errors, omissions, or changes at registration@worldcon.fi.
 
 
 Kiitos! Thank you!
 
 Worldcon 75
 info@worldcon.fi
-http://worldcon.fi/""")
+http://worldcon.fi/"""
+  }
+
+  def sendEmail(mailTo: String, message: String, live: Boolean) = {
+    val email = new SendGrid.Email()
+    email.addTo(mailTo)
+    email.setFrom("registration@worldcon.fi")
+    email.setFromName("Worldcon 75 Registration")
+    if (live) {
+      email.addBcc("registration@worldcon.fi")
+      email.setSubject("Welcome to Worldcon 75!")
+    } else {
+      email.setSubject("TEST - Welcome to Worldcon 75!")
+    }
+    email.setText(message)
 
     try {
       val response = sendgrid.send(email)
@@ -170,15 +170,26 @@ http://worldcon.fi/""")
         Try(Charge.create(chargeParams)) match {
           case Success(result) =>
             val chargeId = result.getId
-            log.info(s"$email charge ($amount): ${result.getStatus}, id: $chargeId")
+            log.info(s"$email Charge ($amount) ${result.getStatus}, id: $chargeId")
             val timestamp = Try(Instant.ofEpochSecond(result.getCreated)).toOption.getOrElse(Instant.now).toString
             val resultJson = Json.parse(APIResource.GSON.toJson(result))
             writeTransactionFile(chargeId, timestamp, requestJson, resultJson, request.headers)
             if (result.getStatus == "succeeded") {
-              sendEmail(email, description, requestJson, result)
+              val message = successMessage(description, requestJson, result)
+              sendEmail(email, message, result.getLivemode)
               log.info(s"$email Confirmation email sent.")
+              Ok(Json.obj(
+                "status" -> result.getStatus,
+                "message" -> message,
+                "result" -> resultJson
+              ))
+            } else {
+              InternalServerError(Json.obj(
+                "status" -> result.getStatus,
+                "message" -> result.getFailureMessage,
+                "result" -> resultJson
+              ))
             }
-            Ok(resultJson)
           case Failure(e: CardException) =>
             val errorJson = Json.obj(
               "status" -> "declined",
