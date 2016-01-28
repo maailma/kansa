@@ -1,4 +1,4 @@
-var stripePublicKey = 'pk_test_LoOP8RB3gIlLkSYIyM9G6skn';
+var stripePublicKey = 'pk_live_vSEBxO9ddioYqCGvhVsog4pb';
 
 var purchase = {
     type: null, upgrade: null, inclPaper: false,
