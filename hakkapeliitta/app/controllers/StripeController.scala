@@ -26,6 +26,7 @@ import play.api.Logger
 
 import scala.util.{Try,Success, Failure}
 import scala.collection.JavaConverters._
+import scala.collection.mutable.ListBuffer
 
 class StripeController {
   val log = Logger(this.getClass())
@@ -52,19 +53,99 @@ class StripeController {
     }
   }
 
-  def sendEmail = {
+  def prettyPrice(currency: String, amount: Integer): String = {
+    (currency match {
+      case "eur" => "€"
+      case "usd" => "$"
+      case c => c.toUpperCase + " "
+    }) + f"${BigDecimal(amount) / 100}%1.2f"
+  }
+
+  def prettyPurchaseDetails(description: String, requestJson: JsValue): String = {
+    (for {
+      details <- (requestJson \ "purchase" \ "details").asOpt[JsValue]
+    } yield {
+      val result = ListBuffer("", s"Purchase:  $description")
+
+      val name = (details \ "name").asOpt[String]
+      if (name.isDefined) { result += s"Official name:  ${name.get}" }
+
+      val email = (details \ "email").asOpt[String]
+      if (email.isDefined) { result += s"Email address:  ${email.get}" }
+
+      val city = (details \ "city").asOpt[String]
+      val state = (details \ "state").asOpt[String]
+      val country = (details \ "country").asOpt[String]
+      val location = List(city, state, country).flatten.filter(_.nonEmpty).mkString(", ")
+      if (!location.isEmpty) { result += s"Home location:  $location" }
+
+      val pubFirst = (details \ "public-first").asOpt[String]
+      val pubLast = (details \ "public-last").asOpt[String]
+      val pubName = List(pubFirst, pubLast).flatten.mkString(" ").trim
+      if (!pubName.isEmpty) { result += s"Public name:  $pubName" }
+
+      val hugo2016 = (details \ "hugo-2016").asOpt[Boolean].getOrElse(false)
+      result += "Participate in 2016 Hugo Awards nomination:  " + (if (hugo2016) "yes" else "no")
+
+      val paperPubs = (details \ "paper-pubs").asOpt[Boolean].getOrElse(false)
+      result +=  "Paper publications:  " + (if (paperPubs) "yes" else "no")
+      if (paperPubs) {
+        val pName = (details \ "paper-name").asOpt[String].getOrElse("[No name!]")
+        result += s"    $pName"
+        val pAddress = (details \ "paper-address").asOpt[String].getOrElse("[No address!]")
+        result ++= pAddress.split("\\n").map(line => s"    $line")
+        val pCountry = (details \ "paper-country").asOpt[String].getOrElse("[No country!]")
+        result += s"    $pCountry"
+      }
+      result.mkString("\n    ")
+    }).getOrElse {
+      log.error("Error parsing purchase details from request!")
+      Json.prettyPrint(requestJson)
+    }
+  }
+
+  def sendEmail(mailTo: String, description: String, requestJson: JsValue, result: Charge) = {
     val email = new SendGrid.Email()
-    email.addTo("ian.monroe@worldcon.fi")
-    email.setFrom("eemeli@worldcon.fi")
-    email.setSubject("Here's An Email")
-    email.setText("My first email with SendGrid Java!")
+    email.addTo(mailTo)
+    email.setFrom("registration@worldcon.fi")
+    email.setFromName("Worldcon 75 Registration")
+    if (result.getLivemode) {
+      email.addBcc("registration@worldcon.fi")
+      email.setSubject("Welcome to Worldcon 75!")
+    } else {
+      email.setSubject("TEST - Welcome to Worldcon 75!")
+    }
+
+    val price = prettyPrice(result.getCurrency, result.getAmount)
+    val details = prettyPurchaseDetails(description, requestJson)
+    email.setText(s"""
+Tervetuloa Maailmanconiin! Welcome to Worldcon!
+
+Thank you for joining us! We have now received your payment of ${price} for a
+Worldcon 75 ${description}.
+
+Here are the details we have for you:
+${details}
+
+The charge will appear on your statement as "WORLDCON 75". Our internal ID
+for this transaction is ${result.getId}.
+
+Please double check your order and inform us immediately of any errors,
+omissions, or changes at registration@worldcon.fi.
+
+
+Kiitos! Thank you!
+
+Worldcon 75
+info@worldcon.fi
+http://worldcon.fi/""")
 
     try {
       val response = sendgrid.send(email)
       log.debug(response.getMessage)
     }
     catch {
-      case e: Throwable => log.error("Something went wrong with sendgrid", e)
+      case e: Throwable => log.error("Sendgrid error", e)
     }
   }
 
@@ -74,14 +155,14 @@ class StripeController {
         apiKey <- Play.application.configuration.getString("stripe.apiKey")
         tokenId <- (requestJson \ "token" \ "id").asOpt[String]
         email <-  (requestJson \ "token" \ "email").asOpt[String]
-        price <- (requestJson \ "purchase" \ "amount").asOpt[BigDecimal]
+        amount <- (requestJson \ "purchase" \ "amount").asOpt[BigDecimal]
         description <- (requestJson \ "purchase" \ "description").asOpt[String]
       } yield {
-        log.info(s"$email is ordering $description for $price")
+        log.info(s"$email is ordering $description")
         Stripe.apiKey = apiKey
 
         val chargeParams = new HashMap[String, Object]
-        chargeParams.put("amount", new Integer(price.toIntExact))
+        chargeParams.put("amount", new Integer(amount.toIntExact))
         chargeParams.put("currency", "eur")
         chargeParams.put("source", tokenId)
         chargeParams.put("description", description)
@@ -89,11 +170,14 @@ class StripeController {
         Try(Charge.create(chargeParams)) match {
           case Success(result) =>
             val chargeId = result.getId
+            log.info(s"$email charge ($amount): ${result.getStatus}, id: $chargeId")
             val timestamp = Try(Instant.ofEpochSecond(result.getCreated)).toOption.getOrElse(Instant.now).toString
             val resultJson = Json.parse(APIResource.GSON.toJson(result))
             writeTransactionFile(chargeId, timestamp, requestJson, resultJson, request.headers)
-            sendEmail
-            log.info(s"$email successfully created Charge ID $chargeId. $description $price")
+            if (result.getStatus == "succeeded") {
+              sendEmail(email, description, requestJson, result)
+              log.info(s"$email Confirmation email sent.")
+            }
             Ok(resultJson)
           case Failure(e: CardException) =>
             val errorJson = Json.obj(
