@@ -28,10 +28,9 @@
     <script src="/scripts/local.js"></script>
     <script src="/scripts/stripe.js"></script>
 
-    <link rel="stylesheet" media="screen" href="/stylesheets/main.css">
     <link rel="stylesheet" media="screen" href="/stylesheets/alertify.min.css">
     <link rel="stylesheet" media="screen" href="/stylesheets/alertify.bootstrap.min.css">
-    <link rel="stylesheet" media="screen" href="/assets/lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/assets/lib/bootstrap/css/bootstrap.min.css" />
 </head>
 <body>
 <style>
@@ -55,7 +54,19 @@
     .form-control { margin-bottom: 5px; }
     .row { margin-top: 20px; }
     #bear { margin-top: 20px; }
+
+    /* overwrite the alertify dimmer value for Stripe payments */
+    .alertify .ajs-dimmer {
+        background-color: #ffffff !important;
+        opacity: 1 !important;
+    }
+
+    @media print {
+        .ajs-reset, .ajs-commands, .ajs-footer, .ajs-handle { display: none !important; }
+    }
 </style>
+
+<h1 class="visible-print-block">Worldcon 75</h1>
 
 <div class="container">
     <!--
@@ -74,7 +85,7 @@
                 <li>Participate in the 2019 Worldcon Site Selection
             </ul>
         </div>
-        <img class="hidden-xs col-sm-4" id="bear" src="/assets/images/polarbear-transp.png">
+        <img class="hidden-xs col-sm-4 hidden-print" id="bear" src="/assets/images/polarbear-transp.png">
     </div>
 
 

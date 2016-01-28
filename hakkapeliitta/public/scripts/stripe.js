@@ -37,7 +37,11 @@ function stripeTimeout() {
 
 function stripeSuccess(data) {
     console.log('stripe success', data);
-    prettyAlert(null, '<h1>Payment processing completed successfully</h1><div style="white-space:pre-wrap">' + data.message + '</div>');
+    prettyAlert(null, '<h3>Payment processing completed successfully</h3>\n' +
+        '<p>The following confirmation has been sent to <b>' + data.source.name + '</b>.' +
+        '<span class="hidden-print">To purchase another membership, please reload this page.</span>\n<hr>\n' +
+        '<div style="white-space:pre-wrap">' + data.message + '</div>');
+    $('.container').addClass('hidden-print');
 }
 
 function stripeError(data) {
