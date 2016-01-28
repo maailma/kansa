@@ -161,10 +161,12 @@ function setPurchaseDetails() {
 function markValidDetails(ev) {
     var fields = checkPurchaseFields();
     if (fields.false.length) {
-        var title = 'Invalid fields: ' + fields.false.join(', ').replace(/#/g, '');
-        $('#stripe-checkout').prop('disabled', true).prop('title', title);
+        var why = 'Required fields: ' + fields.false.join(', ').replace(/#/g, '');
+        $('#stripe-checkout').prop('disabled', true);
+        $('#checkout-why').html(why);
     } else {
-        $('#stripe-checkout').prop('disabled', false).prop('title', '');
+        $('#stripe-checkout').prop('disabled', false);
+        $('#checkout-why').html('');
     }
     $('.has-error').removeClass('has-error');
     $('.has-success').removeClass('has-success');
@@ -178,9 +180,7 @@ function markValidDetails(ev) {
         }
     });
     $(fields.true.join(',')).each(function() {
-        if (this.tabIndex < focusIdx) {
-            $(this).next().addClass('glyphicon-ok').parent().addClass('has-success');
-        }
+        $(this).next().addClass('glyphicon-ok').parent().addClass('has-success');
     });
 }
 
