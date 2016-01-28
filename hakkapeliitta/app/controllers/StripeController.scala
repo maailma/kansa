@@ -84,8 +84,10 @@ class StripeController {
       val pubName = List(pubFirst, pubLast).flatten.mkString(" ").trim
       if (!pubName.isEmpty) { result += s"Public name:  $pubName" }
 
-      val hugo2016 = (details \ "hugo-2016").asOpt[Boolean].getOrElse(false)
-      result += "Participate in 2016 Hugo Awards nomination:  " + (if (hugo2016) "yes" else "no")
+      if (!description.startsWith("Child")) {
+        val hugo2016 = (details \ "hugo-2016").asOpt[Boolean].getOrElse(false)
+        result += "Participate in 2016 Hugo Awards nomination:  " + (if (hugo2016) "yes" else "no")
+      }
 
       val paperPubs = (details \ "paper-pubs").asOpt[Boolean].getOrElse(false)
       result +=  "Paper publications:  " + (if (paperPubs) "yes" else "no")
