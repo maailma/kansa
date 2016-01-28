@@ -106,7 +106,7 @@ function checkPurchaseFields() {
     return res;
 }
 
-function prettyAmount(currency, amount) {
+function prettyPrice(currency, amount) {
     var cSymbol;
     switch (currency) {
         case 'eur': cSymbol = '€'; break;
@@ -141,8 +141,8 @@ function setPurchaseAmountAndDescription() {
         purchase.description += ' + ' + paper.description;
     }
     if (purchase.amount < 0) throw new Error('Purchases are supposed to cost positive money.');
-    purchase.description += ' (' + prettyAmount(purchase.currency, purchase.amount) + ')';
-    $('#stripe-checkout').html(purchase.description);
+    var strPrice = prettyPrice(purchase.currency, purchase.amount);
+    $('#stripe-checkout').html(purchase.description + ' (' + strPrice + ')');
     return true;
 }
 
@@ -150,8 +150,11 @@ function setPurchaseDetails() {
     purchase.details = {};
     var fields = checkPurchaseFields();
     if (fields.false.length) throw new Error('Invalid purchase fields remain! ' + fields.false.join(', '));
-    $('#details input, #details textarea').each(function() {
+    $('#details input[type="text"], #details input[type="email"], #details textarea').each(function() {
         purchase.details[this.id] = $(this).val();
+    });
+    $('#details input[type="checkbox"]').each(function() {
+        purchase.details[this.id] = $(this).is(':checked');
     });
 }
 
