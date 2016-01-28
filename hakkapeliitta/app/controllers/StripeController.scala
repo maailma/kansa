@@ -168,6 +168,7 @@ http://worldcon.fi/"""
         chargeParams.put("currency", "eur")
         chargeParams.put("source", tokenId)
         chargeParams.put("description", description)
+        chargeParams.put("receipt_email", email)
 
         Try(Charge.create(chargeParams)) match {
           case Success(result) =>
