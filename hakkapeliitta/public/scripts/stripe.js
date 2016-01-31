@@ -42,6 +42,9 @@ function stripeSuccess(data) {
         '<span class="hidden-print">To purchase another membership, please reload this page.</span>\n<hr>\n' +
         '<div style="white-space:pre-wrap">' + data.message + '</div>');
     $('.container').addClass('hidden-print');
+    $('#details input, #details textarea').val('');
+    $('#hugo-2016').prop('checked', true);
+    $('#paper-pubs').prop('checked', false);
 }
 
 function stripeError(data) {
