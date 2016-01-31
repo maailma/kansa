@@ -1,0 +1,24 @@
+app:
+  image: imonroe/worldcon
+  env_file: ../.env
+  links:
+    - postgres
+  volumes:
+   - ../transactions:/hakkapeliitta/transactions
+   - ../logs:/hakkapeliitta/logs
+
+proxy:
+  build: ../proxy/
+  ports:
+    - "80:80"
+    - "443:443"
+  links:
+   - app
+  volumes:
+   - /etc/letsencrypt:/etc/letsencrypt
+   - ../../hakkapeliitta/public/:/usr/share/nginx/html
+
+postgres:
+  image: postgres:9.4
+  env_file: ../.env
+  restart: always
