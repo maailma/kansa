@@ -43,7 +43,6 @@ function stripeSuccess(data) {
         '<div style="white-space:pre-wrap">' + data.message + '</div>');
     $('.container').addClass('hidden-print');
     $('#details input, #details textarea').val('');
-    $('#hugo-2016').prop('checked', true);
     $('#paper-pubs').prop('checked', false);
 }
 
