@@ -95,6 +95,7 @@ class StripeController {
 
   def successMessage(description: String, details: JsValue, result: Charge) = {
     val price = prettyPrice(result.getCurrency, result.getAmount)
+    val id = Option(result.getReceiptNumber).filter(_.trim.nonEmpty).getOrElse(result.getId)
     val detailStr = prettyPurchaseDetails(description, details)
     s"""
 Tervetuloa Maailmanconiin! Welcome to Worldcon!
@@ -104,7 +105,7 @@ Thank you for joining us! We have now received your payment of ${price} for a Wo
 Here are the details we have for you:
 ${detailStr}
 
-The charge will appear on your statement as "WORLDCON 75". Our internal ID for this transaction is ${result.getId}.
+The charge will appear on your statement as "WORLDCON 75". Our internal ID for this transaction is #${id}.
 
 Please double check your order and inform us immediately of any errors, omissions, or changes at registration@worldcon.fi.
 
@@ -116,19 +117,19 @@ info@worldcon.fi
 http://worldcon.fi/"""
   }
 
-  def sendEmail(mailTo: String, message: String, live: Boolean) = {
+  def sendEmail(mailAddress: String, mailName: String, message: String, live: Boolean) = {
     val email = new SendGrid.Email()
-    email.addTo(mailTo)
+    email.addTo(mailAddress)
+    email.addToName(mailName)
     email.setFrom("registration@worldcon.fi")
     email.setFromName("Worldcon 75 Registration")
     if (live) {
       email.addBcc("registration@worldcon.fi")
-      email.setSubject("Welcome to Worldcon 75!")
+      email.setSubject(s"Welcome to Worldcon 75, $mailName!")
     } else {
-      email.setSubject("TEST - Welcome to Worldcon 75!")
+      email.setSubject(s"TEST - Welcome to Worldcon 75, $mailName!")
     }
     email.setText(message)
-
     try {
       val response = sendgrid.send(email)
       log.debug(response.getMessage)
@@ -147,6 +148,7 @@ http://worldcon.fi/"""
         amount <- (requestJson \ "purchase" \ "amount").asOpt[BigDecimal]
         description <- (requestJson \ "purchase" \ "description").asOpt[String]
         details <- (requestJson \ "purchase" \ "details").asOpt[JsValue]
+        officialName <- (details \ "name").asOpt[String]
       } yield {
         log.info(s"$email is ordering $description")
         Stripe.apiKey = apiKey
@@ -168,8 +170,9 @@ http://worldcon.fi/"""
               writeTransactionFile(chargeId, timestamp, requestJson, resultJson, request.headers)
             }
             if (result.getStatus == "succeeded") {
+              val name = publicName(details).getOrElse(officialName)
               val message = successMessage(description, details, result)
-              sendEmail(email, message, result.getLivemode)
+              sendEmail(email, name, message, result.getLivemode)
               log.info(s"$email Confirmation email sent.")
               Ok(Json.obj(
                 "status" -> result.getStatus,
