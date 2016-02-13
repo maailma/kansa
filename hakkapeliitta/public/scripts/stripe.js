@@ -1,7 +1,7 @@
 var stripePublicKey = 'pk_live_vSEBxO9ddioYqCGvhVsog4pb';
 
 var purchase = {
-    type: null, upgrade: null, inclPaper: false,
+    type: null, upgrade: null, firstCon: false, inclPaper: false,
     currency: null, amount: null, description: null,
     details: {}
 };
@@ -43,6 +43,7 @@ function stripeSuccess(data) {
         '<div style="white-space:pre-wrap">' + data.message + '</div>');
     $('.container').addClass('hidden-print');
     $('#details input, #details textarea').val('');
+    $('#first-con').prop('checked', false);
     $('#paper-pubs').prop('checked', false);
 }
 
@@ -118,8 +119,14 @@ function setPurchaseAmountAndDescription() {
     purchase.currency = base.currency;
     purchase.amount = base.amount;
     purchase.description = base.description;
+    if (purchase.firstCon) {
+        var first = memberships.firstCon;
+        if (!first || !first.amount || first.currency !== purchase.currency) throw new Error('Membership data is corrupt!');
+        purchase.amount = first.amount;
+        purchase.description = first.description;
+    }
     if (purchase.upgrade) {
-        var prev = memberships.support
+        var prev = memberships.support;
         if (!prev || !prev.amount || prev.currency !== purchase.currency) throw new Error('Membership data is corrupt!');
         purchase.amount -= prev.amount;
         purchase.description += ' (Upgrade)';
@@ -187,9 +194,11 @@ $(function () {
         purchase.type = this.id.split('-', 1)[0];
         purchase.upgrade = null;
         setPurchaseAmountAndDescription();
-        $('.no-kids').show();
+        $('.only-adults').hide();
         switch (this.id) {
             case 'adult-btn':
+                $('.only-adults').show();
+                // fallthrough
             case 'youth-btn':
                 $('#upgrade').show();
                 $('#details').hide();
@@ -198,8 +207,6 @@ $(function () {
                 else myScrollTo('#upgrade', '#upgrade-btn');
                 break;
             case 'child-btn':
-                $('.no-kids').hide();
-                // fallthrough
             case 'support-btn':
                 $('#upgrade').hide();
                 $('#details').show();
@@ -225,6 +232,11 @@ $(function () {
         myScrollTo('#details', '#name')
     });
 
+    $('#first-con').on('change', function() {
+        purchase.firstCon = this.checked;
+        setPurchaseAmountAndDescription();
+    });
+
     $('#paper-pubs').on('change', function() {
         purchase.inclPaper = this.checked;
         setPurchaseAmountAndDescription();
@@ -237,7 +249,7 @@ $(function () {
         setPurchaseDetails();
         console.log("Let's make a purchase!", purchase);
         var desc = purchase.description
-                       .replace('membership', 'member')
+                       .replace('Membership', 'Member')
                        .replace('publications', 'pubs')
                        .replace(/ \([^)]*\d+\)$/, '');
         stripeHandler.open({
