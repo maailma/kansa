@@ -61,56 +61,48 @@ class StripeController {
     }) + f"${BigDecimal(amount) / 100}%1.2f"
   }
 
-  def prettyPurchaseDetails(description: String, requestJson: JsValue): String = {
-    (for {
-      details <- (requestJson \ "purchase" \ "details").asOpt[JsValue]
-    } yield {
-      val result = ListBuffer("", s"Purchase:  $description")
-
-      val name = (details \ "name").asOpt[String]
-      if (name.isDefined) { result += s"Official name:  ${name.get}" }
-
-      val email = (details \ "email").asOpt[String]
-      if (email.isDefined) { result += s"Email address:  ${email.get}" }
-
-      val city = (details \ "city").asOpt[String]
-      val state = (details \ "state").asOpt[String]
-      val country = (details \ "country").asOpt[String]
-      val location = List(city, state, country).flatten.filter(_.nonEmpty).mkString(", ")
-      if (!location.isEmpty) { result += s"Home location:  $location" }
-
-      val pubFirst = (details \ "public-first").asOpt[String]
-      val pubLast = (details \ "public-last").asOpt[String]
-      val pubName = List(pubFirst, pubLast).flatten.mkString(" ").trim
-      if (!pubName.isEmpty) { result += s"Public name:  $pubName" }
-
-      val paperPubs = (details \ "paper-pubs").asOpt[Boolean].getOrElse(false)
-      result +=  "Paper publications:  " + (if (paperPubs) "yes" else "no")
-      if (paperPubs) {
-        val pName = (details \ "paper-name").asOpt[String].getOrElse("[No name!]")
-        result += s"    $pName"
-        val pAddress = (details \ "paper-address").asOpt[String].getOrElse("[No address!]")
-        result ++= pAddress.split("\\n").map(line => s"    $line")
-        val pCountry = (details \ "paper-country").asOpt[String].getOrElse("[No country!]")
-        result += s"    $pCountry"
-      }
-      result.mkString("\n    ")
-    }).getOrElse {
-      log.error("Error parsing purchase details from request!")
-      Json.prettyPrint(requestJson)
-    }
+  def publicName(details: JsValue): Option[String] = {
+    val name = List("public-first", "public-last")
+      .map(p => { (details \ p).asOpt[String] } )
+      .flatten
+      .mkString(" ")
+      .trim
+    if (name.isEmpty) None else Some(name)
   }
 
-  def successMessage(description: String, requestJson: JsValue, result: Charge) = {
+  def prettyPurchaseDetails(description: String, details: JsValue): String = {
+    val result = ListBuffer("", s"Purchase:  $description")
+    (details \ "name").asOpt[String].foreach(n => { result += s"Official name:  $n" } )
+    (details \ "email").asOpt[String].foreach(e => { result += s"Email address:  $e" } )
+    val location = List("city", "state", "country")
+      .map(f => { (details \ f).asOpt[String] } )
+      .flatten
+      .map { _.trim }
+      .filter { _.nonEmpty }
+    if (location.nonEmpty) { result += s"Home location:  ${location.mkString(", ")}" }
+    publicName(details).foreach(p => { result += s"Public name:  $p" } )
+    val paperPubs = (details \ "paper-pubs").asOpt[Boolean].getOrElse(false)
+    result +=  "Paper publications:  " + (if (paperPubs) "yes" else "no")
+    if (paperPubs) {
+      val address = ListBuffer.empty[String]
+      address += (details \ "paper-name").asOpt[String].getOrElse("[No name!]")
+      address ++= (details \ "paper-address").asOpt[String].getOrElse("[No address!]").split("\\n")
+      address += (details \ "paper-country").asOpt[String].getOrElse("[No country!]")
+      result ++= address.map(line => s"    $line")
+    }
+    result.mkString("\n    ")
+  }
+
+  def successMessage(description: String, details: JsValue, result: Charge) = {
     val price = prettyPrice(result.getCurrency, result.getAmount)
-    val details = prettyPurchaseDetails(description, requestJson)
+    val detailStr = prettyPurchaseDetails(description, details)
     s"""
 Tervetuloa Maailmanconiin! Welcome to Worldcon!
 
 Thank you for joining us! We have now received your payment of ${price} for a Worldcon 75 ${description}.
 
 Here are the details we have for you:
-${details}
+${detailStr}
 
 The charge will appear on your statement as "WORLDCON 75". Our internal ID for this transaction is ${result.getId}.
 
@@ -154,6 +146,7 @@ http://worldcon.fi/"""
         email <-  (requestJson \ "token" \ "email").asOpt[String]
         amount <- (requestJson \ "purchase" \ "amount").asOpt[BigDecimal]
         description <- (requestJson \ "purchase" \ "description").asOpt[String]
+        details <- (requestJson \ "purchase" \ "details").asOpt[JsValue]
       } yield {
         log.info(s"$email is ordering $description")
         Stripe.apiKey = apiKey
@@ -171,9 +164,11 @@ http://worldcon.fi/"""
             log.info(s"$email Charge ($amount) ${result.getStatus}, id: $chargeId")
             val timestamp = Try(Instant.ofEpochSecond(result.getCreated)).toOption.getOrElse(Instant.now).toString
             val resultJson = Json.parse(APIResource.GSON.toJson(result))
-            writeTransactionFile(chargeId, timestamp, requestJson, resultJson, request.headers)
+            if (result.getLivemode) {
+              writeTransactionFile(chargeId, timestamp, requestJson, resultJson, request.headers)
+            }
             if (result.getStatus == "succeeded") {
-              val message = successMessage(description, requestJson, result)
+              val message = successMessage(description, details, result)
               sendEmail(email, message, result.getLivemode)
               log.info(s"$email Confirmation email sent.")
               Ok(Json.obj(
