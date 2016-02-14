@@ -104,7 +104,8 @@ function prettyPrice(currency, amount) {
         case 'usd': cSymbol = '$'; break;
         default: cSymbol = currency.toUpperCase() + ' ';
     }
-    return cSymbol + (purchase.amount / 100).toString();
+    if (amount < 0) cSymbol = '-' + cSymbol;
+    return cSymbol + (Math.abs(amount) / 100).toString();
 }
 
 function setPurchaseAmountAndDescription() {
@@ -188,6 +189,15 @@ function myScrollTo(scrollTo, focus) {
 
 // Set button texts
 $(function () {
+    $('.price').text(function() {
+        var type = $(this).data('type');
+        if (!type || !memberships) return '';
+        var data = type.split('-').map(function(t) { return memberships[t] || {}; });
+        var amount = data[0].amount;
+        if (Number.isNaN(amount)) { console.warn('Membership price lookup error for ' + type + ': ' + amount); return ''; }
+        for (var i = 1; i < data.length; ++i) amount -= data[i].amount;
+        return prettyPrice(data[0].currency, amount);
+    });
     $('#type input').on('click', function() {
         $('#type input').removeClass('active btn-primary').addClass('btn-default');
         $(this).addClass('active btn-primary').removeClass('btn-default');
