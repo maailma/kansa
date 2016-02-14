@@ -1,7 +1,7 @@
 var stripePublicKey = 'pk_live_vSEBxO9ddioYqCGvhVsog4pb';
 
 var purchase = {
-    type: null, upgrade: null, firstCon: false, inclPaper: false,
+    type: null, upgrade: null, firstCon: false, youth: false, inclPaper: false,
     currency: null, amount: null, description: null,
     details: {}
 };
@@ -44,6 +44,7 @@ function stripeSuccess(data) {
     $('.container').addClass('hidden-print');
     $('#details input, #details textarea').val('');
     $('#first-con').prop('checked', false);
+    $('#youth').prop('checked', false);
     $('#paper-pubs').prop('checked', false);
 }
 
@@ -97,7 +98,7 @@ function checkPurchaseFields() {
     return res;
 }
 
-function prettyPrice(currency, amount) {
+function prettyPrice(currency, amount, forceNonPositive) {
     var cSymbol;
     switch (currency) {
         case 'eur': cSymbol = '€'; break;
@@ -105,7 +106,19 @@ function prettyPrice(currency, amount) {
         default: cSymbol = currency.toUpperCase() + ' ';
     }
     if (amount < 0) cSymbol = '-' + cSymbol;
+    else if (forceNonPositive) {
+        return '±' + cSymbol + '0';
+    }
     return cSymbol + (Math.abs(amount) / 100).toString();
+}
+
+function prettyPriceForType(type) {
+    if (!type || !memberships) return '';
+    var data = type.split('-').map(function(t) { return memberships[t] || {}; });
+    var amount = data[0].amount;
+    if (Number.isNaN(amount)) { console.warn('Membership price lookup error for ' + type + ': ' + amount); return ''; }
+    for (var i = 1; i < data.length; ++i) amount -= data[i].amount;
+    return prettyPrice(data[0].currency, amount, data.length > 1);
 }
 
 function setPurchaseAmountAndDescription() {
@@ -120,7 +133,12 @@ function setPurchaseAmountAndDescription() {
     purchase.currency = base.currency;
     purchase.amount = base.amount;
     purchase.description = base.description;
-    if (purchase.firstCon) {
+    if (purchase.youth) {
+        var youth = memberships.youth;
+        if (!youth || !youth.amount || youth.currency !== purchase.currency) throw new Error('Membership data is corrupt!');
+        purchase.amount = youth.amount;
+        purchase.description = youth.description;
+    } else if (purchase.firstCon) {
         var first = memberships.firstCon;
         if (!first || !first.amount || first.currency !== purchase.currency) throw new Error('Membership data is corrupt!');
         purchase.amount = first.amount;
@@ -187,16 +205,26 @@ function myScrollTo(scrollTo, focus) {
                             function() { $(focus).focus(); });
 }
 
+function setDiscountPrices() {
+    var firstType, youthType;
+    if (purchase.youth) {
+        firstType = 'firstCon-youth';
+        youthType = 'youth-adult';
+    } else if (purchase.firstCon) {
+        firstType = 'firstCon-adult';
+        youthType = 'youth-firstCon';
+    } else {
+        firstType = 'firstCon-adult';
+        youthType = 'youth-adult';
+    }
+    $('#first-price').text(function(){ return prettyPriceForType(firstType); });
+    $('#youth-price').text(function(){ return prettyPriceForType(youthType); });
+}
+
 // Set button texts
 $(function () {
     $('.price').text(function() {
-        var type = $(this).data('type');
-        if (!type || !memberships) return '';
-        var data = type.split('-').map(function(t) { return memberships[t] || {}; });
-        var amount = data[0].amount;
-        if (Number.isNaN(amount)) { console.warn('Membership price lookup error for ' + type + ': ' + amount); return ''; }
-        for (var i = 1; i < data.length; ++i) amount -= data[i].amount;
-        return prettyPrice(data[0].currency, amount);
+        return prettyPriceForType($(this).data('type'));
     });
     $('#type input').on('click', function() {
         $('#type input').removeClass('active btn-primary').addClass('btn-default');
@@ -204,10 +232,10 @@ $(function () {
         purchase.type = this.id.split('-', 1)[0];
         purchase.upgrade = null;
         setPurchaseAmountAndDescription();
-        $('.only-adults').hide();
+        $('.for-attending, .for-children').hide();
         switch (this.id) {
             case 'adult-btn':
-                $('.only-adults').show();
+                $('.for-attending').show();
                 // fallthrough
             case 'youth-btn':
                 $('#upgrade').show();
@@ -217,6 +245,8 @@ $(function () {
                 else myScrollTo('#upgrade', '#upgrade-btn');
                 break;
             case 'child-btn':
+                $('.for-children').show();
+                // fallthrough
             case 'support-btn':
                 $('#upgrade').hide();
                 $('#details').show();
@@ -245,6 +275,13 @@ $(function () {
     $('#first-con').on('change', function() {
         purchase.firstCon = this.checked;
         setPurchaseAmountAndDescription();
+        setDiscountPrices();
+    });
+
+    $('#youth').on('change', function() {
+        purchase.youth = this.checked;
+        setPurchaseAmountAndDescription();
+        setDiscountPrices();
     });
 
     $('#paper-pubs').on('change', function() {
