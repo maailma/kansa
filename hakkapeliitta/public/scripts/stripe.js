@@ -116,7 +116,10 @@ function prettyPriceForType(type) {
     if (!type || !memberships) return '';
     var data = type.split('-').map(function(t) { return memberships[t] || {}; });
     var amount = data[0].amount;
-    if (Number.isNaN(amount)) { console.warn('Membership price lookup error for ' + type + ': ' + amount); return ''; }
+    if (isNaN(parseFloat(amount)) || !isFinite(amount)) {
+        console.warn('Membership price lookup error for ' + type + ': ' + amount);
+        return '';
+    }
     for (var i = 1; i < data.length; ++i) amount -= data[i].amount;
     return prettyPrice(data[0].currency, amount, data.length > 1);
 }
