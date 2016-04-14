@@ -19,7 +19,7 @@ The environment is provisioned via [Docker](https://www.docker.com/) containers.
       1. Install Java 8, ensure java and javac is on the path.
       2. [Install sbt](http://www.scala-sbt.org/download.html)
       3. [Install IntelliJ Community Edition](https://www.jetbrains.com/idea/download/) (Optional.)
-      4. Run `sbt copyPackage` in the hakkalepiitta directory.
+      4. Run `sbt copyPackage` in the hakkapeliitta directory.
    2. Docker build
       1. Edit the DEV_UID and DEV_GID variables in docker/build-environment/sbt/Dockerfile to match your host UID and GID
       2. run `docker-compose run sbt` in docker/build-environment
@@ -30,4 +30,4 @@ The environment is provisioned via [Docker](https://www.docker.com/) containers.
 
 8. You can view `docker-compose logs` to view the logs from the all containers mixed together. You can also do, for instance, `docker-compose logs proxy` to get the nginx logs.
 
-9. `docker-compose kill`, `docker-compose rm -f` and repeat steps 5-7 to wipe out and deploy a new version of Hakkalepiitta.
+9. `docker-compose kill`, `docker-compose rm -f` and repeat steps 5-7 to wipe out and deploy a new version of Hakkapeliitta.
