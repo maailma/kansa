@@ -19,6 +19,12 @@ proxy:
    - ../hakkapeliitta/public/:/usr/share/nginx/html
 
 postgres:
-  image: postgres:9.4
+  image: postgres:9.5
   env_file: .env
+  ports:
+    - "5432:5432"
   restart: always
+  volumes:
+   - ~/pgdata:/var/lib/postgresql/data/pgdata
+  environment:
+   - PGDATA=/var/lib/postgresql/data/pgdata
