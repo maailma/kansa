@@ -1,5 +1,3 @@
-var stripePublicKey = 'pk_live_vSEBxO9ddioYqCGvhVsog4pb';
-
 var purchase = {
     type: null, upgrade: null, firstCon: false, youth: false, inclPaper: false,
     currency: null, amount: null, description: null,
