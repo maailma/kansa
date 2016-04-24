@@ -1,3 +1,6 @@
+var stripePublicKey = 'pk_live_vSEBxO9ddioYqCGvhVsog4pb';
+//var stripePublicKey = 'pk_test_LoOP8RB3gIlLkSYIyM9G6skn';
+
 var memberships = {
   adult: { currency: "eur", amount: 12000, description: "Adult Membership" },
   youth: { currency: "eur", amount: 9000, description: "Youth Membership" },
