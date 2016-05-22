@@ -77,8 +77,7 @@ var stripeHandler = StripeCheckout.configure({
 
 function checkPurchaseFields() {
     switch (purchase.type) {
-        case 'adult':
-        case 'youth':
+        case 'attend':
             if (typeof purchase.upgrade != 'boolean') return { false: ['#upgrade'] };
             break;
         case 'support':
@@ -123,7 +122,10 @@ function prettyPriceForType(type) {
 }
 
 function setPurchaseAmountAndDescription() {
-    var base = memberships[purchase.type];
+    var base = (purchase.type !== 'attend') ? memberships[purchase.type]
+             : purchase.youth ? memberships.youth
+             : purchase.firstCon ? memberships.firstCon
+             : memberships.adult;
     if (!base) {
         purchase.currency = null;
         purchase.amount = null;
@@ -134,17 +136,6 @@ function setPurchaseAmountAndDescription() {
     purchase.currency = base.currency;
     purchase.amount = base.amount;
     purchase.description = base.description;
-    if (purchase.youth) {
-        var youth = memberships.youth;
-        if (!youth || !youth.amount || youth.currency !== purchase.currency) throw new Error('Membership data is corrupt!');
-        purchase.amount = youth.amount;
-        purchase.description = youth.description;
-    } else if (purchase.firstCon) {
-        var first = memberships.firstCon;
-        if (!first || !first.amount || first.currency !== purchase.currency) throw new Error('Membership data is corrupt!');
-        purchase.amount = first.amount;
-        purchase.description = first.description;
-    }
     if (purchase.upgrade) {
         var prev = memberships.support;
         if (!prev || !prev.amount || prev.currency !== purchase.currency) throw new Error('Membership data is corrupt!');
@@ -235,11 +226,8 @@ $(function () {
         setPurchaseAmountAndDescription();
         $('.for-attending, .for-children').hide();
         switch (this.id) {
-            case 'adult-btn':
+            case 'attend-btn':
                 $('.for-attending').show();
-                // fallthrough
-            case 'youth-btn':
-                $('#upgrade').show();
                 $('#details').hide();
                 var prevUpgrade = $('#upgrade .active');
                 if (prevUpgrade.length) prevUpgrade.click();
@@ -249,12 +237,10 @@ $(function () {
                 $('.for-children').show();
                 // fallthrough
             case 'support-btn':
-                $('#upgrade').hide();
                 $('#details').show();
                 myScrollTo('#details', '#name')
                 break;
             default:
-                $('#upgrade').hide();
                 $('#details').hide();
                 throw new Error('Unexpected #type id ' + JSON.stringify(this.id));
         }
