@@ -1,9 +1,10 @@
-var router = require('express').Router();
-var db = require('../queries');
+const router = require('express').Router();
+const db = require('../queries');
 
-router.get('/api/puppies', db.getAllPuppies);
-router.get('/api/puppies/:id', db.getSinglePuppy);
-router.post('/api/puppies', db.createPuppy);
+router.get('/people', db.getEveryone);
+router.get('/people/:id', db.getSinglePerson);
+router.post('/people', db.addPerson);
+
 router.put('/api/puppies/:id', db.updatePuppy);
 router.delete('/api/puppies/:id', db.removePuppy);
 

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "init-db": "psql -v ON_ERROR_STOP=1 -f puppies.sql"
+    "init-db": "psql -v ON_ERROR_STOP=1 -f worldcon75.sql"
   },
   "dependencies": {
     "bluebird": "^3.4.0",
