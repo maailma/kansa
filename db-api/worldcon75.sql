@@ -41,6 +41,12 @@ CREATE TABLE IF NOT EXISTS Admins (
     hugo_admin bool NOT NULL DEFAULT false
 );
 
+CREATE TABLE IF NOT EXISTS Keys (
+    id SERIAL PRIMARY KEY,
+    people_id integer REFERENCES People NOT NULL,
+    key text NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS Transactions (
     id SERIAL PRIMARY KEY,
     "timestamp" timestamptz NOT NULL,
