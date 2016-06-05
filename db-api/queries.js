@@ -1,5 +1,6 @@
-const promiseLib = require('bluebird');
-const pgp = require('pg-promise')({ promiseLib });
+const options = { promiseLib: require('bluebird') };
+const pgp = require('pg-promise')(options);
+require('pg-monitor').attach(options);
 const db = pgp('postgres://localhost:5432/worldcon75');
 
 module.exports = { getEveryone, getSinglePerson, addPerson, updatePuppy, removePuppy };
