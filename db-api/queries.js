@@ -3,7 +3,20 @@ const pgp = require('pg-promise')(options);
 require('pg-monitor').attach(options);
 const db = pgp('postgres://localhost:5432/worldcon75');
 
-module.exports = { getEveryone, getSinglePerson, addPerson, updatePuppy, removePuppy };
+module.exports = { getLog, getEveryone, getSinglePerson, addPerson, updatePuppy, removePuppy };
+
+function getLog(req, res, next) {
+  db.any('SELECT * FROM Transactions')
+    .then(data => {
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data,
+          message: 'Retrieved ALL transactions'
+        });
+    })
+    .catch(err => next(err));
+}
 
 function getEveryone(req, res, next) {
   db.any('SELECT * FROM People')
