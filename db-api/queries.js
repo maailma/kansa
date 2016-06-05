@@ -6,7 +6,7 @@ const db = pgp('postgres://localhost:5432/worldcon75');
 module.exports = { getEveryone, getSinglePerson, addPerson, updatePuppy, removePuppy };
 
 function getEveryone(req, res, next) {
-  db.any('select * from People')
+  db.any('SELECT * FROM People')
     .then(data => {
       res.status(200)
         .json({
@@ -20,7 +20,7 @@ function getEveryone(req, res, next) {
 
 function getSinglePerson(req, res, next) {
   const id = parseInt(req.params.id);
-  db.one('select * from People where id = $1', id)
+  db.one('SELECT * FROM People WHERE id = $1', id)
     .then(data => {
       res.status(200)
         .json({
@@ -32,18 +32,69 @@ function getSinglePerson(req, res, next) {
     .catch(err => next(err));
 }
 
+function forceBool(obj, prop) {
+  const src = obj[prop];
+  if (obj.hasOwnProperty(prop) && typeof src !== 'boolean') {
+    if (src) {
+      const s = src.trim().toLowerCase();
+      obj[prop] = (s !== '' && s !== '0' && s !== 'false');
+    } else {
+      obj[prop] = false;
+    }
+  }
+}
+
+function forceInt(obj, prop) {
+  const src = obj[prop];
+  if (obj.hasOwnProperty(prop) && !Number.isInteger(src)) {
+    obj[prop] = src ? parseInt(src) : null;
+  }
+}
+
 class LogEntry {
+  // CREATE TABLE IF NOT EXISTS Transactions (
+  //     id SERIAL PRIMARY KEY,
+  //     "timestamp" timestamptz NOT NULL,
+  //     client_info text NOT NULL,
+  //     author_id integer REFERENCES People NOT NULL,
+  //     target_id integer REFERENCES People NOT NULL,
+  //     action text NOT NULL,
+  //     parameters jsonb NOT NULL,
+  //     description text NOT NULL
+  // );
+
+  static get fields() {
+    return [
+      'timestamp', 'client_info',
+      'author_id', 'target_id',
+      'action', 'parameters',
+      'description'
+    ];
+  }
+
+  static get sqlValues() {
+    const fields = LogEntry.fields;
+    const values = fields.map(fn => `$(${fn})`).join(', ');
+    return `(${fields.join(', ')}) VALUES(${values})`;
+  }
+
   constructor(req, desc = '') {
     this.timestamp = new Date().toISOString();
-    this.client = req.ip || 'no-IP';
+    this.client_info = req.ip || 'no-IP';
     const ua = req.headers['User-Agent'];
-    if (ua) this.client += '\t' + ua;
-    //Author ID — Required person ID. The author of the transaction.
-    //Target ID — Required person ID. The target of the transaction.
+    if (ua) this.client_info += '\t' + ua;
+    this.author_id = null;  // required
+    this.target_id = null;  // required
     this.action = req.method + ' ' + req.originalUrl;
-    this.params = req.body;
+    this.parameters = req.body;
     this.description = desc;
   }
+
+  set authorId(src) { this.author_id = parseInt(src); }
+
+  set targetId(src) { this.target_id = parseInt(src); }
+
+  get targetId() { return this.target_id; }
 }
 
 class Person {
@@ -65,15 +116,7 @@ class Person {
   //     can_site_select bool NOT NULL DEFAULT false
   // );
 
-  constructor(src) {
-    if (!src || !src.legal_name || !src.membership) throw new Error('Missing data for new Person (required: legal_name, membership)');
-    if (Person.membershipTypes.indexOf(src.membership) === -1) throw new Error('Invalid membership type for new Person');
-    this.data = Object.assign({}, src);
-    Person.boolFields.forEach(fn => this.forceBool(fn));
-    Person.intFields.forEach(fn => this.forceInt(fn));
-  }
-
-  static get allFields() {
+  static get fields() {
     return [
       'legal_name',
       'membership',
@@ -100,56 +143,44 @@ class Person {
              'FirstWorldcon', 'Adult' ];
   }
 
-  forceBool(fn) {
-    if (this.data.hasOwnProperty(fn)) {
-      const str2bool = src => {
-        if (!src) return false;
-        const s = src.trim().toLowerCase();
-        return s !== '' && s !== '0' && s !== 'false';
-      };
-      this.data[fn] = str2bool(this.data[fn]);
-    }
+  constructor(src) {
+    if (!src || !src.legal_name || !src.membership) throw new Error('Missing data for new Person (required: legal_name, membership)');
+    if (Person.membershipTypes.indexOf(src.membership) === -1) throw new Error('Invalid membership type for new Person');
+    this.data = Object.assign({}, src);
+    Person.boolFields.forEach(fn => forceBool(this, fn));
+    Person.intFields.forEach(fn => forceInt(this, fn));
   }
 
-  forceInt(fn) {
-    if (this.data.hasOwnProperty(fn)) {
-      const src = this.data[fn];
-      this.data[fn] = src ? parseInt(src) : null;
-    }
-  }
-
-  get fields() {
-    return Person.allFields.filter(fn => this.data.hasOwnProperty(fn));
-  }
-
-  get valuesString() {
-    const names = this.fields.join(', ');
-    const values = this.fields.map(fn => `$(${fn})`).join(', ');
-    return `(${names}) values(${values})`;
+  get sqlValues() {
+    const fields = Person.fields.filter(fn => this.data.hasOwnProperty(fn));
+    const values = fields.map(fn => `$(${fn})`).join(', ');
+    return `(${fields.join(', ')}) VALUES(${values})`;
   }
 }
 
 function addPerson(req, res, next) {
-  // TODO: generate log entry before person
   try {
-    const p = new Person(req.body);
-    db.one(`insert into People ${p.valuesString} returning id`, p.data)
-      .then(data => {
-        res.status(200)
-          .json({
-            status: 'success',
-            data,
-            message: 'Added one person'
-          });
-      })
-      .catch(err => next(err));
+    var log = new LogEntry(req, 'Add new person');
+    var person = new Person(req.body);
   } catch (e) {
-    next({
-      message: e.message,
-      err: e,
-      req_body: req.body
-    });
+    next({ message: e.message, err: e, log });
   }
+  db.tx(tx => tx.sequence((index, data) => { switch (index) {
+    case 0:
+      return tx.one(`INSERT INTO People ${person.sqlValues} RETURNING id`, person.data);
+    case 1:
+      log.targetId = data.id;
+      return tx.none(`INSERT INTO Transactions ${LogEntry.sqlValues}`, log);
+  }}))
+  .then(() => {
+    res.status(200)
+      .json({
+        status: 'success',
+        message: 'Added one person',
+        id: log.targetId
+      });
+  })
+  .catch(err => next(err));
 }
 
 function updatePuppy(req, res, next) {
