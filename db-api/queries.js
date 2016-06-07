@@ -5,28 +5,39 @@ const db = pgp(process.env.DATABASE_URL);
 
 module.exports = { setKey, getLog, getEveryone, getSinglePerson, addPerson, updatePuppy, removePuppy };
 
-function setKey(req, res, next) {
+function setKeyChecked(req, res, next) {
   const randomstring = require('randomstring');
-  if (!req.body.email) {
-    next({ message: 'email is required for setting key!' });
-    return;
-  }
-  db.one('SELECT DISTINCT email FROM People WHERE email=$(email)', req.body)
-    .then(data => {
-      data.key = randomstring.generate(12);
-      db.none(`INSERT INTO Keys (email, key)
-          VALUES ($(email), $(key))
-          ON CONFLICT (email) DO UPDATE SET key = EXCLUDED.key`, data)
-        .then(() => {
-          res.status(200)
-            .json({
-              status: 'success',
-              message: 'Key set for ' + JSON.stringify(data.email)
-            });
-        })
-        .catch(err => next(err));
-    })
+  const data = { email: req.body.email, key: randomstring.generate(12) };
+  const log = new LogEntry(req, data.email, 'Set access key');
+  db.tx(tx => tx.batch([
+    tx.none(`INSERT INTO Keys (email, key) VALUES ($(email), $(key))
+        ON CONFLICT (email) DO UPDATE SET key = EXCLUDED.key`, data),
+    tx.none(`INSERT INTO Transactions ${LogEntry.sqlValues}`, log)
+  ]))
+    .then(() => { res.status(200).json({
+      status: 'success',
+      message: 'Key set for ' + JSON.stringify(data.email)
+    })})
     .catch(err => next(err));
+}
+
+function setKey(req, res, next) {
+  if (!req.body || !req.body.email) {
+    res.status(400).json({
+      status: 'error',
+      message: 'An email address is required for setting its key!'
+    });
+  } else {
+    db.one('SELECT COUNT(*) FROM People WHERE email=$1', req.body.email)
+      .then(data => {
+        if (data.count > 0) setKeyChecked(req, res, next);
+        else res.status(400).json({
+          status: 'error',
+          message: 'Email address ' + JSON.stringify(req.body.email) + ' not found'
+        });
+      })
+      .catch(err => next(err));
+  }
 }
 
 function getLog(req, res, next) {
@@ -108,12 +119,12 @@ class LogEntry {
     return `(${fields.join(', ')}) VALUES(${values})`;
   }
 
-  constructor(req, desc = '') {
+  constructor(req, author = null, desc = '') {
     this.timestamp = new Date().toISOString();
     this.client_info = req.ip || 'no-IP';
     const ua = req.headers['User-Agent'];
     if (ua) this.client_info += '\t' + ua;
-    this.author = null;
+    this.author = author;
     this.subject = null;
     this.action = req.method + ' ' + req.originalUrl;
     this.parameters = req.body;
@@ -167,7 +178,7 @@ class Person {
 
 function addPerson(req, res, next) {
   try {
-    var log = new LogEntry(req, 'Add new person');
+    var log = new LogEntry(req, null, 'Add new person');
     var person = new Person(req.body);
   } catch (e) {
     next({ message: e.message, err: e, log });
