@@ -89,23 +89,16 @@ function forceInt(obj, prop) {
 }
 
 class LogEntry {
-  // CREATE TABLE IF NOT EXISTS Transactions (
-  //     id SERIAL PRIMARY KEY,
-  //     "timestamp" timestamptz NOT NULL,
-  //     client_info text NOT NULL,
-  //     author_id integer REFERENCES People NOT NULL,
-  //     target_id integer REFERENCES People NOT NULL,
-  //     action text NOT NULL,
-  //     parameters jsonb NOT NULL,
-  //     description text NOT NULL
-  // );
-
   static get fields() {
     return [
-      'timestamp', 'client_info',
-      'author_id', 'target_id',
-      'action', 'parameters',
-      'description'
+      // id SERIAL PRIMARY KEY
+      'timestamp',  // timestamptz NOT NULL
+      'client_info',  // text NOT NULL
+      'author',  // text
+      'subject',  // integer REFERENCES People
+      'action',  // text NOT NULL
+      'parameters',  // jsonb NOT NULL
+      'description'  // text NOT NULL
     ];
   }
 
@@ -120,50 +113,27 @@ class LogEntry {
     this.client_info = req.ip || 'no-IP';
     const ua = req.headers['User-Agent'];
     if (ua) this.client_info += '\t' + ua;
-    this.author_id = null;  // required
-    this.target_id = null;  // required
+    this.author = null;
+    this.subject = null;
     this.action = req.method + ' ' + req.originalUrl;
     this.parameters = req.body;
     this.description = desc;
   }
-
-  set authorId(src) { this.author_id = parseInt(src); }
-
-  set targetId(src) { this.target_id = parseInt(src); }
-
-  get targetId() { return this.target_id; }
 }
 
 class Person {
-  // CREATE TABLE IF NOT EXISTS People (
-  //     id SERIAL PRIMARY KEY,
-  //     controller_id integer REFERENCES People,
-  //     member_number integer,
-  //     legal_name text NOT NULL,
-  //     public_first_name text,
-  //     public_last_name text,
-  //     email text,
-  //     city text,
-  //     state text,
-  //     country text,
-  //     badge_text text,
-  //     membership MembershipStatus NOT NULL,
-  //     can_hugo_nominate bool NOT NULL DEFAULT false,
-  //     can_hugo_vote bool NOT NULL DEFAULT false,
-  //     can_site_select bool NOT NULL DEFAULT false
-  // );
-
   static get fields() {
     return [
-      'legal_name',
-      'membership',
-      'member_number',
-      'controller_id',
-      'public_first_name', 'public_last_name',
-      'email',
-      'city', 'state', 'country',
-      'badge_text',
-      'can_hugo_nominate', 'can_hugo_vote', 'can_site_select'
+      // id SERIAL PRIMARY KEY
+      'legal_name',  // text NOT NULL
+      'membership',  // MembershipStatus NOT NULL
+      'member_number',  // integer
+      'controller_id',  // integer REFERENCES People
+      'public_first_name', 'public_last_name',  // text
+      'email',  // text
+      'city', 'state', 'country',  // text
+      'badge_text',  // text
+      'can_hugo_nominate', 'can_hugo_vote', 'can_site_select'  // bool NOT NULL DEFAULT false
     ];
   }
 
@@ -206,7 +176,7 @@ function addPerson(req, res, next) {
     case 0:
       return tx.one(`INSERT INTO People ${person.sqlValues} RETURNING id`, person.data);
     case 1:
-      log.targetId = data.id;
+      log.subject = parseInt(data.id);
       return tx.none(`INSERT INTO Transactions ${LogEntry.sqlValues}`, log);
   }}))
   .then(() => {
@@ -214,7 +184,7 @@ function addPerson(req, res, next) {
       .json({
         status: 'success',
         message: 'Added one person',
-        id: log.targetId
+        id: log.subject
       });
   })
   .catch(err => next(err));

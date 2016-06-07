@@ -50,8 +50,8 @@ CREATE TABLE IF NOT EXISTS Transactions (
     id SERIAL PRIMARY KEY,
     "timestamp" timestamptz NOT NULL,
     client_info text NOT NULL,
-    author_id integer REFERENCES People,
-    target_id integer REFERENCES People NOT NULL,
+    author text,
+    subject integer REFERENCES People,
     action text NOT NULL,
     parameters jsonb NOT NULL,
     description text NOT NULL
