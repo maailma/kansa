@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "DATABASE_URL=postgres://localhost:5432/worldcon75 node ./bin/www",
+    "start": "node -r dotenv/config ./bin/www",
     "init-db": "psql -v ON_ERROR_STOP=1 -f worldcon75.sql"
   },
   "dependencies": {
@@ -16,5 +16,8 @@
     "pg-monitor": "^0.5.5",
     "pg-promise": "^4.2.5",
     "randomstring": "^1.1.5"
+  },
+  "devDependencies": {
+    "dotenv": "^2.0.0"
   }
 }
