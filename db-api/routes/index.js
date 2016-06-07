@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const db = require('../queries');
 
+router.post('/key', db.setKey);
 router.get('/log', db.getLog);
 router.get('/people', db.getEveryone);
 router.get('/people/:id', db.getSinglePerson);

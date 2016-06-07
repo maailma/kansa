@@ -42,8 +42,7 @@ CREATE TABLE IF NOT EXISTS Admins (
 );
 
 CREATE TABLE IF NOT EXISTS Keys (
-    id SERIAL PRIMARY KEY,
-    people_id integer REFERENCES People NOT NULL,
+    email text PRIMARY KEY,
     key text NOT NULL
 );
 

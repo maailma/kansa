@@ -3,7 +3,31 @@ const pgp = require('pg-promise')(options);
 require('pg-monitor').attach(options);
 const db = pgp(process.env.DATABASE_URL);
 
-module.exports = { getLog, getEveryone, getSinglePerson, addPerson, updatePuppy, removePuppy };
+module.exports = { setKey, getLog, getEveryone, getSinglePerson, addPerson, updatePuppy, removePuppy };
+
+function setKey(req, res, next) {
+  const randomstring = require('randomstring');
+  if (!req.body.email) {
+    next({ message: 'email is required for setting key!' });
+    return;
+  }
+  db.one('SELECT DISTINCT email FROM People WHERE email=$(email)', req.body)
+    .then(data => {
+      data.key = randomstring.generate(12);
+      db.none(`INSERT INTO Keys (email, key)
+          VALUES ($(email), $(key))
+          ON CONFLICT (email) DO UPDATE SET key = EXCLUDED.key`, data)
+        .then(() => {
+          res.status(200)
+            .json({
+              status: 'success',
+              message: 'Key set for ' + JSON.stringify(data.email)
+            });
+        })
+        .catch(err => next(err));
+    })
+    .catch(err => next(err));
+}
 
 function getLog(req, res, next) {
   db.any('SELECT * FROM Transactions')
