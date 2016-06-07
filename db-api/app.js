@@ -1,11 +1,10 @@
-var express = require('express');
-var path = require('path');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var session = require('express-session');
+const express = require('express');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const session = require('express-session');
 
-var app = express();
+const app = express();
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -16,37 +15,31 @@ app.use(session({
   resave: false,
   saveUninitialized: false
 }));
-//app.use(express.static(path.join(__dirname, 'public')));
 
-var routes = require('./routes/index');
-app.use('/', routes);
+const db = require('./queries');
+const router = express.Router();
+router.post('/key', db.setKey);
+router.get('/log', db.getLog);
+router.get('/people', db.getEveryone);
+router.get('/people/:id', db.getSinglePerson);
+router.post('/people', db.addPerson);
+app.use('/', router);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
+// no match from router -> 404
+app.use((req, res, next) => {
+  const err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
 
-// error handlers
-if (app.get('env') === 'development') {
-  // development error handler -- will print stacktrace
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.json({
-      status: 'error',
-      message: err
-    });
+// error handler
+const isDevEnv = (app.get('env') === 'development');
+app.use((err, req, res, next) => {
+  res.status(err.status || 500);
+  res.json({
+    status: 'error',
+    message: isDevEnv ? err : err.message
   });
-} else {
-  // production error handler -- no stacktraces leaked to user
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.json({
-      status: 'error',
-      message: err.message
-    });
-  });
-}
+});
 
 module.exports = app;
