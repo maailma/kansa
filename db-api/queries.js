@@ -1,10 +1,8 @@
 const db = require('./db');
-const auth = require('./auth');
 const LogEntry = require('./lib/logentry');
 const Person = require('./lib/person');
 
 module.exports = {
-  setKey: auth.setKey,
   getLog,
   getEveryone, getSinglePerson, addPerson,
   updatePuppy, removePuppy

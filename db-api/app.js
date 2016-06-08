@@ -16,13 +16,19 @@ app.use(session({
   saveUninitialized: false
 }));
 
-const db = require('./queries');
 const router = express.Router();
-router.post('/key', db.setKey);
-router.get('/log', db.getLog);
-router.get('/people', db.getEveryone);
-router.get('/people/:id', db.getSinglePerson);
-router.post('/people', db.addPerson);
+
+const auth = require('./auth');
+router.post('/key', auth.setKey);
+router.get('/login', auth.login);
+router.post('/login', auth.login);
+router.get('/logout', auth.logout);
+
+const queries = require('./queries');
+router.get('/log', queries.getLog);
+router.get('/people', queries.getEveryone);
+router.get('/people/:id', queries.getSinglePerson);
+router.post('/people', queries.addPerson);
 app.use('/', router);
 
 // no match from router -> 404

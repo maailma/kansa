@@ -3,6 +3,37 @@ const randomstring = require('randomstring');
 const db = require('./db');
 const LogEntry = require('./lib/logentry');
 
+function login(req, res, next) {
+  const email = req.body && req.body.email || req.query.email || null;
+  const key = req.body && req.body.key || req.query.key || null;
+  if (!email || !key) return res.status(400).json({
+    status: 'error',
+    message: 'Email and key are required for login'
+  });
+  db.one('SELECT COUNT(*) FROM Keys WHERE email=$(email) AND key=$(key)', { email, key })
+    .then(data => {
+      if (data.count > 0) {
+        req.session.authenticated = true;
+        req.session.email = email;
+        res.status(200).json({ status: 'success', email });
+        const log = new LogEntry(req, email, 'Login');
+        db.none(`INSERT INTO Transactions ${LogEntry.sqlValues}`, log);
+      } else {
+        res.status(403).json({
+          status: 'error',
+          message: 'Email and key don\'t match'
+        });
+      }
+    })
+    .catch(err => next(err));
+}
+
+function logout(req, res) {
+  delete req.session.authenticated;
+  delete req.session.email;
+  res.status(200).json({ status: 'success' });
+}
+
 function setKeyChecked(req, res, next) {
   const data = { email: req.body.email, key: randomstring.generate(12) };
   const log = new LogEntry(req, data.email, 'Set access key');
@@ -37,4 +68,4 @@ function setKey(req, res, next) {
   }
 }
 
-module.exports = { setKey };
+module.exports = { login, logout, setKey };
