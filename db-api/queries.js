@@ -1,44 +1,14 @@
-const options = { promiseLib: require('bluebird') };
-const pgp = require('pg-promise')(options);
-require('pg-monitor').attach(options);
-const db = pgp(process.env.DATABASE_URL);
+const db = require('./db');
+const auth = require('./auth');
+const LogEntry = require('./lib/logentry');
+const Person = require('./lib/person');
 
-module.exports = { setKey, getLog, getEveryone, getSinglePerson, addPerson, updatePuppy, removePuppy };
-
-function setKeyChecked(req, res, next) {
-  const randomstring = require('randomstring');
-  const data = { email: req.body.email, key: randomstring.generate(12) };
-  const log = new LogEntry(req, data.email, 'Set access key');
-  db.tx(tx => tx.batch([
-    tx.none(`INSERT INTO Keys (email, key) VALUES ($(email), $(key))
-        ON CONFLICT (email) DO UPDATE SET key = EXCLUDED.key`, data),
-    tx.none(`INSERT INTO Transactions ${LogEntry.sqlValues}`, log)
-  ]))
-    .then(() => { res.status(200).json({
-      status: 'success',
-      message: 'Key set for ' + JSON.stringify(data.email)
-    })})
-    .catch(err => next(err));
-}
-
-function setKey(req, res, next) {
-  if (!req.body || !req.body.email) {
-    res.status(400).json({
-      status: 'error',
-      message: 'An email address is required for setting its key!'
-    });
-  } else {
-    db.one('SELECT COUNT(*) FROM People WHERE email=$1', req.body.email)
-      .then(data => {
-        if (data.count > 0) setKeyChecked(req, res, next);
-        else res.status(400).json({
-          status: 'error',
-          message: 'Email address ' + JSON.stringify(req.body.email) + ' not found'
-        });
-      })
-      .catch(err => next(err));
-  }
-}
+module.exports = {
+  setKey: auth.setKey,
+  getLog,
+  getEveryone, getSinglePerson, addPerson,
+  updatePuppy, removePuppy
+};
 
 function getLog(req, res, next) {
   db.any('SELECT * FROM Transactions')
@@ -78,102 +48,6 @@ function getSinglePerson(req, res, next) {
         });
     })
     .catch(err => next(err));
-}
-
-function forceBool(obj, prop) {
-  const src = obj[prop];
-  if (obj.hasOwnProperty(prop) && typeof src !== 'boolean') {
-    if (src) {
-      const s = src.trim().toLowerCase();
-      obj[prop] = (s !== '' && s !== '0' && s !== 'false');
-    } else {
-      obj[prop] = false;
-    }
-  }
-}
-
-function forceInt(obj, prop) {
-  const src = obj[prop];
-  if (obj.hasOwnProperty(prop) && !Number.isInteger(src)) {
-    obj[prop] = src ? parseInt(src) : null;
-  }
-}
-
-class LogEntry {
-  static get fields() {
-    return [
-      // id SERIAL PRIMARY KEY
-      'timestamp',  // timestamptz NOT NULL
-      'client_info',  // text NOT NULL
-      'author',  // text
-      'subject',  // integer REFERENCES People
-      'action',  // text NOT NULL
-      'parameters',  // jsonb NOT NULL
-      'description'  // text NOT NULL
-    ];
-  }
-
-  static get sqlValues() {
-    const fields = LogEntry.fields;
-    const values = fields.map(fn => `$(${fn})`).join(', ');
-    return `(${fields.join(', ')}) VALUES(${values})`;
-  }
-
-  constructor(req, author = null, desc = '') {
-    this.timestamp = new Date().toISOString();
-    this.client_info = req.ip || 'no-IP';
-    const ua = req.headers['User-Agent'];
-    if (ua) this.client_info += '\t' + ua;
-    this.author = author;
-    this.subject = null;
-    this.action = req.method + ' ' + req.originalUrl;
-    this.parameters = req.body;
-    this.description = desc;
-  }
-}
-
-class Person {
-  static get fields() {
-    return [
-      // id SERIAL PRIMARY KEY
-      'legal_name',  // text NOT NULL
-      'membership',  // MembershipStatus NOT NULL
-      'member_number',  // integer
-      'controller_id',  // integer REFERENCES People
-      'public_first_name', 'public_last_name',  // text
-      'email',  // text
-      'city', 'state', 'country',  // text
-      'badge_text',  // text
-      'can_hugo_nominate', 'can_hugo_vote', 'can_site_select'  // bool NOT NULL DEFAULT false
-    ];
-  }
-
-  static get boolFields() {
-    return [ 'can_hugo_nominate', 'can_hugo_vote', 'can_site_select' ];
-  }
-
-  static get intFields() {
-    return [ 'member_number', 'controller_id' ];
-  }
-
-  static get membershipTypes() {
-    return [ 'NonMember', 'Supporter', 'KidInTow', 'Child', 'Youth',
-             'FirstWorldcon', 'Adult' ];
-  }
-
-  constructor(src) {
-    if (!src || !src.legal_name || !src.membership) throw new Error('Missing data for new Person (required: legal_name, membership)');
-    if (Person.membershipTypes.indexOf(src.membership) === -1) throw new Error('Invalid membership type for new Person');
-    this.data = Object.assign({}, src);
-    Person.boolFields.forEach(fn => forceBool(this, fn));
-    Person.intFields.forEach(fn => forceInt(this, fn));
-  }
-
-  get sqlValues() {
-    const fields = Person.fields.filter(fn => this.data.hasOwnProperty(fn));
-    const values = fields.map(fn => `$(${fn})`).join(', ');
-    return `(${fields.join(', ')}) VALUES(${values})`;
-  }
 }
 
 function addPerson(req, res, next) {
