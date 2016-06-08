@@ -1,4 +1,3 @@
-const db = require('./db');
 const LogEntry = require('./lib/logentry');
 const Person = require('./lib/person');
 
@@ -9,7 +8,7 @@ module.exports = {
 };
 
 function getLog(req, res, next) {
-  db.any('SELECT * FROM Transactions')
+  req.app.locals.db.any('SELECT * FROM Transactions')
     .then(data => {
       res.status(200)
         .json({
@@ -22,7 +21,7 @@ function getLog(req, res, next) {
 }
 
 function getEveryone(req, res, next) {
-  db.any('SELECT * FROM People')
+  req.app.locals.db.any('SELECT * FROM People')
     .then(data => {
       res.status(200)
         .json({
@@ -36,7 +35,7 @@ function getEveryone(req, res, next) {
 
 function getSinglePerson(req, res, next) {
   const id = parseInt(req.params.id);
-  db.one('SELECT * FROM People WHERE id = $1', id)
+  req.app.locals.db.one('SELECT * FROM People WHERE id = $1', id)
     .then(data => {
       res.status(200)
         .json({
@@ -55,7 +54,7 @@ function addPerson(req, res, next) {
   } catch (e) {
     next({ message: e.message, err: e, log });
   }
-  db.tx(tx => tx.sequence((index, data) => { switch (index) {
+  req.app.locals.db.tx(tx => tx.sequence((index, data) => { switch (index) {
     case 0:
       return tx.one(`INSERT INTO People ${person.sqlValues} RETURNING id`, person.data);
     case 1:
@@ -74,7 +73,7 @@ function addPerson(req, res, next) {
 }
 
 function updatePuppy(req, res, next) {
-  db.none('update pups set name=$1, breed=$2, age=$3, sex=$4 where id=$5',
+  req.app.locals.db.none('update pups set name=$1, breed=$2, age=$3, sex=$4 where id=$5',
     [req.body.name, req.body.breed, parseInt(req.body.age),
       req.body.sex, parseInt(req.params.id)])
     .then(function () {
@@ -91,7 +90,7 @@ function updatePuppy(req, res, next) {
 
 function removePuppy(req, res, next) {
   var pupID = parseInt(req.params.id);
-  db.result('delete from pups where id = $1', pupID)
+  req.app.locals.db.result('delete from pups where id = $1', pupID)
     .then(function (result) {
       /* jshint ignore:start */
       res.status(200)

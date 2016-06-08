@@ -1,9 +1,8 @@
 const randomstring = require('randomstring');
-
-const db = require('./db');
 const LogEntry = require('./lib/logentry');
 
 function login(req, res, next) {
+  const db = req.app.locals.db;
   const email = req.body && req.body.email || req.query.email || null;
   const key = req.body && req.body.key || req.query.key || null;
   if (!email || !key) return res.status(400).json({
@@ -37,7 +36,7 @@ function logout(req, res) {
 function setKeyChecked(req, res, next) {
   const data = { email: req.body.email, key: randomstring.generate(12) };
   const log = new LogEntry(req, data.email, 'Set access key');
-  db.tx(tx => tx.batch([
+  req.app.locals.db.tx(tx => tx.batch([
     tx.none(`INSERT INTO Keys (email, key) VALUES ($(email), $(key))
         ON CONFLICT (email) DO UPDATE SET key = EXCLUDED.key`, data),
     tx.none(`INSERT INTO Transactions ${LogEntry.sqlValues}`, log)
@@ -56,7 +55,7 @@ function setKey(req, res, next) {
       message: 'An email address is required for setting its key!'
     });
   } else {
-    db.one('SELECT COUNT(*) FROM People WHERE email=$1', req.body.email)
+    req.app.locals.db.one('SELECT COUNT(*) FROM People WHERE email=$1', req.body.email)
       .then(data => {
         if (data.count > 0) setKeyChecked(req, res, next);
         else res.status(400).json({

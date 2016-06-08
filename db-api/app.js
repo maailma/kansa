@@ -4,6 +4,10 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 
+const pgOptions = { promiseLib: require('bluebird') };
+const pgp = require('pg-promise')(pgOptions);
+require('pg-monitor').attach(pgOptions);
+
 const app = express();
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -15,6 +19,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false
 }));
+app.locals.db = pgp(process.env.DATABASE_URL);
 
 const router = express.Router();
 
