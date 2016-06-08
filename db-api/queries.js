@@ -3,8 +3,7 @@ const Person = require('./lib/person');
 
 module.exports = {
   getLog,
-  getEveryone, getSinglePerson, addPerson,
-  updatePuppy, removePuppy
+  getEveryone, getSinglePerson, addPerson
 };
 
 function getLog(req, res, next) {
@@ -70,37 +69,4 @@ function addPerson(req, res, next) {
       });
   })
   .catch(err => next(err));
-}
-
-function updatePuppy(req, res, next) {
-  req.app.locals.db.none('update pups set name=$1, breed=$2, age=$3, sex=$4 where id=$5',
-    [req.body.name, req.body.breed, parseInt(req.body.age),
-      req.body.sex, parseInt(req.params.id)])
-    .then(function () {
-      res.status(200)
-        .json({
-          status: 'success',
-          message: 'Updated puppy'
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
-}
-
-function removePuppy(req, res, next) {
-  var pupID = parseInt(req.params.id);
-  req.app.locals.db.result('delete from pups where id = $1', pupID)
-    .then(function (result) {
-      /* jshint ignore:start */
-      res.status(200)
-        .json({
-          status: 'success',
-          message: `Removed ${result.rowCount} puppy`
-        });
-      /* jshint ignore:end */
-    })
-    .catch(function (err) {
-      return next(err);
-    });
 }
