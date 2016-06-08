@@ -1,5 +1,7 @@
 const randomstring = require('randomstring');
-const LogEntry = require('./lib/logentry');
+const LogEntry = require('./types/logentry');
+
+module.exports = { login, logout, setKey };
 
 function login(req, res, next) {
   const db = req.app.locals.db;
@@ -66,5 +68,3 @@ function setKey(req, res, next) {
       .catch(err => next(err));
   }
 }
-
-module.exports = { login, logout, setKey };

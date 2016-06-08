@@ -23,17 +23,19 @@ app.locals.db = pgp(process.env.DATABASE_URL);
 
 const router = express.Router();
 
-const auth = require('./auth');
+const auth = require('./lib/auth');
 router.post('/key', auth.setKey);
 router.get('/login', auth.login);
 router.post('/login', auth.login);
 router.get('/logout', auth.logout);
 
-const queries = require('./queries');
-router.get('/log', queries.getLog);
-router.get('/people', queries.getEveryone);
-router.get('/people/:id', queries.getSinglePerson);
-router.post('/people', queries.addPerson);
+const txLog = require('./lib/log');
+router.get('/log', txLog.getLog);
+
+const people = require('./lib/people');
+router.get('/people', people.getEveryone);
+router.get('/people/:id', people.getSinglePerson);
+router.post('/people', people.addPerson);
 app.use('/', router);
 
 // no match from router -> 404

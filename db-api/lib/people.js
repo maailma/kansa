@@ -1,23 +1,7 @@
-const LogEntry = require('./lib/logentry');
-const Person = require('./lib/person');
+const LogEntry = require('./types/logentry');
+const Person = require('./types/person');
 
-module.exports = {
-  getLog,
-  getEveryone, getSinglePerson, addPerson
-};
-
-function getLog(req, res, next) {
-  req.app.locals.db.any('SELECT * FROM Transactions')
-    .then(data => {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: 'Retrieved ALL transactions'
-        });
-    })
-    .catch(err => next(err));
-}
+module.exports = { getEveryone, getSinglePerson, addPerson };
 
 function getEveryone(req, res, next) {
   req.app.locals.db.any('SELECT * FROM People')
