@@ -24,7 +24,6 @@ class Person {
       'legal_name',  // text NOT NULL
       'membership',  // MembershipStatus NOT NULL
       'member_number',  // integer
-      'controller_id',  // integer REFERENCES People
       'public_first_name', 'public_last_name',  // text
       'email',  // text
       'city', 'state', 'country',  // text
@@ -37,10 +36,6 @@ class Person {
     return [ 'can_hugo_nominate', 'can_hugo_vote', 'can_site_select' ];
   }
 
-  static get intFields() {
-    return [ 'member_number', 'controller_id' ];
-  }
-
   static get membershipTypes() {
     return [ 'NonMember', 'Supporter', 'KidInTow', 'Child', 'Youth',
              'FirstWorldcon', 'Adult' ];
@@ -50,8 +45,8 @@ class Person {
     if (!src || !src.legal_name || !src.membership) throw new Error('Missing data for new Person (required: legal_name, membership)');
     if (Person.membershipTypes.indexOf(src.membership) === -1) throw new Error('Invalid membership type for new Person');
     this.data = Object.assign({}, src);
-    Person.boolFields.forEach(fn => forceBool(this, fn));
-    Person.intFields.forEach(fn => forceInt(this, fn));
+    Person.boolFields.forEach(fn => forceBool(this.data, fn));
+    forceInt(this.data, 'member_number');
   }
 
   get sqlValues() {

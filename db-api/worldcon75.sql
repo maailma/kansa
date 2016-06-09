@@ -9,7 +9,6 @@ CREATE TYPE MembershipStatus AS ENUM ('NonMember','Supporter','KidInTow','Child'
 
 CREATE TABLE IF NOT EXISTS People (
     id SERIAL PRIMARY KEY,
-    controller_id integer REFERENCES People,
     member_number integer,
     legal_name text NOT NULL,
     public_first_name text,
