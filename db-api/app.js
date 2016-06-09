@@ -27,6 +27,9 @@ router.get('/login', auth.login);
 router.post('/login', auth.login);
 router.get('/logout', auth.logout);
 
+// subsequent paths require authentication
+router.use(auth.authenticate);
+
 const txLog = require('./lib/log');
 router.get('/log', txLog.getLog);
 

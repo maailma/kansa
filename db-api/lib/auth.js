@@ -1,7 +1,17 @@
 const randomstring = require('randomstring');
 const LogEntry = require('./types/logentry');
 
-module.exports = { login, logout, setKey };
+module.exports = { authenticate, login, logout, setKey };
+
+function authenticate(req, res, next) {
+  if (req.session && req.session.authenticated && req.session.email) next();
+  else {
+    res.status(401).json({
+      status: 'error',
+      message: 'Authentication required'
+    });
+  }
+}
 
 function login(req, res, next) {
   const db = req.app.locals.db;
@@ -20,7 +30,7 @@ function login(req, res, next) {
         const log = new LogEntry(req, email, 'Login');
         db.none(`INSERT INTO Transactions ${LogEntry.sqlValues}`, log);
       } else {
-        res.status(403).json({
+        res.status(401).json({
           status: 'error',
           message: 'Email and key don\'t match'
         });
