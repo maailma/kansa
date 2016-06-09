@@ -62,7 +62,7 @@ function addPerson(req, res, next) {
       return tx.one(`INSERT INTO People ${person.sqlValues} RETURNING id`, person.data);
     case 1:
       log.subject = parseInt(data.id);
-      return tx.none(`INSERT INTO Transactions ${LogEntry.sqlValues}`, log);
+      return tx.none(`INSERT INTO Log ${LogEntry.sqlValues}`, log);
   }}))
   .then(() => {
     res.status(200)

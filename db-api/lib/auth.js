@@ -35,7 +35,7 @@ function login(req, res, next) {
         };
         res.status(200).json({ status: 'success', email });
         const log = new LogEntry(req, email, 'Login');
-        db.none(`INSERT INTO Transactions ${LogEntry.sqlValues}`, log);
+        db.none(`INSERT INTO Log ${LogEntry.sqlValues}`, log);
       } else {
         res.status(401).json({
           status: 'error',
@@ -57,7 +57,7 @@ function setKeyChecked(req, res, next) {
   req.app.locals.db.tx(tx => tx.batch([
     tx.none(`INSERT INTO Keys (email, key) VALUES ($(email), $(key))
         ON CONFLICT (email) DO UPDATE SET key = EXCLUDED.key`, data),
-    tx.none(`INSERT INTO Transactions ${LogEntry.sqlValues}`, log)
+    tx.none(`INSERT INTO Log ${LogEntry.sqlValues}`, log)
   ]))
     .then(() => { res.status(200).json({
       status: 'success',

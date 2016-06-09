@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS Keys (
     key text NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS Transactions (
+CREATE TABLE IF NOT EXISTS Log (
     id SERIAL PRIMARY KEY,
     "timestamp" timestamptz NOT NULL,
     client_info text NOT NULL,
