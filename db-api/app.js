@@ -38,8 +38,9 @@ router.get('/user', auth.userInfo);
 router.get('/user/log', txLog.getUserLog);
 
 router.all('/people/:id*', auth.verifyPeopleAccess);
-router.get('/people/:id', people.getSinglePerson);
+router.get('/people/:id', people.getPerson);
 router.get('/people/:id/log', txLog.getPersonLog);
+router.post('/people/:id', people.updatePerson);
 //router.post('/people', people.addPerson);
 
 app.use('/', router);
