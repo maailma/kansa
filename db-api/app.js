@@ -34,11 +34,13 @@ router.get('/stats', people.getPublicStats);
 
 // these require authentication
 router.use(auth.authenticate);
-router.get('/people/:id', people.getSinglePerson);
-router.get('/people/:id/log', txLog.getPersonLog);
-router.post('/people', people.addPerson);
 router.get('/user', auth.userInfo);
 router.get('/user/log', txLog.getUserLog);
+
+router.all('/people/:id*', auth.verifyPeopleAccess);
+router.get('/people/:id', people.getSinglePerson);
+router.get('/people/:id/log', txLog.getPersonLog);
+//router.post('/people', people.addPerson);
 
 app.use('/', router);
 

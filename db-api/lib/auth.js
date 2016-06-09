@@ -2,16 +2,24 @@ const randomstring = require('randomstring');
 const Admin = require('./types/admin');
 const LogEntry = require('./types/logentry');
 
-module.exports = { authenticate, login, logout, setKey, userInfo };
+module.exports = { authenticate, verifyPeopleAccess, login, logout, setKey, userInfo };
 
 function authenticate(req, res, next) {
   if (req.session && req.session.user && req.session.user.email) next();
-  else {
-    res.status(401).json({
-      status: 'error',
-      message: 'Authentication required'
-    });
-  }
+  else res.status(401).json({ status: 'unauthorized' });
+}
+
+function verifyPeopleAccess(req, res, next) {
+  const id = parseInt(req.params.id);
+  const user = req.session.user;
+  if (isNaN(id) || id < 0) res.status(400).json({ status: 'error', message: 'Bad id number' });
+  else if (user.member_admin) next();
+  else req.app.locals.db.oneOrNone('SELECT email FROM People WHERE id = $1', id)
+    .then(data => {
+      if (data && user.email === data.email) next();
+      else res.status(401).json({ status: 'unauthorized' });
+    })
+    .catch(err => next(err));
 }
 
 function login(req, res, next) {
@@ -38,7 +46,7 @@ function login(req, res, next) {
         db.none(`INSERT INTO Log ${LogEntry.sqlValues}`, log);
       } else {
         res.status(401).json({
-          status: 'error',
+          status: 'unauthorized',
           message: 'Email and key don\'t match'
         });
       }

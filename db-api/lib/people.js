@@ -38,14 +38,9 @@ function getSinglePerson(req, res, next) {
     t.oneOrNone('SELECT name, address, country FROM PaperPubs WHERE people_id = $1', id)
   ]))
     .then(data => {
-      const user = req.session.user;
       const person = data[0];
-      if (user.member_admin || user.email === person.email) {
-        person.paper_pubs = data[1];
-        res.status(200).json(person);
-      } else {
-        res.status(401).json({ status: 'error' });
-      }
+      person.paper_pubs = data[1];
+      res.status(200).json(person);
     })
     .catch(err => next(err));
 }
