@@ -2,7 +2,7 @@ const randomstring = require('randomstring');
 const Admin = require('./types/admin');
 const LogEntry = require('./types/logentry');
 
-module.exports = { authenticate, login, logout, setKey };
+module.exports = { authenticate, login, logout, setKey, userInfo };
 
 function authenticate(req, res, next) {
   if (req.session && req.session.user && req.session.user.email) next();
@@ -83,4 +83,20 @@ function setKey(req, res, next) {
       })
       .catch(err => next(err));
   }
+}
+
+function userInfo(req, res, next) {
+  const email = req.session.user.member_admin && req.query.email || req.session.user.email;
+  req.app.locals.db.tx(tx => tx.batch([
+    tx.any('SELECT * FROM People WHERE email=$1', email),
+    tx.oneOrNone(`SELECT ${Admin.sqlRoles} FROM Admins WHERE email=$1`, email)
+  ]))
+    .then(data => {
+      res.status(200).json({
+        email,
+        people: data[0],
+        roles: data[1] ? Object.keys(data[1]).filter(r => data[1][r]) : []
+      });
+    })
+    .catch(err => next(err));
 }

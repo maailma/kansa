@@ -30,6 +30,8 @@ router.get('/logout', auth.logout);
 // subsequent paths require authentication
 router.use(auth.authenticate);
 
+router.get('/userinfo', auth.userInfo);
+
 const txLog = require('./lib/log');
 router.get('/log', txLog.getLog);
 
