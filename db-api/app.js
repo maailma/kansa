@@ -41,7 +41,7 @@ router.all('/people/:id*', auth.verifyPeopleAccess);
 router.get('/people/:id', people.getPerson);
 router.get('/people/:id/log', txLog.getPersonLog);
 router.post('/people/:id', people.updatePerson);
-//router.post('/people', people.addPerson);
+router.post('/people', people.addPerson);
 
 app.use('/', router);
 

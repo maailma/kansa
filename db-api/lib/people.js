@@ -1,3 +1,4 @@
+const damm = require('damm');
 const LogEntry = require('./types/logentry');
 const Person = require('./types/person');
 
@@ -46,27 +47,30 @@ function getPerson(req, res, next) {
 }
 
 function addPerson(req, res, next) {
+  if (!req.session.user.member_admin) return res.status(401).json({ status: 'unauthorized' });
+  let id, person;
   try {
-    var log = new LogEntry(req, 'Add new person');
-    var person = new Person(req.body);
+    person = new Person(req.body);
   } catch (e) {
-    next({ message: e.message, err: e, log });
+    return res.status(400).json({ status: 'error', message: e.message });
   }
-  req.app.locals.db.tx(tx => tx.sequence((index, data) => { switch (index) {
+  const setNumber = !person.data.member_number && person.data.membership !== 'NonMember';
+  req.app.locals.db.tx(tx => tx.sequence((i, data) => { switch (i) {
     case 0:
-      return tx.one(`INSERT INTO People ${person.sqlValues} RETURNING id`, person.data);
+      return setNumber ? tx.one('SELECT max(member_number) FROM People') : {};
     case 1:
-      log.subject = parseInt(data.id);
+      if (setNumber) {
+        const root = data.max ? Math.floor(data.max / 10) + 1 : 1;
+        const nStr = damm.append(root.toString());
+        person.data.member_number = parseInt(nStr);
+      }
+      return tx.one(`INSERT INTO People ${person.sqlValues} RETURNING id`, person.data);
+    case 2:
+      const log = new LogEntry(req, 'Add new person');
+      id = log.subject = parseInt(data.id);
       return tx.none(`INSERT INTO Log ${LogEntry.sqlValues}`, log);
   }}))
-  .then(() => {
-    res.status(200)
-      .json({
-        status: 'success',
-        message: 'Added one person',
-        id: log.subject
-      });
-  })
+  .then(() => { res.status(200).json({ status: 'success', id }); })
   .catch(err => next(err));
 }
 
@@ -78,8 +82,8 @@ function updatePerson(req, res, next) {
     res.status(400).json({ status: 'error', message: 'No valid parameters' });
   } else {
     const sqlFields = fields.map(fn => `${fn}=$(${fn})`).join(', ');
-    data.id = parseInt(req.params.id);
     const log = new LogEntry(req, 'Update fields: ' + fields.join(', '));
+    data.id = log.subject = parseInt(req.params.id);
     req.app.locals.db.tx(tx => tx.batch([
       tx.none(`UPDATE People SET ${sqlFields} WHERE id=$(id)`, data),
       tx.none(`INSERT INTO Log ${LogEntry.sqlValues}`, log)
