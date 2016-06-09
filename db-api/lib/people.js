@@ -1,17 +1,32 @@
 const LogEntry = require('./types/logentry');
 const Person = require('./types/person');
 
-module.exports = { getEveryone, getSinglePerson, addPerson };
+module.exports = { getPublicPeople, getPublicStats, getSinglePerson, addPerson };
 
-function getEveryone(req, res, next) {
-  req.app.locals.db.any('SELECT * FROM People')
+function getPublicPeople(req, res, next) {
+  req.app.locals.db.any(`SELECT country, membership,
+      concat_ws(' ', public_first_name, public_last_name) AS public_name
+      FROM People WHERE membership != 'NonMember' AND (public_first_name != '' OR public_last_name != '')
+      ORDER BY public_last_name, public_first_name, country`)
     .then(data => {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: 'Retrieved EVERYONE'
-        });
+      res.status(200).json({ status: 'success', data });
+    })
+    .catch(err => next(err));
+}
+
+function getPublicStats(req, res, next) {
+  req.app.locals.db.any(`SELECT country, membership, COUNT(*)
+      FROM People WHERE membership != 'NonMember'
+      GROUP BY CUBE(country, membership)`)
+    .then(data => {
+      const members = data.reduce((stats, d) => {
+        const c = d.country || '';
+        const m = d.membership || 'total'
+        if (!stats[c]) stats[c] = {};
+        stats[c][m] = parseInt(d.count);
+        return stats;
+      }, {});
+      res.status(200).json({ status: 'success', members });
     })
     .catch(err => next(err));
 }
@@ -20,12 +35,12 @@ function getSinglePerson(req, res, next) {
   const id = parseInt(req.params.id);
   req.app.locals.db.one('SELECT * FROM People WHERE id = $1', id)
     .then(data => {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: 'Retrieved ONE person'
-        });
+      const user = req.session.user;
+      if (user.member_admin || user.email === data.email) {
+        res.status(200).json({ status: 'success', data });
+      } else {
+        res.status(401).json({ status: 'error' });
+      }
     })
     .catch(err => next(err));
 }

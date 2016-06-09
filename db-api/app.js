@@ -19,26 +19,26 @@ app.use(session({
 }));
 app.locals.db = pgp(process.env.DATABASE_URL);
 
+const auth = require('./lib/auth');
+const people = require('./lib/people');
+const txLog = require('./lib/log');
 const router = express.Router();
 
-const auth = require('./lib/auth');
+// these are accessible w/o authentication
 router.post('/key', auth.setKey);
 router.get('/login', auth.login);
 router.post('/login', auth.login);
 router.get('/logout', auth.logout);
+router.get('/people', people.getPublicPeople);
+router.get('/stats', people.getPublicStats);
 
-// subsequent paths require authentication
+// these require authentication
 router.use(auth.authenticate);
-
-router.get('/userinfo', auth.userInfo);
-
-const txLog = require('./lib/log');
 router.get('/log', txLog.getLog);
-
-const people = require('./lib/people');
-router.get('/people', people.getEveryone);
 router.get('/people/:id', people.getSinglePerson);
 router.post('/people', people.addPerson);
+router.get('/userinfo', auth.userInfo);
+
 app.use('/', router);
 
 // no match from router -> 404
