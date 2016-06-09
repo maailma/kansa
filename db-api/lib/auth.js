@@ -1,10 +1,11 @@
 const randomstring = require('randomstring');
+const Admin = require('./types/admin');
 const LogEntry = require('./types/logentry');
 
 module.exports = { authenticate, login, logout, setKey };
 
 function authenticate(req, res, next) {
-  if (req.session && req.session.authenticated && req.session.email) next();
+  if (req.session && req.session.user && req.session.user.email) next();
   else {
     res.status(401).json({
       status: 'error',
@@ -21,11 +22,17 @@ function login(req, res, next) {
     status: 'error',
     message: 'Email and key are required for login'
   });
-  db.one('SELECT COUNT(*) FROM Keys WHERE email=$(email) AND key=$(key)', { email, key })
+  db.tx(tx => tx.batch([
+    tx.one('SELECT COUNT(*) FROM Keys WHERE email=$(email) AND key=$(key)', { email, key }),
+    tx.oneOrNone(`SELECT ${Admin.sqlRoles} FROM Admins WHERE email=$1`, email)
+  ]))
     .then(data => {
-      if (data.count > 0) {
-        req.session.authenticated = true;
-        req.session.email = email;
+      if (data[0].count > 0) {
+        req.session.user = {
+          email,
+          member_admin: !!(data[1] && data[1].member_admin),
+          admin_admin: !!(data[1] && data[1].admin_admin)
+        };
         res.status(200).json({ status: 'success', email });
         const log = new LogEntry(req, email, 'Login');
         db.none(`INSERT INTO Transactions ${LogEntry.sqlValues}`, log);
@@ -40,8 +47,7 @@ function login(req, res, next) {
 }
 
 function logout(req, res) {
-  delete req.session.authenticated;
-  delete req.session.email;
+  delete req.session.user;
   res.status(200).json({ status: 'success' });
 }
 

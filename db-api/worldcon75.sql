@@ -34,11 +34,9 @@ CREATE TABLE IF NOT EXISTS PaperPublications (
 );
 
 CREATE TABLE IF NOT EXISTS Admins (
-    id SERIAL PRIMARY KEY,
-    people_id integer REFERENCES People NOT NULL,
-    super_admin bool NOT NULL DEFAULT false,
+    email text PRIMARY KEY,
     member_admin bool NOT NULL DEFAULT false,
-    hugo_admin bool NOT NULL DEFAULT false
+    admin_admin bool NOT NULL DEFAULT false
 );
 
 CREATE TABLE IF NOT EXISTS Keys (
