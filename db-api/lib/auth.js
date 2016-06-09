@@ -42,7 +42,7 @@ function login(req, res, next) {
           admin_admin: !!(data[1] && data[1].admin_admin)
         };
         res.status(200).json({ status: 'success', email });
-        const log = new LogEntry(req, email, 'Login');
+        const log = new LogEntry(req, 'Login');
         db.none(`INSERT INTO Log ${LogEntry.sqlValues}`, log);
       } else {
         res.status(401).json({
@@ -61,7 +61,8 @@ function logout(req, res) {
 
 function setKeyChecked(req, res, next) {
   const data = { email: req.body.email, key: randomstring.generate(12) };
-  const log = new LogEntry(req, data.email, 'Set access key');
+  const log = new LogEntry(req, 'Set access key');
+  log.author = data.email;
   req.app.locals.db.tx(tx => tx.batch([
     tx.none(`INSERT INTO Keys (email, key) VALUES ($(email), $(key))
         ON CONFLICT (email) DO UPDATE SET key = EXCLUDED.key`, data),

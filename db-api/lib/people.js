@@ -47,7 +47,7 @@ function getPerson(req, res, next) {
 
 function addPerson(req, res, next) {
   try {
-    var log = new LogEntry(req, null, 'Add new person');
+    var log = new LogEntry(req, 'Add new person');
     var person = new Person(req.body);
   } catch (e) {
     next({ message: e.message, err: e, log });
@@ -79,7 +79,7 @@ function updatePerson(req, res, next) {
   } else {
     const sqlFields = fields.map(fn => `${fn}=$(${fn})`).join(', ');
     data.id = parseInt(req.params.id);
-    const log = new LogEntry(req, null, 'Update fields: ' + fields.join(', '));
+    const log = new LogEntry(req, 'Update fields: ' + fields.join(', '));
     req.app.locals.db.tx(tx => tx.batch([
       tx.none(`UPDATE People SET ${sqlFields} WHERE id=$(id)`, data),
       tx.none(`INSERT INTO Log ${LogEntry.sqlValues}`, log)

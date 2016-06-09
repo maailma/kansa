@@ -18,12 +18,12 @@ class LogEntry {
     return `(${fields.join(', ')}) VALUES(${values})`;
   }
 
-  constructor(req, author = null, desc = '') {
+  constructor(req, desc = '') {
     this.timestamp = new Date().toISOString();
     this.client_info = req.ip || 'no-IP';
     const ua = req.headers['User-Agent'];
     if (ua) this.client_info += '\t' + ua;
-    this.author = author;
+    this.author = req.session.user && req.session.user.email || null;
     this.subject = null;
     this.action = req.method + ' ' + req.originalUrl;
     this.parameters = req.body;
