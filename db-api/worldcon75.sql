@@ -25,12 +25,12 @@ CREATE TABLE IF NOT EXISTS People (
     can_site_select bool NOT NULL DEFAULT false
 );
 
-CREATE TABLE IF NOT EXISTS PaperPublications (
+CREATE TABLE IF NOT EXISTS PaperPubs (
     id SERIAL PRIMARY KEY,
     people_id integer REFERENCES People NOT NULL,
-    name text,
-    address text,
-    country text
+    name text NOT NULL,
+    address text NOT NULL,
+    country text NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Admins (

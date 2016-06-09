@@ -33,11 +33,16 @@ function getPublicStats(req, res, next) {
 
 function getSinglePerson(req, res, next) {
   const id = parseInt(req.params.id);
-  req.app.locals.db.one('SELECT * FROM People WHERE id = $1', id)
+  req.app.locals.db.task(t => t.batch([
+    t.one('SELECT * FROM People WHERE id = $1', id),
+    t.oneOrNone('SELECT name, address, country FROM PaperPubs WHERE people_id = $1', id)
+  ]))
     .then(data => {
       const user = req.session.user;
-      if (user.member_admin || user.email === data.email) {
-        res.status(200).json({ status: 'success', data });
+      const person = data[0];
+      if (user.member_admin || user.email === person.email) {
+        person.paper_pubs = data[1];
+        res.status(200).json(person);
       } else {
         res.status(401).json({ status: 'error' });
       }
