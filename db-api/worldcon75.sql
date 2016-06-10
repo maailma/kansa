@@ -9,6 +9,7 @@ CREATE TYPE MembershipStatus AS ENUM ('NonMember','Supporter','KidInTow','Child'
 
 CREATE TABLE IF NOT EXISTS People (
     id SERIAL PRIMARY KEY,
+    last_modified timestamptz DEFAULT now(),
     member_number integer,
     legal_name text NOT NULL,
     public_first_name text,
@@ -54,3 +55,17 @@ CREATE TABLE IF NOT EXISTS Log (
     parameters jsonb NOT NULL,
     description text NOT NULL
 );
+
+CREATE FUNCTION set_last_modified() RETURNS trigger AS $$
+BEGIN
+    IF row(NEW.*) IS DISTINCT FROM row(OLD.*) THEN
+        NEW.last_modified = now();
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER set_last_modified_people
+    BEFORE UPDATE ON People
+    FOR EACH ROW
+    EXECUTE PROCEDURE set_last_modified();

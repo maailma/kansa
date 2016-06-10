@@ -4,6 +4,7 @@ class Person {
   static get fields() {
     return [
       // id SERIAL PRIMARY KEY
+      'last_modified',  // timestamptz DEFAULT now()
       'legal_name',  // text NOT NULL
       'membership',  // MembershipStatus NOT NULL
       'member_number',  // integer
