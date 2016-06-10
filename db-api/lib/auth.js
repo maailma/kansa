@@ -1,4 +1,10 @@
+const fs = require('fs');
+const mustache = require('mustache');
 const randomstring = require('randomstring');
+const sendgrid  = require('sendgrid')(process.env.SENDGRID_APIKEY);
+const tfm = require('tiny-frontmatter');
+const wrap = require('wordwrap')(72);
+
 const Admin = require('./types/admin');
 const LogEntry = require('./types/logentry');
 
@@ -61,6 +67,7 @@ function logout(req, res) {
 
 function setKeyChecked(req, res, next) {
   const data = { email: req.body.email, key: randomstring.generate(12) };
+  data.uri = encodeURI(`${process.env.API_ROOT}/login?email=${data.email}&key=${data.key}`);
   const log = new LogEntry(req, 'Set access key');
   log.author = data.email;
   req.app.locals.db.tx(tx => tx.batch([
@@ -68,10 +75,18 @@ function setKeyChecked(req, res, next) {
         ON CONFLICT (email) DO UPDATE SET key = EXCLUDED.key`, data),
     tx.none(`INSERT INTO Log ${LogEntry.sqlValues}`, log)
   ]))
-    .then(() => { res.status(200).json({
-      status: 'success',
-      message: 'Key set for ' + JSON.stringify(data.email)
-    })})
+    .then(() => fs.readFile('templates/set-key.mustache', 'utf8', (err, raw) => {
+      if (err) return next(err);
+      const tmpl = tfm(raw);
+      const msg = tmpl.attributes;
+      msg.to = data.email;
+      msg.text = wrap(mustache.render(tmpl.body, data));
+      sendgrid.send(msg, err => {
+        if (err) return next(err);
+        const email = { to: data.email, from: msg.from, fromname: msg.fromname, subject: msg.subject };
+        res.status(200).json({ status: 'success', email });
+      });
+    }))
     .catch(err => next(err));
 }
 

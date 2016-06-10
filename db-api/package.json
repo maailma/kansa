@@ -14,9 +14,13 @@
     "express": "~4.13.1",
     "express-session": "^1.13.0",
     "morgan": "~1.6.1",
+    "mustache": "^2.2.1",
     "pg-monitor": "^0.5.5",
     "pg-promise": "^4.2.5",
-    "randomstring": "^1.1.5"
+    "randomstring": "^1.1.5",
+    "sendgrid": "^2.0.0",
+    "tiny-frontmatter": "^1.0.0",
+    "wordwrap": "^1.0.0"
   },
   "devDependencies": {
     "dotenv": "^2.0.0"

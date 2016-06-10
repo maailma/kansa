@@ -55,6 +55,7 @@ app.use((req, res, next) => {
 // error handler
 const isDevEnv = (app.get('env') === 'development');
 app.use((err, req, res, next) => {
+  console.error(err);
   res.status(err.status || 500);
   res.json({
     status: 'error',
