@@ -33,7 +33,21 @@ function getPublicStats(req, res, next) {
 }
 
 function getPeopleQuery(req, res, next) {
-  req.app.locals.db.any('SELECT * FROM People')
+  const cond = Object.keys(req.query).map(fn => { switch(fn) {
+    case 'since':
+      return 'last_modified > $(since)';
+    case 'name':
+      return '(legal_name ILIKE $(name) OR public_first_name ILIKE $(name) OR public_last_name ILIKE $(name))';
+    case 'member_number':
+    case 'membership':
+    case 'can_hugo_nominate':
+    case 'can_hugo_vote':
+    case 'can_site_select':
+      return `${fn} = $(${fn})`;
+    default:
+      return (Person.fields.indexOf(fn) !== -1) ? `${fn} ILIKE $(${fn})` : 'true';
+  }});
+  req.app.locals.db.any(`SELECT * FROM People WHERE ${cond.join(' AND ')}`, req.query)
     .then(data => res.status(200).json(data))
     .catch(err => next(err));
 }
