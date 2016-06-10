@@ -1,21 +1,4 @@
-function forceBool(obj, prop) {
-  const src = obj[prop];
-  if (obj.hasOwnProperty(prop) && typeof src !== 'boolean') {
-    if (src) {
-      const s = src.trim().toLowerCase();
-      obj[prop] = (s !== '' && s !== '0' && s !== 'false');
-    } else {
-      obj[prop] = false;
-    }
-  }
-}
-
-function forceInt(obj, prop) {
-  const src = obj[prop];
-  if (obj.hasOwnProperty(prop) && !Number.isInteger(src)) {
-    obj[prop] = src ? parseInt(src) : null;
-  }
-}
+const util = require('../util');
 
 class Person {
   static get fields() {
@@ -49,8 +32,8 @@ class Person {
     if (!src || !src.legal_name || !src.membership) throw new Error('Missing data for new Person (required: legal_name, membership)');
     if (Person.membershipTypes.indexOf(src.membership) === -1) throw new Error('Invalid membership type for new Person');
     this.data = Object.assign({}, src);
-    Person.boolFields.forEach(fn => forceBool(this.data, fn));
-    forceInt(this.data, 'member_number');
+    Person.boolFields.forEach(fn => util.forceBool(this.data, fn));
+    util.forceInt(this.data, 'member_number');
   }
 
   get sqlValues() {
