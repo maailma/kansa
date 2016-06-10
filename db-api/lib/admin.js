@@ -1,3 +1,5 @@
+const Admin = require('./types/admin');
+const LogEntry = require('./types/logentry');
 const util = require('./util');
 
 module.exports = { isAdminAdmin, getAdmins, setAdmin };
@@ -15,7 +17,7 @@ function getAdmins(req, res, next) {
 
 function setAdmin(req, res, next) {
   const data = Object.assign({}, req.body);
-  const fields = [ 'admin_admin', 'member_admin' ].filter(fn => data.hasOwnProperty(fn));
+  const fields = Admin.roleFields.filter(fn => data.hasOwnProperty(fn));
   if (!data.email || fields.length == 0) {
     res.status(400).json({ status: 'error', data });
   } else {

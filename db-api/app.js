@@ -20,32 +20,36 @@ app.use(session({
 app.locals.db = pgp(process.env.DATABASE_URL);
 
 const admin = require('./lib/admin');
-const auth = require('./lib/auth');
+const key = require('./lib/key');
+const log = require('./lib/log');
 const people = require('./lib/people');
-const txLog = require('./lib/log');
+const user = require('./lib/user');
 const router = express.Router();
 
-// these are accessible w/o authentication
-router.post('/key', auth.setKey);
-router.get('/login', auth.login);
-router.post('/login', auth.login);
-router.get('/logout', auth.logout);
+// these are accessible without authentication
 router.get('/people', people.getPublicPeople);
 router.get('/stats', people.getPublicStats);
 
-// these require authentication
-router.use(auth.authenticate);
-router.get('/user', auth.userInfo);
-router.get('/user/log', txLog.getUserLog);
+router.post('/key', key.setKey);
+router.all('/login', user.login);
+router.all('/logout', user.logout);
 
-router.all('/people/:id*', auth.verifyPeopleAccess);
-router.get('/people/:id', people.getPerson);
-router.get('/people/:id/log', txLog.getPersonLog);
-router.post('/people/:id', people.updatePerson);
+// subsequent routes require authentication
+router.use(user.authenticate);
+
 router.post('/people', people.addPerson);
 
-router.get('/admin', admin.isAdminAdmin, admin.getAdmins);
-router.post('/admin', admin.isAdminAdmin, admin.setAdmin);
+router.all('/people/:id*', user.verifyPeopleAccess);
+router.get('/people/:id', people.getPerson);
+router.post('/people/:id', people.updatePerson);
+router.get('/people/:id/log', log.getPersonLog);
+
+router.get('/user', user.getInfo);
+router.get('/user/log', log.getUserLog);
+
+router.all('/admin*', admin.isAdminAdmin);
+router.get('/admin', admin.getAdmins);
+router.post('/admin', admin.setAdmin);
 
 app.use('/', router);
 
