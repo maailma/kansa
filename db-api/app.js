@@ -19,6 +19,7 @@ app.use(session({
 }));
 app.locals.db = pgp(process.env.DATABASE_URL);
 
+const admin = require('./lib/admin');
 const auth = require('./lib/auth');
 const people = require('./lib/people');
 const txLog = require('./lib/log');
@@ -43,8 +44,8 @@ router.get('/people/:id/log', txLog.getPersonLog);
 router.post('/people/:id', people.updatePerson);
 router.post('/people', people.addPerson);
 
-router.get('/admin', auth.getAdmins);
-router.post('/admin', auth.setAdmin);
+router.get('/admin', admin.isAdminAdmin, admin.getAdmins);
+router.post('/admin', admin.isAdminAdmin, admin.setAdmin);
 
 app.use('/', router);
 
