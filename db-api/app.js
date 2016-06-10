@@ -43,6 +43,8 @@ router.get('/people/:id/log', txLog.getPersonLog);
 router.post('/people/:id', people.updatePerson);
 router.post('/people', people.addPerson);
 
+router.get('/admin', auth.getAdmins);
+
 app.use('/', router);
 
 // no match from router -> 404

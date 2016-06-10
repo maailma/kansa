@@ -8,7 +8,7 @@ const wrap = require('wordwrap')(72);
 const Admin = require('./types/admin');
 const LogEntry = require('./types/logentry');
 
-module.exports = { authenticate, verifyPeopleAccess, login, logout, setKey, userInfo };
+module.exports = { authenticate, verifyPeopleAccess, login, logout, setKey, userInfo, getAdmins };
 
 function authenticate(req, res, next) {
   if (req.session && req.session.user && req.session.user.email) next();
@@ -123,4 +123,14 @@ function userInfo(req, res, next) {
       });
     })
     .catch(err => next(err));
+}
+
+function getAdmins(req, res, next) {
+  if (!req.session.user.admin_admin) {
+    res.status(401).json({ status: 'unauthorized' });
+  } else {
+    req.app.locals.db.any('SELECT * FROM Admins')
+      .then(data => { res.status(200).json(data); })
+      .catch(err => next(err));
+  }
 }
