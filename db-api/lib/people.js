@@ -2,7 +2,7 @@ const damm = require('damm');
 const LogEntry = require('./types/logentry');
 const Person = require('./types/person');
 
-module.exports = { getPublicPeople, getPublicStats, getPerson, addPerson, updatePerson };
+module.exports = { getPublicPeople, getPublicStats, getPeople, getPerson, addPerson, updatePerson };
 
 function getPublicPeople(req, res, next) {
   req.app.locals.db.any(`SELECT country, membership,
@@ -28,6 +28,35 @@ function getPublicStats(req, res, next) {
         return stats;
       }, {});
       res.status(200).json({ status: 'success', members });
+    })
+    .catch(err => next(err));
+}
+
+function getPeopleQuery(req, res, next) {
+  req.app.locals.db.any('SELECT * FROM People')
+    .then(data => res.status(200).json(data))
+    .catch(err => next(err));
+}
+
+function getPeople(req, res, next) {
+  if (!req.session.user.member_admin) return res.status(401).json({ status: 'unauthorized' });
+  if (Object.keys(req.query).length > 0) getPeopleQuery(req, res, next);
+  else req.app.locals.db.any('SELECT * FROM People')
+    .then(data => {
+      const maxId = data.reduce((m, p) => Math.max(m, p.id), -1);
+      if (isNaN(maxId)) {
+        res.status(500).json({ status: 'error', message: 'Contains non-numeric id?', data });
+      } else {
+        const arr = new Array(maxId + 1);
+        data.forEach(p => {
+          arr[p.id] = Person.fields.reduce((o, fn) => {
+            const v = p[fn];
+            if (v !== null && v !== false) o[fn] = v;
+            return o;
+          }, { id: p.id });
+        });
+        res.status(200).json(arr);
+      }
     })
     .catch(err => next(err));
 }

@@ -27,8 +27,8 @@ const user = require('./lib/user');
 const router = express.Router();
 
 // these are accessible without authentication
-router.get('/people', people.getPublicPeople);
-router.get('/stats', people.getPublicStats);
+router.get('/public/people', people.getPublicPeople);
+router.get('/public/stats', people.getPublicStats);
 
 router.post('/key', key.setKey);
 router.all('/login', user.login);
@@ -37,6 +37,7 @@ router.all('/logout', user.logout);
 // subsequent routes require authentication
 router.use(user.authenticate);
 
+router.get('/people', people.getPeople);
 router.post('/people', people.addPerson);
 
 router.all('/people/:id*', user.verifyPeopleAccess);
