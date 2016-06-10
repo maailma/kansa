@@ -7,8 +7,9 @@ const wrap = require('wordwrap')(72);
 
 const Admin = require('./types/admin');
 const LogEntry = require('./types/logentry');
+const util = require('./util');
 
-module.exports = { authenticate, verifyPeopleAccess, login, logout, setKey, userInfo, getAdmins };
+module.exports = { authenticate, verifyPeopleAccess, login, logout, setKey, userInfo, getAdmins, setAdmin };
 
 function authenticate(req, res, next) {
   if (req.session && req.session.user && req.session.user.email) next();
@@ -132,5 +133,29 @@ function getAdmins(req, res, next) {
     req.app.locals.db.any('SELECT * FROM Admins')
       .then(data => { res.status(200).json(data); })
       .catch(err => next(err));
+  }
+}
+
+function setAdmin(req, res, next) {
+  if (!req.session.user.admin_admin) {
+    res.status(401).json({ status: 'unauthorized' });
+  } else {
+    const data = Object.assign({}, req.body);
+    const fields = [ 'admin_admin', 'member_admin' ].filter(fn => data.hasOwnProperty(fn));
+    if (!data.email || fields.length == 0) {
+      res.status(400).json({ status: 'error', message: 'No valid parameters', data });
+    } else {
+      const log = new LogEntry(req, 'Set admin rights');
+      const fCols = fields.join(', ');
+      const fValues = fields.map(fn => `$(${fn})`).join(', ');
+      const fSet = fields.map(fn => `${fn} = EXCLUDED.${fn}`).join(', ');
+      fields.forEach(fn => util.forceBool(data, fn));
+      req.app.locals.db.tx(tx => tx.batch([
+        tx.none(`INSERT INTO Admins (email, ${fCols}) VALUES ($(email), ${fValues}) ON CONFLICT (email) DO UPDATE SET ${fSet}`, data),
+        tx.none(`INSERT INTO Log ${LogEntry.sqlValues}`, log)
+      ]))
+        .then(() => { res.status(200).json({ status: 'success', set: data }); })
+        .catch(err => next(err));
+    }
   }
 }

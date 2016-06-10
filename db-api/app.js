@@ -44,6 +44,7 @@ router.post('/people/:id', people.updatePerson);
 router.post('/people', people.addPerson);
 
 router.get('/admin', auth.getAdmins);
+router.post('/admin', auth.setAdmin);
 
 app.use('/', router);
 
