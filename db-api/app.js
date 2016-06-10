@@ -1,3 +1,4 @@
+const cors = require('cors');
 const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
@@ -46,6 +47,11 @@ app.locals.db = pgp(process.env.DATABASE_URL);
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cors({
+  credentials: true,
+  methods: [ 'GET', 'POST' ],
+  origin: process.env.CORS_ORIGIN.split(/[ ,]+/)
+}));
 app.use(session({
   cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 },  // 30 days
   name: 'w75',
