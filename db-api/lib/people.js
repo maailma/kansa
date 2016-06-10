@@ -97,7 +97,7 @@ function addPerson(req, res, next) {
     case 2:
       const log = new LogEntry(req, 'Add new person');
       id = log.subject = parseInt(data.id);
-      return tx.none(`INSERT INTO Log ${LogEntry.sqlValues}`, log);
+      return tx.none(`INSERT INTO Log ${log.sqlValues}`, log);
   }}))
   .then(() => { res.status(200).json({ status: 'success', id }); })
   .catch(err => next(err));
@@ -115,7 +115,7 @@ function updatePerson(req, res, next) {
     data.id = log.subject = parseInt(req.params.id);
     req.app.locals.db.tx(tx => tx.batch([
       tx.none(`UPDATE People SET ${sqlFields} WHERE id=$(id)`, data),
-      tx.none(`INSERT INTO Log ${LogEntry.sqlValues}`, log)
+      tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
     ]))
       .then(() => { res.status(200).json({ status: 'success', updated: fields }); })
       .catch(err => next(err));

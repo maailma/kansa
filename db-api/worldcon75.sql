@@ -45,8 +45,9 @@ CREATE TABLE IF NOT EXISTS Keys (
 
 CREATE TABLE IF NOT EXISTS Log (
     id SERIAL PRIMARY KEY,
-    "timestamp" timestamptz NOT NULL,
-    client_info text NOT NULL,
+    "timestamp" timestamptz NOT NULL DEFAULT now(),
+    client_ip text NOT NULL,
+    client_ua text,
     author text,
     subject integer REFERENCES People,
     action text NOT NULL,

@@ -2,8 +2,9 @@ class LogEntry {
   static get fields() {
     return [
       // id SERIAL PRIMARY KEY
-      'timestamp',  // timestamptz NOT NULL
-      'client_info',  // text NOT NULL
+      'timestamp',  // timestamptz NOT NULL DEFAULT now()
+      'client_ip',  // text NOT NULL
+      'client_ua',  // text
       'author',  // text
       'subject',  // integer REFERENCES People
       'action',  // text NOT NULL
@@ -12,22 +13,21 @@ class LogEntry {
     ];
   }
 
-  static get sqlValues() {
-    const fields = LogEntry.fields;
-    const values = fields.map(fn => `$(${fn})`).join(', ');
-    return `(${fields.join(', ')}) VALUES(${values})`;
-  }
-
   constructor(req, desc = '') {
-    this.timestamp = new Date().toISOString();
-    this.client_info = req.ip || 'no-IP';
-    const ua = req.headers['User-Agent'];
-    if (ua) this.client_info += '\t' + ua;
+    this.timestamp = null; //new Date().toISOString();
+    this.client_ip = req.ip;
+    this.client_ua = req.headers['user-agent'] || null;
     this.author = req.session.user && req.session.user.email || null;
     this.subject = null;
     this.action = req.method + ' ' + req.originalUrl;
     this.parameters = req.body;
     this.description = desc;
+  }
+
+  get sqlValues() {
+    const fields = LogEntry.fields.filter(fn => this[fn] !== null);
+    const values = fields.map(fn => `$(${fn})`).join(', ');
+    return `(${fields.join(', ')}) VALUES(${values})`;
   }
 }
 

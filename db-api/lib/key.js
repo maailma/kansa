@@ -17,7 +17,7 @@ function setKeyChecked(req, res, next) {
   req.app.locals.db.tx(tx => tx.batch([
     tx.none(`INSERT INTO Keys (email, key) VALUES ($(email), $(key))
         ON CONFLICT (email) DO UPDATE SET key = EXCLUDED.key`, data),
-    tx.none(`INSERT INTO Log ${LogEntry.sqlValues}`, log)
+    tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
   ]))
     .then(() => fs.readFile('templates/set-key.mustache', 'utf8', (err, raw) => {
       if (err) return next(err);

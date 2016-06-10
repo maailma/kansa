@@ -42,7 +42,7 @@ function login(req, res, next) {
         };
         res.status(200).json({ status: 'success', email });
         const log = new LogEntry(req, 'Login');
-        db.none(`INSERT INTO Log ${LogEntry.sqlValues}`, log);
+        db.none(`INSERT INTO Log ${log.sqlValues}`, log);
       } else {
         res.status(401).json({
           status: 'unauthorized',

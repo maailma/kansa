@@ -28,7 +28,7 @@ function setAdmin(req, res, next) {
     fields.forEach(fn => util.forceBool(data, fn));
     req.app.locals.db.tx(tx => tx.batch([
       tx.none(`INSERT INTO Admins (email, ${fCols}) VALUES ($(email), ${fValues}) ON CONFLICT (email) DO UPDATE SET ${fSet}`, data),
-      tx.none(`INSERT INTO Log ${LogEntry.sqlValues}`, log)
+      tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
     ]))
       .then(() => { res.status(200).json({ status: 'success', set: data }); })
       .catch(err => next(err));
