@@ -3,21 +3,10 @@ const logger = require('morgan');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 
+const pgSession = require('connect-pg-simple')(session);
 const pgOptions = { promiseLib: require('bluebird') };
 const pgp = require('pg-promise')(pgOptions);
 require('pg-monitor').attach(pgOptions);
-
-const app = express();
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(session({
-  name: 'w75',
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false
-}));
-app.locals.db = pgp(process.env.DATABASE_URL);
 
 const admin = require('./lib/admin');
 const key = require('./lib/key');
@@ -52,6 +41,22 @@ router.all('/admin*', admin.isAdminAdmin);
 router.get('/admin', admin.getAdmins);
 router.post('/admin', admin.setAdmin);
 
+const app = express();
+app.locals.db = pgp(process.env.DATABASE_URL);
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(session({
+  cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 },  // 30 days
+  name: 'w75',
+  resave: false,
+  saveUninitialized: false,
+  secret: process.env.SESSION_SECRET,
+  store: new pgSession({
+    pg: pgp.PG,
+    pruneSessionInterval: 24 * 60 * 60  // 1 day
+  })
+}));
 app.use('/', router);
 
 // no match from router -> 404

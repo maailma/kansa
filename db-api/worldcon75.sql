@@ -56,6 +56,8 @@ CREATE TABLE IF NOT EXISTS Log (
     description text NOT NULL
 );
 
+
+-- keep People.last_modified up to date
 CREATE FUNCTION set_last_modified() RETURNS trigger AS $$
 BEGIN
     IF row(NEW.*) IS DISTINCT FROM row(OLD.*) THEN
@@ -69,3 +71,16 @@ CREATE TRIGGER set_last_modified_people
     BEFORE UPDATE ON People
     FOR EACH ROW
     EXECUTE PROCEDURE set_last_modified();
+
+
+-- from node_modules/connect-pg-simple/table.sql
+CREATE TABLE "session" (
+    "sid" varchar NOT NULL COLLATE "default",
+    "sess" json NOT NULL,
+    "expire" timestamp(6) NOT NULL
+) WITH (OIDS=FALSE);
+
+ALTER TABLE "session"
+    ADD CONSTRAINT "session_pkey"
+    PRIMARY KEY ("sid")
+    NOT DEFERRABLE INITIALLY IMMEDIATE;
