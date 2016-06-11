@@ -21,6 +21,7 @@ class LogEntry {
     this.subject = null;
     this.action = req.method + ' ' + req.baseUrl + req.path;
     this.parameters = Object.assign({}, req.query, req.body);
+    delete this.parameters.key;
     this.description = desc;
   }
 
