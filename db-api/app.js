@@ -24,6 +24,10 @@ router.post('/key', key.setKey);
 router.all('/login', user.login);
 router.all('/logout', user.logout);
 
+router.get('/favicon.ico', (req, res, next) => {
+  res.sendFile('static/favicon.ico', { root: __dirname }, err => err && next(err));
+});
+
 // subsequent routes require authentication
 router.use(user.authenticate);
 
