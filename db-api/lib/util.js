@@ -3,8 +3,8 @@ module.exports = { isTrueish, forceBool, forceInt };
 function isTrueish(v) {
   if (!v) return false;
   if (typeof v === 'boolean') return v;
-  const s = v.toString().trim();
-  return s !== '' && s !== '0' && s.toLowerCase() !== 'false';
+  const s = v.toString().trim().toLowerCase();
+  return s !== '' && s !== '0' && s !== 'false' && s !== 'null';
 }
 
 function forceBool(obj, prop) {
