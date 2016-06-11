@@ -22,7 +22,6 @@ router.get('/public/stats', people.getPublicStats);
 
 router.post('/key', key.setKey);
 router.all('/login', user.login);
-router.all('/logout', user.logout);
 
 router.get('/favicon.ico', (req, res, next) => {
   res.sendFile('static/favicon.ico', { root: __dirname }, err => err && next(err));
@@ -30,6 +29,7 @@ router.get('/favicon.ico', (req, res, next) => {
 
 // subsequent routes require authentication
 router.use(user.authenticate);
+router.all('/logout', user.logout);
 
 router.get('/people', people.getPeople);
 router.post('/people', people.addPerson);

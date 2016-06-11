@@ -1,5 +1,6 @@
 const Admin = require('./types/admin');
 const LogEntry = require('./types/logentry');
+const util = require('./util');
 
 module.exports = { authenticate, verifyPeopleAccess, login, logout, getInfo };
 
@@ -53,9 +54,29 @@ function login(req, res, next) {
     .catch(err => next(err));
 }
 
-function logout(req, res) {
-  delete req.session.user;
-  res.status(200).json({ status: 'success' });
+function logout(req, res, next) {
+  const data = Object.assign({}, req.query, req.body);
+  const opt = ['all', 'reset'].reduce((prev, o) => util.isTrueish(data[o]) ? o : prev, null);
+    // null: log out this session only, 'all': log out all sessions, 'reset': also reset/forget login key
+  const user = req.session.user;
+  if (data.email && !user.admin_admin) return res.status(401).json({ status: 'unauthorized' });
+    // only admin_admin can log out other users
+  const email = data.email || user.email;
+  if (email === user.email) delete req.session.user;
+  else if (!opt) return res.status(400).json({ status: 'error', message: 'Add all=1 or reset=1 to parameters' });
+    // if logging out someone else, make it clear what we're doing
+  if (!opt) return res.status(200).json({ status: 'success', email });
+  req.app.locals.db.task(t => {
+    const tasks = [ t.any(`DELETE FROM "session" WHERE sess #>> '{user, email}' = $1 RETURNING sid`, email) ];
+    if (opt === 'reset') tasks.push(t.none(`DELETE FROM Keys WHERE email = $1`, email));
+    return t.batch(tasks);
+  })
+    .then(data => {
+      const sessions = data[0].length;
+      if (!sessions) res.status(400).json({ status: 'error', email, opt, sessions });
+      else res.status(200).json({ status: 'success', email, opt, sessions });
+    })
+    .catch(err => next(err));
 }
 
 function getInfo(req, res, next) {
