@@ -19,8 +19,8 @@ class LogEntry {
     this.client_ua = req.headers['user-agent'] || null;
     this.author = req.session.user && req.session.user.email || null;
     this.subject = null;
-    this.action = req.method + ' ' + req.originalUrl;
-    this.parameters = req.body;
+    this.action = req.method + ' ' + req.baseUrl + req.path;
+    this.parameters = Object.assign({}, req.query, req.body);
     this.description = desc;
   }
 
