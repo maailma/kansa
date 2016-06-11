@@ -77,15 +77,8 @@ function getPeople(req, res, next) {
 
 function getPerson(req, res, next) {
   const id = parseInt(req.params.id);
-  req.app.locals.db.task(t => t.batch([
-    t.one('SELECT * FROM People WHERE id = $1', id),
-    t.oneOrNone('SELECT name, address, country FROM PaperPubs WHERE people_id = $1', id)
-  ]))
-    .then(data => {
-      const person = data[0];
-      person.paper_pubs = data[1];
-      res.status(200).json(person);
-    })
+  req.app.locals.db.one('SELECT * FROM People WHERE id = $1', id)
+    .then(data => res.status(200).json(data))
     .catch(err => next(err));
 }
 
@@ -124,6 +117,11 @@ function updatePerson(req, res, next) {
   if (!fields || fields.length == 0) {
     res.status(400).json({ status: 'error', message: 'No valid parameters' });
   } else {
+    if (fields.indexOf('paper_pubs') != -1) try {
+      data.paper_pubs = Person.cleanPaperPubs(data.paper_pubs);
+    } catch (e) {
+      return res.status(400).json({ status: 'error', message: 'paper_pubs: ' + e.message });
+    }
     const sqlFields = fields.map(fn => `${fn}=$(${fn})`).join(', ');
     const log = new LogEntry(req, 'Update fields: ' + fields.join(', '));
     data.id = log.subject = parseInt(req.params.id);

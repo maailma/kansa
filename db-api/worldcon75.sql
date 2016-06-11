@@ -22,15 +22,8 @@ CREATE TABLE IF NOT EXISTS People (
     membership MembershipStatus NOT NULL,
     can_hugo_nominate bool NOT NULL DEFAULT false,
     can_hugo_vote bool NOT NULL DEFAULT false,
-    can_site_select bool NOT NULL DEFAULT false
-);
-
-CREATE TABLE IF NOT EXISTS PaperPubs (
-    id SERIAL PRIMARY KEY,
-    people_id integer REFERENCES People NOT NULL,
-    name text NOT NULL,
-    address text NOT NULL,
-    country text NOT NULL
+    can_site_select bool NOT NULL DEFAULT false,
+    paper_pubs jsonb
 );
 
 CREATE TABLE IF NOT EXISTS Admins (
