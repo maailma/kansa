@@ -21,8 +21,8 @@ class Person {
     return [ 'can_hugo_nominate', 'can_hugo_vote', 'can_site_select' ];
   }
 
-  static get userTextFields() {
-    return [ 'legal_name', 'public_first_name', 'public_last_name', 'city', 'state', 'country' ];
+  static get userModFields() {
+    return [ 'legal_name', 'public_first_name', 'public_last_name', 'city', 'state', 'country', 'paper_pubs' ];
   }
 
   static get membershipTypes() {

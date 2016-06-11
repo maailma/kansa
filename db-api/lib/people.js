@@ -112,24 +112,29 @@ function addPerson(req, res, next) {
 
 function updatePerson(req, res, next) {
   const data = Object.assign({}, req.body);
-  const fieldSrc = req.session.user.member_admin ? Person.fields : Person.userTextFields;
+  const isMemberAdmin = req.session.user.member_admin;
+  const fieldSrc = isMemberAdmin ? Person.fields : Person.userModFields;
   const fields = fieldSrc.filter(fn => data.hasOwnProperty(fn));
-  if (!fields || fields.length == 0) {
-    res.status(400).json({ status: 'error', message: 'No valid parameters' });
-  } else {
-    if (fields.indexOf('paper_pubs') != -1) try {
-      data.paper_pubs = Person.cleanPaperPubs(data.paper_pubs);
-    } catch (e) {
-      return res.status(400).json({ status: 'error', message: 'paper_pubs: ' + e.message });
+  if (fields.length == 0) return res.status(400).json({ status: 'error', message: 'No valid parameters' });
+  let ppCond = '';
+  if (fields.indexOf('paper_pubs') >= 0) try {
+    data.paper_pubs = Person.cleanPaperPubs(data.paper_pubs);
+    if (!isMemberAdmin) {
+      if (data.paper_pubs) ppCond = 'AND paper_pubs IS NOT NULL';
+      else fields.splice(fields.indexOf('paper_pubs'), 1);
     }
-    const sqlFields = fields.map(fn => `${fn}=$(${fn})`).join(', ');
-    const log = new LogEntry(req, 'Update fields: ' + fields.join(', '));
-    data.id = log.subject = parseInt(req.params.id);
-    req.app.locals.db.tx(tx => tx.batch([
-      tx.none(`UPDATE People SET ${sqlFields} WHERE id=$(id)`, data),
-      tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
-    ]))
-      .then(() => { res.status(200).json({ status: 'success', updated: fields }); })
-      .catch(err => next(err));
+  } catch (e) {
+    return res.status(400).json({ status: 'error', message: 'paper_pubs: ' + e.message });
   }
+  const sqlFields = fields.map(fn => `${fn}=$(${fn})`).join(', ');
+  const log = new LogEntry(req, 'Update fields: ' + fields.join(', '));
+  data.id = log.subject = parseInt(req.params.id);
+  req.app.locals.db.tx(tx => tx.batch([
+    tx.one(`UPDATE People SET ${sqlFields} WHERE id=$(id) ${ppCond} RETURNING true`, data),
+    tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
+  ]))
+    .then(() => res.status(200).json({ status: 'success', updated: fields }))
+    .catch(err => (ppCond && !err[0].success && err[1].success && err[0].result.message == 'No data returned from the query.')
+      ? res.status(402).json({ status: 'error', message: 'Paper publications have not been enabled for this person' })
+      : next(err));
 }
