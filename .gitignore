@@ -1,3 +1,11 @@
+node_modules/
+
+# Stripe
+*secret-key.txt
+
+.idea
+.sw?
+
 ### https://raw.github.com/github/gitignore/8c9b77cb5c85f6464c0bb31abdf4cfcfdf6833bb/Scala.gitignore
 
 # app specific
@@ -24,9 +32,3 @@ project/plugins/project/
 # Scala-IDE specific
 .scala_dependencies
 .worksheet
-
-# Stripe spesific
-*secret-key.txt
-
-.idea
-.sw?
