@@ -1,5 +1,6 @@
 const cors = require('cors');
 const express = require('express');
+const http = require('http');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const session = require('express-session');
@@ -13,8 +14,15 @@ const admin = require('./lib/admin');
 const key = require('./lib/key');
 const log = require('./lib/log');
 const people = require('./lib/people');
+const PeopleStream = require('./lib/peoplestream');
 const user = require('./lib/user');
+
+const app = express();
+const server = http.createServer(app);
+const expressWs = require('express-ws')(app, server);
 const router = express.Router();
+const db = pgp(process.env.DATABASE_URL);
+const stream = new PeopleStream(db);
 
 // these are accessible without authentication
 router.get('/public/people', people.getPublicPeople);
@@ -33,6 +41,10 @@ router.all('/logout', user.logout);
 
 router.get('/people', people.getPeople);
 router.post('/people', people.addPerson);
+router.ws('/people', (ws, req) => {
+  if (req.session.user.member_admin) stream.addClient(ws);
+  else ws.close(4001, 'Unauthorized');
+});
 
 router.all('/people/:id*', user.verifyPeopleAccess);
 router.get('/people/:id', people.getPerson);
@@ -46,8 +58,7 @@ router.all('/admin*', admin.isAdminAdmin);
 router.get('/admin', admin.getAdmins);
 router.post('/admin', admin.setAdmin);
 
-const app = express();
-app.locals.db = pgp(process.env.DATABASE_URL);
+app.locals.db = db;
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -69,6 +80,9 @@ app.use(session({
 }));
 app.use('/', router);
 
+// express-ws monkeypatching breaks something, so need a catch-all case for it
+app.ws('/*', (ws, req) => ws.close(4004, 'Not Found'));
+
 // no match from router -> 404
 app.use((req, res, next) => {
   const err = new Error('Not Found');
@@ -79,7 +93,7 @@ app.use((req, res, next) => {
 // error handler
 const isDevEnv = (app.get('env') === 'development');
 app.use((err, req, res, next) => {
-  console.error(err);
+  //console.error(err);
   res.status(err.status || 500);
   res.json({
     status: 'error',
@@ -87,4 +101,4 @@ app.use((err, req, res, next) => {
   });
 });
 
-module.exports = app;
+module.exports = { app, server };

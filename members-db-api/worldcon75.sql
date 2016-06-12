@@ -66,6 +66,19 @@ CREATE TRIGGER set_last_modified_people
     EXECUTE PROCEDURE set_last_modified();
 
 
+-- allow clients to listen to changes
+CREATE FUNCTION people_notify() RETURNS trigger as $$
+BEGIN
+    PERFORM pg_notify('people', row_to_json(NEW)::text);
+    RETURN null;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER people_notify
+    AFTER INSERT OR UPDATE ON People
+    FOR EACH ROW EXECUTE PROCEDURE people_notify();
+
+
 -- from node_modules/connect-pg-simple/table.sql
 CREATE TABLE "session" (
     "sid" varchar NOT NULL COLLATE "default",
