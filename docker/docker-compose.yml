@@ -14,9 +14,19 @@ proxy:
     - "443:443"
   links:
    - app
+   - members-db
   volumes:
    - /etc/letsencrypt:/etc/letsencrypt
    - ../hakkapeliitta/public/:/usr/share/nginx/html
+
+members-db:
+  build: ../members-db-api/
+  env_file: .env
+  entrypoint: ./wait-for-it.sh postgres:5432 -- npm start
+  links:
+    - postgres
+  volumes:
+    - ../members-db-api/.env:/usr/src/app/.env
 
 postgres:
   image: postgres:9.5
