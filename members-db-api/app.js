@@ -41,10 +41,6 @@ router.all('/logout', user.logout);
 
 router.get('/people', people.getPeople);
 router.post('/people', people.addPerson);
-router.ws('/people', (ws, req) => {
-  if (req.session.user.member_admin) stream.addClient(ws);
-  else ws.close(4001, 'Unauthorized');
-});
 
 router.all('/people/:id*', user.verifyPeopleAccess);
 router.get('/people/:id', people.getPerson);
@@ -78,10 +74,13 @@ app.use(session({
     pruneSessionInterval: 24 * 60 * 60  // 1 day
   })
 }));
-app.use('/', router);
-
-// express-ws monkeypatching breaks something, so need a catch-all case for it
+app.ws('/people', (ws, req) => {
+  if (req.session.user.member_admin) stream.addClient(ws);
+  else ws.close(4001, 'Unauthorized');
+});
 app.ws('/*', (ws, req) => ws.close(4004, 'Not Found'));
+  // express-ws monkeypatching breaks the server on unhandled paths
+app.use('/', router);
 
 // no match from router -> 404
 app.use((req, res, next) => {
