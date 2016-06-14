@@ -1,18 +1,30 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
+import { List, Map } from 'immutable';
 
 class App extends React.Component {
   render() {
-    const pl = this.props.people.toArray().map(p => <li key={p}>{p}</li>);
+    const people = this.props.people
+      .toSeq()
+      .filter(p => p)
+      .map(p => <li key={p.get('id')}>{
+        p.get('id') + ' ' + p.get('legal_name')
+      }</li>)
+      .toJS();
     return (
-      <ul>{pl}</ul>
+      <div>
+        <b>Email:</b> {this.props.user.get('email')}
+        <hr/>
+        <b>People:</b> <ul>{people}</ul>
+      </div>
     );
   }
   // shouldComponentUpdate(nextProps, nextState) { return false; }
 }
 
 App.propTypes = {
-  people: PropTypes.object.isRequired
+  people: React.PropTypes.instanceOf(List).isRequired,
+  user: React.PropTypes.instanceOf(Map).isRequired
 };
 
 export default connect(state => state)(App);
