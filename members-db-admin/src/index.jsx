@@ -11,19 +11,29 @@ import App from './components/App';
 import people from './reducers/people';
 import user from './reducers/user';
 
-const api = new API('http://localhost:3000/');
+const apiHost = 'localhost:3000';
+const api = new API(`http://${apiHost}/`);
 const reducer = combineReducers({ people, user });
 const store = createStore(reducer);
 
 api.GET('user')
-  .then(response => response.json())
   .then(data => store.dispatch({ type: 'LOGIN', data }))
-  .catch(e => console.error(e));
-
-api.GET('people')
-  .then(response => response.json())
+  .then(() => api.GET('people'))
   .then(data => store.dispatch({ type: 'INIT PEOPLE', data }))
-  .catch(e => console.error(e));
+  .then(() => {
+    const ws = new WebSocket(`ws://${apiHost}/people`);
+    ws.onmessage = msg => {
+      const data = JSON.parse(msg.data);
+      store.dispatch({ type: 'SET PERSON', data });
+    };
+    ws.onclose = ev => console.warn('WebSocket closed', ev);
+    ws.onerror = ev => {
+      const error = new Error('WebSocket error!');
+      error.ws = ws;
+      throw error;
+    };
+  })
+  .catch(e => { throw e; });
 
 render(
   <Provider store={store}>

@@ -17,7 +17,7 @@ export default function(state = List(), action) {
         console.warn(`${action.type} expects positive integer id`, action.data);
         return state;
       }
-      return state.set(id, action.data);
+      return state.set(id, fromJS(action.data));
 
     case 'LOGOUT':
       return List();
