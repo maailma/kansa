@@ -11,22 +11,21 @@ class App extends React.Component {
   }
 
   render() {
-    const people = this.props.people
-      .toSeq()
-      .filter(p => p)
-      .map(p => <li key={p.get('id')}>{
-        p.get('id') + ' ' + p.get('legal_name')
-      }</li>)
-      .toJS();
+    const { user, people } = this.props;
     return (
       <div>
-        <b>Email:</b> {this.props.user.get('email')}
-        <hr/>
-        <MemberTable list={this.props.people} />
+        <div style={{ position: 'fixed', right: 0, height: '30px' }}>
+          <b>Email:</b> {user.get('email')}
+          <hr/>
+        </div>
+        <div style={{ display: 'flex', height: 'calc(100vh - 30px)' }}>
+          <div style={{ flex: '1 1 auto' }}>
+            <MemberTable list={people} />
+          </div>
+        </div>
       </div>
     );
   }
-  // shouldComponentUpdate(nextProps, nextState) { return false; }
 }
 
 export default connect(state => state)(App);

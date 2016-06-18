@@ -3,9 +3,8 @@ import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 
-//import 'styles/app.scss';
-//import 'bootstrap/dist/css/bootstrap.css';
 import 'react-virtualized/styles.css';
+import './styles/app.css';
 
 import API from './api';
 import App from './components/App';
@@ -30,7 +29,7 @@ api.GET('user')
     ws.onclose = ev => console.warn('WebSocket closed', ev);
     ws.onerror = ev => console.error('WebSocket error!', ws, ev);
   })
-  .catch(e => console.error('Server connection failed!', e));
+  .catch(e => console.error(e));
 
 render(
   <Provider store={store}>
