@@ -10,6 +10,8 @@ import { AutoSizer, FlexTable, FlexColumn, SortDirection } from 'react-virtualiz
 
 import styles from '../styles/MemberTable.css'
 
+import MemberDialog from './MemberDialog';
+
 export default class MemberTable extends React.Component {
   static propTypes = {
     api: React.PropTypes.object.isRequired,
@@ -20,6 +22,7 @@ export default class MemberTable extends React.Component {
     super(props, context)
 
     this.state = {
+      selectedMember: null,
       headerHeight: 30,
       overscanRowCount: 10,
       rowHeight: 30,
@@ -33,6 +36,7 @@ export default class MemberTable extends React.Component {
 
   render() {
     const {
+      selectedMember,
       headerHeight,
       overscanRowCount,
       rowHeight,
@@ -48,8 +52,9 @@ export default class MemberTable extends React.Component {
 
     return (
       <AutoSizer>
-        {({ height, width }) => (
+        {({ height, width }) => ([
           <FlexTable
+            key='table'
             headerClassName={styles.headerColumn}
             headerHeight={headerHeight}
             height={height}
@@ -59,10 +64,11 @@ export default class MemberTable extends React.Component {
             rowGetter={({ index }) => list.get(index)}
             rowCount={list.size}
             scrollToIndex={scrollToIndex}
-            sort={({ sortBy, sortDirection }) => { this.setState({ sortBy, sortDirection }) }}
+            sort={({ sortBy, sortDirection }) => this.setState({ sortBy, sortDirection })}
             sortBy={sortBy}
             sortDirection={sortDirection}
             width={width}
+            onRowClick={({ index }) => this.setState({ selectedMember: list.get(index).get('id') })}
           >
             <FlexColumn dataKey='member_number' label='#' width={30} />
             <FlexColumn dataKey='membership' label='Type' width={105} />
@@ -74,8 +80,27 @@ export default class MemberTable extends React.Component {
             <FlexColumn dataKey='loc' label='Location' width={120} flexGrow={1}
               cellDataGetter = { ({ rowData }) => this._fullLocation(rowData) }
             />
-          </FlexTable>
-        )}
+          </FlexTable>,
+          selectedMember !== null && list.size && <MemberDialog
+            key='dialog'
+            formId='member-form'
+            cancel={() => this.setState({ selectedMember: null })}
+            ok={({ id, form }) => {
+              const prev = this.props.list.get(id);
+              const update = {};
+              const inputs = form.querySelectorAll('input');
+              for (let i = 0; i < inputs.length; ++i) {
+                const { name, value } = inputs[i];
+                const v0 = prev.get(name, '');
+                if (value != v0) update[name] = value;
+              }
+              this.props.api.POST(`people/${id}`, update)
+                .then(() => this.setState({ selectedMember: null }))
+                .catch(e => console.error(e));
+            }}
+            member={this.props.list.get(selectedMember)}
+          />
+        ])}
       </AutoSizer>
     )
   }

@@ -30,3 +30,11 @@
   font-size: 1em;
   color: #bdbdbd;
 }
+
+.memberDialog {
+  padding-left: 0 !important;
+}
+
+.memberInput {
+  margin-left: 24px;
+}
