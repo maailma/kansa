@@ -12,11 +12,12 @@ module.exports = {
           presets: [ 'es2015', 'react' ],
           plugins: [ 'transform-class-properties' ]
         }
-      }
+      },
+      { test: /\.css$/, loader: 'style!css' }
     ]
   },
   resolve: {
-    extensions: ['', '.js', '.jsx']
+    extensions: [ '', '.js', '.jsx', '.css' ]
   },
   devServer: {
     contentBase: './dist'
