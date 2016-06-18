@@ -6,12 +6,13 @@ import MemberTable from './MemberTable';
 
 class App extends React.Component {
   static propTypes = {
+    api: React.PropTypes.object.isRequired,
     people: React.PropTypes.instanceOf(List).isRequired,
     user: React.PropTypes.instanceOf(Map).isRequired
   }
 
   render() {
-    const { user, people } = this.props;
+    const { api, user, people } = this.props;
     return (
       <div>
         <div style={{ position: 'fixed', right: 0, height: '30px' }}>
@@ -20,7 +21,7 @@ class App extends React.Component {
         </div>
         <div style={{ display: 'flex', height: 'calc(100vh - 30px)' }}>
           <div style={{ flex: '1 1 auto' }}>
-            <MemberTable list={people} />
+            <MemberTable api={api} list={people} />
           </div>
         </div>
       </div>

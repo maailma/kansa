@@ -12,6 +12,7 @@ import styles from '../styles/MemberTable.css'
 
 export default class MemberTable extends React.Component {
   static propTypes = {
+    api: React.PropTypes.object.isRequired,
     list: React.PropTypes.instanceOf(List).isRequired
   }
 

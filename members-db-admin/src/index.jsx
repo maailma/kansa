@@ -1,7 +1,13 @@
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
+
+// Needed by material-ui for onTouchTap, see http://stackoverflow.com/a/34015469/988941
+import injectTapEventPlugin from 'react-tap-event-plugin';
+injectTapEventPlugin();
 
 import 'react-virtualized/styles.css';
 import './styles/app.css';
@@ -33,7 +39,9 @@ api.GET('user')
 
 render(
   <Provider store={store}>
-    <App />
+    <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <App api={api} />
+    </MuiThemeProvider>
   </Provider>,
   document.getElementById('app')
 );
