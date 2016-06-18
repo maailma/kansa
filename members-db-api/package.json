@@ -1,10 +1,20 @@
 {
   "name": "worldcon-db-api",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "description": "API & database for members",
+  "author": "",
   "private": true,
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/worldcon75/api.git"
+  },
   "scripts": {
     "start": "node -r dotenv/config ./bin/www",
     "init-db": "psql -v ON_ERROR_STOP=1 -f worldcon75.sql"
+  },
+  "devDependencies": {
+    "dotenv": "^2.0.0"
   },
   "dependencies": {
     "bluebird": "^3.4.0",
@@ -24,8 +34,5 @@
     "sendgrid": "^2.0.0",
     "tiny-frontmatter": "^1.0.0",
     "wordwrap": "^1.0.0"
-  },
-  "devDependencies": {
-    "dotenv": "^2.0.0"
   }
 }

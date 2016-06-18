@@ -2,14 +2,18 @@
   "name": "members-db-admin",
   "version": "0.1.0",
   "description": "Admin front-end for members-db-api",
-  "main": "index.js",
+  "author": "",
+  "private": true,
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/worldcon75/api.git"
+  },
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server -d",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "UNLICENSED",
   "devDependencies": {
     "babel-core": "^6.9.1",
     "babel-loader": "^6.2.4",
