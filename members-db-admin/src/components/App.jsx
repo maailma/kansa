@@ -3,6 +3,11 @@ import { connect } from 'react-redux';
 import { List, Map } from 'immutable';
 
 class App extends React.Component {
+  static propTypes = {
+    people: React.PropTypes.instanceOf(List).isRequired,
+    user: React.PropTypes.instanceOf(Map).isRequired
+  }
+
   render() {
     const people = this.props.people
       .toSeq()
@@ -21,10 +26,5 @@ class App extends React.Component {
   }
   // shouldComponentUpdate(nextProps, nextState) { return false; }
 }
-
-App.propTypes = {
-  people: React.PropTypes.instanceOf(List).isRequired,
-  user: React.PropTypes.instanceOf(Map).isRequired
-};
 
 export default connect(state => state)(App);
