@@ -27,13 +27,9 @@ api.GET('user')
       store.dispatch({ type: 'SET PERSON', data });
     };
     ws.onclose = ev => console.warn('WebSocket closed', ev);
-    ws.onerror = ev => {
-      const error = new Error('WebSocket error!');
-      error.ws = ws;
-      throw error;
-    };
+    ws.onerror = ev => console.error('WebSocket error!', ws, ev);
   })
-  .catch(e => { throw e; });
+  .catch(e => console.error('Server connection failed!', e));
 
 render(
   <Provider store={store}>

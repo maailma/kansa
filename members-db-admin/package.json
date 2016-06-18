@@ -4,8 +4,8 @@
   "description": "Admin front-end for members-db-api",
   "main": "index.js",
   "scripts": {
-    "prestart": "webpack -d",
-    "start": "webpack-dev-server",
+    "build": "webpack",
+    "start": "webpack-dev-server -d",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
