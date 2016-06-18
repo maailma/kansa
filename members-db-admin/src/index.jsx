@@ -5,6 +5,7 @@ import { combineReducers, createStore } from 'redux';
 
 //import 'styles/app.scss';
 //import 'bootstrap/dist/css/bootstrap.css';
+import 'react-virtualized/styles.css';
 
 import API from './api';
 import App from './components/App';

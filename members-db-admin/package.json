@@ -23,6 +23,7 @@
     "css-loader": "^0.23.1",
     "immutable": "^3.8.1",
     "react": "^15.1.0",
+    "react-addons-shallow-compare": "^15.1.0",
     "react-dom": "^15.1.0",
     "react-redux": "^4.4.5",
     "redux": "^3.5.2",
@@ -30,5 +31,8 @@
     "webpack": "^1.13.1",
     "webpack-dev-server": "^1.14.1",
     "whatwg-fetch": "^1.0.0"
+  },
+  "dependencies": {
+    "react-virtualized": "^7.7.1"
   }
 }

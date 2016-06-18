@@ -2,6 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { List, Map } from 'immutable';
 
+import MemberTable from './MemberTable';
+
 class App extends React.Component {
   static propTypes = {
     people: React.PropTypes.instanceOf(List).isRequired,
@@ -20,7 +22,7 @@ class App extends React.Component {
       <div>
         <b>Email:</b> {this.props.user.get('email')}
         <hr/>
-        <b>People:</b> <ul>{people}</ul>
+        <MemberTable list={this.props.people} />
       </div>
     );
   }
