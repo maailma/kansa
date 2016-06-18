@@ -27,4 +27,17 @@ export default class API {
     return fetch(uri, { credentials: 'include' })
       .then(response => API.parse(response));
   }
+
+  POST(cmd, body) {
+    const uri = this.path(cmd);
+    const opt = { credentials: 'include', method: 'POST' };
+    if (typeof body == 'string') {
+      opt.body = body;
+    } else {
+      opt.headers = { 'Content-Type': 'application/json' };
+      opt.body = JSON.stringify(body);
+    }
+    return fetch(uri, opt)
+      .then(response => API.parse(response));
+  }
 }
