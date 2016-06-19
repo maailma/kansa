@@ -10,7 +10,8 @@ CREATE TYPE MembershipStatus AS ENUM ('NonMember','Supporter','KidInTow','Child'
 CREATE TABLE IF NOT EXISTS People (
     id SERIAL PRIMARY KEY,
     last_modified timestamptz DEFAULT now(),
-    member_number integer,
+    membership MembershipStatus NOT NULL,
+    member_number integer UNIQUE,
     legal_name text NOT NULL,
     public_first_name text,
     public_last_name text,
@@ -19,7 +20,6 @@ CREATE TABLE IF NOT EXISTS People (
     state text,
     country text,
     badge_text text,
-    membership MembershipStatus NOT NULL,
     can_hugo_nominate bool NOT NULL DEFAULT false,
     can_hugo_vote bool NOT NULL DEFAULT false,
     can_site_select bool NOT NULL DEFAULT false,
