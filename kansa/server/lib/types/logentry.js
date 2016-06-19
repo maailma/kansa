@@ -14,7 +14,11 @@ class LogEntry {
   }
 
   constructor(req, desc = '') {
-    this.timestamp = null; //new Date().toISOString();
+    this.timestamp = null;
+    if (req.session && req.session.user && req.session.user.member_admin && req.body && req.body.timestamp) {
+      const ts = new Date(req.body.timestamp);
+      if (ts > 0) this.timestamp = ts.toISOString();
+    }
     this.client_ip = req.ip;
     this.client_ua = req.headers['user-agent'] || null;
     this.author = req.session.user && req.session.user.email || null;
