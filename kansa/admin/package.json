@@ -1,7 +1,7 @@
 {
-  "name": "members-db-admin",
+  "name": "kansa-admin",
   "version": "0.1.0",
-  "description": "Admin front-end for members-db-api",
+  "description": "Admin front-end for Kansa",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
