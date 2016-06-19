@@ -15,6 +15,7 @@ const key = require('./lib/key');
 const log = require('./lib/log');
 const people = require('./lib/people');
 const PeopleStream = require('./lib/peoplestream');
+const upgrade = require('./lib/upgrade');
 const user = require('./lib/user');
 
 const app = express();
@@ -46,6 +47,7 @@ router.all('/people/:id*', user.verifyPeopleAccess);
 router.get('/people/:id', people.getPerson);
 router.post('/people/:id', people.updatePerson);
 router.get('/people/:id/log', log.getPersonLog);
+router.post('/people/:id/upgrade', upgrade.upgradePerson);
 
 router.get('/user', user.getInfo);
 router.get('/user/log', log.getUserLog);
