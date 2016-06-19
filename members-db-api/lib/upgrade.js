@@ -19,34 +19,31 @@ function upgradePaperPubs(req, res, next, { paper_pubs }) {
       : next(err));
 }
 
-function upgradeMembership(req, res, next, { membership, member_number, paper_pubs }) {
-  const id = parseInt(req.params.id);
-  const fields = [ 'membership', 'member_number' ];
-  if (paper_pubs) fields.push('paper_pubs');
-  req.app.locals.db.tx(tx => tx.sequence((i, data) => { switch (i) {
+function upgradeMembership(req, res, next, data) {
+  const fields = [ 'membership', 'member_number', 'paper_pubs' ];
+  data.id = parseInt(req.params.id);
+  req.app.locals.db.tx(tx => tx.sequence((i, prev) => { switch (i) {
     case 0:
-      return tx.one('SELECT membership, member_number FROM People WHERE id=$1', id);
+      return tx.one('SELECT membership, member_number FROM People WHERE id=$1', data.id);
     case 1:
-      const prevTypeIdx = Person.membershipTypes.indexOf(data.membership);
-      const nextTypeIdx = Person.membershipTypes.indexOf(membership);
-      if (nextTypeIdx <= prevTypeIdx) throw new InputError(`Can't "upgrade" from ${data.membership} to ${membership}`);
-      if (member_number) {
-        if (parseInt(data.member_number)) throw new InputError('Member number already set');
-        return {};
-      } else {
-        return tx.one('SELECT max(member_number) FROM People');
-      }
+      const prevTypeIdx = Person.membershipTypes.indexOf(prev.membership);
+      const nextTypeIdx = Person.membershipTypes.indexOf(data.membership);
+      if (nextTypeIdx <= prevTypeIdx) throw new InputError(`Can't "upgrade" from ${prev.membership} to ${data.membership}`);
+      const prevNumber = parseInt(prev.member_number);
+      if (data.member_number && prevNumber) throw new InputError('Member number already set');
+      if (data.member_number || prevNumber) return {};
+      return tx.one('SELECT max(member_number) FROM People');
     case 2:
-      if (data.hasOwnProperty('max')) member_number = Person.nextMemberNumber(data.max);
-      const sqlFields = fields.map(fn => `${fn}=$(${fn})`).join(', ');
-      return tx.one(`UPDATE People SET ${sqlFields} WHERE id=$(id) RETURNING true`, { id, membership, member_number, paper_pubs });
+      if (prev.hasOwnProperty('max')) data.member_number = Person.nextMemberNumber(prev.max);
+      const sqlFields = fields.filter(fn => data[fn]).map(fn => `${fn}=$(${fn})`).join(', ');
+      return tx.one(`UPDATE People SET ${sqlFields} WHERE id=$(id) RETURNING true`, data);
     case 3:
-      const log = new LogEntry(req, `Upgrade to ${membership}`);
-      if (paper_pubs) log.description += ' and add paper pubs';
-      log.subject = id;
+      const log = new LogEntry(req, `Upgrade to ${data.membership}`);
+      if (data.paper_pubs) log.description += ' and add paper pubs';
+      log.subject = data.id;
       return tx.none(`INSERT INTO Log ${log.sqlValues}`, log);
   }}))
-    .then(() => { res.status(200).json({ status: 'success', updated: fields }); })
+    .then(() => { res.status(200).json({ status: 'success', updated: fields.filter(fn => data[fn]) }); })
     .catch(err => next(err));
 }
 
