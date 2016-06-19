@@ -1,4 +1,3 @@
-const damm = require('damm');
 const LogEntry = require('./types/logentry');
 const Person = require('./types/person');
 
@@ -95,11 +94,7 @@ function addPerson(req, res, next) {
     case 0:
       return setNumber ? tx.one('SELECT max(member_number) FROM People') : {};
     case 1:
-      if (setNumber) {
-        const root = data.max ? Math.floor(data.max / 10) + 1 : 1;
-        const nStr = damm.append(root.toString());
-        person.data.member_number = parseInt(nStr);
-      }
+      if (setNumber) person.data.member_number = Person.nextMemberNumber(data.max);
       return tx.one(`INSERT INTO People ${person.sqlValues} RETURNING id`, person.data);
     case 2:
       const log = new LogEntry(req, 'Add new person');

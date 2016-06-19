@@ -1,3 +1,4 @@
+const damm = require('damm');
 const util = require('../util');
 
 class Person {
@@ -34,6 +35,17 @@ class Person {
     return [ 'name', 'address', 'country' ];  // text
   }
 
+  static cleanMemberNumber(ns) {
+    const n = parseInt(ns);
+    if (!isNaN(n) && n > 0 && damm.verify(n.toString())) return n;
+    throw new Error('Invalid member number: ' + JSON.stringify(ns));
+  }
+
+  static cleanMemberType(ms) {
+    if (Person.membershipTypes.indexOf(ms) > -1) return ms;
+    throw new Error('Invalid membership type: ' + JSON.stringify(ms));
+  }
+
   static cleanPaperPubs(pp) {
     if (!util.isTrueish(pp)) return null;
     if (typeof pp == 'string') pp = JSON.parse(pp);
@@ -44,10 +56,16 @@ class Person {
     }, {});
   }
 
+  static nextMemberNumber(prevMax) {
+    const root = prevMax ? Math.floor(prevMax / 10) + 1 : 1;
+    const nStr = damm.append(root.toString());
+    return parseInt(nStr);
+  }
+
   constructor(src) {
     if (!src || !src.legal_name || !src.membership) throw new Error('Missing data for new Person (required: legal_name, membership)');
-    if (Person.membershipTypes.indexOf(src.membership) === -1) throw new Error('Invalid membership type for new Person');
     this.data = Object.assign({}, src);
+    Person.cleanMemberType(this.data.membership);
     Person.boolFields.forEach(fn => util.forceBool(this.data, fn));
     util.forceInt(this.data, 'member_number');
     this.data.paper_pubs = Person.cleanPaperPubs(this.data.paper_pubs);
