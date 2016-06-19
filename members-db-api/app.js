@@ -92,12 +92,11 @@ app.use((req, res, next) => {
 // error handler
 const isDevEnv = (app.get('env') === 'development');
 app.use((err, req, res, next) => {
-  //console.error(err);
-  res.status(err.status || 500);
-  res.json({
-    status: 'error',
-    message: isDevEnv ? err : err.message
-  });
+  const error = err.error || err;
+  const data = { status: 'error', message: error.message };
+  if (isDevEnv) data.error = err;
+  const status = err.status || error.status || error.name == 'InputError' && 400 || 500;
+  res.status(status).json(data);
 });
 
 module.exports = { app, server };
