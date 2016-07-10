@@ -10,10 +10,12 @@ const DEFAULT_EMAIL = 'registration@worldcon.fi';
 
 const loginUrl = process.argv[2];
 if (loginUrl.indexOf('/login') === -1) {
-  console.error('Usage: node index.js \'https://api.server/login?...\' < data.csv > skipped.json');
+  console.error('Usage: node index.js \'https://api.server/login?...\' [--req-member-number] < data.csv > skipped.json');
   process.exit(1);
 }
 const apiRoot = loginUrl.slice(0, loginUrl.indexOf('/login'));
+
+const reqMemberNumber = process.argv.indexOf('--req-member-number') !== -1;
 
 let loop = null;
 parser.on('readable', () => {
@@ -26,6 +28,9 @@ parser.on('readable', () => {
         console.log(JSON.stringify(rec));
       } else if (!rec.email && !DEFAULT_EMAIL) {
         console.error(`Skipped ${tag} due to missing e-mail address`);
+        console.log(JSON.stringify(rec));
+      } else if (reqMemberNumber && !rec.member_number) {
+        console.error(`Skipped ${tag} due to missing member number`);
         console.log(JSON.stringify(rec));
       } else {
         if (!rec.email) rec.email = DEFAULT_EMAIL;
