@@ -38,7 +38,7 @@ parser.on('readable', () => {
       clearInterval(loop);
       loop = null;
     }
-  }, 1);
+  }, 10);  // delay required to not saturate server
 });
 
 fetch(loginUrl).then(parseResponse)
