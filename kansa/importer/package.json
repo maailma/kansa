@@ -17,6 +17,7 @@
     "colors": "^1.1.2",
     "csv-parse": "^1.1.1",
     "fetch-cookie": "^0.1.2",
+    "ldjson-stream": "^1.2.1",
     "node-fetch": "^1.5.3"
   }
 }

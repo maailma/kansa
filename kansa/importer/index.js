@@ -1,58 +1,64 @@
 process.argv.push('--color');
 const colors = require('colors/safe');
 const fetch = require('fetch-cookie')(require('node-fetch'));
-const parser = require('csv-parse')({
-  columns: true,
-  skip_empty_lines: true
-});
+const csvParse = require('csv-parse');
+const ldj = require('ldjson-stream');
 
+const csvOptions = { columns: true, skip_empty_lines: true };
 const DEFAULT_EMAIL = 'registration@worldcon.fi';
 
 const loginUrl = process.argv[2];
 if (loginUrl.indexOf('/login') === -1) {
-  console.error('Usage: node index.js \'https://api.server/login?...\' [--req-member-number] < data.csv > skipped.json');
+  console.error('Usage: node index.js \'https://api.server/login?...\' [--json] [--req-member-number] < data.csv > skipped.json');
   process.exit(1);
 }
 const apiRoot = loginUrl.slice(0, loginUrl.indexOf('/login'));
-
+const isJSON = process.argv.indexOf('--json') !== -1;
 const reqMemberNumber = process.argv.indexOf('--req-member-number') !== -1;
 
-let loop = null;
-parser.on('readable', () => {
-  if (!loop) loop = setInterval(() => {
-    const rec = parser.read();
-    if (rec) {
-      const tag = `"${rec.legal_name}" <${rec.email}>`;
-      if (rec.Issues) {
-        console.error(`Skipped ${tag} due to open issue: ${rec.Issues}`);
-        console.log(JSON.stringify(rec));
-      } else if (!rec.email && !DEFAULT_EMAIL) {
-        console.error(`Skipped ${tag} due to missing e-mail address`);
-        console.log(JSON.stringify(rec));
-      } else if (reqMemberNumber && !rec.member_number) {
-        console.error(`Skipped ${tag} due to missing member number`);
-        console.log(JSON.stringify(rec));
-      } else {
-        if (!rec.email) rec.email = DEFAULT_EMAIL;
-        handle(rec, tag).catch(err => {
-          console.error(colors.red(`Error on ${tag}! ${err.message}`));
-          console.log(JSON.stringify(rec));
-        });
-      }
-    } else {
-      clearInterval(loop);
-      loop = null;
-    }
-  }, 10);  // delay required to not saturate server
-});
 
-fetch(loginUrl).then(parseResponse)
-  .then(login => {
-    console.error(`Logged in as ${colors.green(login.email)} on ${colors.green(apiRoot)}\n`);
+fetch(loginUrl)
+  .then(parseResponse)
+  .then(res => {
+    console.error(`Logged in as ${colors.green(res.email)} on ${colors.green(apiRoot)}\n`);
+    const parser = isJSON ? ldj.parse() : csvParse(csvOptions);
     process.stdin.setEncoding('utf8');
-    process.stdin.pipe(parser);
+    let loop = null;
+    process.stdin.pipe(parser)
+      .on('readable', () => {
+        if (!loop) loop = setInterval(() => {
+          const rec = parser.read();
+          if (rec) {
+            filter(rec);
+          } else {
+            clearInterval(loop);
+            loop = null;
+          }
+        }, 10);  // delay required to not saturate server
+      });
   })
   .catch(err => console.error(err));
+
+
+function filter(rec) {
+  const tag = `"${rec.legal_name}" <${rec.email}>`;
+  if (rec.Issues) {
+    console.error(`Skipped ${tag} due to open issue: ${rec.Issues}`);
+    console.log(JSON.stringify(rec));
+  } else if (!rec.email && !DEFAULT_EMAIL) {
+    console.error(`Skipped ${tag} due to missing e-mail address`);
+    console.log(JSON.stringify(rec));
+  } else if (reqMemberNumber && !rec.member_number) {
+    console.error(`Skipped ${tag} due to missing member number`);
+    console.log(JSON.stringify(rec));
+  } else {
+    if (!rec.email) rec.email = DEFAULT_EMAIL;
+    handle(rec, tag).catch(err => {
+      console.error(colors.red(`Error on ${tag}! ${err.message}`));
+      console.log(JSON.stringify(rec));
+    });
+  }
+}
 
 function handle(rec, tag) {
   let data;
