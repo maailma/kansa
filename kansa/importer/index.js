@@ -10,16 +10,15 @@ const DEFAULT_EMAIL = 'registration@worldcon.fi';
 
 const loginUrl = process.argv[2];
 if (loginUrl.indexOf('/login') === -1) {
-  console.error('Usage: node index.js \'https://api.server/login?...\' [--json] [--req-member-number] < data.csv > skipped.json');
+  console.error('Usage: node index.js \'https://api.server/login?...\' [--json] < data.csv > skipped.json');
   process.exit(1);
 }
 const apiRoot = loginUrl.slice(0, loginUrl.indexOf('/login'));
 const isJSON = process.argv.indexOf('--json') !== -1;
-const reqMemberNumber = process.argv.indexOf('--req-member-number') !== -1;
 
 
 const paperPubs = new PaperPubs(process.argv, csvOptions);
-const sum = { rec: 0, join: 0, upgrade: 0, paper: 0, issueSkip: 0, emailSkip: 0, numberSkip: 0, error: 0 };
+const sum = { rec: 0, join: 0, upgrade: 0, paper: 0, issueSkip: 0, emailSkip: 0, error: 0 };
 
 fetch(loginUrl)
   .then(parseResponse)
@@ -27,13 +26,15 @@ fetch(loginUrl)
     console.error(`Logged in as ${colors.green(res.email)} on ${colors.green(apiRoot)}\n`);
     const parser = isJSON ? ldj.parse() : csvParse(csvOptions);
     process.stdin.setEncoding('utf8');
+    const stage2 = [];
     let loop = null;
     process.stdin.pipe(parser)
       .on('readable', () => {
         if (!loop) loop = setInterval(() => {
           const rec = parser.read();
           if (rec) {
-            filter(rec);
+            ++sum.rec;
+            if (!filter(rec, true)) stage2.push(rec);
           } else {
             clearInterval(loop);
             loop = null;
@@ -41,36 +42,46 @@ fetch(loginUrl)
         }, 10);  // delay required to not saturate server
       })
       .on('end', () => {
-        setTimeout(() => {
-          console.error(`\n==== Import done. Read ${sum.rec} records.`);
-          console.error(`Successfully handled ${sum.join} joins, ${sum.upgrade} upgrades, and ${sum.paper} paper pubs sales.`);
-          console.error(`Skipped ${sum.issueSkip} due to issues, ${sum.emailSkip} due to missing email, and ${sum.numberSkip} due to missing member number.`);
-          console.error(`Encountered ${sum.error} errors.`);
-          console.error(`${paperPubs.remaining().length}/${paperPubs.data.length} paper pubs left unhandled.`);
-        }, 1000);
+        let i = -1;
+        const endLoop = setInterval(() => {
+          if (++i < stage2.length) {
+            filter(stage2[i], false);
+          } else {
+            clearInterval(endLoop);
+            setTimeout(() => {
+              console.error(`\n==== Import done. Read ${sum.rec} records.`);
+              console.error(`Successfully handled ${sum.join} joins, ${sum.upgrade} upgrades, and ${sum.paper} paper pubs sales.`);
+              console.error(`Assigned member numbers for ${stage2.length} new members.`);
+              console.error(`Skipped ${sum.issueSkip} due to issues and ${sum.emailSkip} due to missing email.`);
+              console.error(`Encountered ${sum.error} errors.`);
+              console.error(`${paperPubs.remaining().length}/${paperPubs.data.length} paper pubs left unhandled.`);
+            }, 1000);
+          }
+        }, 10);  // delay required to not saturate server
       });
   })
   .catch(err => console.error(err));
 
 
-function filter(rec) {
-  ++sum.rec;
+function filter(rec, reqMemberNumber) {
   const tag = `"${rec.legal_name}" <${rec.email}>`;
   if (rec.Issues) {
     ++sum.issueSkip;
     console.error(`Skipped ${tag} due to open issue: ${rec.Issues}`);
     rec._skip = 'has issue';
     console.log(JSON.stringify(rec));
+    return true;
+
   } else if (!rec.email && !DEFAULT_EMAIL) {
     ++sum.emailSkip;
     console.error(`Skipped ${tag} due to missing e-mail address`);
     rec._skip = 'no email';
     console.log(JSON.stringify(rec));
+    return true;
+
   } else if (reqMemberNumber && !rec.member_number) {
-    ++sum.numberSkip;
-    console.error(`Skipped ${tag} due to missing member number`);
-    rec._skip = 'no member number';
-    console.log(JSON.stringify(rec));
+    return false;
+
   } else {
     if (!rec.email) rec.email = DEFAULT_EMAIL;
     handle(rec, tag).catch(err => {
@@ -79,6 +90,7 @@ function filter(rec) {
       rec._skip = 'error: ' + err.message;
       console.log(JSON.stringify(rec));
     });
+    return true;
   }
 }
 
