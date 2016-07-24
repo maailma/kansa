@@ -44,17 +44,21 @@ function filter(rec) {
   const tag = `"${rec.legal_name}" <${rec.email}>`;
   if (rec.Issues) {
     console.error(`Skipped ${tag} due to open issue: ${rec.Issues}`);
+    rec._skip = 'has issue';
     console.log(JSON.stringify(rec));
   } else if (!rec.email && !DEFAULT_EMAIL) {
     console.error(`Skipped ${tag} due to missing e-mail address`);
+    rec._skip = 'no email';
     console.log(JSON.stringify(rec));
   } else if (reqMemberNumber && !rec.member_number) {
     console.error(`Skipped ${tag} due to missing member number`);
+    rec._skip = 'no member number';
     console.log(JSON.stringify(rec));
   } else {
     if (!rec.email) rec.email = DEFAULT_EMAIL;
     handle(rec, tag).catch(err => {
       console.error(colors.red(`Error on ${tag}! ${err.message}`));
+      rec._skip = 'error: ' + err.message;
       console.log(JSON.stringify(rec));
     });
   }
@@ -144,8 +148,8 @@ function newAttendingData(rec) {
   p.membership = attendingType(rec.upgrade);
   if (!p.membership) throw new Error('Unrecognised membership: ' + rec.upgrade);
   p.timestamp = `${rec.upgrade_date} UTC`;
-  if (rec.upgrade_source) rec.source = rec.upgrade_source;
-  if (rec.upgrade_comment) rec.comment = rec.upgrade_comment;
+  if (rec.upgrade_source) p.source = rec.upgrade_source;
+  if (rec.upgrade_comment) p.comment = rec.upgrade_comment;
   return p;
 }
 
@@ -155,7 +159,7 @@ function upgradeData(rec) {
     timestamp: `${rec.upgrade_date} UTC`
   };
   if (!d.membership) throw new Error('Unrecognised membership: ' + rec.upgrade);
-  if (rec.upgrade_source) rec.source = rec.upgrade_source;
-  if (rec.upgrade_comment) rec.comment = rec.upgrade_comment;
+  if (rec.upgrade_source) d.source = rec.upgrade_source;
+  if (rec.upgrade_comment) d.comment = rec.upgrade_comment;
   return d;
 }
