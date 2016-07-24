@@ -14,7 +14,7 @@ const admin = require('./lib/admin');
 const key = require('./lib/key');
 const log = require('./lib/log');
 const people = require('./lib/people');
-const PeopleStream = require('./lib/peoplestream');
+const PeopleStream = require('./lib/PeopleStream');
 const upgrade = require('./lib/upgrade');
 const user = require('./lib/user');
 
