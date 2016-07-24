@@ -19,6 +19,7 @@ const reqMemberNumber = process.argv.indexOf('--req-member-number') !== -1;
 
 
 const paperPubs = new PaperPubs(process.argv, csvOptions);
+const sum = { rec: 0, join: 0, upgrade: 0, paper: 0, issueSkip: 0, emailSkip: 0, numberSkip: 0, error: 0 };
 
 fetch(loginUrl)
   .then(parseResponse)
@@ -38,28 +39,42 @@ fetch(loginUrl)
             loop = null;
           }
         }, 10);  // delay required to not saturate server
+      })
+      .on('end', () => {
+        setTimeout(() => {
+          console.error(`\n==== Import done. Read ${sum.rec} records.`);
+          console.error(`Successfully handled ${sum.join} joins, ${sum.upgrade} upgrades, and ${sum.paper} paper pubs sales.`);
+          console.error(`Skipped ${sum.issueSkip} due to issues, ${sum.emailSkip} due to missing email, and ${sum.numberSkip} due to missing member number.`);
+          console.error(`Encountered ${sum.error} errors.`);
+          console.error(`${paperPubs.remaining().length}/${paperPubs.data.length} paper pubs left unhandled.`);
+        }, 1000);
       });
   })
   .catch(err => console.error(err));
 
 
 function filter(rec) {
+  ++sum.rec;
   const tag = `"${rec.legal_name}" <${rec.email}>`;
   if (rec.Issues) {
+    ++sum.issueSkip;
     console.error(`Skipped ${tag} due to open issue: ${rec.Issues}`);
     rec._skip = 'has issue';
     console.log(JSON.stringify(rec));
   } else if (!rec.email && !DEFAULT_EMAIL) {
+    ++sum.emailSkip;
     console.error(`Skipped ${tag} due to missing e-mail address`);
     rec._skip = 'no email';
     console.log(JSON.stringify(rec));
   } else if (reqMemberNumber && !rec.member_number) {
+    ++sum.numberSkip;
     console.error(`Skipped ${tag} due to missing member number`);
     rec._skip = 'no member number';
     console.log(JSON.stringify(rec));
   } else {
     if (!rec.email) rec.email = DEFAULT_EMAIL;
     handle(rec, tag).catch(err => {
+      ++sum.error;
       console.error(colors.red(`Error on ${tag}! ${err.message}`));
       rec._skip = 'error: ' + err.message;
       console.log(JSON.stringify(rec));
@@ -79,10 +94,12 @@ function handle(rec, tag) {
   }).then(data => POST('people', data))
     .then(res => {
       id = res.id;
+      ++sum.join;
       console.error(colors.gray(`${tag} joined as ${data.membership} on ${data.timestamp}`));
       if (rec.supporter && rec.upgrade) {
         const upgrade = upgradeData(rec);
         return POST(`people/${id}/upgrade`, upgrade).then(res => {
+          ++sum.upgrade;
           console.error(colors.gray(`${tag} upgraded to ${upgrade.membership} on ${upgrade.timestamp}`));
         });
       }
@@ -91,6 +108,7 @@ function handle(rec, tag) {
       if (rec.paper_pubs_id) {
         const pp = paperPubs.getData(rec.paper_pubs_id, rec.legal_name);
         return POST(`people/${id}/upgrade`, pp).then(res => {
+          ++sum.paper;
           console.error(colors.gray(`${tag} got paper pubs on ${pp.timestamp}`));
         });
       }
