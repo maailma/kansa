@@ -3,6 +3,7 @@ const colors = require('colors/safe');
 const fetch = require('fetch-cookie')(require('node-fetch'));
 const csvParse = require('csv-parse');
 const ldj = require('ldjson-stream');
+const PaperPubs = require('./paperpubs');
 
 const csvOptions = { columns: true, skip_empty_lines: true };
 const DEFAULT_EMAIL = 'registration@worldcon.fi';
@@ -16,6 +17,8 @@ const apiRoot = loginUrl.slice(0, loginUrl.indexOf('/login'));
 const isJSON = process.argv.indexOf('--json') !== -1;
 const reqMemberNumber = process.argv.indexOf('--req-member-number') !== -1;
 
+
+const paperPubs = new PaperPubs(process.argv, csvOptions);
 
 fetch(loginUrl)
   .then(parseResponse)
@@ -65,7 +68,7 @@ function filter(rec) {
 }
 
 function handle(rec, tag) {
-  let data;
+  let data, id;
   return new Promise((resolve, reject) => {
     try {
       data = rec.supporter ? supporterData(rec) : newAttendingData(rec);
@@ -75,11 +78,20 @@ function handle(rec, tag) {
     }
   }).then(data => POST('people', data))
     .then(res => {
+      id = res.id;
       console.error(colors.gray(`${tag} joined as ${data.membership} on ${data.timestamp}`));
       if (rec.supporter && rec.upgrade) {
         const upgrade = upgradeData(rec);
-        return POST(`people/${res.id}/upgrade`, upgrade).then(res => {
+        return POST(`people/${id}/upgrade`, upgrade).then(res => {
           console.error(colors.gray(`${tag} upgraded to ${upgrade.membership} on ${upgrade.timestamp}`));
+        });
+      }
+    })
+    .then(() => {
+      if (rec.paper_pubs_id) {
+        const pp = paperPubs.getData(rec.paper_pubs_id, rec.legal_name);
+        return POST(`people/${id}/upgrade`, pp).then(res => {
+          console.error(colors.gray(`${tag} got paper pubs on ${pp.timestamp}`));
         });
       }
     });
