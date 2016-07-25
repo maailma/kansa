@@ -1,10 +1,3 @@
-CREATE DATABASE worldcon75;
-
---CREATE ROLE $POSTGRES_USER WITH CREATEDB CREATEROLE PASSWORD '$POSTGRES_PASSWORD';
---GRANT ALL PRIVILEGES ON DATABASE worldcon75 TO $POSTGRES_USER;
-
-\connect worldcon75
-
 CREATE TYPE MembershipStatus AS ENUM ('NonMember','Supporter','KidInTow','Child','Youth','FirstWorldcon','Adult');
 
 CREATE TABLE IF NOT EXISTS People (

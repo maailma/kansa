@@ -10,8 +10,7 @@
     "url": "https://github.com/worldcon75/api.git"
   },
   "scripts": {
-    "start": "node -r dotenv/config ./bin/www",
-    "init-db": "psql -v ON_ERROR_STOP=1 -f worldcon75.sql"
+    "start": "node -r dotenv/config ./bin/www"
   },
   "devDependencies": {
     "dotenv": "^2.0.0"
