@@ -28,7 +28,7 @@ const MemberDialog = ({ api, ok, cancel, formId = 'member-form', member = Map() 
   bodyClassName='memberDialog'
   onRequestClose={cancel}
 >
-  <MemberForm formId={formId} member={member} />
+  <MemberForm { ...{ api, formId, member } } />
 </Dialog>);
 
 MemberDialog.propTypes = {

@@ -2,10 +2,13 @@ import { Map } from 'immutable'
 import React from 'react'
 import TextField from 'material-ui/TextField';
 
+import Membership from './Membership';
+
 const title = id => id.charAt(0).toUpperCase() + id.slice(1).replace(/_/g, ' ');
 
 export default class MemberForm extends React.Component {
   static propTypes = {
+    api: React.PropTypes.object.isRequired,
     formId: React.PropTypes.string.isRequired,
     member: React.PropTypes.instanceOf(Map).isRequired
       /*
@@ -33,12 +36,25 @@ export default class MemberForm extends React.Component {
   }
 
   render() {
+    const { api, formId, member } = this.props;
     const narrow = { style: { width: '162px' } };
-    return <form id={this.props.formId}>
-      {this.text('legal_name')}<br />
-      {this.text('public_first_name')}{this.text('public_last_name')}<br />
-      {this.text('email')}<br />
-      {this.text('country', narrow)}{this.text('state', narrow)}{this.text('city', narrow)}<br />
+    return <form id={formId}>
+      {this.text('legal_name')}
+      <Membership className='memberInput' style={{ display: 'inline-block' }}
+        membership={member.get('membership')}
+        name={ member.get('legal_name') + ' <' + member.get('email') + '>' }
+        ok={ ({ membership, comment }) => api.POST(`people/${member.get('id')}/upgrade`, { membership, comment }) }
+      />
+      <br />
+      {this.text('public_first_name')}
+      {this.text('public_last_name')}
+      <br />
+      {this.text('email')}
+      <br />
+      {this.text('country', narrow)}
+      {this.text('state', narrow)}
+      {this.text('city', narrow)}
+      <br />
     </form>;
   }
 }
