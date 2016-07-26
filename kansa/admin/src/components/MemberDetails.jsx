@@ -4,7 +4,7 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 
-import Membership from './Membership';
+import MemberUpgrade from './MemberUpgrade';
 
 const narrow = { width: '162px' };
 
@@ -35,7 +35,6 @@ export default class MemberDetails extends React.Component {
   }
 
   text = (key, style = {}) => (<TextField
-    id={key} name={key}
     floatingLabelText={ key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ') }
     floatingLabelFixed={true}
     className='memberInput'
@@ -56,10 +55,11 @@ export default class MemberDetails extends React.Component {
     return (<Dialog
       key='dialog'
       actions={[
-        <Membership key='upgrade' style={{ float: 'left' }}
+        <MemberUpgrade key='upgrade' style={{ float: 'left' }}
+          hasPaperPubs={ !!member.get('paper_pubs') }
           membership={membership}
           name={ member.get('legal_name') + ' <' + member.get('email') + '>' }
-          upgrade={ ({ membership, comment }) => api.POST(`people/${member.get('id')}/upgrade`, { membership, comment }) }
+          upgrade={ res => api.POST(`people/${member.get('id')}/upgrade`, res) }
         />,
         <FlatButton key='cancel' label='Cancel' onTouchTap={handleClose} />,
         <FlatButton key='ok' label='Apply'
@@ -70,7 +70,6 @@ export default class MemberDetails extends React.Component {
               .catch(e => console.error(e));  // TODO: report errors better
           }} />
       ]}
-      modal={false}
       open={open}
       title={ membership == 'NonMember' ? 'Non-member' : `Member #${member.get('member_number')} (${membership})` }
       autoScrollBodyContent={true}
