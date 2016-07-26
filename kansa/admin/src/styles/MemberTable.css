@@ -10,6 +10,9 @@
 .Grid__cell:nth-child(odd) {
   background-color: #fafafa;
 }
+.FlexTable__row {
+  cursor: pointer;
+}
 
 .checkboxLabel {
   margin-left: .5rem;

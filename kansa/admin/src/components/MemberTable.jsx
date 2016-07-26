@@ -83,20 +83,11 @@ export default class MemberTable extends React.Component {
           </FlexTable>,
           selectedMember !== null && list.size && <MemberDialog
             key='dialog'
-            formId='member-form'
+            api={this.props.api}
             cancel={() => this.setState({ selectedMember: null })}
-            ok={({ id, form }) => {
-              const prev = this.props.list.get(id);
-              const update = {};
-              const inputs = form.querySelectorAll('input');
-              for (let i = 0; i < inputs.length; ++i) {
-                const { name, value } = inputs[i];
-                const v0 = prev.get(name, '');
-                if (value != v0) update[name] = value;
-              }
-              this.props.api.POST(`people/${id}`, update)
-                .then(() => this.setState({ selectedMember: null }))
-                .catch(e => console.error(e));
+            ok={post => { post
+              .then(() => this.setState({ selectedMember: null }))
+              .catch(e => console.error(e));
             }}
             member={this.props.list.get(selectedMember)}
           />
