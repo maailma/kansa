@@ -2,7 +2,6 @@ import React from 'react'
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import MenuItem from 'material-ui/MenuItem';
-import RaisedButton from 'material-ui/RaisedButton';
 import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 
@@ -10,7 +9,7 @@ export default class Membership extends React.Component {
   static propTypes = {
     membership: React.PropTypes.string.isRequired,
     name: React.PropTypes.string.isRequired,
-    ok: React.PropTypes.func.isRequired
+    upgrade: React.PropTypes.func.isRequired
   }
 
   static types = [ 'NonMember', 'Supporter', 'KidInTow', 'Child', 'Youth', 'FirstWorldcon', 'Adult' ];
@@ -34,7 +33,7 @@ export default class Membership extends React.Component {
     const prevIdx = Membership.types.indexOf(this.props.membership);
     return (
       <div { ...this.props } >
-        <RaisedButton label={this.props.membership} onTouchTap={this.handleOpen} />
+        <FlatButton label='Upgrade' onTouchTap={this.handleOpen} />
         <Dialog
           title={ 'Upgrade ' + this.props.name }
           open={this.state.open}
@@ -47,9 +46,9 @@ export default class Membership extends React.Component {
               disabled={ this.state.sent || this.state.membership === this.props.membership || !this.state.comment }
               onTouchTap={ () => {
                 this.setState({ sent: true });
-                (this.props.ok(this.state) || Promise.reject('Membership expected a Promise from ok()'))
-                  .then(this.handleClose);
-                  // TODO: report errors here
+                (this.props.upgrade(this.state) || Promise.reject('Membership expected a Promise from upgrade()'))
+                  .then(this.handleClose)
+                  .catch(e => console.error(e));  // TODO: report errors better
               }}
             />
           ]}
