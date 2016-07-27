@@ -4,6 +4,7 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 
+import MemberLog from './MemberLog';
 import MemberUpgrade from './MemberUpgrade';
 
 const styles = {
@@ -115,13 +116,17 @@ export default class MemberDetails extends React.Component {
     if (this.ppStateChanged) update.paper_pubs = this.ppState;
     return (<Dialog
       actions={[
+        <MemberLog key='log' style={{ float: 'left' }}
+          api={api}
+          id={member.get('id', -1)}
+        />,
         <MemberUpgrade key='upgrade' style={{ float: 'left' }}
           hasPaperPubs={ !!member.get('paper_pubs') }
           membership={membership}
           name={ member.get('legal_name') + ' <' + member.get('email') + '>' }
           upgrade={ res => api.POST(`people/${member.get('id')}/upgrade`, res) }
         />,
-        <FlatButton key='cancel' label='Cancel' onTouchTap={handleClose} />,
+        <FlatButton key='close' label='Close' onTouchTap={handleClose} />,
         <FlatButton key='ok'
           label={ this.state._sent ? 'Working...' : 'Apply' }
           disabled={ this.state._sent || Object.keys(update).length == 0 || !this.ppValid }
