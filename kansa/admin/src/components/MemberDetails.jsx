@@ -64,10 +64,11 @@ export default class MemberDetails extends React.Component {
   }
 
   ppText = (key) => {
+    const pp0 = this.props.member.get('paper_pubs');
+    if (!pp0) return '';
     const ppKey = `pp_${key}`;
     const value = this.state[ppKey] || '';
-    const prev = this.props.member.getIn([ 'paper_pubs', key ]) || '';
-    const ulStyle = value == prev ? {} : styles.changed;
+    const ulStyle = value == pp0.get(key) ? {} : styles.changed;
     return <TextField
       floatingLabelText={`Paper pubs ${key}`}
       floatingLabelFixed={true}
