@@ -8,7 +8,7 @@ import TextField from 'material-ui/TextField';
 
 export default class MemberLog extends React.Component {
   static propTypes = {
-    api: React.PropTypes.object.isRequired,
+    getLog: React.PropTypes.func.isRequired,
     id: React.PropTypes.number.isRequired
   }
 
@@ -23,8 +23,7 @@ export default class MemberLog extends React.Component {
 
   handleOpen = () => {
     this.setState({ open: true });
-    const { api, id } = this.props;
-    if (id > 0) api.GET(`people/${id}/log`)
+    this.props.getLog(this.props.id)
       .then(log => { this.setState({ log }) })
       .catch(e => console.error(e));  // TODO: report errors better
   }
@@ -32,6 +31,7 @@ export default class MemberLog extends React.Component {
   handleClose = () => { this.setState({ open: false }) }
 
   render() {
+    // TODO: FIXME Replace ugly <table> with custom <LogList>
     const log = this.state.log || [];
     const columns = Object.keys(log[0] || {});
     return (

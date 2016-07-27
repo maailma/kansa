@@ -117,7 +117,7 @@ export default class MemberDetails extends React.Component {
     return (<Dialog
       actions={[
         <MemberLog key='log' style={{ float: 'left' }}
-          api={api}
+          getLog={ id => id > 0 ? api.GET(`people/${id}/log`) : Promise.reject('Invalid id! ' + id) }
           id={member.get('id', -1)}
         />,
         <MemberUpgrade key='upgrade' style={{ float: 'left' }}
