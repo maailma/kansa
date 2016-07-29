@@ -6,6 +6,7 @@ const apiHost = '139.162.147.227:3000';
 const api = new API(`http://${apiHost}/`);
 
 export default React.createClass({
+	
 	componentDidMount() {
 	api.GET('login',{email:this.props.params.email,key:this.props.params.key})
   		.then(console.log('log'))
