@@ -16,7 +16,8 @@ module.exports = {
         ]
     },
     plugins: [
-      new webpack.NoErrorsPlugin()
+      new webpack.NoErrorsPlugin(),
+      new webpack.HotModuleReplacementPlugin()
     ]
 
 };
