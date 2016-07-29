@@ -8,7 +8,7 @@ import TextField from 'material-ui/TextField';
 import Member from './Member';
 
 const MembershipSelect = ({ getDefaultValue, getValue, onChange }) => {
-  const path = 'membership';
+  const path = ['membership'];
   const prevIdx = Member.membershipTypes.indexOf(getDefaultValue(path));
   return <SelectField
     floatingLabelText='Membership type'
@@ -26,7 +26,7 @@ const MembershipSelect = ({ getDefaultValue, getValue, onChange }) => {
 }
 
 const PaperPubsCheckbox = ({ getDefaultValue, getValue, onChange }) => {
-  const path = 'paper_pubs';
+  const path = ['paper_pubs'];
   return <Checkbox
     label='Add paper publications'
     style={{ width: '256px', float: 'right', marginTop: '37px' }}
@@ -63,7 +63,7 @@ const PaperPubsTable = ({ getValue, onChange }) => {
 }
 
 const CommentField = ({ getValue, onChange }) => {
-  const path = 'comment';
+  const path = ['comment'];
   const value = getValue(path);
   return <TextField
     floatingLabelText='Comment'

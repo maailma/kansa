@@ -12,14 +12,9 @@ import Member from './Member';
 import UpgradeForm from './UpgradeForm';
 
 function getIn(obj, path, unset) {
-  if (Array.isArray(path)) {
-    const val = obj[path[0]];
-    if (typeof val === 'undefined') return unset;
-    return path.length <= 1 ? val : val.getIn(path.slice(1), unset);
-  } else {
-    const val = obj[path];
-    return (typeof val === 'undefined') ? unset : val;
-  }
+  const val = obj[path[0]];
+  if (typeof val === 'undefined') return unset;
+  return path.length <= 1 ? val : val.getIn(path.slice(1), unset);
 }
 
 export default class Upgrade extends React.Component {
@@ -52,13 +47,9 @@ export default class Upgrade extends React.Component {
   handleClose = () => { this.setState({ open: false }) }
 
   setStateIn = (path, value) => {
-    if (Array.isArray(path)) {
-      const key = path[0];
-      if (path.length > 1) value = this.state[key].setIn(path.slice(1), value);
-      return this.setState({ [key]: value });
-    } else {
-      return this.setState({ [path]: value });
-    }
+    const key = path[0];
+    if (path.length > 1) value = this.state[key].setIn(path.slice(1), value);
+    return this.setState({ [key]: value });
   }
 
   render() {
