@@ -1,9 +1,13 @@
+import 'whatwg-fetch';
+
+
 export default class API {
   constructor(root) {
     this.root = root;  // [scheme]://[host]:[port]/[path]/
   }
 
   static parse(response) {
+    console.log(response)
     if (response.ok) return response.json();
     const error = new Error(response.statusText);
     error.response = response;
@@ -23,7 +27,7 @@ export default class API {
   GET(cmd, params) {
     const uri = this.path(cmd, params);
     return fetch(uri, { credentials: 'include', mode: 'no-cors' })
-      .then(response => API.parse(response));
+      //.then(response => API.parse(response));
   }
 
   POST(cmd, body) {

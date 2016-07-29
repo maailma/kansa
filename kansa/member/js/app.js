@@ -1,7 +1,6 @@
 import React from 'react';  
 import { render } from 'react-dom'
 import { DefaultRoute, Router, Link, Route, RouteHandler, hashHistory } from 'react-router';
-import 'whatwg-fetch';
 
 import Login from './components/Login.js';
 import App from './components/App.js';

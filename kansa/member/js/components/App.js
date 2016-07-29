@@ -10,7 +10,6 @@ export default React.createClass({
 	   this.setState({key: e.target.value});
 	},
 	handleLogin: function() {
-		console.log(this.state.email)
 		window.location = '#/login/'+this.state.email+'/'+this.state.key
 	},
 
