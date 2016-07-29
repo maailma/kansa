@@ -11,6 +11,7 @@ const MembershipSelect = ({ getDefaultValue, getValue, onChange }) => {
   const path = ['membership'];
   const prevIdx = Member.membershipTypes.indexOf(getDefaultValue(path));
   return <SelectField
+    style={{ marginLeft: '24px' }}
     floatingLabelText='Membership type'
     floatingLabelFixed={true}
     value={getValue(path)}
@@ -28,8 +29,8 @@ const MembershipSelect = ({ getDefaultValue, getValue, onChange }) => {
 const PaperPubsCheckbox = ({ getDefaultValue, getValue, onChange }) => {
   const path = ['paper_pubs'];
   return <Checkbox
+    style={{ display: 'inline-block', width: '256px', marginLeft: '24px', marginTop: '37px', verticalAlign: 'top' }}
     label='Add paper publications'
-    style={{ width: '256px', float: 'right', marginTop: '37px' }}
     checked={!!getValue(path)}
     disabled={!!getDefaultValue(path)}
     onCheck={ (ev, checked) => onChange(path, checked ? Member.emptyPaperPubsMap : null) }
@@ -40,32 +41,31 @@ const PaperPubsTextField = ({ ppKey, getValue, onChange, multiLine = false }) =>
   const path = ['paper_pubs', ppKey];
   const value = getValue(path);
   if (value === null) return null;
-  return <td><TextField
+  return <TextField
+    style={{ width: '162px', marginLeft: '24px', verticalAlign: 'top' }}
     floatingLabelText={ 'Paper pubs ' + ppKey }
     floatingLabelFixed={true}
-    fullWidth={true}
     multiLine={multiLine}
     value={value}
     errorText={ value ? '' : 'Required' }
     onChange={ ev => onChange(path, ev.target.value) }
-  /></td>;
+  />;
 }
 
-const PaperPubsTable = ({ getValue, onChange }) => {
+const PaperPubsFields = ({ getValue, onChange }) => {
   if (!getValue(['paper_pubs'])) return null;
-  return <table style={{ width: '100%' }}>
-    <tbody><tr style={{ verticalAlign: 'top' }}>
-      <PaperPubsTextField ppKey='name' getValue={getValue} onChange={onChange} />
-      <PaperPubsTextField ppKey='address' getValue={getValue} onChange={onChange} multiLine={true} />
-      <PaperPubsTextField ppKey='country' getValue={getValue} onChange={onChange} />
-    </tr></tbody>
-  </table>;
+  return <div>
+    <PaperPubsTextField ppKey='name' getValue={getValue} onChange={onChange} />
+    <PaperPubsTextField ppKey='address' getValue={getValue} onChange={onChange} multiLine={true} />
+    <PaperPubsTextField ppKey='country' getValue={getValue} onChange={onChange} />
+  </div>;
 }
 
 const CommentField = ({ getValue, onChange }) => {
   const path = ['comment'];
   const value = getValue(path);
   return <TextField
+    style={{ width: '536px', marginLeft: '24px' }}
     floatingLabelText='Comment'
     floatingLabelFixed={true}
     multiLine={true}
@@ -81,7 +81,7 @@ const UpgradeForm = ({ style = {}, ...props }) => (<form style={style}>
   <MembershipSelect { ...props } />
   <PaperPubsCheckbox { ...props } />
   <br />
-  <PaperPubsTable { ...props } />
+  <PaperPubsFields { ...props } />
   <CommentField { ...props } />
 </form>);
 

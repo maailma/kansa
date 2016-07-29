@@ -61,6 +61,7 @@ export default class Upgrade extends React.Component {
       <div { ...this.props } >
         <FlatButton label='Upgrade' onTouchTap={this.handleOpen} />
         <Dialog
+          bodyStyle={{ paddingLeft: 0 }}
           title={ 'Upgrade ' + this.props.name }
           open={open}
           autoScrollBodyContent={true}

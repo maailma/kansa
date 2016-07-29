@@ -39,6 +39,7 @@ export default class NewMember extends React.Component {
           title='Add new member'
           open={open}
           autoScrollBodyContent={true}
+          bodyClassName='memberDialog'
           onRequestClose={this.handleClose}
           actions={[
             <FlatButton key='cancel' label='Cancel' onTouchTap={this.handleClose} />,
