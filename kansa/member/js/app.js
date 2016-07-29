@@ -3,7 +3,8 @@ import { render } from 'react-dom'
 import { DefaultRoute, Router, Link, Route, RouteHandler, hashHistory } from 'react-router';
 import 'whatwg-fetch';
 
-import LoginHandler from './components/Login.js';
+import Login from './components/Login.js';
+import App from './components/App.js';
 
 export default class API {
   constructor(root) {
@@ -55,30 +56,11 @@ const api = new API(`http://${apiHost}/`);
 api.GET('login',{email:'admin@example.com',key:'key'})
   .then(console.log('log'))
 
-let App = React.createClass({  
-
-    componentDidMount() {
-      const email = this.props.params.email
-      console.log(email)
-    },
-
-  render() {
-    return (<div className="nav">
-        <Link to="app">Home</Link>
-        <Link to="login">Login</Link>
-
-        {/* this is the importTant part */}
-        <RouteHandler/>
-      </div>
-    );
-  }
-});
 
 let routes = (
 <Router history={hashHistory}>  
-  <Route name="app" path="/" handler={App}>
-    <Route name="login" path="/login" handler={LoginHandler}/>
-  </Route>
+  <Route path="/" component={App} />
+  <Route path="/login/:email/:key" component={Login}/>
 </Router>
 );
 
