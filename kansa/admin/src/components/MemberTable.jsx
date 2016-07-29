@@ -70,8 +70,8 @@ export default class MemberTable extends React.Component {
             width={width}
             onRowClick={({ index }) => this.setState({ selectedMember: list.get(index).get('id') })}
           >
-            <FlexColumn dataKey='member_number' label='#' width={30} />
-            <FlexColumn dataKey='membership' label='Type' width={105} />
+            <FlexColumn dataKey='member_number' label='#' width={40} />
+            <FlexColumn dataKey='membership' label='Type' width={80} />
             <FlexColumn dataKey='legal_name' label='Name' width={120} flexGrow={1} />
             <FlexColumn dataKey='email' label='Email' width={210} />
             <FlexColumn dataKey='public_name' label='Public' width={120} flexGrow={1}
