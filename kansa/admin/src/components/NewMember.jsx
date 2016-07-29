@@ -8,6 +8,7 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 
 import Member from './Member';
 import MemberForm from './MemberForm';
+import UpgradeForm from './UpgradeForm';
 
 export default class NewMember extends React.Component {
   static propTypes = {
@@ -62,6 +63,12 @@ export default class NewMember extends React.Component {
             getDefaultValue={ () => '' }
             getValue={ path => member.getIn(path, null) }
             onChange={ (path, value) => this.setState({ member: member.setIn(path, value) }) }
+          />
+          <UpgradeForm
+            getDefaultValue={ () => '' }
+            getValue={ path => this.state.member.getIn(path, '') }
+            onChange={ (path, value) => this.setState({ member: this.state.member.setIn(path, value) }) }
+            style={{}}
           />
         </Dialog>
       </div>
