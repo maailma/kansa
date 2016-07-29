@@ -32,11 +32,12 @@ export default class MemberLog extends React.Component {
 
   render() {
     // TODO: FIXME Replace ugly <table> with custom <LogList>
+    const button = React.Children.only(this.props.children);
     const log = this.state.log || [];
     const columns = Object.keys(log[0] || {});
     return (
-      <div { ...this.props } >
-        <FlatButton label='View log' onTouchTap={this.handleOpen} />
+      <div>
+        { React.cloneElement(button, { onTouchTap: this.handleOpen }) }
         <Dialog
           open={this.state.open}
           autoScrollBodyContent={true}

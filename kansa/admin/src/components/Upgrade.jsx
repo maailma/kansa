@@ -54,6 +54,7 @@ export default class Upgrade extends React.Component {
 
   render() {
     const { comment, membership, paper_pubs, sent, open } = this.state;
+    const button = React.Children.only(this.props.children);
     const msChanged = membership !== this.props.membership;
     const disabled = sent || !comment || (!msChanged && !paper_pubs)
         || !Member.paperPubsIsValid(paper_pubs);
@@ -62,40 +63,38 @@ export default class Upgrade extends React.Component {
       getValue: path => getIn(this.state, path, ''),
       onChange: this.setStateIn
     }
-    return (
-      <div { ...this.props } >
-        <FlatButton label='Upgrade' onTouchTap={this.handleOpen} />
-        <Dialog
-          bodyStyle={{ paddingLeft: 0 }}
-          title={ 'Upgrade ' + this.props.name }
-          open={open}
-          autoScrollBodyContent={true}
-          onRequestClose={this.handleClose}
-          actions={[
-            <FlatButton key='cancel' label='Cancel' onTouchTap={this.handleClose} />,
-            <FlatButton key='ok'
-              label={ sent ? 'Working...' : 'Apply' }
-              disabled={disabled}
-              onTouchTap={ () => {
-                this.setState({ sent: true });
-                const res = { comment };
-                if (msChanged) res.membership = membership;
-                if (paper_pubs) res.paper_pubs = paper_pubs.toJS();
-                (this.props.upgrade(res) || Promise.reject('Upgrade expected a Promise from upgrade()'))
-                  .then(res => {
-                    console.log('Member upgraded', res);
-                    this.handleClose();
-                  })
-                  .catch(e => console.error(e));  // TODO: report errors better
-              }}
-            />
-          ]}
-        >
-          <UpgradeFields { ...formProps } />
-          <br />
-          <CommentField { ...formProps } />
-        </Dialog>
-      </div>
-    );
+    return <div>
+      { React.cloneElement(button, { onTouchTap: this.handleOpen }) }
+      <Dialog
+        bodyStyle={{ paddingLeft: 0 }}
+        title={ 'Upgrade ' + this.props.name }
+        open={open}
+        autoScrollBodyContent={true}
+        onRequestClose={this.handleClose}
+        actions={[
+          <FlatButton key='cancel' label='Cancel' onTouchTap={this.handleClose} />,
+          <FlatButton key='ok'
+            label={ sent ? 'Working...' : 'Apply' }
+            disabled={disabled}
+            onTouchTap={ () => {
+              this.setState({ sent: true });
+              const res = { comment };
+              if (msChanged) res.membership = membership;
+              if (paper_pubs) res.paper_pubs = paper_pubs.toJS();
+              (this.props.upgrade(res) || Promise.reject('Upgrade expected a Promise from upgrade()'))
+                .then(res => {
+                  console.log('Member upgraded', res);
+                  this.handleClose();
+                })
+                .catch(e => console.error(e));  // TODO: report errors better
+            }}
+          />
+        ]}
+      >
+        <UpgradeFields { ...formProps } />
+        <br />
+        <CommentField { ...formProps } />
+      </Dialog>
+    </div>;
   }
 }

@@ -100,19 +100,27 @@ export default class Member extends React.Component {
       getValue: path => this.state.member.getIn(path, null),
       onChange: (path, value) => this.setState({ member: this.state.member.setIn(path, value) })
     };
-    return (<Dialog
+
+    return <Dialog
       actions={[
-        <MemberLog key='log' style={{ float: 'left' }}
+        <MemberLog key='log'
           getLog={ id => id > 0 ? api.GET(`people/${id}/log`) : Promise.reject('Invalid id! ' + id) }
           id={member.get('id', -1)}
-        />,
-        <Upgrade key='upgrade' style={{ float: 'left' }}
+        >
+          <FlatButton label='View log' style={{ float: 'left' }} />
+        </MemberLog>,
+
+        <Upgrade key='upgrade'
           membership={membership}
           paper_pubs={member.get('paper_pubs')}
           name={ member.get('legal_name') + ' <' + member.get('email') + '>' }
           upgrade={ res => api.POST(`people/${member.get('id')}/upgrade`, res) }
-        />,
+        >
+          <FlatButton label='Upgrade' style={{ float: 'left' }} />
+        </Upgrade>,
+
         <FlatButton key='close' label='Close' onTouchTap={handleClose} />,
+
         <FlatButton key='ok'
           label={ this.state.sent ? 'Working...' : 'Apply' }
           disabled={ this.state.sent || this.changes.size == 0 || !this.valid }
@@ -132,6 +140,6 @@ export default class Member extends React.Component {
       <CommonFields { ...formProps } />
       <br />
       <PaperPubsFields { ...formProps } />
-    </Dialog>);
+    </Dialog>;
   }
 }
