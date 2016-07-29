@@ -4,6 +4,8 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 
+const ImmutablePropTypes = require('react-immutable-proptypes');
+
 import MemberLog from './MemberLog';
 import MemberUpgrade from './MemberUpgrade';
 
@@ -18,11 +20,32 @@ export default class MemberDetails extends React.Component {
     open: React.PropTypes.bool.isRequired,
     api: React.PropTypes.object.isRequired,
     handleClose: React.PropTypes.func.isRequired,
-    member: React.PropTypes.instanceOf(Map)
+    member: ImmutablePropTypes.mapContains({
+      legal_name: React.PropTypes.string,
+      email: React.PropTypes.string,
+      public_first_name: React.PropTypes.string,
+      public_last_name: React.PropTypes.string,
+      country: React.PropTypes.string,
+      state: React.PropTypes.string,
+      city: React.PropTypes.string,
+      paper_pubs: ImmutablePropTypes.mapContains({
+        name: React.PropTypes.string.isRequired,
+        address: React.PropTypes.string.isRequired,
+        country: React.PropTypes.string.isRequired
+      })
+    })
   }
 
   static defaultProps = {
-    member: Map()
+    member: Map({
+      legal_name: '',
+      email: '',
+      public_first_name: '',
+      public_last_name: '',
+      country: '',
+      state: '',
+      city: ''
+    })
   }
 
   static textFields = [ 'legal_name', 'public_first_name', 'public_last_name',
