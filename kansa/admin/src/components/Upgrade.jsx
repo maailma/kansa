@@ -8,8 +8,8 @@ import TextField from 'material-ui/TextField';
 
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
+import { UpgradeFields, CommentField } from './form';
 import Member from './Member';
-import UpgradeForm from './UpgradeForm';
 
 function getIn(obj, path, unset) {
   const val = obj[path[0]];
@@ -57,6 +57,11 @@ export default class Upgrade extends React.Component {
     const msChanged = membership !== this.props.membership;
     const disabled = sent || !comment || (!msChanged && !paper_pubs)
         || !Member.paperPubsIsValid(paper_pubs);
+    const formProps = {
+      getDefaultValue: path => getIn(this.props, path, null),
+      getValue: path => getIn(this.state, path, ''),
+      onChange: this.setStateIn
+    }
     return (
       <div { ...this.props } >
         <FlatButton label='Upgrade' onTouchTap={this.handleOpen} />
@@ -86,12 +91,9 @@ export default class Upgrade extends React.Component {
             />
           ]}
         >
-          <UpgradeForm
-            getDefaultValue={ path => getIn(this.props, path, null) }
-            getValue={ path => getIn(this.state, path, '') }
-            onChange={this.setStateIn}
-            style={{}}
-          />
+          <UpgradeFields { ...formProps } />
+          <br />
+          <CommentField { ...formProps } />
         </Dialog>
       </div>
     );

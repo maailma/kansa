@@ -5,7 +5,7 @@ import FlatButton from 'material-ui/FlatButton';
 
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
-import MemberForm from './MemberForm';
+import { CommonFields, PaperPubsFields } from './form';
 import MemberLog from './MemberLog';
 import Upgrade from './Upgrade';
 
@@ -95,6 +95,11 @@ export default class Member extends React.Component {
   render() {
     const { open, api, handleClose, member } = this.props;
     const membership = member.get('membership', 'NonMember');
+    const formProps = {
+      getDefaultValue: path => member.getIn(path, ''),
+      getValue: path => this.state.member.getIn(path, null),
+      onChange: (path, value) => this.setState({ member: this.state.member.setIn(path, value) })
+    };
     return (<Dialog
       actions={[
         <MemberLog key='log' style={{ float: 'left' }}
@@ -124,11 +129,9 @@ export default class Member extends React.Component {
       bodyClassName='memberDialog'
       onRequestClose={handleClose}
     >
-      <MemberForm
-        getDefaultValue={ path => member.getIn(path, '') }
-        getValue={ path => this.state.member.getIn(path, null) }
-        onChange={ (path, value) => this.setState({ member: this.state.member.setIn(path, value) }) }
-      />
+      <CommonFields { ...formProps } />
+      <br />
+      <PaperPubsFields { ...formProps } />
     </Dialog>);
   }
 }

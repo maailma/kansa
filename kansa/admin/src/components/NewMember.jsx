@@ -6,9 +6,8 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 
+import { CommentField, CommonFields, UpgradeFields } from './form';
 import Member from './Member';
-import MemberForm from './MemberForm';
-import UpgradeForm from './UpgradeForm';
 
 export default class NewMember extends React.Component {
   static propTypes = {
@@ -22,7 +21,7 @@ export default class NewMember extends React.Component {
   }
 
   handleOpen = () => { this.setState({
-    member: Member.defaultProps.member,
+    member: Member.defaultProps.member.set('comment', ''),
     open: true,
     sent: false
   }) }
@@ -33,6 +32,11 @@ export default class NewMember extends React.Component {
     const { member, open, sent } = this.state;
     const button = React.Children.only(this.props.children);
     let disabled = sent || !Member.isValid(member);
+    const formProps = {
+      getDefaultValue: () => '',
+      getValue: path => member.getIn(path, null),
+      onChange: (path, value) => this.setState({ member: member.setIn(path, value) })
+    };
     return (
       <div>
         { React.cloneElement(button, { onTouchTap: this.handleOpen }) }
@@ -59,17 +63,11 @@ export default class NewMember extends React.Component {
             />
           ]}
         >
-          <MemberForm
-            getDefaultValue={ () => '' }
-            getValue={ path => member.getIn(path, null) }
-            onChange={ (path, value) => this.setState({ member: member.setIn(path, value) }) }
-          />
-          <UpgradeForm
-            getDefaultValue={ () => '' }
-            getValue={ path => this.state.member.getIn(path, '') }
-            onChange={ (path, value) => this.setState({ member: this.state.member.setIn(path, value) }) }
-            style={{}}
-          />
+          <CommonFields { ...formProps } />
+          <br />
+          <UpgradeFields { ...formProps } />
+          <br />
+          <CommentField { ...formProps } />
         </Dialog>
       </div>
     );
