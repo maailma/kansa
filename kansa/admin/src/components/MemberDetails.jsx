@@ -42,12 +42,18 @@ export default class MemberDetails extends React.Component {
     })
   }
 
+  static membershipTypes = [ 'NonMember', 'Supporter', 'KidInTow', 'Child', 'Youth', 'FirstWorldcon', 'Adult' ];
+
+  static emptyPaperPubsMap = Map({ name: '', address: '', country: '' });
+
+  static paperPubsIsValid(pp) {
+    return !pp || pp.get('name') && pp.get('address') && pp.get('country');
+  }
+
   static isValid(member) {
     return Map.isMap(member)
       && member.get('legal_name', false) && member.get('email', false)
-      && member.getIn(['paper_pubs', 'name'], true)
-      && member.getIn(['paper_pubs', 'address'], true)
-      && member.getIn(['paper_pubs', 'country'], true);
+      && MemberDetails.paperPubsIsValid(member.get('paper_pubs'));
   }
 
   state = {
@@ -96,8 +102,8 @@ export default class MemberDetails extends React.Component {
           id={member.get('id', -1)}
         />,
         <MemberUpgrade key='upgrade' style={{ float: 'left' }}
-          hasPaperPubs={ !!member.get('paper_pubs') }
           membership={membership}
+          paper_pubs={member.get('paper_pubs')}
           name={ member.get('legal_name') + ' <' + member.get('email') + '>' }
           upgrade={ res => api.POST(`people/${member.get('id')}/upgrade`, res) }
         />,
