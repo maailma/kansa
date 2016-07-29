@@ -8,7 +8,7 @@ import TextField from 'material-ui/TextField';
 
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
-import MemberDetails from './MemberDetails';
+import Member from './Member';
 import UpgradeForm from './UpgradeForm';
 
 function getIn(obj, path, unset) {
@@ -65,7 +65,7 @@ export default class MemberUpgrade extends React.Component {
     const { comment, membership, paper_pubs, sent, open } = this.state;
     const msChanged = membership !== this.props.membership;
     const disabled = sent || !comment || (!msChanged && !paper_pubs)
-        || !MemberDetails.paperPubsIsValid(paper_pubs);
+        || !Member.paperPubsIsValid(paper_pubs);
     return (
       <div { ...this.props } >
         <FlatButton label='Upgrade' onTouchTap={this.handleOpen} />

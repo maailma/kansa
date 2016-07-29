@@ -6,7 +6,7 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 
-import MemberDetails from './MemberDetails';
+import Member from './Member';
 import MemberForm from './MemberForm';
 
 export default class NewMember extends React.Component {
@@ -21,7 +21,7 @@ export default class NewMember extends React.Component {
   }
 
   handleOpen = () => { this.setState({
-    member: MemberDetails.defaultProps.member,
+    member: Member.defaultProps.member,
     open: true,
     sent: false
   }) }
@@ -31,7 +31,7 @@ export default class NewMember extends React.Component {
   render() {
     const { member, open, sent } = this.state;
     const button = React.Children.only(this.props.children);
-    let disabled = sent || !MemberDetails.isValid(member);
+    let disabled = sent || !Member.isValid(member);
     return (
       <div>
         { React.cloneElement(button, { onTouchTap: this.handleOpen }) }

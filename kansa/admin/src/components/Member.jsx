@@ -9,7 +9,7 @@ import MemberForm from './MemberForm';
 import MemberLog from './MemberLog';
 import MemberUpgrade from './MemberUpgrade';
 
-export default class MemberDetails extends React.Component {
+export default class Member extends React.Component {
   static propTypes = {
     open: React.PropTypes.bool.isRequired,
     api: React.PropTypes.object.isRequired,
@@ -53,7 +53,7 @@ export default class MemberDetails extends React.Component {
   static isValid(member) {
     return Map.isMap(member)
       && member.get('legal_name', false) && member.get('email', false)
-      && MemberDetails.paperPubsIsValid(member.get('paper_pubs'));
+      && Member.paperPubsIsValid(member.get('paper_pubs'));
   }
 
   state = {
@@ -70,13 +70,13 @@ export default class MemberDetails extends React.Component {
   }
 
   get valid() {
-    return MemberDetails.isValid(this.state.member);
+    return Member.isValid(this.state.member);
   }
 
   componentWillReceiveProps(nextProps) {
     if (!nextProps.member.equals(this.props.member)) {
       this.setState({
-        member: MemberDetails.defaultProps.member.merge(nextProps.member),
+        member: Member.defaultProps.member.merge(nextProps.member),
         sent: false
       });
     }

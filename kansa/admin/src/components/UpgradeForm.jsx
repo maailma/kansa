@@ -5,18 +5,18 @@ import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 
-import MemberDetails from './MemberDetails';
+import Member from './Member';
 
 const MembershipSelect = ({ getDefaultValue, getValue, onChange }) => {
   const path = 'membership';
-  const prevIdx = MemberDetails.membershipTypes.indexOf(getDefaultValue(path));
+  const prevIdx = Member.membershipTypes.indexOf(getDefaultValue(path));
   return <SelectField
     floatingLabelText='Membership type'
     floatingLabelFixed={true}
     value={getValue(path)}
     onChange={ (ev, idx, value) => onChange(path, value) }
   >
-    { MemberDetails.membershipTypes.map((type, idx) => (
+    { Member.membershipTypes.map((type, idx) => (
       <MenuItem
         key={type} value={type} primaryText={type}
         disabled={ idx < prevIdx }
@@ -32,7 +32,7 @@ const PaperPubsCheckbox = ({ getDefaultValue, getValue, onChange }) => {
     style={{ width: '256px', float: 'right', marginTop: '37px' }}
     checked={!!getValue(path)}
     disabled={!!getDefaultValue(path)}
-    onCheck={ (ev, checked) => onChange(path, checked ? MemberDetails.emptyPaperPubsMap : null) }
+    onCheck={ (ev, checked) => onChange(path, checked ? Member.emptyPaperPubsMap : null) }
   />;
 }
 

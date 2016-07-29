@@ -10,7 +10,7 @@ import { AutoSizer, FlexTable, FlexColumn, SortDirection } from 'react-virtualiz
 
 import styles from '../styles/MemberTable.css'
 
-import MemberDetails from './MemberDetails';
+import Member from './Member';
 
 export default class MemberTable extends React.Component {
   static propTypes = {
@@ -81,7 +81,7 @@ export default class MemberTable extends React.Component {
               cellDataGetter = { ({ rowData }) => this._fullLocation(rowData) }
             />
           </FlexTable>,
-          <MemberDetails
+          <Member
             key='details'
             open={list.size > 0 && selectedMember !== null}
             api={this.props.api}
