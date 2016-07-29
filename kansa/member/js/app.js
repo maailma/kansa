@@ -1,6 +1,6 @@
 import React from 'react';  
-import Router from 'react-router';  
-import { DefaultRoute, Link, Route, RouteHandler } from 'react-router';
+import { render } from 'react-dom'
+import { DefaultRoute, Router, Link, Route, RouteHandler, hashHistory } from 'react-router';
 import 'whatwg-fetch';
 
 import LoginHandler from './components/Login.js';
@@ -50,10 +50,18 @@ export default class API {
 const apiHost = '139.162.147.227:3000';
 const api = new API(`http://${apiHost}/`);
 
+/*** Would here catch query parameters or show form with email and key **/
+
 api.GET('login',{email:'admin@example.com',key:'key'})
-  .then(console.log('logged'))
+  .then(console.log('log'))
 
 let App = React.createClass({  
+
+    componentDidMount() {
+      const email = this.props.params.email
+      console.log(email)
+    },
+
   render() {
     return (<div className="nav">
         <Link to="app">Home</Link>
@@ -66,12 +74,18 @@ let App = React.createClass({
   }
 });
 
-let routes = (  
+let routes = (
+<Router history={hashHistory}>  
   <Route name="app" path="/" handler={App}>
     <Route name="login" path="/login" handler={LoginHandler}/>
   </Route>
+</Router>
 );
 
-Router.run(routes, function (Handler) {  
-  React.render(<Handler/>, document.body);
-});
+// Router.run(routes, function (Handler) {  
+//   React.render(<Handler/>, document.body);
+// });
+
+render((
+  routes
+  ), document.getElementById('react'))
