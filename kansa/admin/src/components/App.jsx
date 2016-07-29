@@ -1,8 +1,12 @@
+import { List, Map } from 'immutable';
 import React from 'react';
 import { connect } from 'react-redux';
-import { List, Map } from 'immutable';
+
+import ContentAdd from 'material-ui/svg-icons/content/add';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
 
 import MemberTable from './MemberTable';
+import NewMember from './NewMember';
 
 function logout(api) {
   api.GET('logout')
@@ -36,6 +40,11 @@ class App extends React.Component {
             <MemberTable api={api} list={people} />
           </div>
         </div>
+        <NewMember add={ member => api.POST('people', member.toJS()) }>
+          <FloatingActionButton style={{ position: 'fixed', bottom: '24px', right: '24px' }} >
+            <ContentAdd />
+          </FloatingActionButton>
+        </NewMember>
       </div>
     );
   }

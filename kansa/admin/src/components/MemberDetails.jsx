@@ -42,6 +42,14 @@ export default class MemberDetails extends React.Component {
     })
   }
 
+  static isValid(member) {
+    return Map.isMap(member)
+      && member.get('legal_name', false) && member.get('email', false)
+      && member.getIn(['paper_pubs', 'name'], true)
+      && member.getIn(['paper_pubs', 'address'], true)
+      && member.getIn(['paper_pubs', 'country'], true);
+  }
+
   state = {
     member: Map(),
     sent: false
@@ -56,11 +64,7 @@ export default class MemberDetails extends React.Component {
   }
 
   get valid() {
-    const m = this.state.member;
-    return m.get('legal_name', false) && m.get('email', false)
-      && m.getIn(['paper_pubs', 'name'], true)
-      && m.getIn(['paper_pubs', 'address'], true)
-      && m.getIn(['paper_pubs', 'country'], true);
+    return MemberDetails.isValid(this.state.member);
   }
 
   componentWillReceiveProps(nextProps) {
