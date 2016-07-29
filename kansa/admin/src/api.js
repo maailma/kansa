@@ -6,10 +6,8 @@ export default class API {
   }
 
   static parse(response) {
-    if (response.ok) return response.json();
-    const error = new Error(response.statusText);
-    error.response = response;
-    throw error;
+    return response.json()
+      .then( json => response.ok ? json : Promise.reject(json) );
   }
 
   static queryFromObj(obj) {
