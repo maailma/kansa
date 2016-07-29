@@ -22,7 +22,7 @@ export default class API {
 
   GET(cmd, params) {
     const uri = this.path(cmd, params);
-    return fetch(uri, { credentials: 'include' })
+    return fetch(uri, { credentials: 'include', mode: 'no-cors' })
       .then(response => API.parse(response));
   }
 
