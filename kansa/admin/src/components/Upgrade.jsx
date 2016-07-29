@@ -22,7 +22,7 @@ function getIn(obj, path, unset) {
   }
 }
 
-export default class MemberUpgrade extends React.Component {
+export default class Upgrade extends React.Component {
   static propTypes = {
     membership: React.PropTypes.string.isRequired,
     paper_pubs: ImmutablePropTypes.mapContains({
@@ -84,7 +84,7 @@ export default class MemberUpgrade extends React.Component {
                 const res = { comment };
                 if (msChanged) res.membership = membership;
                 if (paper_pubs) res.paper_pubs = paper_pubs.toJS();
-                (this.props.upgrade(res) || Promise.reject('MemberUpgrade expected a Promise from upgrade()'))
+                (this.props.upgrade(res) || Promise.reject('Upgrade expected a Promise from upgrade()'))
                   .then(res => {
                     console.log('Member upgraded', res);
                     this.handleClose();

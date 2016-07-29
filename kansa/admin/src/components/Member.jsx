@@ -7,7 +7,7 @@ const ImmutablePropTypes = require('react-immutable-proptypes');
 
 import MemberForm from './MemberForm';
 import MemberLog from './MemberLog';
-import MemberUpgrade from './MemberUpgrade';
+import Upgrade from './Upgrade';
 
 export default class Member extends React.Component {
   static propTypes = {
@@ -101,7 +101,7 @@ export default class Member extends React.Component {
           getLog={ id => id > 0 ? api.GET(`people/${id}/log`) : Promise.reject('Invalid id! ' + id) }
           id={member.get('id', -1)}
         />,
-        <MemberUpgrade key='upgrade' style={{ float: 'left' }}
+        <Upgrade key='upgrade' style={{ float: 'left' }}
           membership={membership}
           paper_pubs={member.get('paper_pubs')}
           name={ member.get('legal_name') + ' <' + member.get('email') + '>' }
