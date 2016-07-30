@@ -34,6 +34,15 @@ export default class MemberTable extends React.Component {
     this._noRowsRenderer = this._noRowsRenderer.bind(this)
   }
 
+  componentWillReceiveProps(nextProps) {
+    const member = this.state.selectedMember;
+    if (member) {
+      const id = member.get('id');
+      const selectedMember = nextProps.list.find(m => m && m.get('id') === id) || null;
+      this.setState({ selectedMember });
+    }
+  }
+
   render() {
     const {
       selectedMember,
@@ -68,7 +77,7 @@ export default class MemberTable extends React.Component {
             sortBy={sortBy}
             sortDirection={sortDirection}
             width={width}
-            onRowClick={({ index }) => this.setState({ selectedMember: list.get(index).get('id') })}
+            onRowClick={ ({ index }) => this.setState({ selectedMember: list.get(index) }) }
           >
             <FlexColumn dataKey='member_number' label='#' width={40} />
             <FlexColumn dataKey='membership' label='Type' width={80} />
@@ -83,10 +92,9 @@ export default class MemberTable extends React.Component {
           </FlexTable>,
           <Member
             key='details'
-            open={list.size > 0 && selectedMember !== null}
             api={this.props.api}
             handleClose={ () => this.setState({ selectedMember: null }) }
-            member={this.props.list.get(selectedMember)}
+            member={selectedMember}
           />
         ])}
       </AutoSizer>

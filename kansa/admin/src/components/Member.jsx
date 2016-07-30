@@ -11,7 +11,6 @@ import Upgrade from './Upgrade';
 
 export default class Member extends React.Component {
   static propTypes = {
-    open: React.PropTypes.bool.isRequired,
     api: React.PropTypes.object.isRequired,
     handleClose: React.PropTypes.func.isRequired,
     member: ImmutablePropTypes.mapContains({
@@ -74,7 +73,7 @@ export default class Member extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!nextProps.member.equals(this.props.member)) {
+    if (nextProps.member && (!this.props.member || !nextProps.member.equals(this.props.member))) {
       this.setState({
         member: Member.defaultProps.member.merge(nextProps.member),
         sent: false
@@ -83,7 +82,6 @@ export default class Member extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.open !== this.props.open) return true;
     if (nextProps.api !== this.props.api) return true;
     if (nextProps.handleClose !== this.props.handleClose) return true;
     if (!nextProps.member.equals(this.props.member)) return true;
@@ -93,7 +91,8 @@ export default class Member extends React.Component {
   }
 
   render() {
-    const { open, api, handleClose, member } = this.props;
+    const { api, handleClose, member } = this.props;
+    if (!member) return null;
     const membership = member.get('membership', 'NonMember');
     const formProps = {
       getDefaultValue: path => member.getIn(path, ''),
@@ -131,8 +130,8 @@ export default class Member extends React.Component {
               .catch(e => console.error(e));  // TODO: report errors better
           }} />
       ]}
-      open={open}
       title={ membership == 'NonMember' ? 'Non-member' : `Member #${member.get('member_number')} (${membership})` }
+      open={true}
       autoScrollBodyContent={true}
       bodyClassName='memberDialog'
       onRequestClose={handleClose}
