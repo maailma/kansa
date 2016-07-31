@@ -17,17 +17,14 @@ import App from './components/App';
 import people from './reducers/people';
 import user from './reducers/user';
 
-const apiHost = 'localhost:3000';
-const api = new API(`http://${apiHost}/`);
-const reducer = combineReducers({ people, user });
-const store = createStore(reducer);
-
+const store = createStore(combineReducers({ people, user }));
+const api = new API(`http://${API_HOST}/`);
 api.GET('user')
   .then(data => store.dispatch({ type: 'LOGIN', data }))
   .then(() => api.GET('people'))
   .then(data => store.dispatch({ type: 'INIT PEOPLE', data }))
   .then(() => {
-    const ws = new WebSocket(`ws://${apiHost}/people`);
+    const ws = new WebSocket(`ws://${API_HOST}/people`);
     ws.onmessage = msg => {
       const data = JSON.parse(msg.data);
       store.dispatch({ type: 'SET PERSON', data });
@@ -40,7 +37,7 @@ api.GET('user')
 render(
   <Provider store={store}>
     <MuiThemeProvider muiTheme={getMuiTheme()}>
-      <App api={api} />
+      <App api={api} title={TITLE} />
     </MuiThemeProvider>
   </Provider>,
   document.getElementById('app')
