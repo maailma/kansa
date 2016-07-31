@@ -1,8 +1,3 @@
-/** Table of members
- *
- * Based on: https://github.com/bvaughn/react-virtualized/blob/7.7.1/source/FlexTable/FlexTable.example.js
- */
-
 import { List } from 'immutable'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -10,42 +5,57 @@ import { AutoSizer, FlexTable, FlexColumn, SortDirection } from 'react-virtualiz
 
 import styles from '../styles/MemberTable.css'
 
-import Member from './Member';
+const publicName = (person) => ['public_first_name', 'public_last_name']
+  .map(k => person.get(k))
+  .join(' ')
+  .trim();
+
+const publicSortName = (person) => ['public_last_name', 'public_first_name']
+  .map(k => person.get(k))
+  .filter(v => !!v)
+  .join(';');
+
+const fullLocation = (person) => ['country', 'state', 'city']
+  .map(k => person.get(k))
+  .filter(v => !!v)
+  .join(', ');
+
+const noRowsRenderer = () => (
+  <div className={styles.noRows}>
+    No rows
+  </div>
+);
 
 export default class MemberTable extends React.Component {
   static propTypes = {
-    api: React.PropTypes.object.isRequired,
-    list: React.PropTypes.instanceOf(List).isRequired
+    list: React.PropTypes.instanceOf(List).isRequired,
+    onMemberSelect: React.PropTypes.func.isRequired
   }
 
-  constructor(props, context) {
-    super(props, context)
-
-    this.state = {
-      selectedMember: null,
-      headerHeight: 30,
-      overscanRowCount: 10,
-      rowHeight: 30,
-      scrollToIndex: undefined,
-      sortBy: 'id',
-      sortDirection: SortDirection.ASC
-    }
-
-    this._noRowsRenderer = this._noRowsRenderer.bind(this)
+  state = {
+    headerHeight: 30,
+    overscanRowCount: 10,
+    rowHeight: 30,
+    scrollToIndex: undefined,
+    sortBy: 'id',
+    sortDirection: SortDirection.ASC
   }
 
-  componentWillReceiveProps(nextProps) {
-    const member = this.state.selectedMember;
-    if (member) {
-      const id = member.get('id');
-      const selectedMember = nextProps.list.find(m => m && m.get('id') === id) || null;
-      this.setState({ selectedMember });
+  get sortFn() {
+    const { sortBy } = this.state;
+    switch (sortBy) {
+      case 'public_name':  return publicSortName;
+      case 'loc':          return fullLocation;
+      default:             return item => item.get(sortBy, '');
     }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState)
   }
 
   render() {
     const {
-      selectedMember,
       headerHeight,
       overscanRowCount,
       rowHeight,
@@ -56,80 +66,45 @@ export default class MemberTable extends React.Component {
 
     const list = this.props.list
       .filter(item => item)
-      .sortBy(this._sortFn)
+      .sortBy(this.sortFn)
       .update(list => sortDirection === SortDirection.DESC ? list.reverse() : list)
 
     return (
-      <AutoSizer>
-        {({ height, width }) => ([
-          <FlexTable
-            key='table'
-            headerClassName={styles.headerColumn}
-            headerHeight={headerHeight}
-            height={height}
-            noRowsRenderer={this._noRowsRenderer}
-            overscanRowCount={overscanRowCount}
-            rowHeight={rowHeight}
-            rowGetter={({ index }) => list.get(index)}
-            rowCount={list.size}
-            scrollToIndex={scrollToIndex}
-            sort={({ sortBy, sortDirection }) => this.setState({ sortBy, sortDirection })}
-            sortBy={sortBy}
-            sortDirection={sortDirection}
-            width={width}
-            onRowClick={ ({ index }) => this.setState({ selectedMember: list.get(index) }) }
-          >
-            <FlexColumn dataKey='member_number' label='#' width={40} />
-            <FlexColumn dataKey='membership' label='Type' width={80} />
-            <FlexColumn dataKey='legal_name' label='Name' width={120} flexGrow={1} />
-            <FlexColumn dataKey='email' label='Email' width={210} />
-            <FlexColumn dataKey='public_name' label='Public' width={120} flexGrow={1}
-              cellDataGetter = { ({ rowData }) => this._publicName(rowData) }
-            />
-            <FlexColumn dataKey='loc' label='Location' width={120} flexGrow={1}
-              cellDataGetter = { ({ rowData }) => this._fullLocation(rowData) }
-            />
-          </FlexTable>,
-          <Member
-            key='details'
-            api={this.props.api}
-            handleClose={ () => this.setState({ selectedMember: null }) }
-            member={selectedMember}
-          />
-        ])}
-      </AutoSizer>
-    )
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
-  }
-
-  get _sortFn() {
-    const { sortBy } = this.state;
-    switch (sortBy) {
-      case 'public_name':  return this._publicSortName;
-      case 'loc':          return this._fullLocation;
-      default:             return item => item.get(sortBy, '');
-    }
-  }
-
-  _publicName(person) {
-    return ['public_first_name', 'public_last_name'].map(k => person.get(k)).join(' ').trim()
-  }
-
-  _publicSortName(person) {
-    return ['public_last_name', 'public_first_name'].map(k => person.get(k)).filter(v => !!v).join(';')
-  }
-
-  _fullLocation(person) {
-    return ['country', 'state', 'city'].map(k => person.get(k)).filter(v => !!v).join(', ')
-  }
-
-  _noRowsRenderer() {
-    return (
-      <div className={styles.noRows}>
-        No rows
+      <div style={{ display: 'flex', height: 'calc(100vh - 48px)' }}>
+        <div style={{ flex: '1 1 auto' }}>
+          <AutoSizer>
+            { ({ height, width }) => (
+              <FlexTable
+                key='table'
+                headerClassName={styles.headerColumn}
+                headerHeight={headerHeight}
+                height={height}
+                noRowsRenderer={noRowsRenderer}
+                overscanRowCount={overscanRowCount}
+                rowHeight={rowHeight}
+                rowGetter={({ index }) => list.get(index)}
+                rowCount={list.size}
+                scrollToIndex={scrollToIndex}
+                sort={({ sortBy, sortDirection }) => this.setState({ sortBy, sortDirection })}
+                sortBy={sortBy}
+                sortDirection={sortDirection}
+                width={width}
+                onRowClick={ ({ index }) => this.props.onMemberSelect(list.get(index)) }
+              >
+                <FlexColumn dataKey='member_number' label='#' width={40} />
+                <FlexColumn dataKey='membership' label='Type' width={80} />
+                <FlexColumn dataKey='legal_name' label='Name' width={120} flexGrow={1} />
+                <FlexColumn dataKey='email' label='Email' width={210} />
+                <FlexColumn dataKey='public_name' label='Public' width={120} flexGrow={1}
+                  cellDataGetter = { ({ rowData }) => publicName(rowData) }
+                />
+                <FlexColumn dataKey='loc' label='Location' width={120} flexGrow={1}
+                  cellDataGetter = { ({ rowData }) => fullLocation(rowData) }
+                />
+              </FlexTable>
+            ) }
+          </AutoSizer>
+        </div>
       </div>
     )
   }

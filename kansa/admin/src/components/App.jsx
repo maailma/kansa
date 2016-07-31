@@ -6,6 +6,7 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 
 import filterPeople from '../filterPeople';
+import Member from './Member';
 import MemberTable from './MemberTable';
 import NewMember from './NewMember';
 import Toolbar from './Toolbar';
@@ -18,12 +19,22 @@ class App extends React.Component {
   }
 
   state = {
-    filter: ''
+    filter: '',
+    member: null
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const prevMember = this.state.member;
+    if (prevMember) {
+      const id = prevMember.get('id');
+      const member = nextProps.list && nextProps.list.find(m => m && m.get('id') === id) || null;
+      this.setState({ member });
+    }
   }
 
   render() {
-    const { api, user, people } = this.props;
-    const { filter } = this.state;
+    const { api, people, user } = this.props;
+    const { filter, member } = this.state;
     const list = filterPeople(people, filter);
     return <div>
       <Toolbar
@@ -36,11 +47,16 @@ class App extends React.Component {
         }
       />
 
-      <div style={{ display: 'flex', height: 'calc(100vh - 48px)' }}>
-        <div style={{ flex: '1 1 auto' }}>
-          <MemberTable api={api} list={list} />
-        </div>
-      </div>
+      <MemberTable
+        list={list}
+        onMemberSelect={ member => this.setState({ member }) }
+      />
+
+      <Member
+        api={api}
+        handleClose={ () => this.setState({ member: null }) }
+        member={member}
+      />
 
       <NewMember add={ member => api.POST('people', member.toJS()) }>
         <FloatingActionButton style={{ position: 'fixed', bottom: '24px', right: '24px' }} >
