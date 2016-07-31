@@ -13,9 +13,14 @@ import Toolbar from './Toolbar';
 
 class App extends React.Component {
   static propTypes = {
+    title: React.PropTypes.string,
     api: React.PropTypes.object.isRequired,
     people: React.PropTypes.instanceOf(List).isRequired,
     user: React.PropTypes.instanceOf(Map).isRequired
+  }
+
+  static defaultProps = {
+    title: 'Kansa'
   }
 
   state = {
@@ -33,11 +38,12 @@ class App extends React.Component {
   }
 
   render() {
-    const { api, people, user } = this.props;
+    const { title, api, people, user } = this.props;
     const { filter, member } = this.state;
     const list = filterPeople(people, filter);
     return <div>
       <Toolbar
+        title={title}
         filter={filter}
         user={user}
         onFilterChange={ filter => this.setState({ filter }) }
