@@ -41,6 +41,9 @@ export default class Member extends React.Component {
     })
   }
 
+  static fields = [ 'membership', 'legal_name', 'email', 'public_first_name', 'public_last_name',
+    'country', 'state', 'city', 'paper_pubs' ];
+
   static membershipTypes = [ 'NonMember', 'Supporter', 'KidInTow', 'Child', 'Youth', 'FirstWorldcon', 'Adult' ];
 
   static emptyPaperPubsMap = Map({ name: '', address: '', country: '' });

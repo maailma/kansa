@@ -1,5 +1,17 @@
 import { Map } from 'immutable';
 
+export const filterTerms = [
+  [ '_some terms_', 'Match both _some_ and _terms_, possibly in different fields' ],
+  [ '"_some terms_"', 'Match _some terms_ in one field' ],
+  [ '_some -terms_', 'Match _some_, excluding members that match _terms_' ],
+  [ 'has:_field_', 'Match members with a non-empty value for the given _field_' ],
+  [ 'is:public', 'Match members with some public name' ],
+  [ 'is:_membership_', 'Match members of the given _membership_ type' ],
+  [ 'loc:_some_', 'Match _some_ in location fields only' ],
+  [ 'name:_terms_', 'Match _terms_ in name fields only' ],
+  [ '_field_:"_some terms_"', 'Match _some terms_ in the given _field_ only' ]
+];
+
 const namePaths = [ ['legal_name'], ['public_first_name'], ['public_last_name'], ['paper_pubs', 'name'] ];
 const locPaths = [ ['country'], ['state'], ['city'], ['paper_pubs', 'address'], ['paper_pubs', 'country'] ];
 

@@ -13,7 +13,7 @@ import ContentClear from 'material-ui/svg-icons/content/clear';
 
 let searchField = null;
 
-const KansaToolbar = ({ title, filter, user, onFilterChange, onLogout }) => <Toolbar
+const KansaToolbar = ({ title, filter, user, onFilterChange, onHelp, onLogout }) => <Toolbar
   style={{ position: 'fixed', zIndex: 1, height: 48, width: '100%', backgroundColor: 'rgb(221, 236, 148)' }}
 >
   <ToolbarGroup firstChild={true}>
@@ -48,6 +48,7 @@ const KansaToolbar = ({ title, filter, user, onFilterChange, onLogout }) => <Too
       targetOrigin={{ horizontal: 'right', vertical: 'top' }}
     >
       <MenuItem primaryText={user.get('email')} disabled={true} />
+      <MenuItem primaryText="Help" onTouchTap={onHelp} />
       <MenuItem primaryText="Logout" onTouchTap={onLogout} />
     </IconMenu>
   </ToolbarGroup>
@@ -58,6 +59,7 @@ KansaToolbar.propTypes = {
   filter: React.PropTypes.string.isRequired,
   user: React.PropTypes.instanceOf(Map).isRequired,
   onFilterChange: React.PropTypes.func.isRequired,
+  onHelp: React.PropTypes.func.isRequired,
   onLogout: React.PropTypes.func.isRequired
 }
 

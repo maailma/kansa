@@ -6,6 +6,7 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 
 import filterPeople from '../filterPeople';
+import { HelpDialog } from './Help';
 import Member from './Member';
 import MemberTable from './MemberTable';
 import NewMember from './NewMember';
@@ -25,6 +26,7 @@ class App extends React.Component {
 
   state = {
     filter: '',
+    helpOpen: false,
     member: null
   }
 
@@ -39,7 +41,7 @@ class App extends React.Component {
 
   render() {
     const { title, api, people, user } = this.props;
-    const { filter, member } = this.state;
+    const { filter, helpOpen, member } = this.state;
     const list = filterPeople(people, filter);
     return <div>
       <Toolbar
@@ -47,6 +49,7 @@ class App extends React.Component {
         filter={filter}
         user={user}
         onFilterChange={ filter => this.setState({ filter }) }
+        onHelp={ () => this.setState({ helpOpen: true }) }
         onLogout={ () => api.GET('logout')
           .then(res => location.reload())
           .catch(e => console.error('Logout failed', e))
@@ -69,6 +72,11 @@ class App extends React.Component {
           <ContentAdd />
         </FloatingActionButton>
       </NewMember>
+
+      <HelpDialog
+        open={helpOpen}
+        handleClose={ () => this.setState({ helpOpen: false }) }
+      />
     </div>;
   }
 }
