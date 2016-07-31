@@ -30,6 +30,14 @@ class App extends React.Component {
     member: null
   }
 
+  constructor(props) {
+    super(props);
+    const defaultTitle = App.defaultProps.title;
+    let title = props.title;
+    if (title.indexOf(defaultTitle) === -1) title = `${defaultTitle} - ${title}`;
+    document.title = title;
+  }
+
   componentWillReceiveProps(nextProps) {
     const prevMember = this.state.member;
     if (prevMember) {
