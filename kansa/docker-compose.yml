@@ -14,5 +14,7 @@ postgres:
     - "5432:5432"
   restart: always
   volumes:
+    - ./postgres/damm:/damm
+    - ./postgres/install-damm-extension.sh:/docker-entrypoint-initdb.d/00-damm.sh
     - ./postgres/init.sql:/docker-entrypoint-initdb.d/10-init.sql
     - ./postgres/dev-init-admin.sql:/docker-entrypoint-initdb.d/20-admin.sql
