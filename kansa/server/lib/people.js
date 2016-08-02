@@ -82,7 +82,9 @@ function getPerson(req, res, next) {
 }
 
 function addPerson(req, res, next) {
-  if (!req.session.user.member_admin) return res.status(401).json({ status: 'unauthorized' });
+  if (!req.session.user.member_admin || req.body.hasOwnProperty('member_number') && !req.session.user.admin_admin) {
+    return res.status(401).json({ status: 'unauthorized' });
+  }
   let id, person;
   try {
     person = new Person(req.body);

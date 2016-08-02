@@ -29,10 +29,7 @@ function upgradeMembership(req, res, next, data) {
       const prevTypeIdx = Person.membershipTypes.indexOf(prev.membership);
       const nextTypeIdx = Person.membershipTypes.indexOf(data.membership);
       if (nextTypeIdx <= prevTypeIdx) throw new InputError(`Can't "upgrade" from ${prev.membership} to ${data.membership}`);
-      const prevNumber = parseInt(prev.member_number);
-      if (data.member_number && prevNumber) throw new InputError('Member number already set');
-      if (data.member_number || prevNumber) return {};
-      return tx.one('SELECT max(member_number) FROM People');
+      return parseInt(prev.member_number) ? {} : tx.one('SELECT max(member_number) FROM People');
     case 2:
       if (prev.hasOwnProperty('max')) data.member_number = Person.nextMemberNumber(prev.max);
       const sqlFields = fields.filter(fn => data[fn]).map(fn => `${fn}=$(${fn})`).join(', ');
