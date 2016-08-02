@@ -10,11 +10,12 @@ const DEFAULT_EMAIL = 'registration@worldcon.fi';
 
 const loginUrl = process.argv[2];
 if (loginUrl.indexOf('/login') === -1) {
-  console.error('Usage: node index.js \'https://api.server/login?...\' [--json] < data.csv > skipped.json');
+  console.error('Usage: node index.js \'https://api.server/login?...\' [--json] [--verbose] < data.csv > skipped.json');
   process.exit(1);
 }
 const apiRoot = loginUrl.slice(0, loginUrl.indexOf('/login'));
 const isJSON = process.argv.indexOf('--json') !== -1;
+const verbose = process.argv.indexOf('--verbose') !== -1;
 
 
 const paperPubs = new PaperPubs(process.argv, csvOptions);
@@ -55,7 +56,7 @@ fetch(loginUrl)
               console.error(`Skipped ${sum.issueSkip} due to issues and ${sum.emailSkip} due to missing email.`);
               console.error(`Encountered ${sum.error} errors.`);
               console.error(`${paperPubs.remaining().length}/${paperPubs.data.length} paper pubs left unhandled.`);
-            }, 1000);
+            }, 30*1000);
           }
         }, 10);  // delay required to not saturate server
       });
@@ -107,12 +108,12 @@ function handle(rec, tag) {
     .then(res => {
       id = res.id;
       ++sum.join;
-      console.error(colors.gray(`${tag} joined as ${data.membership} on ${data.timestamp}`));
+      if (verbose) console.error(colors.gray(`${tag} joined as ${data.membership} on ${data.timestamp}`));
       if (rec.supporter && rec.upgrade) {
         const upgrade = upgradeData(rec);
         return POST(`people/${id}/upgrade`, upgrade).then(res => {
           ++sum.upgrade;
-          console.error(colors.gray(`${tag} upgraded to ${upgrade.membership} on ${upgrade.timestamp}`));
+          if (verbose) console.error(colors.gray(`${tag} upgraded to ${upgrade.membership} on ${upgrade.timestamp}`));
         });
       }
     })
@@ -121,7 +122,7 @@ function handle(rec, tag) {
         const pp = paperPubs.getData(rec.paper_pubs_id, rec.legal_name);
         return POST(`people/${id}/upgrade`, pp).then(res => {
           ++sum.paper;
-          console.error(colors.gray(`${tag} got paper pubs on ${pp.timestamp}`));
+          if (verbose) console.error(colors.gray(`${tag} got paper pubs on ${pp.timestamp}`));
         });
       }
     });
