@@ -20,7 +20,7 @@ function upgradePaperPubs(req, res, next, { paper_pubs }) {
 }
 
 function upgradeMembership(req, res, next, data) {
-  const fields = [ 'membership', 'member_number', 'paper_pubs' ];
+  const set = [ 'membership=$(membership)' ];
   data.id = parseInt(req.params.id);
   req.app.locals.db.tx(tx => tx.sequence((i, prev) => { switch (i) {
     case 0:
@@ -29,18 +29,19 @@ function upgradeMembership(req, res, next, data) {
       const prevTypeIdx = Person.membershipTypes.indexOf(prev.membership);
       const nextTypeIdx = Person.membershipTypes.indexOf(data.membership);
       if (nextTypeIdx <= prevTypeIdx) throw new InputError(`Can't "upgrade" from ${prev.membership} to ${data.membership}`);
-      return parseInt(prev.member_number) ? {} : tx.one('SELECT max(member_number) FROM People');
+      if (!parseInt(prev.member_number)) set.push("member_number=nextdamm('member_number_seq')");
+      if (data.paper_pubs) set.push('paper_pubs=$(paper_pubs)');
+      return tx.one(`UPDATE People SET ${set.join(', ')} WHERE id=$(id) RETURNING true`, data);
     case 2:
-      if (prev.hasOwnProperty('max')) data.member_number = Person.nextMemberNumber(prev.max);
-      const sqlFields = fields.filter(fn => data[fn]).map(fn => `${fn}=$(${fn})`).join(', ');
-      return tx.one(`UPDATE People SET ${sqlFields} WHERE id=$(id) RETURNING true`, data);
-    case 3:
       const log = new LogEntry(req, `Upgrade to ${data.membership}`);
       if (data.paper_pubs) log.description += ' and add paper pubs';
       log.subject = data.id;
       return tx.none(`INSERT INTO Log ${log.sqlValues}`, log);
   }}))
-    .then(() => { res.status(200).json({ status: 'success', updated: fields.filter(fn => data[fn]) }); })
+    .then(() => res.status(200).json({
+      status: 'success',
+      updated: set.map(sql => sql.replace(/=.*/, ''))
+    }))
     .catch(err => next(err));
 }
 
@@ -49,7 +50,6 @@ function upgradePerson(req, res, next) {
   const data = Object.assign({}, req.body);
   const checks = {
     membership: Person.cleanMemberType,
-    member_number: Person.cleanMemberNumber,
     paper_pubs: Person.cleanPaperPubs
   };
   for (const key in checks) {

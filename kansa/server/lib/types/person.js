@@ -1,4 +1,3 @@
-const damm = require('damm');
 const util = require('../util');
 
 class Person {
@@ -35,12 +34,6 @@ class Person {
     return [ 'name', 'address', 'country' ];  // text
   }
 
-  static cleanMemberNumber(ns) {
-    const n = parseInt(ns);
-    if (!isNaN(n) && n > 0 && damm.verify(n.toString())) return n;
-    throw new Error('Invalid member number: ' + JSON.stringify(ns));
-  }
-
   static cleanMemberType(ms) {
     if (Person.membershipTypes.indexOf(ms) > -1) return ms;
     throw new Error('Invalid membership type: ' + JSON.stringify(ms));
@@ -54,12 +47,6 @@ class Person {
       o[fn] = pp[fn];
       return o;
     }, {});
-  }
-
-  static nextMemberNumber(prevMax) {
-    const root = prevMax ? Math.floor(prevMax / 10) + 1 : 1;
-    const nStr = damm.append(root.toString());
-    return parseInt(nStr);
   }
 
   constructor(src) {

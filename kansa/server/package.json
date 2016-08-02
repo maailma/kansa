@@ -21,7 +21,6 @@
     "body-parser": "~1.13.2",
     "connect-pg-simple": "^3.1.0",
     "cors": "^2.7.1",
-    "damm": "0.0.1",
     "debug": "~2.2.0",
     "express": "~4.13.1",
     "express-session": "^1.13.0",

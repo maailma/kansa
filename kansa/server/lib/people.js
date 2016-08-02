@@ -91,14 +91,10 @@ function addPerson(req, res, next) {
   } catch (e) {
     return res.status(400).json({ status: 'error', message: e.message });
   }
-  const setNumber = !person.data.member_number && person.data.membership !== 'NonMember';
   req.app.locals.db.tx(tx => tx.sequence((i, data) => { switch (i) {
     case 0:
-      return setNumber ? tx.one('SELECT max(member_number) FROM People') : {};
-    case 1:
-      if (setNumber) person.data.member_number = Person.nextMemberNumber(data.max);
       return tx.one(`INSERT INTO People ${person.sqlValues} RETURNING id`, person.data);
-    case 2:
+    case 1:
       const log = new LogEntry(req, 'Add new person');
       id = log.subject = parseInt(data.id);
       return tx.none(`INSERT INTO Log ${log.sqlValues}`, log);
