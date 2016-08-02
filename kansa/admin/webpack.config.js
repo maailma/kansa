@@ -20,8 +20,11 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      API_HOST: JSON.stringify(process.env.KANSA_API_HOST || 'localhost:3000'),
-      TITLE: JSON.stringify(process.env.KANSA_TITLE || 'Kansa')
+      'process.env': {
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV || ''),
+        KANSA_API_HOST: JSON.stringify(process.env.KANSA_API_HOST || 'localhost:3000'),
+        KANSA_TITLE: JSON.stringify(process.env.KANSA_TITLE || 'Kansa')
+      }
     })
   ],
   resolve: {

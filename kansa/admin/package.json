@@ -10,7 +10,8 @@
     "url": "https://github.com/worldcon75/api.git"
   },
   "scripts": {
-    "build": "webpack",
+    "build": "webpack -d",
+    "build:prod": "NODE_ENV=production webpack -p",
     "start": "webpack-dev-server -d",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
