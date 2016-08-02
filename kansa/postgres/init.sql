@@ -1,10 +1,14 @@
+CREATE EXTENSION damm;
+
+CREATE SEQUENCE member_number_seq;
+
 CREATE TYPE MembershipStatus AS ENUM ('NonMember','Supporter','KidInTow','Child','Youth','FirstWorldcon','Adult');
 
 CREATE TABLE IF NOT EXISTS People (
     id SERIAL PRIMARY KEY,
     last_modified timestamptz DEFAULT now(),
     membership MembershipStatus NOT NULL,
-    member_number integer UNIQUE,
+    member_number damm_code UNIQUE DEFAULT nextdamm('member_number_seq'),
     legal_name text NOT NULL,
     public_first_name text,
     public_last_name text,

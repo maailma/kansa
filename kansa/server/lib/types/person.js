@@ -8,7 +8,7 @@ class Person {
       'last_modified',  // timestamptz DEFAULT now()
       'legal_name',  // text NOT NULL
       'membership',  // MembershipStatus NOT NULL
-      'member_number',  // integer
+      'member_number',  // damm_code
       'public_first_name', 'public_last_name',  // text
       'email',  // text
       'city', 'state', 'country',  // text
@@ -68,6 +68,7 @@ class Person {
     Person.cleanMemberType(this.data.membership);
     Person.boolFields.forEach(fn => util.forceBool(this.data, fn));
     util.forceInt(this.data, 'member_number');
+    if (this.data.membership === 'NonMember') this.data.member_number = null;
     this.data.paper_pubs = Person.cleanPaperPubs(this.data.paper_pubs);
   }
 
