@@ -7,7 +7,6 @@ export default class API {
   }
 
   static parse(response) {
-    console.log(response)
     if (response.ok) return response.json();
     const error = new Error(response.statusText);
     error.response = response;
@@ -23,15 +22,35 @@ export default class API {
   path(cmd, params) {
     return this.root + cmd + API.queryFromObj(params);
   }
+    pathkansa(cmd, params) {
+    return "http://0.0.0.0:3000/" + cmd + API.queryFromObj(params);
+  }
 
   GET(cmd, params) {
     const uri = this.path(cmd, params);
-    return fetch(uri, { credentials: 'include', mode: 'no-cors' })
-      //.then(response => API.parse(response));
+    return fetch(uri, { credentials: 'include'})
+      .then(response => API.parse(response));
+  }
+   GETCORS(cmd, params) {
+    const uri = this.path(cmd, params);
+    return fetch(uri, { credentials: 'include'})
+      .then(response => API.parse(response));
   }
 
   POST(cmd, body) {
     const uri = this.path(cmd);
+    const opt = { credentials: 'include', method: 'POST' };
+    if (typeof body == 'string') {
+      opt.body = body;
+    } else {
+      opt.headers = { 'Content-Type': 'application/json' };
+      opt.body = JSON.stringify(body);
+    }
+    return fetch(uri, opt)
+      .then(response => API.parse(response));
+  }
+    POSTKANSA(cmd, body) {
+    const uri = this.pathkansa(cmd);
     const opt = { credentials: 'include', method: 'POST' };
     if (typeof body == 'string') {
       opt.body = body;
