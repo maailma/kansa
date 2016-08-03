@@ -32,7 +32,7 @@ function login(req, res, next) {
   });
   db.task(t => t.batch([
     t.one('SELECT COUNT(*) FROM Keys WHERE email=$(email) AND key=$(key)', { email, key }),
-    t.oneOrNone(`SELECT ${Admin.sqlRoles} FROM Admins WHERE email=$1`, email)
+    t.oneOrNone(`SELECT ${Admin.sqlRoles} FROM admin.Admins WHERE email=$1`, email)
   ]))
     .then(data => {
       if (data[0].count > 0) {
@@ -83,7 +83,7 @@ function getInfo(req, res, next) {
   const email = req.session.user.member_admin && req.query.email || req.session.user.email;
   req.app.locals.db.task(t => t.batch([
     t.any('SELECT * FROM People WHERE email=$1', email),
-    t.oneOrNone(`SELECT ${Admin.sqlRoles} FROM Admins WHERE email=$1`, email)
+    t.oneOrNone(`SELECT ${Admin.sqlRoles} FROM admin.Admins WHERE email=$1`, email)
   ]))
     .then(data => {
       res.status(200).json({

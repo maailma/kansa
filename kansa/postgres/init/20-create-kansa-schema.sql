@@ -1,7 +1,6 @@
-CREATE EXTENSION damm;
+SET ROLE kansa;
 
 CREATE SEQUENCE member_number_seq;
-
 CREATE TYPE MembershipStatus AS ENUM ('NonMember','Supporter','KidInTow','Child','Youth','FirstWorldcon','Adult');
 
 CREATE TABLE IF NOT EXISTS People (
@@ -21,12 +20,6 @@ CREATE TABLE IF NOT EXISTS People (
     can_hugo_vote bool NOT NULL DEFAULT false,
     can_site_select bool NOT NULL DEFAULT false,
     paper_pubs jsonb
-);
-
-CREATE TABLE IF NOT EXISTS Admins (
-    email text PRIMARY KEY,
-    member_admin bool NOT NULL DEFAULT false,
-    admin_admin bool NOT NULL DEFAULT false
 );
 
 CREATE TABLE IF NOT EXISTS Keys (
@@ -57,7 +50,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER set_last_modified_people
+CREATE TRIGGER set_last_modified
     BEFORE UPDATE ON People
     FOR EACH ROW
     EXECUTE PROCEDURE set_last_modified();
@@ -71,19 +64,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER people_notify
+CREATE TRIGGER notify
     AFTER INSERT OR UPDATE ON People
     FOR EACH ROW EXECUTE PROCEDURE people_notify();
-
-
--- from node_modules/connect-pg-simple/table.sql
-CREATE TABLE "session" (
-    "sid" varchar NOT NULL COLLATE "default",
-    "sess" json NOT NULL,
-    "expire" timestamp(6) NOT NULL
-) WITH (OIDS=FALSE);
-
-ALTER TABLE "session"
-    ADD CONSTRAINT "session_pkey"
-    PRIMARY KEY ("sid")
-    NOT DEFERRABLE INITIALLY IMMEDIATE;

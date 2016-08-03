@@ -10,7 +10,7 @@ function isAdminAdmin(req, res, next) {
 }
 
 function getAdmins(req, res, next) {
-  req.app.locals.db.any('SELECT * FROM Admins')
+  req.app.locals.db.any('SELECT * FROM admin.Admins')
     .then(data => { res.status(200).json(data); })
     .catch(err => next(err));
 }
@@ -27,7 +27,7 @@ function setAdmin(req, res, next) {
     const fSet = fields.map(fn => `${fn} = EXCLUDED.${fn}`).join(', ');
     fields.forEach(fn => util.forceBool(data, fn));
     req.app.locals.db.tx(tx => tx.batch([
-      tx.none(`INSERT INTO Admins (email, ${fCols}) VALUES ($(email), ${fValues}) ON CONFLICT (email) DO UPDATE SET ${fSet}`, data),
+      tx.none(`INSERT INTO admin.Admins (email, ${fCols}) VALUES ($(email), ${fValues}) ON CONFLICT (email) DO UPDATE SET ${fSet}`, data),
       tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
     ]))
       .then(() => { res.status(200).json({ status: 'success', set: data }); })
