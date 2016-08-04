@@ -15,9 +15,10 @@ import Member from './components/Member.jsx';
 import Login from './components/Login.jsx';
 import './styles/app.css';
 import API from './api.js'
+const apiHost = 'localhost:3000';
+const api = new API(`http://${apiHost}/`);
+
 import user from './reducers/user';
-
-
 
 const store = createStore(
   combineReducers({
@@ -26,24 +27,21 @@ const store = createStore(
   })
 )
 
-const apiHost = 'localhost:3000';
-const api = new API(`http://${apiHost}/`);
-/*** Would here catch query parameters or show form with email and key **/
+
 
 api.GETCORS('user')
   .then(data => store.dispatch({ type: 'LOGIN', data })).then(function() {})
   .catch(e => console.log(e));
 
-// Create an enhanced history that syncs navigation events with the store
 const history = syncHistoryWithStore(browserHistory, store)
 
 ReactDOM.render(
-  <Provider store={store}>
+  <Provider store={store} >
    <MuiThemeProvider muiTheme={getMuiTheme()}>
 <Router history={hashHistory}>  
-  <Route path="/" component={App} api={api}  />
-  <Route name="profile" path="/profile" component={Member} api={api}  />
-  <Route path="/login/:email/:key" component={Login}/>
+  <Route path="/" component={(props, state, params) => <App api={api} {...props} />}  />
+  <Route name="profile" path="/profile" component={(props, state, params) => <Member api={api} {...props} />}  />
+  <Route path="/login/:email/:key"  component={(props, state, params) => <Login api={api} {...props} />}  />
 </Router>
   </MuiThemeProvider>
   </Provider>,

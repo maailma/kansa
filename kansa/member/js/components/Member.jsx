@@ -4,8 +4,6 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import API from './../api.js'
 import { connect } from 'react-redux';
-
-
 const apiHost = 'localhost:3000';
 const api = new API(`http://${apiHost}/`);
 
@@ -88,18 +86,10 @@ export default class Member extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-
-console.log("nextProps",nextProps)
-
-
-
-
-
       this.setState({
         member: Member.defaultProps.member.merge(nextProps.user.get("member")[0]),
         sent: false
       });
-    
   }
 
   shouldComponentUpdate(nextProps, nextState) {
