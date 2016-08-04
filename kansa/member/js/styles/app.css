@@ -26,7 +26,7 @@ form {
 	box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
 }
 .container {
-	width: 800px;
+	max-width: 800px;
 	margin: 4em auto;
 	padding: 3em 2em 2em 2em;
 	background: #fafafa;
@@ -166,10 +166,7 @@ input:focus ~ .bar:before, input:focus ~ .bar:after { width: 50%; }
   overflow: hidden;
   background: transparent;
 }
-body {
-  margin: 0;
-  font-family: sans-serif;
-}
+
 
 .user-info {
   position: fixed;
@@ -185,3 +182,9 @@ body {
 .user-info li:before { content: " | "; }
 .user-info li:first-child:before { content: ""; }
 .user-info a:hover { cursor: pointer; text-decoration: underline; }
+
+
+
+
+
+
