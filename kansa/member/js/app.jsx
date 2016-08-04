@@ -12,6 +12,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import App from './components/App.jsx';
 import Member from './components/Member.jsx';
+import Login from './components/Login.jsx';
 import './styles/app.css';
 import API from './api.js'
 import user from './reducers/user';
@@ -41,7 +42,8 @@ ReactDOM.render(
    <MuiThemeProvider muiTheme={getMuiTheme()}>
 <Router history={hashHistory}>  
   <Route path="/" component={App} api={api}  />
-  <Route path="/profile" component={Member} api={api}  />
+  <Route name="profile" path="/profile" component={Member} api={api}  />
+  <Route path="/login/:email/:key" component={Login}/>
 </Router>
   </MuiThemeProvider>
   </Provider>,

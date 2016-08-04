@@ -33,7 +33,7 @@ export default class App extends React.Component {
 	}
 
 	getKey() {
-		api.POSTKANSA('key', {email : "teemu.ahonen@gmail.com"})
+		api.POSTKANSA('key', {email : this.state.email})
   			.then(function(response) {
 			})
   		.catch(e => console.log(e));

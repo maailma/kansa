@@ -6,10 +6,30 @@ const apiHost = 'localhost:3000';
 const api = new API(`http://${apiHost}/`);
 
 export default class Login extends React.Component { 
+  constructor(props) {
+    super(props);
+
+     api.GET('login',{email:this.props.params.email,key:this.props.params.key})
+      .then(function(response){
+        
+
+api.GET('user')
+  .then(data => props.dispatch({ type: 'LOGIN', data })).then(function(response) {
+
+   window.location = '/';
+
+  })
+  .catch(e => console.log(e));
+
+
+
+      });
+
+
+  }
 
 	componentDidMount() {
-	 api.GET('login',{email:this.props.params.email,key:this.props.params.key})
-  		.then(location.reload());
+
 	}
 
   render() {
@@ -20,3 +40,4 @@ export default class Login extends React.Component {
     )
   }
 }
+export default connect(state => state)(Login);

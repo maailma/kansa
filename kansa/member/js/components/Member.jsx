@@ -89,7 +89,7 @@ export default class Member extends React.Component {
 
   componentWillReceiveProps(nextProps) {
 
-
+console.log("nextProps",nextProps)
 
 
 
@@ -135,7 +135,7 @@ export default class Member extends React.Component {
           name={ member.get('legal_name') + ' <' + member.get('email') + '>' }
           upgrade={ res => api.POST(`people/${member.get('id')}/upgrade`, res) }
         >
-          <FlatButton label='Upgrade' style={{ float: 'left' }} />
+          <FlatButton className="buttonBlue" label='Upgrade' style={{ float: 'left' }} />
         </Upgrade>
         <FlatButton key='ok'
           label={ this.state.sent ? 'Working...' : 'Apply' }
