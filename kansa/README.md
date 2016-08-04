@@ -22,9 +22,19 @@ The particular places that may need manual adjustment are:
 - The `CORS_ORIGIN` variable in `kansa/server/dev.env` needs to be a space-separated list of
   addresses from which browser clients may connect to the server, to allow for Cross-Origin
   Resource Sharing. The defaule should match the admin tool's default address.
-- To tell the admin tool where to find the server, use e.g. `export KANSA_API_HOST='192.168.99.100:3000'`
-  before running `npm start`; that's the default IP Address that at least the Mac Docker Toolbox
-  uses for its VM. The default is set [here](admin/webpack.config.js) to `localhost:3000`.
+- To tell the admin tool where to find the server, use something like
+  `export KANSA_API_HOST='192.168.99.100:3000'` before running `npm start`; that's the default IP
+  address that at least the Mac Docker Toolbox uses for its VM. The default is set
+  [here](admin/webpack.config.js) to `localhost:3000`.
+
+
+### Login
+
+As we're still missing a login flow, once you have postgres + server + admin up and running,
+first visit `http://localhost:3000/login?email=admin@example.com&key=key` (replacing `localhost`
+with your docker host address) in your browser to login as the bootstrapped dev account; that'll
+set a session cookie that'll enable the admin interface at `http://localhost:8080/` to access the
+server.
 
 
 ----
