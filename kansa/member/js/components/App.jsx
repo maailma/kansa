@@ -1,8 +1,8 @@
 import { Map } from 'immutable';
 import React from 'react';  
-import { Link } from 'react-router'
+import { Link } from 'react-router';
 import { connect } from 'react-redux';
-import API from '../api.js'
+import API from '../api.js';
 
 export default class App extends React.Component { 
 

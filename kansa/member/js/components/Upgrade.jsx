@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import Checkbox from 'material-ui/Checkbox';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';

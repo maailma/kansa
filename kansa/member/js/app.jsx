@@ -1,10 +1,9 @@
-import React from 'react';  
-import { render } from 'react-dom'
+import React from 'react';
+import ReactDOM from 'react-dom';
 import { DefaultRoute, Router, Link, Route, RouteHandler, hashHistory,browserHistory } from 'react-router';
 import { Provider } from 'react-redux';
-import { createStore, combineReducers, applyMiddleware } from 'redux'
-import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
-import ReactDOM from 'react-dom'
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { syncHistoryWithStore, routerReducer } from 'react-router-redux';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
@@ -12,7 +11,7 @@ injectTapEventPlugin();
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
-import API from './api.js'
+import API from './api.js';
 import App from './components/App.jsx';
 import Member from './components/Member.jsx';
 import Login from './components/Login.jsx';

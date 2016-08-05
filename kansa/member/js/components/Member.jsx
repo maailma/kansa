@@ -1,4 +1,4 @@
-import { Map } from 'immutable'
+import { Map } from 'immutable';
 import React from 'react'
 import { connect } from 'react-redux';
 import Dialog from 'material-ui/Dialog';
@@ -6,7 +6,7 @@ import FlatButton from 'material-ui/FlatButton';
 
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
-import API from '../api.js'
+import API from '../api.js';
 import { CommonFields, PaperPubsFields } from './form';
 import Upgrade from './Upgrade';
 
