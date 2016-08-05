@@ -1,4 +1,4 @@
-import { Map } from 'immutable';
+import Immutable, { Map } from 'immutable';
 import React from 'react'
 import { connect } from 'react-redux';
 import Dialog from 'material-ui/Dialog';
@@ -87,13 +87,13 @@ export default class Member extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      member: Member.defaultProps.member.merge(nextProps.user.get("member")[0]),
+      member: Immutable.fromJS(nextProps.user.get("member")),
       sent: false
     });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (!nextProps.member.equals(this.props.user.get("member")[0])) return true;
+    if (!nextProps.member.equals(this.props.user.get("member"))) return true;
     if (nextState.sent !== this.state.sent) return true;
     if (!nextState.member.equals(this.state.member)) return true;
     return false;
@@ -105,7 +105,7 @@ export default class Member extends React.Component {
     const membership = member.get('membership', 'NonMember');
     const formProps = {
       getDefaultValue: path => member.getIn(path, ''),
-      getValue: path => this.state.member.getIn(path, null),
+      getValue: path => this.state.member.getIn(path, null) || '',
       onChange: (path, value) => this.setState({ member: this.state.member.setIn(path, value) })
     };
 
@@ -118,14 +118,6 @@ export default class Member extends React.Component {
         <CommonFields { ...formProps } />
         <br />
         <PaperPubsFields { ...formProps } />
-        <Upgrade key='upgrade'
-          membership={membership}
-          paper_pubs={member.get('paper_pubs')}
-          name={ member.get('legal_name') + ' <' + member.get('email') + '>' }
-          upgrade={ res => api.POST(`people/${member.get('id')}/upgrade`, res) }
-        >
-          <FlatButton className="buttonBlue" label='Upgrade' style={{ float: 'left' }} />
-        </Upgrade>
         <FlatButton key='ok'
           label={ this.state.sent ? 'Working...' : 'Apply' }
           disabled={ this.state.sent || this.changes.size == 0 || !this.valid }

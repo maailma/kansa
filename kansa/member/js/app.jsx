@@ -30,8 +30,7 @@ const store = createStore(
 
 api.GET('user')
   .then(data => store.dispatch({ type: 'LOGIN', data }))
-  .then(function() {})
-  .catch(e => console.log(e));
+  .catch(e => console.error(e));
 
 const history = syncHistoryWithStore(browserHistory, store)
 

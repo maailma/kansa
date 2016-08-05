@@ -29,7 +29,7 @@ function label(path) {
 const TextInput = ({ getDefaultValue, getValue, onChange, path, required, style = {}, ...props }) => {
   if (!Array.isArray(path)) path = [ path ];
   const value = getValue(path);
-  //if (value === null) return null;
+  if (value === null) return null;
   const ulStyle = value === getDefaultValue(path) ? {} : styles.changed;
   return <TextField
     floatingLabelText={label(path)}
