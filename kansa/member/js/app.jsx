@@ -8,13 +8,16 @@ import ReactDOM from 'react-dom'
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
+
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+
 import App from './components/App.jsx';
 import Member from './components/Member.jsx';
 import Login from './components/Login.jsx';
 import './styles/app.css';
 import API from './api.js'
+
 const apiHost = 'localhost:3000';
 const api = new API(`http://${apiHost}/`);
 
@@ -27,23 +30,22 @@ const store = createStore(
   })
 )
 
-
-
 api.GETCORS('user')
-  .then(data => store.dispatch({ type: 'LOGIN', data })).then(function() {})
+  .then(data => store.dispatch({ type: 'LOGIN', data }))
+  .then(function() {})
   .catch(e => console.log(e));
 
 const history = syncHistoryWithStore(browserHistory, store)
 
 ReactDOM.render(
   <Provider store={store} >
-   <MuiThemeProvider muiTheme={getMuiTheme()}>
-<Router history={hashHistory}>  
-  <Route path="/" component={(props, state, params) => <App api={api} {...props} />}  />
-  <Route name="profile" path="/profile" component={(props, state, params) => <Member api={api} {...props} />}  />
-  <Route path="/login/:email/:key"  component={(props, state, params) => <Login api={api} {...props} />}  />
-</Router>
-  </MuiThemeProvider>
+    <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <Router history={hashHistory}>  
+        <Route path="/" component={(props, state, params) => <App api={api} {...props} />}  />
+        <Route name="profile" path="/profile" component={(props, state, params) => <Member api={api} {...props} />}  />
+        <Route path="/login/:email/:key"  component={(props, state, params) => <Login api={api} {...props} />}  />
+      </Router>
+    </MuiThemeProvider>
   </Provider>,
   document.getElementById('react')
 )

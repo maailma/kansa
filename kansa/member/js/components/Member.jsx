@@ -4,6 +4,7 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import API from './../api.js'
 import { connect } from 'react-redux';
+
 const apiHost = 'localhost:3000';
 const api = new API(`http://${apiHost}/`);
 
@@ -21,6 +22,7 @@ function logout(api) {
       console.error('Logout failed');
     });
 }
+
 export default class Member extends React.Component {
   static propTypes = {
     member: ImmutablePropTypes.mapContains({
@@ -86,10 +88,10 @@ export default class Member extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-      this.setState({
-        member: Member.defaultProps.member.merge(nextProps.user.get("member")[0]),
-        sent: false
-      });
+    this.setState({
+      member: Member.defaultProps.member.merge(nextProps.user.get("member")[0]),
+      sent: false
+    });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -110,16 +112,15 @@ export default class Member extends React.Component {
     };
 
     return <div>
-            <ul className='user-info'>
-          <li></li>
-          <li><a onClick={() => logout(api)}>Logout</a></li>
-        </ul>
-              <div className="container">
-
-      <CommonFields { ...formProps } />
-      <br />
-      <PaperPubsFields { ...formProps } />
-              <Upgrade key='upgrade'
+      <ul className='user-info'>
+        <li></li>
+        <li><a onClick={ () => logout(api) }>Logout</a></li>
+      </ul>
+      <div className="container">
+        <CommonFields { ...formProps } />
+        <br />
+        <PaperPubsFields { ...formProps } />
+        <Upgrade key='upgrade'
           membership={membership}
           paper_pubs={member.get('paper_pubs')}
           name={ member.get('legal_name') + ' <' + member.get('email') + '>' }
@@ -130,13 +131,15 @@ export default class Member extends React.Component {
         <FlatButton key='ok'
           label={ this.state.sent ? 'Working...' : 'Apply' }
           disabled={ this.state.sent || this.changes.size == 0 || !this.valid }
-          onTouchTap={() => {
+          onTouchTap={ () => {
             this.setState({ sent: true });
             api.POST(`people/${this.state.member.get('id')}`, this.changes.toJS())
               .catch(e => console.error(e));  // TODO: report errors better
-          }} />
-          </div>
+          }}
+        />
+      </div>
     </div>;
   }
 }
+
 export default connect(state => state)(Member);

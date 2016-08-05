@@ -22,7 +22,8 @@ export default class API {
   path(cmd, params) {
     return this.root + cmd + API.queryFromObj(params);
   }
-    pathkansa(cmd, params) {
+
+  pathkansa(cmd, params) {
     return "http://0.0.0.0:3000/" + cmd + API.queryFromObj(params);
   }
 
@@ -31,7 +32,8 @@ export default class API {
     return fetch(uri, { credentials: 'include'})
       .then(response => API.parse(response));
   }
-   GETCORS(cmd, params) {
+
+  GETCORS(cmd, params) {
     const uri = this.path(cmd, params);
     return fetch(uri, { credentials: 'include'})
       .then(response => API.parse(response));
@@ -49,7 +51,8 @@ export default class API {
     return fetch(uri, opt)
       .then(response => API.parse(response));
   }
-    POSTKANSA(cmd, body) {
+
+  POSTKANSA(cmd, body) {
     const uri = this.pathkansa(cmd);
     const opt = { credentials: 'include', method: 'POST' };
     if (typeof body == 'string') {

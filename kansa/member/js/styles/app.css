@@ -1,14 +1,14 @@
 * { box-sizing:border-box; }
 
 body {
-	font-family: Helvetica;
-	background: #eee;
+  font-family: Helvetica;
+  background: #eee;
   -webkit-font-smoothing: antialiased;
 }
 
 hgroup { 
-	text-align:center;
-	margin-top: 4em;
+  text-align:center;
+  margin-top: 4em;
 }
 
 h1, h3 { font-weight: 300; }
@@ -18,37 +18,39 @@ h1 { color: #636363; }
 h3 { color: #4a89dc; }
 
 form {
-	width: 380px;
-	margin: 4em auto;
-	padding: 3em 2em 2em 2em;
-	background: #fafafa;
-	border: 1px solid #ebebeb;
-	box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
+  width: 380px;
+  margin: 4em auto;
+  padding: 3em 2em 2em 2em;
+  background: #fafafa;
+  border: 1px solid #ebebeb;
+  box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
 }
+
 .container {
-	max-width: 800px;
-	margin: 4em auto;
-	padding: 3em 2em 2em 2em;
-	background: #fafafa;
-	border: 1px solid #ebebeb;
-	box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
+  max-width: 800px;
+  margin: 4em auto;
+  padding: 3em 2em 2em 2em;
+  background: #fafafa;
+  border: 1px solid #ebebeb;
+  box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
 }
+
 .group { 
-	position: relative; 
-	margin-bottom: 45px; 
+  position: relative; 
+  margin-bottom: 45px; 
 }
 
 input {
-	font-size: 18px;
-	padding: 10px 10px 10px 5px;
-	-webkit-appearance: none;
-	display: block;
-	background: #fafafa;
-	color: #636363;
-	width: 100%;
-	border: none;
-	border-radius: 0;
-	border-bottom: 1px solid #757575;
+  font-size: 18px;
+  padding: 10px 10px 10px 5px;
+  -webkit-appearance: none;
+  display: block;
+  background: #fafafa;
+  color: #636363;
+  width: 100%;
+  border: none;
+  border-radius: 0;
+  border-bottom: 1px solid #757575;
 }
 
 input:focus { outline: none; }
@@ -57,43 +59,43 @@ input:focus { outline: none; }
 /* Label */
 
 label {
-	color: #999; 
-	font-size: 18px;
-	font-weight: normal;
-	position: absolute;
-	pointer-events: none;
-	left: 5px;
-	top: 10px;
-	transition: all 0.2s ease;
+  color: #999; 
+  font-size: 18px;
+  font-weight: normal;
+  position: absolute;
+  pointer-events: none;
+  left: 5px;
+  top: 10px;
+  transition: all 0.2s ease;
 }
 
 
 /* active */
 
 input:focus ~ label, input.used ~ label {
-	top: -20px;
+  top: -20px;
   transform: scale(.75); left: -2px;
-	/* font-size: 14px; */
-	color: #4a89dc;
+  /* font-size: 14px; */
+  color: #4a89dc;
 }
 
 
 /* Underline */
 
 .bar {
-	position: relative;
-	display: block;
-	width: 100%;
+  position: relative;
+  display: block;
+  width: 100%;
 }
 
 .bar:before, .bar:after {
-	content: '';
-	height: 2px; 
-	width: 0;
-	bottom: 1px; 
-	position: absolute;
-	background: #4a89dc; 
-	transition: all 0.2s ease;
+  content: '';
+  height: 2px; 
+  width: 0;
+  bottom: 1px; 
+  position: absolute;
+  background: #4a89dc; 
+  transition: all 0.2s ease;
 }
 
 .bar:before { left: 50%; }
@@ -109,16 +111,14 @@ input:focus ~ .bar:before, input:focus ~ .bar:after { width: 50%; }
 /* Highlight */
 
 .highlight {
-	position: absolute;
-	height: 60%; 
-	width: 100px; 
-	top: 25%; 
-	left: 0;
-	pointer-events: none;
-	opacity: 0.5;
+  position: absolute;
+  height: 60%; 
+  width: 100px; 
+  top: 25%; 
+  left: 0;
+  pointer-events: none;
+  opacity: 0.5;
 }
-
-
 
 
 /* Button */

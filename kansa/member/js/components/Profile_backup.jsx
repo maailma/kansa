@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 
 const apiHost = 'localhost:3000';
 const api = new API(`http://${apiHost}/`);
+
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 
@@ -14,6 +15,7 @@ const styles = {
   paperPubs: { width: '162px', verticalAlign: 'top' },
   changed: { borderColor: 'rgb(255, 152, 0)' }
 };
+
 function logout(api) {
   api.GET('logout')
     .then(res => {
@@ -24,21 +26,26 @@ function logout(api) {
       console.log(e);
     });
 }
+
 export default class Profile extends React.Component { 
-  
+
   static propTypes = {
     user: React.PropTypes.object.isRequired
   }
-    state = {
+
+  state = {
     _sent: false
   }
+
   static defaultProps = {
     user: Map()
   }
+
   static textFields = [ 'legal_name', 'public_first_name', 'public_last_name',
-                        'email', 'country', 'state', 'city' ];
- componentWillReceiveProps(props) {
-  console.log("properties", props);
+    'email', 'country', 'state', 'city' ];
+
+  componentWillReceiveProps(props) {
+    console.log("properties", props);
     const get = key => props.user.people[key];
     const state = Profile.textFields.reduce((state, key) => {
       state[key] = get(key);
@@ -54,9 +61,7 @@ export default class Profile extends React.Component {
     this.opening = true;
   }
 
-
-
-text = (key, style = {}) => {
+  text = (key, style = {}) => {
     const value = this.state[key] || '';
     const prev = '';
     const ulStyle = value == prev ? {} : styles.changed;
@@ -70,19 +75,15 @@ text = (key, style = {}) => {
       underlineStyle={ulStyle}
       underlineFocusStyle={ulStyle}
     />;
-}
+  }
 
   render() {
-
-    return (
-            <div>
-        <ul className='user-info'>
-          <li></li>
-          <li><a onClick={() => logout(api)}>Logout</a></li>
-        </ul>
-
-     
-     <form>
+    return <div>
+      <ul className='user-info'>
+        <li></li>
+        <li><a onClick={() => logout(api)}>Logout</a></li>
+      </ul>
+      <form>
         {this.text('legal_name')}
         {this.text('email')}
         <br />
@@ -92,10 +93,8 @@ text = (key, style = {}) => {
         {this.text('city', styles.loc)}
         {this.text('state', styles.loc)}
         {this.text('country', styles.loc)}
-
       </form>
-       </div>
-      )
+    </div>
   }
 }
 
