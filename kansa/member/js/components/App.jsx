@@ -1,15 +1,13 @@
+import { Map } from 'immutable';
 import React from 'react';  
 import { Link } from 'react-router'
-import API from './../api.js'
 import { connect } from 'react-redux';
+import API from '../api.js'
 
-const apiHost = 'localhost:3000';
-const api = new API(`http://${apiHost}/`);
-
-import { List, Map } from 'immutable';
 export default class App extends React.Component { 
 
   static propTypes = {
+    api: React.PropTypes.instanceOf(API).isRequired,
     user: React.PropTypes.instanceOf(Map).isRequired
   }
 
@@ -33,12 +31,12 @@ export default class App extends React.Component {
   }
 
   handleLogin() {
-    api.GET('login',{email:this.state.email,key:this.state.key})
+    this.props.api.GET('login',{email:this.state.email,key:this.state.key})
       .then(location.reload());
   }
 
   getKey() {
-    api.POSTKANSA('key', {email : this.state.email})
+    this.props.api.POSTKANSA('key', {email : this.state.email})
       .then(function(response) { })
       .catch(e => console.log(e));
   }
@@ -56,7 +54,7 @@ export default class App extends React.Component {
   }
 
   render() {
-    const { api, user } = this.props;
+    const { user } = this.props;
 
     return <div>
       <hgroup>

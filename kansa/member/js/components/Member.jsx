@@ -1,15 +1,12 @@
 import { Map } from 'immutable'
 import React from 'react'
+import { connect } from 'react-redux';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import API from './../api.js'
-import { connect } from 'react-redux';
-
-const apiHost = 'localhost:3000';
-const api = new API(`http://${apiHost}/`);
 
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
+import API from '../api.js'
 import { CommonFields, PaperPubsFields } from './form';
 import Upgrade from './Upgrade';
 
@@ -25,6 +22,7 @@ function logout(api) {
 
 export default class Member extends React.Component {
   static propTypes = {
+    api: React.PropTypes.instanceOf(API).isRequired,
     member: ImmutablePropTypes.mapContains({
       legal_name: React.PropTypes.string,
       email: React.PropTypes.string,
@@ -102,7 +100,7 @@ export default class Member extends React.Component {
   }
 
   render() {
-    const { member } = this.props;
+    const { api, member } = this.props;
     if (!member) return null;
     const membership = member.get('membership', 'NonMember');
     const formProps = {
