@@ -23,10 +23,6 @@ export default class API {
     return this.root + cmd + API.queryFromObj(params);
   }
 
-  pathkansa(cmd, params) {
-    return "http://0.0.0.0:3000/" + cmd + API.queryFromObj(params);
-  }
-
   GET(cmd, params) {
     const uri = this.path(cmd, params);
     return fetch(uri, { credentials: 'include'})
@@ -53,7 +49,7 @@ export default class API {
   }
 
   POSTKANSA(cmd, body) {
-    const uri = this.pathkansa(cmd);
+    const uri = this.path(cmd);
     const opt = { credentials: 'include', method: 'POST' };
     if (typeof body == 'string') {
       opt.body = body;

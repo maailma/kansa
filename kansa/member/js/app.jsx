@@ -12,16 +12,15 @@ injectTapEventPlugin();
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
+import API from './api.js'
 import App from './components/App.jsx';
 import Member from './components/Member.jsx';
 import Login from './components/Login.jsx';
-import './styles/app.css';
-import API from './api.js'
-
-const apiHost = 'localhost:3000';
-const api = new API(`http://${apiHost}/`);
-
 import user from './reducers/user';
+
+import './styles/app.css';
+
+const api = new API(`http://${process.env.KANSA_API_HOST}/`);
 
 const store = createStore(
   combineReducers({

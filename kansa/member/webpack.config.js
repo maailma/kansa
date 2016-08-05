@@ -24,6 +24,12 @@ module.exports = {
     extensions: [ '', '.js', '.jsx', '.css' ]
   },
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV || ''),
+        KANSA_API_HOST: JSON.stringify(process.env.KANSA_API_HOST || 'localhost:3000')
+      }
+    }),
     new webpack.NoErrorsPlugin(),
     new webpack.HotModuleReplacementPlugin()
   ]
