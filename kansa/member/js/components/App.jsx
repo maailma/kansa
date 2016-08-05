@@ -3,6 +3,7 @@ import React from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import RaisedButton from 'material-ui/RaisedButton';
+import Snackbar from 'material-ui/Snackbar';
 import TextField from 'material-ui/TextField';
 import API from '../api.js';
 
@@ -15,13 +16,19 @@ export default class App extends React.Component {
 
   state = {
     email: '',
-    key: ''
+    key: '',
+    message: '',
+    showMessage: false
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.user.get('member')) {
       this.redirectToProfile();
     }
+  }
+
+  showMessage(message) {
+    this.setState({ message, showMessage: true });
   }
 
   handleEmailChange = ev => this.setState({ email: ev.target.value });
@@ -31,14 +38,26 @@ export default class App extends React.Component {
   handleLogin = () => {
     const { email, key } = this.state;
     this.props.api.GET('login', { email, key })
-      .then(location.reload());
+      .then(() => {
+        location.reload()
+      })
+      .catch(e => {
+        console.error('Login failed', e);
+        this.showMessage('Login failed: ' + e.message);
+      });
   }
 
   getKey = () => {
     const { email } = this.state;
     this.props.api.POST('key', { email })
-      .then(res => { })
-      .catch(e => console.log(e));
+      .then(res => {
+        console.log('Login key and link sent', res);
+        this.showMessage('Login key and link sent to ' + email);
+      })
+      .catch(e => {
+        console.error('Key send failed', e);
+        this.showMessage('Key send failed: ' + e.message);
+      });
   }
 
   redirectToProfile() {
@@ -95,6 +114,11 @@ export default class App extends React.Component {
           onTouchTap={this.getKey}
         />
       </form>
+      <Snackbar
+        open={this.state.showMessage}
+        message={this.state.message}
+        onRequestClose={ () => this.setState({ showMessage: false }) }
+      />
     </div>
   }
 }
