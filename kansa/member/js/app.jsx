@@ -28,7 +28,7 @@ const store = createStore(
   })
 )
 
-api.GETCORS('user')
+api.GET('user')
   .then(data => store.dispatch({ type: 'LOGIN', data }))
   .then(function() {})
   .catch(e => console.log(e));

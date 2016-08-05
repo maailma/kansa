@@ -36,7 +36,7 @@ export default class App extends React.Component {
   }
 
   getKey() {
-    this.props.api.POSTKANSA('key', {email : this.state.email})
+    this.props.api.POST('key', {email : this.state.email})
       .then(function(response) { })
       .catch(e => console.log(e));
   }
