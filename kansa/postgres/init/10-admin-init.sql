@@ -7,22 +7,19 @@ CREATE SCHEMA AUTHORIZATION admin
 
 
 -- from server/node_modules/connect-pg-simple/table.sql
-CREATE TABLE public."session" (
-    "sid" varchar NOT NULL COLLATE "default",
-    "sess" json NOT NULL,
-    "expire" timestamp(6) NOT NULL
+CREATE TABLE public.session (
+    sid varchar NOT NULL COLLATE "default",
+    sess json NOT NULL,
+    expire timestamp(6) NOT NULL
 ) WITH (OIDS=FALSE);
 
-ALTER TABLE public."session"
+ALTER TABLE public.session
     ADD CONSTRAINT "session_pkey"
-    PRIMARY KEY ("sid")
+    PRIMARY KEY (sid)
     NOT DEFERRABLE INITIALLY IMMEDIATE;
 
 
-\set kansaPwd `echo "$KANSA_PG_PASSWORD"`
-
-CREATE USER kansa WITH PASSWORD :'kansaPwd';
-CREATE SCHEMA AUTHORIZATION kansa;
-GRANT USAGE ON SCHEMA admin, public TO kansa;
-GRANT SELECT ON TABLE admin.Admins TO kansa;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO kansa;
+CREATE ROLE api_access;
+GRANT USAGE ON SCHEMA admin TO api_access;
+GRANT SELECT ON TABLE admin.Admins TO api_access;
+GRANT ALL PRIVILEGES ON TABLE public.session TO api_access;

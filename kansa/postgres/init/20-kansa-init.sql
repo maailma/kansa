@@ -1,3 +1,7 @@
+\set kansaPwd `echo "$KANSA_PG_PASSWORD"`
+
+CREATE USER kansa WITH PASSWORD :'kansaPwd' IN ROLE api_access;
+CREATE SCHEMA AUTHORIZATION kansa;
 SET ROLE kansa;
 
 CREATE SEQUENCE member_number_seq;
