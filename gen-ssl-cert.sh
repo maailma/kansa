@@ -4,7 +4,7 @@
 # exit if any command exits unsuccessfully
 set -e
 
-. docker/.env
+. hakkapeliitta/docker/.env
 
 if [ -z "$DEFAULT_DOMAIN" ]; then
   echo "You must set DEFAULT_DOMAIN in the .env file."

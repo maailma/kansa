@@ -23,7 +23,7 @@ routesGenerator := InjectedRoutesGenerator
 
 val copyPackage = TaskKey[Unit]("copyPackage", "Copies tarball to the Docker directory")
 copyPackage <<= (packageZipTarball in Universal) map { tarball =>
-  val destinationDir = "../docker/app/temp/"
+  val destinationDir = "./docker/app/temp/"
   val destinationFile = new File(destinationDir + tarball.getName)
   IO.copyFile(tarball, destinationFile)
   println(s"Copying $tarball to $destinationFile")
