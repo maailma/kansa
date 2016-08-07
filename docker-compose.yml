@@ -2,8 +2,8 @@ version: '2'
 
 services:
   server:
-    build: ./server
-    env_file: ./server/dev.env
+    build: ./kansa/server
+    env_file: ./kansa/server/dev.env
     entrypoint: ./wait-for-it.sh postgres:5432 -- npm start
     links:
       - postgres
