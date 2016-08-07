@@ -16,9 +16,10 @@ the name for our member registry.
 
 ### Installation & Configuration
 
-To get a dev environment up and running, first clone this repo. The database and server are set up
-to be run using [docker-compose](https://docs.docker.com/compose/); for the Kansa importer & admin
-tools you'll need a recent-ish version of node.
+To get a dev environment up and running, first clone this repo with `git clone --recursive`, or run
+`git submodule update --init` after cloning. The database and server are set up to be run using
+[docker-compose](https://docs.docker.com/compose/); for the Kansa importer & admin tools you'll need
+a recent-ish version of node.
 
 The particular places that may need manual adjustment are:
 
