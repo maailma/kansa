@@ -24,7 +24,7 @@ api.GET('user')
   .then(() => api.GET('people'))
   .then(data => store.dispatch({ type: 'INIT PEOPLE', data }))
   .then(() => {
-    const ws = new WebSocket(`ws://${process.env.KANSA_API_HOST}/people`);
+    const ws = new WebSocket(`ws://${process.env.KANSA_API_HOST}/people/updates`);
     ws.onmessage = msg => {
       const data = JSON.parse(msg.data);
       store.dispatch({ type: 'SET PERSON', data });
