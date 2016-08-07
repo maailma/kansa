@@ -4,7 +4,7 @@
 # exit if any command exits unsuccessfully
 set -e
 
-. hakkapeliitta/docker/.env
+. ../docker/.env
 
 if [ -z "$DEFAULT_DOMAIN" ]; then
   echo "You must set DEFAULT_DOMAIN in the .env file."
@@ -15,7 +15,7 @@ fi
 OPENSSL=$(which openssl)
 
 # do we have the config?
-SSLDIR=fixtures/ssl
+SSLDIR=.
 SSLCONF="${SSLDIR}/openssl.cnf"
 [ -r "$SSLCONF" ]
 
