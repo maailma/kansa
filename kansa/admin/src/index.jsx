@@ -18,13 +18,13 @@ import people from './reducers/people';
 import user from './reducers/user';
 
 const store = createStore(combineReducers({ people, user }));
-const api = new API(`http://${process.env.KANSA_API_HOST}/`);
+const api = new API(`https://${process.env.KANSA_API_HOST}/`);
 api.GET('user')
   .then(data => store.dispatch({ type: 'LOGIN', data }))
   .then(() => api.GET('people'))
   .then(data => store.dispatch({ type: 'INIT PEOPLE', data }))
   .then(() => {
-    const ws = new WebSocket(`ws://${process.env.KANSA_API_HOST}/people/updates`);
+    const ws = new WebSocket(`wss://${process.env.KANSA_API_HOST}/people/updates`);
     ws.onmessage = msg => {
       const data = JSON.parse(msg.data);
       store.dispatch({ type: 'SET PERSON', data });
