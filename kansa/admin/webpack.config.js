@@ -1,4 +1,8 @@
+const url = require('url');
 const webpack = require('webpack');
+
+const apiHost = process.env.KANSA_API_HOST || (url.parse(process.env.DOCKER_HOST).hostname || 'localhost') + ':4430';
+console.log('Using API host', apiHost);
 
 module.exports = {
   entry: './src/index.jsx',
@@ -22,7 +26,7 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV || ''),
-        KANSA_API_HOST: JSON.stringify(process.env.KANSA_API_HOST || 'localhost:3000'),
+        KANSA_API_HOST: JSON.stringify(apiHost),
         KANSA_TITLE: JSON.stringify(process.env.KANSA_TITLE || 'Kansa')
       }
     })
