@@ -4,8 +4,7 @@ This project is under active development, so not everything is ready yet. The ma
 
 - **`docker-compose.yml`** - Service configuration
 - **`hakkapeliitta`** - A deprecated Scala webshop implementation, due to be ported to node.js
-- **`kansa/server`** - An express.js app providing
-  [this API](https://docs.google.com/document/d/1N4R6jkSEpOc0oAfHK_xN2PtHWkepcKfsrpIR3f_IsAs/edit?usp=sharing)
+- **`kansa/server`** - An express.js app providing [this API](API.md)
 - **`kansa/importer`** - A tool for importing CSV & JSON data from our prior registry format
 - **`kansa/admin`** - An internal front-end for the registry data; a react + redux single-page app
 - **`kansa/member`** - The interface for our own members; also a react + redux single-page app
