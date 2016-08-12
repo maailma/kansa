@@ -19,3 +19,13 @@ CREATE TABLE Nominations (
     category Category NOT NULL,
     nominations jsonb[] NOT NULL
 );
+
+CREATE TABLE Canon (
+    id SERIAL PRIMARY KEY,
+    nomination jsonb NOT NULL
+);
+
+CREATE TABLE Classification (
+    nomination jsonb PRIMARY KEY,
+    canon_id integer REFERENCES Canon NOT NULL
+);
