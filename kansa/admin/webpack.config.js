@@ -1,7 +1,7 @@
 const url = require('url');
 const webpack = require('webpack');
 
-const apiHost = process.env.KANSA_API_HOST || (url.parse(process.env.DOCKER_HOST).hostname || 'localhost') + ':4430';
+const apiHost = process.env.KANSA_API_HOST || (process.env.DOCKER_HOST && url.parse(process.env.DOCKER_HOST).hostname || 'localhost') + ':4430';
 console.log('Using API host', apiHost);
 
 module.exports = {
