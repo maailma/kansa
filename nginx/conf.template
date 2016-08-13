@@ -1,7 +1,11 @@
+upstream hugo {
+  server                     hugo:3000;
+}
+
 upstream kansa {
   server                     kansa:3000;
-}                           
-                            
+}
+
 server {                    
   listen                     80;
   server_name                ${API_SERVER_NAME};
@@ -28,6 +32,10 @@ server {
   proxy_http_version         1.1;
   proxy_set_header           Host $http_host;
 
+
+  location /api/hugo/ {
+    proxy_pass               http://hugo/;
+  }
 
   location /api/kansa/ {
     proxy_pass               http://kansa/;
