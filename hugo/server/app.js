@@ -11,6 +11,8 @@ const pgp = require('pg-promise')(pgOptions);
 require('pg-monitor').attach(pgOptions);
 const db = pgp(process.env.DATABASE_URL);
 
+const hugo = require('./lib/hugo');
+
 const app = express();
 const server = http.createServer(app);
 
@@ -34,6 +36,11 @@ app.use(session({
     pruneSessionInterval: 24 * 60 * 60  // 1 day
   })
 }));
+
+const router = express.Router();
+router.get('/:id/nominations', hugo.getNominations);
+router.post('/:id/nominate', hugo.nominate);
+app.use('/', router);
 
 // no match from router -> 404
 app.use((req, res, next) => {
