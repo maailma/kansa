@@ -3,12 +3,13 @@ class Admin {
     return [
       'email',  // text PRIMARY KEY
       'member_admin',  // bool NOT NULL DEFAULT false
+      'hugo_admin',  // bool NOT NULL DEFAULT false
       'admin_admin'  // bool NOT NULL DEFAULT false
     ];
   }
 
   static get roleFields() {
-    return [ 'member_admin', 'admin_admin' ];
+    return [ 'member_admin', 'hugo_admin', 'admin_admin' ];
   }
 
   static get sqlRoles() {
@@ -24,6 +25,7 @@ class Admin {
   constructor(email) {
     this.email = email;
     this.member_admin = false;
+    this.hugo_admin = false;
     this.admin_admin = false;
   }
 }
