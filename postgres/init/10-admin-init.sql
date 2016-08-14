@@ -2,6 +2,7 @@ CREATE SCHEMA AUTHORIZATION admin
     CREATE TABLE IF NOT EXISTS Admins (
         email text PRIMARY KEY,
         member_admin bool NOT NULL DEFAULT false,
+        hugo_admin bool NOT NULL DEFAULT false,
         admin_admin bool NOT NULL DEFAULT false
     );
 

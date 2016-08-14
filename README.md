@@ -4,7 +4,8 @@ This project is under active development, so not everything is ready yet. The ma
 
 - **`docker-compose.yml`** - Service configuration
 - **`hakkapeliitta`** - A deprecated Scala webshop implementation, due to be ported to node.js
-- **`kansa/server`** - An express.js app providing [this API](API.md)
+- **`hugo/server`** - An express.js app providing the `/api/hugo/` parts of [this API](API.md)
+- **`kansa/server`** - An express.js app providing the `/api/kansa/` parts of [this API](API.md)
 - **`kansa/importer`** - A tool for importing CSV & JSON data from our prior registry format
 - **`kansa/admin`** - An internal front-end for the registry data; a react + redux single-page app
 - **`kansa/member`** - The interface for our own members; also a react + redux single-page app
@@ -13,7 +14,8 @@ This project is under active development, so not everything is ready yet. The ma
 - **`postgres`** - Configuration & schemas for our database
 
 [Kansa](https://en.wiktionary.org/wiki/kansa#Finnish) is Finnish for "people" or "tribe", and it's
-the name for our member registry.
+the name for our member registry. The [Hugo Awards](http://www.thehugoawards.org/) are awards that
+are nominated and selected by the members of each year's Worldcon.
 
 
 ### Installation & Configuration

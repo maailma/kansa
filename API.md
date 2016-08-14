@@ -246,9 +246,7 @@ from membership changes.
 ```
 
 
-## WebSocket
-
-### `wss://kansa.server/api/kansa/people/updates`
+### WebSocket: `wss://kansa.server/api/kansa/people/updates`
 - Requires authentication and `member_admin` authority
 
 WebSocket connection endpoint. The server won't listen to any messages sent to
@@ -261,4 +259,104 @@ events to signal `'Unauthorized'` and `'Not Found'` (respectively) to the client
 #### Response
 ```
 '{"id":#,"member_number":…,"legal_name":…,…}'
+```
+
+
+## Hugo Nominations
+
+### `GET /api/hugo/:id/nominations`
+- Requires authentication
+- Parameter: `all`
+
+Find the Hugo nominations for the person matching `id`. If its email address
+does not match the session data, `hugo_admin` authority is required. The results
+are sorted first by award category, then in descending order of submission time;
+if the `all` parameter is not set, each category only includes its most recent
+nomination.
+
+#### Response
+```
+[
+  {
+    "id": 4,
+    "time": "2016-08-13T17:45:24.773Z",
+    "client_ip": "::ffff:172.19.0.5",
+    "client_ua": "curl/7.43.0",
+    "person_id": 1,
+    "category": "Novel",
+    "nominations": [
+      {
+        "author": …,
+        "title": …,
+        "publisher": …
+      },
+      {
+        "author": …,
+        "title": …,
+        "publisher": …
+      },
+      …
+    ]
+  },
+  {
+    "id": 5,
+    "time": "2016-08-13T17:51:23.323Z",
+    "client_ip": "::ffff:172.19.0.5",
+    "client_ua": "curl/7.43.0",
+    "person_id": 1,
+    "category": "Novella",
+    "nominations": [
+      {
+        "author": …,
+        "title": …,
+        "publisher": …
+      },
+      {
+        "author": …,
+        "title": …,
+        "publisher": …
+      },
+      …
+    ]
+  },
+	…
+]
+```
+
+
+### `POST /api/hugo/:id/nominate`
+- Requires authentication
+- Parameters: `category`, `nominations`
+
+Find the Hugo nominations for the person matching `id`. If its email address
+does not match the session data, `hugo_admin` authority is required. `category`
+needs to be string matching one of the award categories included
+[here](postgres/init/30-hugo-init.sql). `nominations` must be a JSON array of
+objects.
+
+#### Response
+```
+{
+  "status": "success",
+  "time": "2016-08-13T17:24:59.746Z",
+  "data": {
+    "client_ip": "::ffff:172.19.0.5",
+    "client_ua": "curl/7.43.0",
+    "person_id": 1,
+    "category": "Novella",
+    "nominations": [
+      {
+        "author": …,
+        "title": …,
+        "publisher": …
+      },
+      {
+        "author": …,
+        "title": …,
+        "publisher": …
+      },
+      …
+    ]
+  }
+}
 ```
