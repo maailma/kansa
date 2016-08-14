@@ -22,9 +22,9 @@ function access(req) {
 
 
 function getNominations(req, res, next) {
-  const select = req.query.all ? 'SELECT' : 'SELECT DISTINCT ON (category)';
+  const distinct = req.query.all ? '' : 'DISTINCT ON (category)';
   access(req)
-    .then(({ id }) => req.app.locals.db.many(`${select} * FROM Nominations WHERE person_id=$1 ORDER BY category, time DESC`, [ id ]))
+    .then(({ id }) => req.app.locals.db.many('SELECT $1^ * FROM Nominations WHERE person_id = $2 ORDER BY category, time DESC', [ distinct, id ]))
     .then(data => res.status(200).json(data))
     .catch(err => next(err));
 }
