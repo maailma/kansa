@@ -2,29 +2,30 @@ import { setNominations, submitNominationError } from '../actions'
 import { categories, nominationFields } from '../hugoinfo'
 
 export default (api) => (store) => (next) => (action) => {
+  //console.log('middleware', action);
   if (action.error || action.stage !== 'nomination' || action.type !== 'SUBMIT') return next(action);
 
   const category = action.category;
-  const state = store.getState();
-  const nominations = state.nominations[category];
-  if (!nominations) throw new Error(`Nominations for category ${JSON.stringify(category)} not found!`);
+  const { nominations, person } = store.getState();
 
-  const list = nominations.get('clientData').filter(nom => nom);
-  if (list.equals(nominations.get('serverData'))) return;
+  const list = nominations.getIn([category, 'clientData']).filter(nom => nom);
+  if (!list) throw new Error(`Nominations for category ${JSON.stringify(category)} not found!`);
+  if (list.equals(nominations.getIn([category, 'serverData']))) return;
 
   const fields = nominationFields(category);
-  if (list.keySeq().some(key => fields.indexOf(key) === -1)) {
-    action.error = `Unknown key in nomination data for ${category}: ${JSON.stringify(list.toJS())}`;
+  if (list.some(nomination => nomination.some((_, field) => fields.indexOf(field) === -1))) {
+    action.error = `Unknown key in nomination data: ${JSON.stringify(list.toJS())}`;
     return next(action);
   }
 
-  if (!state.person.id) {
-    action.error = `Attempt to submit nomination for ${category} with no key?!`;
+  const id = person.get('id');
+  if (!id) {
+    action.error = `Attempt to submit nomination with no key?!`;
     return next(action);
   }
 
   next(action);
-  return api.POST(`hugo/${state.person.id}/nominate`, { category, nominations: list.toJS() })
+  return api.POST(`hugo/${id}/nominate`, { category, nominations: list.toJS() })
     .then(res => next(setNominations(res)))
     .catch(err => next(submitNominationError(category, err.message)));
 }

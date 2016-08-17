@@ -18,66 +18,83 @@
 } */
 
 import { fromJS, List, Map } from 'immutable'
-import { combineReducers } from 'redux'
 
 import { categories } from '../hugoinfo'
 
-const defaultState = Map({
-  clientData: List(),
-  serverData: List(),
-  serverTime: null,
-  isFetching: false,
-  error: null
-});
 
-const reducer = (category) => (state = defaultState, action) => {
-  if (action.category !== category || action.stage !== 'nomination') return state;
-  if (action.error) return state.set('isFetching', false).set('error', action.error);
-  switch (action.type) {
+const defaultState = Map(categories.map(
+  category => [category, Map({
+    clientData: List(),
+    serverData: List(),
+    serverTime: null,
+    isFetching: false,
+    error: null
+  })]
+));
+
+export default (state = defaultState, action) => {
+  if (action.stage !== 'nomination') return state;
+  const { category, error, type } = action;
+  //console.log(category, 'STATE', state.get(category).toJS());
+  //console.log(category, 'ACTION', action);
+  if (categories.indexOf(category) === -1) return state;
+  if (error) return state.mergeIn([category], { isFetching: false, error });
+  switch (type) {
 
     case 'SET':
-      const serverData = fromJS(action.nominations);
-      const serverTime = action.time;
+      const { nominations, time } = action;
+      const serverData = fromJS(nominations);
       if (!List.isList(serverData)) {
-        const err = `Server error for ${category}: Expected an array of nominations, but instead got: ${JSON.stringify(action.nominations)}`;
-        return state.set('isFetching', false).set('error', err);
+        return state.mergeIn([category], {
+          isFetching: false,
+          error: `Server error! Expected an array of nominations, but instead got: ${JSON.stringify(nominations)}`
+        });
       }
-      return Map({
+      return state.set(category, Map({
         clientData: serverData,
         serverData,
-        serverTime,
+        serverTime: time,
+        isFetching: false,
+        error: null
+      }));
+
+    case 'EDIT':
+      const { index, nomination } = action;
+      //console.log(category, 'EDIT', index, nomination.toJS());
+      try {
+        if (state.getIn([category, 'isFetching'])) {
+          throw new Error('Nominations cannot be updated while submitting data');
+        }
+        if (!isFinite(index) || index < 0 || Math.floor(index) !== index) {
+          throw new Error(`${JSON.stringify(index)} is not a valid index`);
+        }
+        if (nomination && !Map.isMap(nomination)) {
+          throw new Error(`${JSON.stringify(nomination)} is not a valid nomination object`);
+        }
+        const cleanNomination = nomination && nomination.filter(value => value);
+        return cleanNomination && cleanNomination.size
+          ? state.setIn([category, 'clientData', index], cleanNomination)
+          : state.deleteIn([category, 'clientData', index]);
+      } catch (e) {
+        return state.setIn([category, 'error'], `Editing nomination failed! ${e.message}`);
+      }
+
+    case 'RESET':
+      return state.mergeIn([category], {
+        clientData: state.getIn([category, 'serverData']),
         isFetching: false,
         error: null
       });
 
-    case 'SUBMIT':
-      return state.set('isFetching', true).set('error', null);
+    case 'CLEAR ERROR':
+      return state.setIn([category, 'error'], null);
 
-    case 'EDIT':
-      try {
-        if (state.get('isFetching')) {
-          throw new Error('Nominations cannot be updated while submitting data');
-        }
-        const idx = action.index;
-        const nomination = action.nomination ? fromJS(action.nomination) : null;
-        if (!isFinite(idx) || idx < 0 || Math.floor(idx) !== idx) {
-          throw new Error(`${JSON.stringify(idx)} is not a valid index`);
-        }
-        if (nomination && !Map.isMap(nomination)) {
-          throw new Error(`${JSON.stringify(action.nomination)} is not a valid nomination object`);
-        }
-        return state.setIn(['clientData', idx], nomination);
-      } catch (e) {
-        return state.set('error', `Editing ${category} nomination failed: ${e.message}`);
-      }
+    case 'SUBMIT':
+      return state.mergeIn([category], {
+        isFetching: true,
+        error: null
+      });
 
   }
   return state;
 }
-
-
-export default combineReducers(categories.reduce((reducers, category) => {
-  const name = category.charAt(0).toLowerCase() + category.slice(1);
-  reducers[name] = reducer(category);
-  return reducers;
-}, {}));
