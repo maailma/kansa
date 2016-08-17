@@ -26,7 +26,6 @@
     "immutable": "^3.8.1",
     "material-ui": "^0.15.0",
     "react": "^15.1.0",
-    "react-addons-shallow-compare": "^15.1.0",
     "react-dom": "^15.1.0",
     "react-immutable-proptypes": "^1.7.1",
     "react-redux": "^4.4.5",
@@ -37,8 +36,5 @@
     "webpack": "^1.13.1",
     "webpack-dev-server": "^1.14.1",
     "whatwg-fetch": "^1.0.0"
-  },
-  "dependencies": {
-    "react-virtualized": "^7.7.1"
   }
 }

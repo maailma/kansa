@@ -10,9 +10,6 @@ import { createStore, applyMiddleware } from 'redux'
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin();
 
-import 'react-virtualized/styles.css'
-//import './styles/app.css'
-
 import App from './components/App'
 import Nominate from './components/Nominate'
 
