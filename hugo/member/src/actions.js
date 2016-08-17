@@ -3,12 +3,18 @@ export const editNomination = (category, index, nomination) => ({
   type: 'EDIT',
   category,
   index,
-  nominations
+  nomination
 });
 
 export const submitNominations = (category) => ({
   stage: 'nomination',
   type: 'SUBMIT',
+  category
+});
+
+export const resetNominations = (category) => ({
+  stage: 'nomination',
+  type: 'RESET',
   category
 });
 
@@ -25,5 +31,11 @@ export const submitNominationError = (category, error) => ({
   type: 'ERROR',
   category,
   error
+});
+
+export const clearNominationError = (category) => ({
+  stage: 'nomination',
+  type: 'CLEAR ERROR',
+  category
 });
 
