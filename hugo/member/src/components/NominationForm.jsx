@@ -10,29 +10,22 @@ import ContentClear from 'material-ui/svg-icons/content/clear'
 import ContentUndo from 'material-ui/svg-icons/content/undo'
 import TextField from 'material-ui/TextField'
 
+import './NominationForm.css'
 
 
-const styles = {
-  button: { float: 'right', marginLeft: 12 },
-  fieldChangedUlStyle: { borderColor: 'rgb(255, 152, 0)' }
-}
-
-
-const NominationField = ({ disabled, name, onChange, ulStyle, value }) => <TextField
-  className='nominationField'
+const NominationField = ({ changed, disabled, name, onChange, value }) => <TextField
+  className={ 'NominationField' + (changed ? ' changed' : '') }
   disabled={disabled}
   name={name}
   onChange={onChange}
-  underlineStyle={ulStyle}
-  underlineFocusStyle={ulStyle}
   value={value}
 />;
 
 NominationField.propTypes = {
-  disabled: React.PropTypes.bool.isRequired,
+  changed: React.PropTypes.bool,
+  disabled: React.PropTypes.bool,
   name: React.PropTypes.string.isRequired,
   onChange: React.PropTypes.func,
-  ulStyle: React.PropTypes.object.isRequired,
   value: React.PropTypes.string.isRequired
 }
 
@@ -51,7 +44,6 @@ class NominationRemoveButton extends React.Component {
     const { disabled, onRemove } = this.props;
     return <IconButton
       disabled={disabled}
-      iconStyle={{ }}
       onTouchTap={onRemove}
       tooltip='Remove nomination'
       tooltipStyles={{ top: 24 }}
@@ -83,10 +75,10 @@ class NominationRow extends React.Component {
       {
         fields.map(field => <td key={field}>
           <NominationField
+            changed={ values.get(field, '') != defaultValues.get(field, '') }
             disabled={disabled}
             name={field}
             onChange={ ev => onChange(field, ev.target.value) }
-            ulStyle={ values.get(field, '') == defaultValues.get(field, '') ? {} : styles.fieldChangedUlStyle }
             value={ values.get(field, '') }
           />
         </td>)
@@ -116,18 +108,16 @@ class NominationActionsRow extends React.Component {
     return <tr>
       <td colSpan={colSpan}>
         <RaisedButton
+          className='NominationActionButton'
           label='Save'
-          style={styles.button}
           disabled={disabled}
-          disabledBackgroundColor='transparent'
           icon={<ListCheck />}
           onTouchTap={onSave}
         />
         <RaisedButton
+          className='NominationActionButton'
           label='Reset'
-          style={styles.button}
           disabled={disabled}
-          disabledBackgroundColor='transparent'
           icon={<ContentUndo />}
           onTouchTap={onReset}
         />
@@ -142,7 +132,7 @@ const NominationForm = ({ fields, maxNominations, onChange, onSave, onReset, sta
   const disabled = state.get('isFetching');
   const values = state.get('clientData');
   const rows = values.size < maxNominations ? values.push(Map()) : values;
-  return <tbody>
+  return <tbody className='NominationForm'>
     {
       rows.map((rowValues, idx) => <NominationRow
         key={idx}
