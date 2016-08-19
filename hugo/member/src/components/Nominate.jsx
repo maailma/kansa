@@ -1,11 +1,31 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import Snackbar from 'material-ui/Snackbar';
+
+import FloatingActionButton from 'material-ui/FloatingActionButton'
+import ListCheck from 'material-ui/svg-icons/av/playlist-add-check'
+import Snackbar from 'material-ui/Snackbar'
 
 import { editNomination, submitNominations, resetNominations, clearNominationError } from '../actions'
 import { categories, maxNominationsPerCategory, nominationFields, categoryTexts } from '../hugoinfo'
 import NominationForm from './NominationForm'
 
+import './Nominate.css'
+
+const SaveAllButton = connect(
+  ({ nominations }) => ({
+    changedCategories: nominations.filterNot(data => data.get('clientData').equals(data.get('serverData'))).keySeq()
+  }), {
+    submitNominations
+  }
+)(({ changedCategories, submitNominations }) =>
+  <FloatingActionButton
+    className='SaveAllButton'
+    disabled={ changedCategories.size == 0 }
+    onTouchTap={ () => changedCategories.forEach(submitNominations) }
+  >
+    <ListCheck />
+  </FloatingActionButton>
+);
 
 const ErrorMessages = connect(
   ({ nominations }) => {
@@ -15,12 +35,12 @@ const ErrorMessages = connect(
       error: data ? data.get('error') : ''
     }
   }, {
-    handleClear: (category) => clearNominationError(category)
+    clearNominationError
   }
-)(({ category, error, handleClear }) => <Snackbar
+)(({ category, error, clearNominationError }) => <Snackbar
   open={ !!category }
   message={ category ? `${category}: ${error}` : '' }
-  onRequestClose={ () => handleClear(category) }
+  onRequestClose={ () => clearNominationError(category) }
 />);
 
 const ActiveNominations = () => <div>
@@ -52,6 +72,7 @@ const ActiveNominations = () => <div>
       </div>
     })
   }
+  <SaveAllButton />
   <ErrorMessages />
 </div>;
 
