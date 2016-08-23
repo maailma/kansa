@@ -1,3 +1,3 @@
-[submodule "kansa/postgres/damm"]
-	path = kansa/postgres/damm
+[submodule "postgres/damm"]
+	path = postgres/damm
 	url = https://github.com/fusiongyro/damm.git

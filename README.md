@@ -1,33 +1,67 @@
-# Worldcon 75 API Service [![DockerPulls](https://img.shields.io/docker/stars/worldcon75/api.svg)](https://hub.docker.com/r/worldcon75/api/)
+# Worldcon 75 Member Services [![DockerPulls](https://img.shields.io/docker/stars/worldcon75/api.svg)](https://hub.docker.com/r/worldcon75/api/)
 
-## Development Environment
+This project is under active development, so not everything is ready yet. The main components are:
 
-This provides a sample development environment for the Worldcon 75 API service.  Our stack is [Scala 2.11](http://scala-lang.org/), [Play Framework 2.4](https://www.playframework.com/) and [PostgreSQL 9.4](http://www.postgresql.org/).
+- **`docker-compose.yml`** - Service configuration
+- **`hakkapeliitta`** - A deprecated Scala webshop implementation, due to be ported to node.js
+- **`hugo/server`** - An express.js app providing the `/api/hugo/` parts of [this API](API.md)
+- **`kansa/server`** - An express.js app providing the `/api/kansa/` parts of [this API](API.md)
+- **`kansa/importer`** - A tool for importing CSV & JSON data from our prior registry format
+- **`kansa/admin`** - An internal front-end for the registry data; a react + redux single-page app
+- **`kansa/member`** - The interface for our own members; also a react + redux single-page app
+  (currently only in the `memberui` branch)
+- **`nginx`** - An SSL-terminating reverse proxy for Kansa
+- **`postgres`** - Configuration & schemas for our database
 
-The environment is provisioned via [Docker](https://www.docker.com/) containers.
+[Kansa](https://en.wiktionary.org/wiki/kansa#Finnish) is Finnish for "people" or "tribe", and it's
+the name for our member registry. The [Hugo Awards](http://www.thehugoawards.org/) are awards that
+are nominated and selected by the members of each year's Worldcon.
 
-1. Install [Docker Toolbox](https://www.docker.com/docker-toolbox). Or on Linux you could just install Docker Client and Docker Compose.
 
-2. Step through the platform-appropriate Getting Started Guide ([OS X](https://docs.docker.com/mac/)/[Windows](https://docs.docker.com/windows/)/[Linux](https://docs.docker.com/linux/)).  If you cannot complete step three, "Find and run the whalesay image", then do not proceed further, instead contact @hakamadare for assistance.
+### Installation & Configuration
 
-3. Check out this repository and open a terminal session at the top-level directory.
+To get a dev environment up and running, first clone this repo with `git clone --recursive`, or run
+`git submodule update --init` after cloning. The database and server are set up to be run using
+[docker-compose](https://docs.docker.com/compose/); for the Kansa importer & admin tools you'll need
+a recent-ish version of node.
 
-4. Write a `.env` file in the docker directory.  A sample file is in Google Drive, in the DevOps folder.
+The particular places that may need manual adjustment are:
 
-5. You can install a Java Dev environment or use a Docker composition to build the project.
-   1. Normal install - recommended for Scala developers.
-      1. Install Java 8, ensure java and javac is on the path.
-      2. [Install sbt](http://www.scala-sbt.org/download.html)
-      3. [Install IntelliJ Community Edition](https://www.jetbrains.com/idea/download/) (Optional.)
-      4. Run `sbt copyPackage` in the hakkapeliitta directory.
-   2. Docker build
-      1. Edit the DEV_UID and DEV_GID variables in docker/build-environment/sbt/Dockerfile to match your host UID and GID
-      2. run `docker-compose run sbt` in docker/build-environment
+- Connections to the server require TLS (HTTPS, WSS); for ease of development the repo includes a
+  [self-signed certificate](http://www.selfsignedcertificate.com/) for `localhost`. This will not
+  be automatically accepted by browsers or other clients, and you'll need to convince them to get
+  in. If you have a signed certificate you can use (and therefore a publicly visible address),
+  you'll want to add the certificate files to `nginx/ssl/` and adjust the environment values set for
+  the `nginx` service in [docker-compose.yml](docker-compose.yml).
 
-6. Run `docker-compose build` in the docker directory.
+- The `CORS_ORIGIN` variable in [kansa/server/dev.env](kansa/server/dev.env) needs to be a space- or
+  comma-separated list of addresses at which client apps may be hosted, to allow for Cross-Origin
+  Resource Sharing. By default, the value should match the `http://localhost:8080` address of the
+  `kansa/admin` Webpack dev server started by `npm start` there.
 
-7. Run `docker-compose up -d`
+- If you're running the server on a separate machine or if you've changed the `nginx` port
+  configuration, you may need to tell `kansa/admin` where to find the server, using something like
+  `export KANSA_API_HOST='remote.example.com'` before running `npm start`. The default is set
+  [here](kansa/admin/webpack.config.js) to `localhost:4430'` or the address of your Docker VM.
 
-8. You can view `docker-compose logs` to view the logs from the all containers mixed together. You can also do, for instance, `docker-compose logs proxy` to get the nginx logs.
 
-9. `docker-compose kill`, `docker-compose rm -f` and repeat steps 5-7 to wipe out and deploy a new version of Hakkapeliitta.
+### Login
+
+As we're still missing a login flow, once you have all the services up and running, first visit
+`https://localhost:4430/api/kansa/login?email=admin@example.com&key=key` (replacing `localhost` with
+your Docker host address, if necessary) in your browser to login as the bootstrapped dev account;
+that'll set a session cookie that'll enable the Kansa admin interface at `http://localhost:8080/` to
+access the server. If/as your browser will complain about the server's self-singed certificate, you
+will need to bypass its warnings:
+- **Chrome**: Click on _Advanced_, then _Proceed to example.com_
+- **Firefox**: Click on _I Understand the Risks_, then _Add Exception...._, then _Get Certificate_,
+  and finally _Confirm Security Exception_
+- **IE**: Click on _Continue to this website (not recommended)_
+- **Safari**: Click on _Show Certificate_, _Always Trust "hostname" when connecting to "hostname"_,
+  then _Continue_
+
+
+----
+
+If you'd like to help with this project, please get in touch with us at
+[devops@worldcon.fi](mailto:devops@worldcon.fi).

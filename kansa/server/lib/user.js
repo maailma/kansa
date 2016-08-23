@@ -39,6 +39,7 @@ function login(req, res, next) {
         req.session.user = {
           email,
           member_admin: !!(data[1] && data[1].member_admin),
+          hugo_admin: !!(data[1] && data[1].hugo_admin),
           admin_admin: !!(data[1] && data[1].admin_admin)
         };
         res.status(200).json({ status: 'success', email });

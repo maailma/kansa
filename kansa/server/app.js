@@ -23,7 +23,7 @@ const server = http.createServer(app);
 const expressWs = require('express-ws')(app, server);
 const router = express.Router();
 const db = pgp(process.env.DATABASE_URL);
-const stream = new PeopleStream(db);
+const peopleStream = new PeopleStream(db);
 
 // these are accessible without authentication
 router.get('/public/people', people.getPublicPeople);
@@ -76,8 +76,8 @@ app.use(session({
     pruneSessionInterval: 24 * 60 * 60  // 1 day
   })
 }));
-app.ws('/people', (ws, req) => {
-  if (req.session.user.member_admin) stream.addClient(ws);
+app.ws('/people/updates', (ws, req) => {
+  if (req.session.user.member_admin) peopleStream.addClient(ws);
   else ws.close(4001, 'Unauthorized');
 });
 app.ws('/*', (ws, req) => ws.close(4004, 'Not Found'));
