@@ -13,7 +13,7 @@ import './Nominate.css'
 
 const SaveAllButton = connect(
   ({ nominations }) => ({
-    changedCategories: nominations.filterNot(data => data.get('clientData').equals(data.get('serverData'))).keySeq()
+    changedCategories: nominations.filterNot(data => data.get('clientData').equals(data.get('serverData')))
   }), {
     submitNominations
   }
@@ -21,13 +21,14 @@ const SaveAllButton = connect(
   <FloatingActionButton
     className='SaveAllButton'
     disabled={ changedCategories.size == 0 }
-    onTouchTap={ () => changedCategories.forEach(submitNominations) }
+    onTouchTap={ () => changedCategories.keySeq().forEach(submitNominations) }
+    title='Save all categories'
   >
     <ListCheck />
   </FloatingActionButton>
 );
 
-const ErrorMessages = connect(
+const Messages = connect(
   ({ nominations }) => {
     const [ category, data ] = nominations.findEntry(data => data.get('error'), null, []);
     return {
@@ -73,7 +74,7 @@ const ActiveNominations = () => <div>
     })
   }
   <SaveAllButton />
-  <ErrorMessages />
+  <Messages />
 </div>;
 
 
