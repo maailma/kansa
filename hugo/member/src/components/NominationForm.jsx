@@ -10,6 +10,8 @@ import ContentClear from 'material-ui/svg-icons/content/clear'
 import ContentUndo from 'material-ui/svg-icons/content/undo'
 import TextField from 'material-ui/TextField'
 
+import time_diff from '../time_diff.js'
+
 import './NominationForm.css'
 
 
@@ -96,17 +98,19 @@ class NominationActionsRow extends React.Component {
     colSpan: React.PropTypes.number.isRequired,
     disabled: React.PropTypes.bool.isRequired,
     onSave: React.PropTypes.func.isRequired,
-    onReset: React.PropTypes.func.isRequired
+    onReset: React.PropTypes.func.isRequired,
+    saveTime: React.PropTypes.instanceOf(Date)
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return nextProps.disabled !== this.props.disabled;
+    return nextProps.disabled !== this.props.disabled || nextProps.saveTime !== this.props.saveTime;
   }
 
   render() {
-    const { colSpan, disabled, onSave, onReset } = this.props;
+    const { colSpan, disabled, onSave, onReset, saveTime } = this.props;
     return <tr>
       <td colSpan={colSpan}>
+        { saveTime ? <span title={saveTime}>{ 'Last saved ' + time_diff(saveTime) }</span> : null }
         <RaisedButton
           className='NominationActionButton'
           label='Save'
@@ -128,16 +132,17 @@ class NominationActionsRow extends React.Component {
 
 
 const NominationForm = ({ fields, maxNominations, onChange, onSave, onReset, state }) => {
-  const defaultValues = state.get('serverData');
-  const disabled = state.get('isFetching');
-  const values = state.get('clientData');
-  const rows = values.size < maxNominations ? values.push(Map()) : values;
+  const clientData = state.get('clientData');
+  const serverData = state.get('serverData');
+  const serverTime = state.get('serverTime');
+  const isFetching = state.get('isFetching');
+  const rows = clientData.size < maxNominations ? clientData.push(Map()) : clientData;
   return <tbody className='NominationForm'>
     {
       rows.map((rowValues, idx) => <NominationRow
         key={idx}
-        defaultValues={ defaultValues.get(idx, Map()) }
-        disabled={disabled}
+        defaultValues={ serverData.get(idx, Map()) }
+        disabled={isFetching}
         fields={fields}
         onChange={ (field, value) => onChange(idx, rowValues.set(field, value)) }
         onRemove={ () => onChange(idx, null) }
@@ -146,9 +151,10 @@ const NominationForm = ({ fields, maxNominations, onChange, onSave, onReset, sta
     }
     <NominationActionsRow
       colSpan={fields.length}
-      disabled={ disabled || values.equals(defaultValues) }
+      disabled={ isFetching || clientData.equals(serverData) }
       onSave={onSave}
       onReset={onReset}
+      saveTime={ serverTime ? new Date(serverTime) : null }
     />
   </tbody>;
 }
