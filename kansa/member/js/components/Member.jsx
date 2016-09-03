@@ -17,18 +17,7 @@ import Upgrade from './Upgrade';
 class Member extends React.Component {
   static propTypes = {
     member: ImmutablePropTypes.mapContains({
-      legal_name: React.PropTypes.string,
-      email: React.PropTypes.string,
-      public_first_name: React.PropTypes.string,
-      public_last_name: React.PropTypes.string,
-      country: React.PropTypes.string,
-      state: React.PropTypes.string,
-      city: React.PropTypes.string,
-      paper_pubs: ImmutablePropTypes.mapContains({
-        name: React.PropTypes.string.isRequired,
-        address: React.PropTypes.string.isRequired,
-        country: React.PropTypes.string.isRequired
-      })
+      paper_pubs: ImmutablePropTypes.map
     }),
     onLogout: React.PropTypes.func.isRequired,
     onUpdate: React.PropTypes.func.isRequired,
