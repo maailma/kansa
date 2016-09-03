@@ -68,11 +68,6 @@ export default class Member extends React.Component {
       && Member.paperPubsIsValid(member.get('paper_pubs'));
   }
 
-  state = {
-    member: Map(),
-    sent: false
-  }
-
   get changes() {
     const m0 = this.props.member;
     return this.state.member.filter((value, key) => {
@@ -85,15 +80,23 @@ export default class Member extends React.Component {
     return Member.isValid(this.state.member);
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      member: props.member,
+      sent: false
+    };
+  }
+
   componentWillReceiveProps(nextProps) {
     this.setState({
-      member: Immutable.fromJS(nextProps.user.get("member")),
+      member: nextProps.member,
       sent: false
     });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (!nextProps.member.equals(this.props.user.get("member"))) return true;
+    if (!nextProps.member.equals(this.props.member)) return true;
     if (nextState.sent !== this.state.sent) return true;
     if (!nextState.member.equals(this.state.member)) return true;
     return false;
@@ -104,8 +107,8 @@ export default class Member extends React.Component {
     if (!member) return null;
     const membership = member.get('membership', 'NonMember');
     const formProps = {
-      getDefaultValue: path => member.getIn(path, ''),
-      getValue: path => this.state.member.getIn(path, null) || '',
+      getDefaultValue: path => member.getIn(path) || '',
+      getValue: path => this.state.member.getIn(path) || '',
       onChange: (path, value) => this.setState({ member: this.state.member.setIn(path, value) })
     };
 
@@ -124,6 +127,9 @@ export default class Member extends React.Component {
           onTouchTap={ () => {
             this.setState({ sent: true });
             api.POST(`people/${this.state.member.get('id')}`, this.changes.toJS())
+              .then(res => {
+                this.setState({ sent: false });
+              })
               .catch(e => console.error(e));  // TODO: report errors better
           }}
         />
@@ -132,4 +138,6 @@ export default class Member extends React.Component {
   }
 }
 
-export default connect(state => state)(Member);
+export default connect(state => ({
+  member: Immutable.fromJS(state.user.get('member'))
+}))(Member);
