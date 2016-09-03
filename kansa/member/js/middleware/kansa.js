@@ -1,25 +1,71 @@
 import { Map } from 'immutable'
+import { push, replace } from 'react-router-redux'
 
-import { logout, memberUpdate } from '../actions'
+import API from '../api';
+import { memberSet } from '../actions'
+import { API_ROOT, PATH_IN, PATH_OUT } from '../constants'
 
-export default (api) => (store) => (next) => (action) => {
+const api = new API(API_ROOT);
+
+export default ({ dispatch }) => (next) => (action) => {
+  const handleError = (error) => next({ ...action, error });
+
+  //console.log('MW', action.type, action.error, action);
   if (!action.error) switch (action.type) {
 
-    case 'LOGOUT':
-      api.GET('logout')
-        .then(res => next(action))
-        .catch(e => console.error(e));  // TODO: report errors better
-      break;
+    case 'KEY_REQUEST': {
+      const { email } = action;
+      if (!email) return next({ ...action, error: 'Email missing for key request' });
+      api.POST('key', { email })
+        .then(() => next(action))
+        .catch(handleError);
+    } return;
 
-    case 'MEMBER_UPDATE':
+    case 'KEY_LOGIN': {
+      const { email, key } = action;
+      if (!email || !key) return next({ ...action, error: 'Missing parameters for key login' });
+      api.POST('login', { email, key })
+        .then(() => api.GET('user'))
+        .then(user => {
+          dispatch(memberSet(user));
+          dispatch(push(PATH_IN));
+        })
+        .catch(err => {
+          handleError(err);
+          dispatch(push(PATH_OUT));
+        });
+    } return;
+
+    case 'TRY_LOGIN': {
+      api.GET('user')
+        .then(user => {
+          dispatch(memberSet(user));
+          dispatch(replace(PATH_IN));
+        })
+        .catch(err => {
+          handleError(err);
+          dispatch(replace(PATH_OUT));
+        });
+    } return;
+
+    case 'LOGOUT': {
+      api.GET('logout')
+        .then(() => {
+          next(action);
+          dispatch(push(PATH_OUT));
+        })
+        .catch(handleError);
+    } return;
+
+    case 'MEMBER_UPDATE': {
       const { id, changes } = action;
       if (!id || !Map.isMap(changes) || changes.isEmpty()) {
-        throw new Error(`Bad parameters for member update: ${JSON.stringify(action)}`);
+        return next({ ...action, error: `Bad parameters for member update: ${JSON.stringify(action)}` });
       }
       api.POST(`people/${id}`, changes.toJS())
-        .then(res => next(action))
-        .catch(e => console.error(e));  // TODO: report errors better
-      break;
+        .then(() => next(action))
+        .catch(handleError);
+    } return;
 
   }
   return next(action);

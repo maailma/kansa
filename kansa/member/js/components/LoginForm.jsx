@@ -1,50 +1,38 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import { routerShape, withRouter } from 'react-router'
 
 import RaisedButton from 'material-ui/RaisedButton'
 import Snackbar from 'material-ui/Snackbar'
 import TextField from 'material-ui/TextField'
 
+import { hideMessage, keyLogin, keyRequest } from '../actions'
+import { PATH_IN } from '../constants'
 
-export default class LoginForm extends React.Component { 
+class LoginForm extends React.Component {
 
   static propTypes = {
-    onKeyLogin: React.PropTypes.func.isRequired,
-    onKeyRequest: React.PropTypes.func.isRequired,
-    router: routerShape.isRequired
+    email: React.PropTypes.string,
+    keyLogin: React.PropTypes.func.isRequired,
+    keyRequest: React.PropTypes.func.isRequired,
+    onHideMessage: React.PropTypes.func.isRequired,
+    router: routerShape.isRequired,
+    message: React.PropTypes.string,
+    showMessage: React.PropTypes.bool
   }
 
   state = {
     email: '',
-    key: '',
-    message: '',
-    showMessage: false
+    key: ''
   }
 
-  showMessage(message) {
-    this.setState({ message, showMessage: true });
-  }
-
-  handleLogin = () => {
-    const { email, key } = this.state;
-    this.props.onKeyLogin(email, key, this.props.router)
-      .catch(err => {
-        console.error('Login failed for', email, err);
-        this.showMessage('Login failed: ' + (err.message || err.status));
-      });
-  }
-
-  getKey = () => {
-    const { email } = this.state;
-    this.props.onKeyRequest(email)
-      .then(res => this.showMessage('Login key and link sent to ' + email))
-      .catch(err => {
-        console.error('Key send failed for', email, err);
-        this.showMessage('Key send failed: ' + (err.message || err.status));
-      });
+  componentWillReceiveProps(nextProps) {
+    const { email, router } = nextProps;
+    if (email) router.replace(PATH_IN);
   }
 
   render() {
+    const { keyLogin, keyRequest } = this.props;
     const { email, key } = this.state;
     const validEmail = email && /.@.*\../.test(email);
 
@@ -71,7 +59,7 @@ export default class LoginForm extends React.Component {
           primary={true}
           disabled={!validEmail || !key}
           style={{ margin: '12px 0' }}
-          onTouchTap={this.handleLogin}
+          onTouchTap={() => keyLogin(email, key)}
         />
         <RaisedButton
           label="Send login key"
@@ -79,16 +67,28 @@ export default class LoginForm extends React.Component {
           primary={true}
           disabled={!validEmail}
           style={{ margin: '12px 0' }}
-          onTouchTap={this.getKey}
+          onTouchTap={() => keyRequest(email)}
         />
       </form>
       <Snackbar
-        open={this.state.showMessage}
-        message={this.state.message}
-        onRequestClose={ () => this.setState({ showMessage: false }) }
+        open={!!this.props.showMessage}
+        message={this.props.message}
+        onRequestClose={this.props.onHideMessage}
       />
     </div>
   }
 }
 
-export default withRouter(LoginForm);
+export default connect(
+  (state) => ({
+    email: state.user.get('email'),
+    message: state.app.get('message'),
+    showMessage: state.app.get('showMessage')
+  }), {
+    keyLogin,
+    keyRequest,
+    onHideMessage: hideMessage
+  }
+)(
+  withRouter(LoginForm)
+);

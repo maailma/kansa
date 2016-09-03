@@ -1,18 +1,18 @@
-import Immutable, { Map } from 'immutable';
+import Immutable, { Map } from 'immutable'
 import React from 'react'
 import { connect } from 'react-redux'
 import { routerShape, withRouter } from 'react-router'
 
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
+import Dialog from 'material-ui/Dialog'
+import FlatButton from 'material-ui/FlatButton'
 
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
 import { logout, memberUpdate } from '../actions'
 import { PATH_OUT } from '../constants'
 
-import { CommonFields, PaperPubsFields } from './form';
-import Upgrade from './Upgrade';
+import { CommonFields, PaperPubsFields } from './form'
+import Upgrade from './Upgrade'
 
 class Member extends React.Component {
   static propTypes = {
