@@ -15,6 +15,9 @@ export default function(state = Map(), action) {
     case 'LOGOUT':
       return Map();
 
+    case 'MEMBER_UPDATE':
+      return state.mergeIn(['member'], action.changes);
+
   }
   return state;
 }

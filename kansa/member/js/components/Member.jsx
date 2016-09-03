@@ -1,28 +1,21 @@
 import Immutable, { Map } from 'immutable';
 import React from 'react'
-import { connect } from 'react-redux';
+import { connect } from 'react-redux'
+import { routerShape, withRouter } from 'react-router'
+
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
-import API from '../api.js';
+import { logout, memberUpdate } from '../actions'
+import { PATH_OUT } from '../constants'
+
 import { CommonFields, PaperPubsFields } from './form';
 import Upgrade from './Upgrade';
 
-function logout(api) {
-  api.GET('logout')
-    .then(res => {
-      window.location = '#/';
-    })
-    .catch(e => {
-      console.error('Logout failed');
-    });
-}
-
 class Member extends React.Component {
   static propTypes = {
-    api: React.PropTypes.instanceOf(API).isRequired,
     member: ImmutablePropTypes.mapContains({
       legal_name: React.PropTypes.string,
       email: React.PropTypes.string,
@@ -36,7 +29,10 @@ class Member extends React.Component {
         address: React.PropTypes.string.isRequired,
         country: React.PropTypes.string.isRequired
       })
-    })
+    }),
+    onLogout: React.PropTypes.func.isRequired,
+    onUpdate: React.PropTypes.func.isRequired,
+    router: routerShape.isRequired
   }
 
   static defaultProps = {
@@ -81,6 +77,8 @@ class Member extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    const { member, router } = nextProps;
+    if (!Map.isMap(member) || member.isEmpty()) router.replace(PATH_OUT);
     this.setState({
       member: nextProps.member,
       sent: false
@@ -95,7 +93,7 @@ class Member extends React.Component {
   }
 
   render() {
-    const { api, member } = this.props;
+    const { member, onLogout, onUpdate } = this.props;
     if (!member) return null;
     const membership = member.get('membership', 'NonMember');
     const formProps = {
@@ -107,7 +105,7 @@ class Member extends React.Component {
     return <div>
       <ul className='user-info'>
         <li></li>
-        <li><a onClick={ () => logout(api) }>Logout</a></li>
+        <li><a onClick={onLogout}>Logout</a></li>
       </ul>
       <div className="container">
         <CommonFields { ...formProps } />
@@ -118,11 +116,7 @@ class Member extends React.Component {
           disabled={ this.state.sent || this.changes.size == 0 || !this.valid }
           onTouchTap={ () => {
             this.setState({ sent: true });
-            api.POST(`people/${this.state.member.get('id')}`, this.changes.toJS())
-              .then(res => {
-                this.setState({ sent: false });
-              })
-              .catch(e => console.error(e));  // TODO: report errors better
+            onUpdate(member.get('id'), this.changes);
           }}
         />
       </div>
@@ -133,7 +127,10 @@ class Member extends React.Component {
 export default connect(
   (state) => ({
     member: state.user.get('member')
-  })
+  }), {
+    onLogout: logout,
+    onUpdate: memberUpdate
+  }
 )(
-  Member
+  withRouter(Member)
 );
