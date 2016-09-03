@@ -19,7 +19,7 @@ import user from './reducers/user';
 
 import './styles/app.css';
 
-const api = new API(`http://${process.env.KANSA_API_HOST}/`);
+const api = new API(`https://${process.env.KANSA_API_HOST}/api/kansa/`);
 
 const store = createStore(
   combineReducers({
