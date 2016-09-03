@@ -1,5 +1,5 @@
-const PATH_IN = '/profile';
-const PATH_OUT = '/login';
+import { login } from './actions'
+import { PATH_IN, PATH_OUT } from './constants'
 
 export default class {
 
@@ -20,7 +20,7 @@ export default class {
     const loc = nextState.location.pathname;
     this.getUser()
       .then(data => {
-        this.store.dispatch({ type: 'LOGIN', data });
+        this.store.dispatch(login(data));
         if (loc !== PATH_IN) replace(PATH_IN);
         callback();
       })

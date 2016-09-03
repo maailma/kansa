@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { IndexRedirect, IndexRoute, Router, Route, hashHistory } from 'react-router';
 import { Provider } from 'react-redux';
-import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { applyMiddleware, createStore } from 'redux';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
@@ -14,12 +14,12 @@ import API from './api.js';
 import Auth from './auth.js';
 import Member from './components/Member.jsx';
 import LoginForm from './components/LoginForm.jsx';
-import user from './reducers/user';
+import reducers from './reducers';
 
 import './styles/app.css';
 
-const store = createStore(combineReducers({ user }));
 const api = new API(`https://${process.env.KANSA_API_HOST}/api/kansa/`);
+const store = createStore(reducers);
 const auth = new Auth(api, store);
 
 ReactDOM.render(

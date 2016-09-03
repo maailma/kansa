@@ -20,7 +20,7 @@ function logout(api) {
     });
 }
 
-export default class Member extends React.Component {
+class Member extends React.Component {
   static propTypes = {
     api: React.PropTypes.instanceOf(API).isRequired,
     member: ImmutablePropTypes.mapContains({
@@ -40,15 +40,7 @@ export default class Member extends React.Component {
   }
 
   static defaultProps = {
-    member: Map({
-      legal_name: '',
-      email: '',
-      public_first_name: '',
-      public_last_name: '',
-      country: '',
-      state: '',
-      city: ''
-    })
+    member: Map()
   }
 
   static fields = [ 'membership', 'legal_name', 'email', 'public_first_name', 'public_last_name',
@@ -138,6 +130,10 @@ export default class Member extends React.Component {
   }
 }
 
-export default connect(state => ({
-  member: Immutable.fromJS(state.user.get('member'))
-}))(Member);
+export default connect(
+  (state) => ({
+    member: state.user.get('member')
+  })
+)(
+  Member
+);
