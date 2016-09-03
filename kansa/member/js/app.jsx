@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import { DefaultRoute, Router, Link, Route, RouteHandler, hashHistory,browserHistory } from 'react-router';
 import { Provider } from 'react-redux';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { syncHistoryWithStore, routerReducer } from 'react-router-redux';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
@@ -23,8 +22,7 @@ const api = new API(`https://${process.env.KANSA_API_HOST}/api/kansa/`);
 
 const store = createStore(
   combineReducers({
-    user,
-    routing: routerReducer
+    user
   })
 )
 
@@ -32,7 +30,6 @@ api.GET('user')
   .then(data => store.dispatch({ type: 'LOGIN', data }))
   .catch(e => console.error(e));
 
-const history = syncHistoryWithStore(browserHistory, store)
 
 ReactDOM.render(
   <Provider store={store} >

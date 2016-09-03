@@ -32,9 +32,6 @@
     "whatwg-fetch": "^1.0.0"
   },
   "dependencies": {
-    "react-addons-shallow-compare": "^15.3.0",
-    "react-router-redux": "^4.0.5"
+    "react-addons-shallow-compare": "^15.3.0"
   }
 }
-
- 
