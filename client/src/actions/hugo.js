@@ -1,47 +1,48 @@
-export const editNomination = (person, category, index, nomination) => ({
+export const setNominator = (person, callback) => ({
   module: 'hugo-nominations',
-  type: 'EDIT',
+  type: 'SET_NOMINATOR',
   person,
-  category,
-  index,
-  nomination
+  callback
 });
 
-export const submitNominations = (person, category) => ({
+export const getNominations = ({ category, nominations, time }) => ({
   module: 'hugo-nominations',
-  type: 'SUBMIT',
-  person,
-  category
-});
-
-export const resetNominations = (person, category) => ({
-  module: 'hugo-nominations',
-  type: 'RESET',
-  person,
-  category
-});
-
-export const setNominations = (person, { category, nominations, time }) => ({
-  module: 'hugo-nominations',
-  type: 'SET',
-  person,
+  type: 'GET_NOMINATIONS',
   category,
   nominations,
   time
 });
 
-export const submitNominationError = (person, category, error) => ({
+export const editNomination = (category, index, nomination) => ({
   module: 'hugo-nominations',
-  type: 'ERROR',
-  person,
+  type: 'EDIT_NOMINATIONS',
+  category,
+  index,
+  nomination
+});
+
+export const submitNominations = (category) => ({
+  module: 'hugo-nominations',
+  type: 'SUBMIT_NOMINATIONS',
+  category
+});
+
+export const resetNominations = (category) => ({
+  module: 'hugo-nominations',
+  type: 'RESET_NOMINATIONS',
+  category
+});
+
+export const submitNominationError = (category, error) => ({
+  module: 'hugo-nominations',
+  type: 'NOMINATIONS_ERROR',
   category,
   error
 });
 
-export const clearNominationError = (person, category) => ({
+export const clearNominationError = (category) => ({
   module: 'hugo-nominations',
-  type: 'CLEAR ERROR',
-  person,
+  type: 'CLEAR_NOMINATIONS_ERROR',
   category
 });
 
