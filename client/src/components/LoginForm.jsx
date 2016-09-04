@@ -5,7 +5,7 @@ import { routerShape, withRouter } from 'react-router'
 import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
 
-import { keyLogin, keyRequest } from '../actions'
+import { keyLogin, keyRequest } from '../actions/auth'
 import { PATH_IN } from '../constants'
 
 class LoginForm extends React.Component {

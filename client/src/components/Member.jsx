@@ -8,7 +8,8 @@ import FlatButton from 'material-ui/FlatButton'
 
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
-import { logout, memberUpdate } from '../actions'
+import { logout } from '../actions/auth'
+import { memberUpdate } from '../actions/kansa'
 import { PATH_OUT } from '../constants'
 
 import { CommonFields, PaperPubsFields } from './form'

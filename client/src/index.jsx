@@ -11,7 +11,7 @@ injectTapEventPlugin();
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
-import { keyLogin, tryLogin } from './actions'
+import { keyLogin, tryLogin } from './actions/auth'
 import { PATH_IN, TITLE } from './constants'
 import App from './components/App'
 import Member from './components/Member'

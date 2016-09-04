@@ -2,7 +2,8 @@ import { Map } from 'immutable'
 import { push, replace } from 'react-router-redux'
 
 import API from '../api';
-import { memberSet, showMessage } from '../actions'
+import { showMessage } from '../actions/app'
+import { memberSet } from '../actions/kansa'
 import { API_ROOT, PATH_IN, PATH_OUT } from '../constants'
 
 const api = new API(API_ROOT);
