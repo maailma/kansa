@@ -12,10 +12,12 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import { keyLogin, tryLogin } from './actions/auth'
+import { setNominator } from './actions/hugo'
 import { PATH_IN, TITLE } from './constants'
 import App from './components/App'
 import LoginForm from './components/LoginForm'
 import Member from './components/Member'
+import Nominate from './components/Nominate'
 import middleware from './middleware'
 import reducers from './reducers'
 
@@ -34,6 +36,16 @@ const doLogin = ({ params: { email, key } }) => {
   store.dispatch(keyLogin(email, key));
 }
 
+const onEnterHugo = (nextState, replace) => {
+  const id = parseInt(nextState.params.id);
+  const person = [ store.getState().user.getIn(['member', 'id']) ].find(pId => pId === id);  // FIXME
+  if (!person) store.dispatch(tryLogin());
+}
+
+const onEnterNominations = ({ params: { id } }, _, callback) => {
+  store.dispatch(setNominator(id, callback));
+}
+
 ReactDOM.render(
   <Provider store={store} >
     <MuiThemeProvider muiTheme={getMuiTheme()}>
@@ -43,6 +55,13 @@ ReactDOM.render(
           <Route path="login" component={LoginForm} />
           <Route path="login/:email/:key" onEnter={doLogin} />
           <Route path="profile" onEnter={authCheck} component={Member} />
+          <Route path="hugo" onEnter={authCheck} >
+            <IndexRedirect to={PATH_IN} />
+            <Route path=":id" onEnter={onEnterHugo} >
+              <IndexRedirect to="nominate" />
+              <Route path="nominate" onEnter={onEnterNominations} component={Nominate} />
+            </Route>
+          </Route>
         </Route>
       </Router>
     </MuiThemeProvider>
