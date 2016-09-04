@@ -1,9 +1,14 @@
 * { box-sizing:border-box; }
 
 body {
+  margin: 0;
   font-family: Helvetica;
   background: #eee;
   -webkit-font-smoothing: antialiased;
+}
+
+main {
+  padding: 24px;
 }
 
 hgroup { 

@@ -13,7 +13,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import { keyLogin, tryLogin } from './actions/auth'
 import { setNominator } from './actions/hugo'
-import { PATH_IN, TITLE } from './constants'
+import { PATH_IN } from './constants'
 import App from './components/App'
 import LoginForm from './components/LoginForm'
 import MemberList from './components/MemberList'
@@ -50,7 +50,7 @@ ReactDOM.render(
   <Provider store={store} >
     <MuiThemeProvider muiTheme={getMuiTheme()}>
       <Router history={syncHistoryWithStore(hashHistory, store)}>
-        <Route path="/" component={App} title={TITLE} >
+        <Route path="/" component={App} >
           <IndexRedirect to={PATH_IN} />
           <Route path="login" component={LoginForm} />
           <Route path="login/:email/:key" onEnter={doLogin} />
