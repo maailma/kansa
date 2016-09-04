@@ -5,11 +5,11 @@ import Snackbar from 'material-ui/Snackbar'
 
 import { hideMessage } from '../actions'
 
-const App = ({ children, route: { title }, message, showMessage, hideMessage }) => <div>
+const App = ({ children, route: { title }, message, hideMessage }) => <div>
   <h1>{title}</h1>
   {children}
   <Snackbar
-    open={showMessage}
+    open={!!message}
     message={message}
     onRequestClose={hideMessage}
   />
@@ -17,8 +17,7 @@ const App = ({ children, route: { title }, message, showMessage, hideMessage }) 
 
 export default connect(
   (state) => ({
-    message: state.app.get('message'),
-    showMessage: !!state.app.get('showMessage')
+    message: state.app.get('message')
   }), {
     hideMessage
   }

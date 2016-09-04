@@ -2,7 +2,7 @@ import { Map } from 'immutable'
 import { push, replace } from 'react-router-redux'
 
 import API from '../api';
-import { memberSet } from '../actions'
+import { memberSet, showMessage } from '../actions'
 import { API_ROOT, PATH_IN, PATH_OUT } from '../constants'
 
 const api = new API(API_ROOT);
@@ -10,7 +10,6 @@ const api = new API(API_ROOT);
 export default ({ dispatch }) => (next) => (action) => {
   const handleError = (error) => next({ ...action, error });
 
-  //console.log('MW', action.type, action.error, action);
   if (!action.error) switch (action.type) {
 
     case 'KEY_REQUEST': {
@@ -19,6 +18,7 @@ export default ({ dispatch }) => (next) => (action) => {
       api.POST('kansa/key', { email })
         .then(() => next(action))
         .catch(handleError);
+      dispatch(showMessage('Sending login key and link to ' + action.email));
     } return;
 
     case 'KEY_LOGIN': {
@@ -43,7 +43,7 @@ export default ({ dispatch }) => (next) => (action) => {
           dispatch(replace(PATH_IN));
         })
         .catch(err => {
-          handleError(err);
+          if (err.status !== 'unauthorized') handleError(err);
           dispatch(replace(PATH_OUT));
         });
     } return;
