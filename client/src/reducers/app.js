@@ -2,7 +2,7 @@ import { Map } from 'immutable'
 
 const defaultState = Map({
   message: '',
-  showMessage: false
+  person: -1
 });
 
 export default function(state = defaultState, action) {
@@ -11,6 +11,9 @@ export default function(state = defaultState, action) {
     return state.set('message', `${action.type} error` + (message ? `: ${message}` : ''));
   }
   switch (action.type) {
+
+    case 'SET_PERSON':
+      return state.set('person', action.person);
 
     case 'SHOW_MESSAGE':
       return state.set('message', action.message);
