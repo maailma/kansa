@@ -26,7 +26,8 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV || ''),
-        API_HOST: JSON.stringify(apiHost)
+        API_HOST: JSON.stringify(apiHost),
+        TITLE: JSON.stringify(process.env.TITLE || 'Your Membership')
       }
     }),
     new webpack.NoErrorsPlugin()
