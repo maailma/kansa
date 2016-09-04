@@ -17,12 +17,13 @@ import App from './components/App'
 import Member from './components/Member'
 import LoginForm from './components/LoginForm'
 import kansa from './middleware/kansa'
+import logger from './middleware/logger'
 import reducers from './reducers'
 
 import './styles/app.css'
 
 const store = createStore(reducers, applyMiddleware(
-  kansa,
+  kansa, logger,
   routerMiddleware(hashHistory)
 ));
 
