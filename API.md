@@ -339,24 +339,22 @@ objects.
 {
   "status": "success",
   "time": "2016-08-13T17:24:59.746Z",
-  "data": {
-    "client_ip": "::ffff:172.19.0.5",
-    "client_ua": "curl/7.43.0",
-    "person_id": 1,
-    "category": "Novella",
-    "nominations": [
-      {
-        "author": …,
-        "title": …,
-        "publisher": …
-      },
-      {
-        "author": …,
-        "title": …,
-        "publisher": …
-      },
-      …
-    ]
-  }
+  "client_ip": "::ffff:172.19.0.5",
+  "client_ua": "curl/7.43.0",
+  "person_id": 1,
+  "category": "Novella",
+  "nominations": [
+    {
+      "author": …,
+      "title": …,
+      "publisher": …
+    },
+    {
+      "author": …,
+      "title": …,
+      "publisher": …
+    },
+    …
+  ]
 }
 ```
