@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 
 import Snackbar from 'material-ui/Snackbar'
 
-import { hideMessage } from '../actions'
+import { hideMessage } from '../actions/app'
 
 const App = ({ children, route: { title }, message, hideMessage }) => <div>
   <h1>{title}</h1>
