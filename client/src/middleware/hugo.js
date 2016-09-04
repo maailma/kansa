@@ -13,7 +13,6 @@ function setNominator(dispatch, { person, callback }) {
   dispatch(setPerson(person));
   api.GET(`hugo/${person}/nominations`)
     .then(data => {
-      console.log('wFN results', data);
       data.forEach(catData => dispatch(getNominations(catData)))
       callback();
     })
