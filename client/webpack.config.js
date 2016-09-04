@@ -7,7 +7,7 @@ console.log('Using API host', apiHost);
 module.exports = {  
   entry: [
     'webpack/hot/only-dev-server',
-    "./js/app.jsx"
+    "./src/index.jsx"
   ],
   output: {
     path: __dirname + '/build',
