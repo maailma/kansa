@@ -3,7 +3,7 @@ import { showMessage } from '../actions/app'
 import { API_ROOT } from '../constants'
 import { categories, nominationFields } from '../constants/hugo'
 
-import API from '../api'
+import API from '../lib/api'
 const api = new API(API_ROOT);
 
 export default ({ dispatch, getState }) => (next) => (action) => {
