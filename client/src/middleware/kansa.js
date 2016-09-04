@@ -16,7 +16,7 @@ export default ({ dispatch }) => (next) => (action) => {
     case 'KEY_REQUEST': {
       const { email } = action;
       if (!email) return next({ ...action, error: 'Email missing for key request' });
-      api.POST('key', { email })
+      api.POST('kansa/key', { email })
         .then(() => next(action))
         .catch(handleError);
     } return;
@@ -24,8 +24,8 @@ export default ({ dispatch }) => (next) => (action) => {
     case 'KEY_LOGIN': {
       const { email, key } = action;
       if (!email || !key) return next({ ...action, error: 'Missing parameters for key login' });
-      api.POST('login', { email, key })
-        .then(() => api.GET('user'))
+      api.POST('kansa/login', { email, key })
+        .then(() => api.GET('kansa/user'))
         .then(user => {
           dispatch(memberSet(user));
           dispatch(push(PATH_IN));
@@ -37,7 +37,7 @@ export default ({ dispatch }) => (next) => (action) => {
     } return;
 
     case 'TRY_LOGIN': {
-      api.GET('user')
+      api.GET('kansa/user')
         .then(user => {
           dispatch(memberSet(user));
           dispatch(replace(PATH_IN));
@@ -49,7 +49,7 @@ export default ({ dispatch }) => (next) => (action) => {
     } return;
 
     case 'LOGOUT': {
-      api.GET('logout')
+      api.GET('kansa/logout')
         .then(() => {
           next(action);
           dispatch(push(PATH_OUT));
@@ -62,7 +62,7 @@ export default ({ dispatch }) => (next) => (action) => {
       if (!id || !Map.isMap(changes) || changes.isEmpty()) {
         return next({ ...action, error: `Bad parameters for member update: ${JSON.stringify(action)}` });
       }
-      api.POST(`people/${id}`, changes.toJS())
+      api.POST(`kansa/people/${id}`, changes.toJS())
         .then(() => next(action))
         .catch(handleError);
     } return;
