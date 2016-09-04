@@ -12,9 +12,10 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import { keyLogin, tryLogin } from './actions'
-import { PATH_IN } from './constants'
-import Member from './components/Member.jsx'
-import LoginForm from './components/LoginForm.jsx'
+import { PATH_IN, TITLE } from './constants'
+import App from './components/App'
+import Member from './components/Member'
+import LoginForm from './components/LoginForm'
 import kansa from './middleware/kansa'
 import reducers from './reducers'
 
@@ -40,7 +41,7 @@ ReactDOM.render(
   <Provider store={store} >
     <MuiThemeProvider muiTheme={getMuiTheme()}>
       <Router history={syncHistoryWithStore(hashHistory, store)}>
-        <Route path="/">
+        <Route path="/" component={App} title={TITLE} >
           <IndexRoute onEnter={authCheck} />
           <Route path="login" component={LoginForm} />
           <Route path="login/:email/:key" onEnter={doLogin} />
