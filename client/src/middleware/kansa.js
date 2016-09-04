@@ -24,7 +24,7 @@ export default ({ dispatch }) => (next) => (action) => {
 
     case 'KEY_LOGIN': {
       const { email, key } = action;
-      if (!email || !key) return next({ ...action, error: 'Missing parameters for key login' });
+      if (!email || !key) return handleError('Missing parameters for key login');
       api.POST('kansa/login', { email, key })
         .then(() => api.GET('kansa/user'))
         .then(user => {
@@ -60,7 +60,7 @@ export default ({ dispatch }) => (next) => (action) => {
     case 'MEMBER_UPDATE': {
       const { id, changes } = action;
       if (!id || !Map.isMap(changes) || changes.isEmpty()) {
-        return next({ ...action, error: `Bad parameters for member update: ${JSON.stringify(action)}` });
+        return handleError(`Bad parameters for member update: ${JSON.stringify(action)}`);
       }
       api.POST(`kansa/people/${id}`, changes.toJS())
         .then(() => next(action))

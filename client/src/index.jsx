@@ -16,7 +16,7 @@ import { setNominator } from './actions/hugo'
 import { PATH_IN, TITLE } from './constants'
 import App from './components/App'
 import LoginForm from './components/LoginForm'
-import Member from './components/Member'
+import MemberList from './components/MemberList'
 import Nominate from './components/Nominate'
 import middleware from './middleware'
 import reducers from './reducers'
@@ -38,7 +38,7 @@ const doLogin = ({ params: { email, key } }) => {
 
 const onEnterHugo = (nextState, replace) => {
   const id = parseInt(nextState.params.id);
-  const person = [ store.getState().user.getIn(['member', 'id']) ].find(pId => pId === id);  // FIXME
+  const person = store.getState().user.get('people', []).find(p => p.id === id);
   if (!person) store.dispatch(tryLogin());
 }
 
@@ -54,7 +54,7 @@ ReactDOM.render(
           <IndexRedirect to={PATH_IN} />
           <Route path="login" component={LoginForm} />
           <Route path="login/:email/:key" onEnter={doLogin} />
-          <Route path="profile" onEnter={authCheck} component={Member} />
+          <Route path="profile" onEnter={authCheck} component={MemberList} />
           <Route path="hugo" onEnter={authCheck} >
             <IndexRedirect to={PATH_IN} />
             <Route path=":id" onEnter={onEnterHugo} >

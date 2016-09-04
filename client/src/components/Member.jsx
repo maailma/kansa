@@ -115,9 +115,7 @@ class Member extends React.Component {
 }
 
 export default connect(
-  (state) => ({
-    member: state.user.get('member')
-  }), {
+  null, {
     onLogout: logout,
     onUpdate: memberUpdate
   }
