@@ -37,11 +37,13 @@ export default (state = defaultState, action) => {
   const { category, error, type } = action;
   //console.log(category, 'STATE', state.get(category).toJS());
   //console.log(category, 'ACTION', action);
-  if (categories.indexOf(category) === -1) return state;
+  if (categories.indexOf(category) === -1) {
+    return (type === 'SET_NOMINATOR') ? defaultState : state;
+  }
   if (error) return state.mergeIn([category], { isFetching: false, error });
   switch (type) {
 
-    case 'SET':
+    case 'GET_NOMINATIONS':
       const { nominations, time } = action;
       const serverData = fromJS(nominations);
       if (!List.isList(serverData)) {
@@ -58,7 +60,7 @@ export default (state = defaultState, action) => {
         error: null
       }));
 
-    case 'EDIT':
+    case 'EDIT_NOMINATIONS':
       const { index, nomination } = action;
       //console.log(category, 'EDIT', index, nomination.toJS());
       try {
@@ -79,17 +81,17 @@ export default (state = defaultState, action) => {
         return state.setIn([category, 'error'], `Editing nomination failed! ${e.message}`);
       }
 
-    case 'RESET':
+    case 'RESET_NOMINATIONS':
       return state.mergeIn([category], {
         clientData: state.getIn([category, 'serverData']),
         isFetching: false,
         error: null
       });
 
-    case 'CLEAR ERROR':
+    case 'CLEAR_NOMINATIONS_ERROR':
       return state.setIn([category, 'error'], null);
 
-    case 'SUBMIT':
+    case 'SUBMIT_NOMINATIONS':
       return state.mergeIn([category], {
         isFetching: true,
         error: null
