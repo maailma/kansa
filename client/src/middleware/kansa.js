@@ -41,7 +41,6 @@ export default ({ dispatch }) => (next) => (action) => {
       api.GET('kansa/user')
         .then(user => {
           dispatch(memberSet(user));
-          dispatch(replace(PATH_IN));
         })
         .catch(err => {
           if (err.status !== 'unauthorized') handleError(err);

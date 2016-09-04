@@ -39,7 +39,7 @@ ReactDOM.render(
     <MuiThemeProvider muiTheme={getMuiTheme()}>
       <Router history={syncHistoryWithStore(hashHistory, store)}>
         <Route path="/" component={App} title={TITLE} >
-          <IndexRoute onEnter={authCheck} />
+          <IndexRedirect to={PATH_IN} />
           <Route path="login" component={LoginForm} />
           <Route path="login/:email/:key" onEnter={doLogin} />
           <Route path="profile" onEnter={authCheck} component={Member} />
