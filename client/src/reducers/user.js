@@ -7,16 +7,21 @@ export default function(state = Map(), action) {
     case 'LOGOUT':
       return Map();
 
-    case 'MEMBER_SET':
+    case 'MEMBER_SET': {
       const { email, people, roles } = action;
       return fromJS({
         email,
-        member: people && people[0],
+        people,
         admin: roles && roles.indexOf('member_admin') != -1
       });
+    }
 
-    case 'MEMBER_UPDATE':
-      return state.mergeIn(['member'], action.changes);
+    case 'MEMBER_UPDATE': {
+      const { id, changes } = action;
+      const key = state.get('people').findKey(p => p.get('id') === id);
+      if (typeof key !== 'number') return state;
+      return state.mergeIn(['people', key], changes);
+    }
 
   }
   return state;
