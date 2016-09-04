@@ -3,10 +3,9 @@ import { connect } from 'react-redux'
 import { routerShape, withRouter } from 'react-router'
 
 import RaisedButton from 'material-ui/RaisedButton'
-import Snackbar from 'material-ui/Snackbar'
 import TextField from 'material-ui/TextField'
 
-import { hideMessage, keyLogin, keyRequest } from '../actions'
+import { keyLogin, keyRequest } from '../actions'
 import { PATH_IN } from '../constants'
 
 class LoginForm extends React.Component {
@@ -15,10 +14,7 @@ class LoginForm extends React.Component {
     email: React.PropTypes.string,
     keyLogin: React.PropTypes.func.isRequired,
     keyRequest: React.PropTypes.func.isRequired,
-    onHideMessage: React.PropTypes.func.isRequired,
-    router: routerShape.isRequired,
-    message: React.PropTypes.string,
-    showMessage: React.PropTypes.bool
+    router: routerShape.isRequired
   }
 
   state = {
@@ -70,24 +66,16 @@ class LoginForm extends React.Component {
           onTouchTap={() => keyRequest(email)}
         />
       </form>
-      <Snackbar
-        open={!!this.props.showMessage}
-        message={this.props.message}
-        onRequestClose={this.props.onHideMessage}
-      />
     </div>
   }
 }
 
 export default connect(
   (state) => ({
-    email: state.user.get('email'),
-    message: state.app.get('message'),
-    showMessage: state.app.get('showMessage')
+    email: state.user.get('email')
   }), {
     keyLogin,
-    keyRequest,
-    onHideMessage: hideMessage
+    keyRequest
   }
 )(
   withRouter(LoginForm)
