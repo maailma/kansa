@@ -2,8 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { IndexRedirect, IndexRoute, Router, Route, hashHistory } from 'react-router'
-import { routerMiddleware, syncHistoryWithStore } from 'react-router-redux'
-import { applyMiddleware, createStore } from 'redux'
+import { syncHistoryWithStore } from 'react-router-redux'
+import { createStore } from 'redux'
 
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin();
@@ -14,18 +14,14 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import { keyLogin, tryLogin } from './actions/auth'
 import { PATH_IN, TITLE } from './constants'
 import App from './components/App'
-import Member from './components/Member'
 import LoginForm from './components/LoginForm'
-import kansa from './middleware/kansa'
-import logger from './middleware/logger'
+import Member from './components/Member'
+import middleware from './middleware'
 import reducers from './reducers'
 
 import './styles/app.css'
 
-const store = createStore(reducers, applyMiddleware(
-  kansa, logger,
-  routerMiddleware(hashHistory)
-));
+const store = createStore(reducers, middleware(hashHistory));
 
 const authCheck = (nextState, replace) => {
   const loc = nextState.location.pathname;
