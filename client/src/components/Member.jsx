@@ -1,28 +1,20 @@
 import Immutable, { Map } from 'immutable'
 import React from 'react'
-import { connect } from 'react-redux'
-import { routerShape, withRouter } from 'react-router'
 
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
-import { logout } from '../actions/auth'
-import { memberUpdate } from '../actions/kansa'
-import { PATH_OUT } from '../constants'
-
 import { CommonFields, PaperPubsFields } from './form'
 import Upgrade from './Upgrade'
 
-class Member extends React.Component {
+export default class Member extends React.Component {
   static propTypes = {
     member: ImmutablePropTypes.mapContains({
       paper_pubs: ImmutablePropTypes.map
     }),
-    onLogout: React.PropTypes.func.isRequired,
-    onUpdate: React.PropTypes.func.isRequired,
-    router: routerShape.isRequired
+    onUpdate: React.PropTypes.func.isRequired
   }
 
   static defaultProps = {
@@ -67,8 +59,6 @@ class Member extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { member, router } = nextProps;
-    if (!Map.isMap(member) || member.isEmpty()) router.replace(PATH_OUT);
     this.setState({
       member: nextProps.member,
       sent: false
@@ -83,7 +73,7 @@ class Member extends React.Component {
   }
 
   render() {
-    const { member, onLogout, onUpdate } = this.props;
+    const { member, onUpdate } = this.props;
     if (!member) return null;
     const membership = member.get('membership', 'NonMember');
     const formProps = {
@@ -92,33 +82,19 @@ class Member extends React.Component {
       onChange: (path, value) => this.setState({ member: this.state.member.setIn(path, value) })
     };
 
-    return <div>
-      <ul className='user-info'>
-        <li></li>
-        <li><a onClick={onLogout}>Logout</a></li>
-      </ul>
-      <div className="container">
-        <CommonFields { ...formProps } />
-        <br />
-        <PaperPubsFields { ...formProps } />
-        <FlatButton key='ok'
-          label={ this.state.sent ? 'Working...' : 'Apply' }
-          disabled={ this.state.sent || this.changes.size == 0 || !this.valid }
-          onTouchTap={ () => {
-            this.setState({ sent: true });
-            onUpdate(member.get('id'), this.changes);
-          }}
-        />
-      </div>
+    return <div className="container">
+      <CommonFields { ...formProps } />
+      <br />
+      <PaperPubsFields { ...formProps } />
+      <FlatButton key='ok'
+        label={ this.state.sent ? 'Working...' : 'Apply' }
+        disabled={ this.state.sent || this.changes.size == 0 || !this.valid }
+        onTouchTap={ () => {
+          this.setState({ sent: true });
+          console.log('updating', member, onUpdate);
+          onUpdate(member.get('id'), this.changes);
+        }}
+      />
     </div>;
   }
 }
-
-export default connect(
-  null, {
-    onLogout: logout,
-    onUpdate: memberUpdate
-  }
-)(
-  withRouter(Member)
-);
