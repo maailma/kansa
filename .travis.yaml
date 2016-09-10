@@ -18,5 +18,5 @@ before_install:
     - docer-compose up
   
 script:
-    - mocha
+    - npm test
     
