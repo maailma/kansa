@@ -14,6 +14,9 @@ describe("Check API points",function () {
     it("Check that api/kansa/ is routed", function (done) {
         request.agent(host,{ca:cert})
             .get("/api/kansa/")
+            .expect(function (res) {
+                console.log(res);
+            })
             .expect("Content-Type",/json/)
             .expect(401)
         .end(done);
