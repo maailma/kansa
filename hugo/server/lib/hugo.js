@@ -55,7 +55,7 @@ function nominate(req, res, next) {
       return req.app.locals.db.one(`INSERT INTO Nominations (${keys.join(', ')}) VALUES (${values}) RETURNING time`, data);
     })
     .then(({ time }) => {
-      res.status(200).json({ status: 'success', time, data });
+      res.status(200).json(Object.assign({ status: 'success', time }, data));
     })
     .catch(err => next(err));
 }

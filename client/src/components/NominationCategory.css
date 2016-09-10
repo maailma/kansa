@@ -1,0 +1,11 @@
+.NominationActionButton {
+  float: right;
+  margin-left: 12px;
+}
+.NominationActionButton button[disabled] {
+  background-color: transparent !important;
+}
+
+.NominationField.changed hr {
+  border-color: rgb(255, 152, 0) !important;
+}
