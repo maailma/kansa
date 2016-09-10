@@ -1,8 +1,9 @@
 import Immutable, { Map } from 'immutable'
 import React from 'react'
+import { Link } from 'react-router'
 
 import Dialog from 'material-ui/Dialog'
-import FlatButton from 'material-ui/FlatButton'
+import RaisedButton from 'material-ui/RaisedButton'
 
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
@@ -86,15 +87,17 @@ export default class Member extends React.Component {
       <CommonFields { ...formProps } />
       <br />
       <PaperPubsFields { ...formProps } />
-      <FlatButton key='ok'
-        label={ this.state.sent ? 'Working...' : 'Apply' }
+      <RaisedButton key='ok'
         disabled={ this.state.sent || this.changes.size == 0 || !this.valid }
+        label={ this.state.sent ? 'Working...' : 'Apply changes' }
         onTouchTap={ () => {
           this.setState({ sent: true });
           console.log('updating', member, onUpdate);
           onUpdate(member.get('id'), this.changes);
         }}
+        style={{ margin: '0 24px' }}
       />
+      { member.get('can_hugo_nominate') ? <Link to={`/hugo/${member.get('id')}/nominate`}>Nominate for the Hugo Awards</Link> : null }
     </div>;
   }
 }
