@@ -24,7 +24,7 @@ function access(req) {
 function getNominations(req, res, next) {
   const distinct = req.query.all ? '' : 'DISTINCT ON (category)';
   access(req)
-    .then(({ id }) => req.app.locals.db.many('SELECT $1^ * FROM Nominations WHERE person_id = $2 ORDER BY category, time DESC', [ distinct, id ]))
+    .then(({ id }) => req.app.locals.db.any('SELECT $1^ * FROM Nominations WHERE person_id = $2 ORDER BY category, time DESC', [ distinct, id ]))
     .then(data => res.status(200).json(data))
     .catch(err => next(err));
 }
@@ -55,7 +55,7 @@ function nominate(req, res, next) {
       return req.app.locals.db.one(`INSERT INTO Nominations (${keys.join(', ')}) VALUES (${values}) RETURNING time`, data);
     })
     .then(({ time }) => {
-      res.status(200).json({ status: 'success', time, data });
+      res.status(200).json(Object.assign({ status: 'success', time }, data));
     })
     .catch(err => next(err));
 }
