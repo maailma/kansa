@@ -10,7 +10,7 @@ describe("Check that API services are up",function () {
         excepting that thou then proceed to three. Five is right out. */
     afterEach(function (done) { // wait for one second after failed test before retry.
         if (this.currentTest.state === 'failed') {
-            setTimeout(function (done) {
+            setTimeout(function () {
                 done();
             },1000);
         } else {
