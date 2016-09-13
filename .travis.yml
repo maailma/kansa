@@ -18,6 +18,6 @@ before_install:
   
 script:
     - docker-compose up -d
-    - npm test
+    - cd api-testing; npm test
     - docker-compose down
     
