@@ -1,7 +1,7 @@
 var host = "https://localhost:4430";
 var request = require('supertest');
 var fs = require('fs');
-var cert = fs.readFileSync('nginx/ssl/localhost.cert','utf8');
+var cert = fs.readFileSync('../nginx/ssl/localhost.cert','utf8');
 
 describe("Check that API services are up",function () {
     this.retries(3); /* Then shalt thou count to three, no more, no less. Three shall be
