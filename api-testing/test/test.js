@@ -13,6 +13,8 @@ describe("Check that API services are up",function () {
             setTimeout(function (done) {
                 done();
             },1000);
+        } else {
+            done();
         }
     })
     it("Should have web server running",function (done) {
