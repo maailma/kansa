@@ -8,6 +8,11 @@ describe("Check that API services are up",function () {
         the number thou shalt count, and the number of the counting shall
         be three. Four shalt thou not count, neither count thou two,
         excepting that thou then proceed to three. Five is right out. */
+    afterEach(function (done) { // wait for one second before retry.
+        setTimeout(function (done) {
+            done();
+        },1000);
+    })
     it("Should have web server running",function (done) {
         request.agent(host,{ca:cert})
             .get('/')
