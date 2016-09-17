@@ -358,3 +358,88 @@ objects.
   ]
 }
 ```
+
+
+## Hugo Canonicalisation
+
+### `GET /api/hugo/canon/canon`
+- Requires authentication and `hugo_admin` authority
+
+Fetch the set of canonical nominations. Results are sorted by category, and
+expressed as `[ object, id ]` tuples.
+
+#### Response
+```
+{
+  Fancast: [
+    [ { title: 'The Really Good One' }, 2 ],
+    [ { title: 'Three Little Piggies' }, 3 ]
+  ],
+  Novel: [
+    [ { author: 'Asimov', title: '1984' }, 6 ]
+  ],
+  …
+}
+```
+
+
+### `GET /api/hugo/canon/nominations`
+- Requires authentication and `hugo_admin` authority
+
+Fetch all unique nomination entries. Results are sorted by category, and
+expressed as `[ object, id ]` tuples, where the second entry is the id of the
+nomination's canonical form, if such has been assigned.
+
+#### Response
+```
+{
+  Novel: [
+    [ { title: 'best', author: 'the' } ],
+    [ { title: 'Work of Art', author: 'The best' }, 6 ]
+  ],
+  Fancast: [
+    [ { title: '3 pigs' }, 3 ],
+    [ { title: 'The Really Good One' }, 2 ],
+    [ { title: 'Three Little Piggies' }, 3 ]
+  ],
+  …
+}
+```
+
+
+### `POST /api/hugo/canon/classify`
+- Requires authentication and `hugo_admin` authority
+- Parameters: `category` (required), `nominations` (required), `canon_id`, `canon_nom`
+
+Classify the given `nominations` in `category` as having the canonicalisation
+identified by `canon_id` or (if set) `canon_nom`. If both are falsey, the nominations'
+canonicalisations are removed.
+
+#### Request
+```
+{
+  category: 'Fancast',
+  nominations: [
+    { title: '3 pigs' },
+    { title: 'Three Little Piggies' }
+  ],
+  canon_nom: { title: 'Three Little Piggies' }
+}
+```
+
+#### Response
+```
+{ status: 'success' }
+```
+
+
+### `POST /api/hugo/canon/:id`
+- Requires authentication and `hugo_admin` authority
+- Parameters: `category` (required), `nomination` (required)
+
+Sets the `category` and `nomination` for the canonical nomination `id`.
+
+#### Response
+```
+{ status: 'success' }
+```
