@@ -22,10 +22,29 @@ CREATE TABLE Nominations (
 
 CREATE TABLE Canon (
     id SERIAL PRIMARY KEY,
-    nomination jsonb NOT NULL
+    category Category NOT NULL,
+    nomination jsonb NOT NULL,
+    UNIQUE (category, nomination)
 );
 
 CREATE TABLE Classification (
-    nomination jsonb PRIMARY KEY,
-    canon_id integer REFERENCES Canon NOT NULL
+    category Category,
+    nomination jsonb,
+    canon_id integer REFERENCES Canon,
+    PRIMARY KEY (category, nomination)
 );
+
+CREATE VIEW CurrentBallots AS SELECT
+    DISTINCT ON (person_id, category)
+    id AS ballot_id, category, nominations
+    FROM Nominations
+    ORDER BY person_id, category, time DESC;
+
+CREATE VIEW CurrentNominations AS SELECT
+    n.ballot_id, n.category, n.nomination, c.nomination AS canon
+    FROM (
+        SELECT ballot_id, category, unnest(nominations) as nomination
+        FROM CurrentBallots
+    ) AS n
+    NATURAL LEFT OUTER JOIN Classification l
+    LEFT OUTER JOIN Canon c ON l.canon_id = c.id;
