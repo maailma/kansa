@@ -9,6 +9,34 @@ and `500` for server error. The response should contain a `status` field with
 the contents `"error"` or `"unauthorized"`, as appropriate, possibly along with
 some relevant data and/or a `message` field.
 
+* [Public information](#public-information)
+  * [`GET /api/kansa/public/people`](#get-apikansapublicpeople)
+  * [`GET /api/kansa/public/stats`](#get-apikansapublicstats)
+* [Authentication](#authentication)
+  * [`POST /api/kansa/key`](#post-apikansakey)
+  * [`GET/POST /api/kansa/login`](#getpost-apikansalogin)
+  * [`GET/POST /api/kansa/logout`](#getpost-apikansalogout)
+* [User info](#user-info)
+  * [`GET /api/kansa/user`](#get-apikansauser)
+  * [`GET /api/kansa/user/log`](#get-apikansauserlog)
+* [Member info](#member-info)
+  * [`GET /api/kansa/people`](#get-apikansapeople)
+  * [`POST /api/kansa/people`](#post-apikansapeople)
+  * [`GET /api/kansa/people/:id`](#get-apikansapeopleid)
+  * [`GET /api/kansa/people/:id/log`](#get-apikansapeopleidlog)
+  * [`POST /api/kansa/people/:id`](#post-apikansapeopleid)
+  * [`POST /api/kansa/people/:id/upgrade`](#post-apikansapeopleidupgrade)
+  * [WebSocket: `wss://kansa.server/api/kansa/people/updates`](#websocket-wsskansaserverapikansapeopleupdates)
+* [Hugo Nominations](#hugo-nominations)
+  * [`GET /api/hugo/:id/nominations`](#get-apihugoidnominations)
+  * [`POST /api/hugo/:id/nominate`](#post-apihugoidnominate)
+* [Hugo Canonicalisation](#hugo-canonicalisation)
+  * [`GET /api/hugo/canon/canon`](#get-apihugocanoncanon)
+  * [`GET /api/hugo/canon/nominations`](#get-apihugocanonnominations)
+  * [`POST /api/hugo/canon/classify`](#post-apihugocanonclassify)
+  * [`POST /api/hugo/canon/:id`](#post-apihugocanonid)
+
+----
 
 ## Public information
 
