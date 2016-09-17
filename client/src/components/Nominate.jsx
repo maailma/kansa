@@ -1,3 +1,4 @@
+import { Map } from 'immutable'
 import React from 'react'
 import { connect } from 'react-redux'
 
@@ -44,7 +45,15 @@ const Messages = connect(
   onRequestClose={ () => clearNominationError(category) }
 />);
 
+function getName(person) {
+  if (!Map.isMap(person)) return '<>';
+  const pna = [ person.get('public_first_name'), person.get('public_last_name') ];
+  const pns = pna.filter(s => s).join(' ');
+  return pns || person.get('legal_name');
+}
+
 const ActiveNominations = ({ person }) => <div>
+  <h1>{ 'Hugo nominations for ' + getName(person) }</h1>
   <p>Introduction to Hugo nominations</p>
   {
     categories.map(category => {
@@ -118,11 +127,12 @@ const NominationsNotAllowed = () => <div>
 
 const Nominate = ({ nominator }) => nominator ? <ActiveNominations /> : <NominationsNotAllowed />;
 
-//export default ActiveNominations;
 export default connect(
-  (state) => ({
-    //nominator: !!state.person.get('can_hugo_nominate'),
-    //person: state.person.toJS()
-    person: state.app.get('person')
-  })
+  (state) => {
+    const id = Number(state.app.get('person', -1));
+    const people = state.user.get('people');
+    return {
+      person: people ? people.find(p => p.get('id') === id) : null
+    }
+  }
 )(ActiveNominations);
