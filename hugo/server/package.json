@@ -18,14 +18,14 @@
   },
   "dependencies": {
     "bluebird": "^3.4.0",
-    "body-parser": "~1.13.2",
+    "body-parser": "~1.15.2",
     "connect-pg-simple": "^3.1.0",
     "cors": "^2.7.1",
     "debug": "~2.2.0",
-    "express": "~4.13.1",
+    "express": "~4.14.0",
     "express-session": "^1.13.0",
-    "morgan": "~1.6.1",
+    "morgan": "~1.7.0",
     "pg-monitor": "^0.5.8",
-    "pg-promise": "^4.6.3"
+    "pg-promise": "^5.3.3"
   }
 }
