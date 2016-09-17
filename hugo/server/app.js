@@ -11,7 +11,7 @@ const pgp = require('pg-promise')(pgOptions);
 require('pg-monitor').attach(pgOptions);
 const db = pgp(process.env.DATABASE_URL);
 
-const hugo = require('./lib/hugo');
+const nominate = require('./lib/nominate');
 
 const app = express();
 const server = http.createServer(app);
@@ -38,8 +38,8 @@ app.use(session({
 }));
 
 const router = express.Router();
-router.get('/:id/nominations', hugo.getNominations);
-router.post('/:id/nominate', hugo.nominate);
+router.get('/:id/nominations', nominate.getNominations);
+router.post('/:id/nominate', nominate.nominate);
 app.use('/', router);
 
 // no match from router -> 404
