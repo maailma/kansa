@@ -12,6 +12,8 @@ require('pg-monitor').attach(pgOptions);
 const db = pgp(process.env.DATABASE_URL);
 
 const nominate = require('./lib/nominate');
+const Canon = require('./lib/canon');
+const canon = new Canon(pgp, db);
 
 const app = express();
 const server = http.createServer(app);
@@ -38,6 +40,10 @@ app.use(session({
 }));
 
 const router = express.Router();
+router.all('/canon/*', Canon.verifyCanonAccess);
+router.get('/canon/canon', canon.getCanon);
+router.get('/canon/nominations', canon.getNominations);
+router.post('/canon/classify', canon.classify);
 router.get('/:id/nominations', nominate.getNominations);
 router.post('/:id/nominate', nominate.nominate);
 app.use('/', router);
