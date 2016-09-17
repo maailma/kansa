@@ -17,6 +17,7 @@ class Canon {
     this.getCanon = this.getCanon.bind(this);
     this.getNominations = this.getNominations.bind(this);
     this.classify = this.classify.bind(this);
+    this.updateCanonEntry = this.updateCanonEntry.bind(this);
   }
 
   getCanon(req, res, next) {
@@ -88,6 +89,26 @@ class Canon {
             DO UPDATE SET canon_id = EXCLUDED.canon_id
         `);
     }}))
+      .then(() => res.status(200).json({ status: 'success' }))
+      .catch(next);
+  }
+
+  updateCanonEntry(req, res, next) {
+    if (!req.body) return next(new InputError('Empty POST body!?'));
+    const data = {
+      id: parseInt(req.params.id),
+      category: req.body.category,
+      nomination: req.body.nomination
+    };
+    if (!data.category || !data.nomination) {
+      return next(new InputError('Required fields: category, nomination'));
+    }
+    this.db.one(`
+      UPDATE Canon
+      SET category = $(category), nomination = $(nomination)::jsonb
+      WHERE id = $(id)
+      RETURNING id
+    `, data)
       .then(() => res.status(200).json({ status: 'success' }))
       .catch(next);
   }
