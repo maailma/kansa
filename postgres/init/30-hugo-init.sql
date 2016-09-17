@@ -41,10 +41,9 @@ CREATE VIEW CurrentBallots AS SELECT
     ORDER BY person_id, category, time DESC;
 
 CREATE VIEW CurrentNominations AS SELECT
-    n.ballot_id, n.category, n.nomination, c.nomination AS canon
+    n.ballot_id, n.category, n.nomination, c.canon_id
     FROM (
         SELECT ballot_id, category, unnest(nominations) as nomination
         FROM CurrentBallots
     ) AS n
-    NATURAL LEFT OUTER JOIN Classification l
-    LEFT OUTER JOIN Canon c ON l.canon_id = c.id;
+    NATURAL LEFT OUTER JOIN Classification c;

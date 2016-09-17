@@ -20,12 +20,13 @@ class Canon {
   }
 
   getCanon(req, res, next) {
-    this.db.any(`SELECT category, nomination FROM Canon`)
-      .then(data => res.status(200).json(data.reduce((canon, { category, nomination }) => {
+    this.db.any(`SELECT id, category, nomination FROM Canon`)
+      .then(data => res.status(200).json(data.reduce((canon, { id, category, nomination }) => {
+        const entry = [ nomination, id ];
         if (canon.hasOwnProperty(category)) {
-          canon[category].push(nomination);
+          canon[category].push(entry);
         } else {
-          canon[category] = [ nomination ];
+          canon[category] = [ entry ];
         }
         return canon;
       }, {})))
@@ -35,13 +36,13 @@ class Canon {
   getNominations(req, res, next) {
     this.db.any(`
       SELECT DISTINCT ON (category, nomination)
-      category, nomination, canon
+      category, nomination, canon_id
       FROM CurrentNominations
       ORDER BY category, nomination
     `)
-      .then(data => res.status(200).json(data.reduce((nominations, { category, nomination, canon }) => {
-        const entry = { raw: nomination };
-        if (canon) entry.canon = canon;
+      .then(data => res.status(200).json(data.reduce((nominations, { category, nomination, canon_id }) => {
+        const entry = [ nomination ];
+        if (canon_id) entry.push(canon_id);
         if (nominations.hasOwnProperty(category)) {
           nominations[category].push(entry);
         } else {
@@ -56,9 +57,10 @@ class Canon {
     if (!req.body) return next(new InputError('Empty POST body!?'));
     const category = req.body.category;
     const src = req.body.nominations;
-    const tgt = req.body.canon;
-    if (!category || !src || !src.length || !tgt) {
-      return next(new InputError('Required fields: category, nominations, canon'));
+    const canon_id = req.body.canon_id;
+    const canon_nom = req.body.canon_nom;
+    if (!category || !src || !src.length || !canon_id && !canon_nom) {
+      return next(new InputError('Required fields: category, nominations, canon_id || canon_nom'));
     }
     const cs = new this.pgp.helpers.ColumnSet([
       'category',
@@ -69,13 +71,13 @@ class Canon {
     });
     this.db.tx(tx => tx.sequence((i, data) => { switch (i) {
       case 0:
-        return tx.one(`
+        return canon_id ? { id: canon_id } : tx.one(`
           INSERT INTO Canon (category, nomination)
           VALUES ($(category), $(nomination)::jsonb)
           ON CONFLICT (category, nomination)
             DO UPDATE SET category = EXCLUDED.category
           RETURNING id
-        `, { category, nomination: tgt });  //
+        `, { category, nomination: canon_nom });  // DO UPDATE required for non-empty RETURNING id
       case 1:
         const insert = this.pgp.helpers.insert(src.map(
           nomination => ({ category, nomination, canon_id: data.id })
