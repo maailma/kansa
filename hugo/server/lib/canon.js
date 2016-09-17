@@ -54,41 +54,52 @@ class Canon {
       .catch(next);
   }
 
-  classify(req, res, next) {
-    if (!req.body) return next(new InputError('Empty POST body!?'));
-    const category = req.body.category;
-    const src = req.body.nominations;
-    const canon_id = req.body.canon_id;
-    const canon_nom = req.body.canon_nom;
-    if (!category || !src || !src.length || !canon_id && !canon_nom) {
-      return next(new InputError('Required fields: category, nominations, canon_id || canon_nom'));
-    }
-    const cs = new this.pgp.helpers.ColumnSet([
-      'category',
-      { name: 'nomination', mod: ':json' },
-      'canon_id'
-    ], {
-      table: 'classification'
-    });
-    this.db.tx(tx => tx.sequence((i, data) => { switch (i) {
+  _classifyWithObject(category, nomination, getInsertQuery) {
+    return this.db.tx(tx => tx.sequence((i, data) => { switch (i) {
       case 0:
-        return canon_id ? { id: canon_id } : tx.one(`
+        return tx.one(`
           INSERT INTO Canon (category, nomination)
           VALUES ($(category), $(nomination)::jsonb)
           ON CONFLICT (category, nomination)
             DO UPDATE SET category = EXCLUDED.category
           RETURNING id
-        `, { category, nomination: canon_nom });  // DO UPDATE required for non-empty RETURNING id
+        `, { category, nomination });  // DO UPDATE required for non-empty RETURNING id
       case 1:
-        const insert = this.pgp.helpers.insert(src.map(
-          nomination => ({ category, nomination, canon_id: data.id })
-        ), cs);
-        return tx.none(`
-          ${insert}
-          ON CONFLICT (category, nomination)
-            DO UPDATE SET canon_id = EXCLUDED.canon_id
-        `);
+        return tx.none(getInsertQuery(data.id));
     }}))
+  }
+
+  classify(req, res, next) {
+    if (!req.body) return next(new InputError('Empty POST body!?'));
+    const category = req.body.category;
+    const nominations = req.body.nominations;
+    if (!category || !nominations || !nominations.length) {
+      return next(new InputError('Required fields: category, nominations, canon_id || canon_nom'));
+    }
+
+    const getInsertQuery = (canon_id) => {
+      const values = nominations.map(
+        nomination => ({ category, nomination, canon_id })
+      );
+      const cs = new this.pgp.helpers.ColumnSet([
+        'category',
+        { name: 'nomination', mod: ':json' },
+        'canon_id'
+      ], {
+        table: 'classification'
+      });
+      return `
+        ${this.pgp.helpers.insert(values, cs)}
+        ON CONFLICT (category, nomination)
+          DO UPDATE SET canon_id = EXCLUDED.canon_id
+      `;
+    }
+
+    (
+      req.body.canon_nom
+        ? this._classifyWithObject(category, req.body.canon_nom, getInsertQuery)
+        : this.db.none(getInsertQuery(req.body.canon_id || null))
+    )
       .then(() => res.status(200).json({ status: 'success' }))
       .catch(next);
   }
