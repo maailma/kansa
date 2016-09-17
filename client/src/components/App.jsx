@@ -23,7 +23,12 @@ class ButtonMenu extends React.Component {
     open: false
   }
 
-  handleTouchTap = (event) => {
+  menuItemTap = (action) => () => {
+    this.setState({ open: false });
+    if (action) action();
+  }
+
+  openMenu = (event) => {
     event.preventDefault();
     this.setState({
       anchorEl: event.currentTarget,
@@ -33,10 +38,10 @@ class ButtonMenu extends React.Component {
 
   render = () => !this.props.label ? null : <div>
     <FlatButton
-      onTouchTap={this.handleTouchTap}
+      onTouchTap={this.openMenu}
       label={this.props.label}
-            labelStyle={{ color: 'rgba(0, 0, 0, 0.4)', textTransform: 'none', verticalAlign: 'initial' }}
-            style={{ marginTop: 10 }}
+      labelStyle={{ color: 'rgba(0, 0, 0, 0.4)', textTransform: 'none', verticalAlign: 'initial' }}
+      style={{ marginTop: 10 }}
     />
     <Popover
       open={this.state.open}
@@ -46,7 +51,9 @@ class ButtonMenu extends React.Component {
       onRequestClose={ () => this.setState({ open: false }) }
     >
       <Menu>
-        { this.props.children }
+        { React.Children.map(this.props.children, (child) => React.cloneElement(child, {
+            onTouchTap: this.menuItemTap(child.props.onTouchTap)
+        })) }
       </Menu>
     </Popover>
   </div>;
