@@ -47,3 +47,20 @@ CREATE VIEW CurrentNominations AS SELECT
         FROM CurrentBallots
     ) AS n
     NATURAL LEFT OUTER JOIN Classification c;
+
+
+-- allow clients to listen to changes
+CREATE FUNCTION canon_notify() RETURNS trigger as $$
+BEGIN
+    PERFORM pg_notify('canon', json_build_object(TG_TABLE_NAME, NEW)::text);
+    RETURN null;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER notify
+    AFTER INSERT OR UPDATE ON Canon
+    FOR EACH ROW EXECUTE PROCEDURE canon_notify();
+
+CREATE TRIGGER notify
+    AFTER INSERT OR UPDATE ON Classification
+    FOR EACH ROW EXECUTE PROCEDURE canon_notify();
