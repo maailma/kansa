@@ -9,6 +9,35 @@ and `500` for server error. The response should contain a `status` field with
 the contents `"error"` or `"unauthorized"`, as appropriate, possibly along with
 some relevant data and/or a `message` field.
 
+* [Public information](#public-information)
+  * [`GET /api/kansa/public/people`](#get-apikansapublicpeople)
+  * [`GET /api/kansa/public/stats`](#get-apikansapublicstats)
+* [Authentication](#authentication)
+  * [`POST /api/kansa/key`](#post-apikansakey)
+  * [`GET/POST /api/kansa/login`](#getpost-apikansalogin)
+  * [`GET/POST /api/kansa/logout`](#getpost-apikansalogout)
+* [User info](#user-info)
+  * [`GET /api/kansa/user`](#get-apikansauser)
+  * [`GET /api/kansa/user/log`](#get-apikansauserlog)
+* [Member info](#member-info)
+  * [`GET /api/kansa/people`](#get-apikansapeople)
+  * [`POST /api/kansa/people`](#post-apikansapeople)
+  * [`GET /api/kansa/people/:id`](#get-apikansapeopleid)
+  * [`GET /api/kansa/people/:id/log`](#get-apikansapeopleidlog)
+  * [`POST /api/kansa/people/:id`](#post-apikansapeopleid)
+  * [`POST /api/kansa/people/:id/upgrade`](#post-apikansapeopleidupgrade)
+  * [WebSocket: `wss://server/api/kansa/people/updates`](#websocket-wssserverapikansapeopleupdates)
+* [Hugo Nominations](#hugo-nominations)
+  * [`GET /api/hugo/:id/nominations`](#get-apihugoidnominations)
+  * [`POST /api/hugo/:id/nominate`](#post-apihugoidnominate)
+* [Hugo Canonicalisation](#hugo-canonicalisation)
+  * [`GET /api/hugo/canon/canon`](#get-apihugocanoncanon)
+  * [`GET /api/hugo/canon/nominations`](#get-apihugocanonnominations)
+  * [`POST /api/hugo/canon/classify`](#post-apihugocanonclassify)
+  * [`POST /api/hugo/canon/entry/:id`](#post-apihugocanonentryid)
+  * [WebSocket: `wss://server/api/hugo/canon/updates`](#websocket-wssserverapihugocanonupdates)
+
+----
 
 ## Public information
 
@@ -246,7 +275,7 @@ from membership changes.
 ```
 
 
-### WebSocket: `wss://kansa.server/api/kansa/people/updates`
+### WebSocket: `wss://server/api/kansa/people/updates`
 - Requires authentication and `member_admin` authority
 
 WebSocket connection endpoint. The server won't listen to any messages sent to
@@ -357,4 +386,107 @@ objects.
     …
   ]
 }
+```
+
+
+## Hugo Canonicalisation
+
+### `GET /api/hugo/canon/canon`
+- Requires authentication and `hugo_admin` authority
+
+Fetch the set of canonical nominations. Results are sorted by category, and
+expressed as `[ object, id ]` tuples.
+
+#### Response
+```
+{
+  Fancast: [
+    [ { title: 'The Really Good One' }, 2 ],
+    [ { title: 'Three Little Piggies' }, 3 ]
+  ],
+  Novel: [
+    [ { author: 'Asimov', title: '1984' }, 6 ]
+  ],
+  …
+}
+```
+
+
+### `GET /api/hugo/canon/nominations`
+- Requires authentication and `hugo_admin` authority
+
+Fetch all unique nomination entries. Results are sorted by category, and
+expressed as `[ object, id ]` tuples, where the second entry is the id of the
+nomination's canonical form, if such has been assigned.
+
+#### Response
+```
+{
+  Novel: [
+    [ { title: 'best', author: 'the' } ],
+    [ { title: 'Work of Art', author: 'The best' }, 6 ]
+  ],
+  Fancast: [
+    [ { title: '3 pigs' }, 3 ],
+    [ { title: 'The Really Good One' }, 2 ],
+    [ { title: 'Three Little Piggies' }, 3 ]
+  ],
+  …
+}
+```
+
+
+### `POST /api/hugo/canon/classify`
+- Requires authentication and `hugo_admin` authority
+- Parameters: `category` (required), `nominations` (required), `canon_id`, `canon_nom`
+
+Classify the given `nominations` in `category` as having the canonicalisation
+identified by `canon_id` or (if set) `canon_nom`. If both are falsey, the nominations'
+canonicalisations are removed.
+
+#### Request
+```
+{
+  category: 'Fancast',
+  nominations: [
+    { title: '3 pigs' },
+    { title: 'Three Little Piggies' }
+  ],
+  canon_nom: { title: 'Three Little Piggies' }
+}
+```
+
+#### Response
+```
+{ status: 'success' }
+```
+
+
+### `POST /api/hugo/canon/entry/:id`
+- Requires authentication and `hugo_admin` authority
+- Parameters: `category` (required), `nomination` (required)
+
+Sets the `category` and `nomination` for the canonical nomination `id`.
+
+#### Response
+```
+{ status: 'success' }
+```
+
+
+### WebSocket: `wss://server/api/hugo/canon/updates`
+- Requires authentication and `hugo_admin` authority
+
+WebSocket connection endpoint. The server won't listen to any messages sent to
+it, but will broadcast updates to `canon` and `classification` tables as they happen.
+Each message will contain as its data a JSON string representation of a single update.
+
+The API uses the app-specific codes `4001` and `4004` on WebSocket `'close'`
+events to signal `'Unauthorized'` and `'Not Found'` (respectively) to the client.
+
+#### Response
+```
+'{"canon":{"id":13,"category":"Novel","nomination":{"author":"That Guy","title":"That Book"}}}'
+'{"classification":{"nomination":{"author": "A friend"},"category":"Novel","canon_id":13}}'
+…
 ```

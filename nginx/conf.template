@@ -38,6 +38,13 @@ server {
     proxy_pass               http://hugo/;
   }
 
+  location = /api/hugo/canon/updates {
+    proxy_pass               http://hugo/canon/updates;
+    proxy_set_header         Upgrade $http_upgrade;
+    proxy_set_header         Connection "upgrade";
+    proxy_read_timeout       86400s;  # 24h
+  }
+
   location /api/kansa/ {
     proxy_pass               http://kansa/;
   }
