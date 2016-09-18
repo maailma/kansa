@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import { memberUpdate } from '../actions/kansa'
+import { memberUpdate } from '../actions'
 import Member from './Member'
 
 const MemberList = ({ memberUpdate, people = [] }) => <div>{

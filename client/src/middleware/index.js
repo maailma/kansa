@@ -2,7 +2,7 @@ import { applyMiddleware } from 'redux'
 import { routerMiddleware } from 'react-router-redux'
 
 import hugo from '../hugo/middleware'
-import kansa from './kansa'
+import kansa from '../kansa/middleware'
 import logger from './logger'
 
 export default (history) => applyMiddleware(
