@@ -19,7 +19,7 @@
 
 import { fromJS, List, Map } from 'immutable'
 
-import { categories } from '../constants/hugo'
+import { categories } from '../constants'
 
 
 const defaultState = Map(categories.map(
