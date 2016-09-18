@@ -11,7 +11,7 @@ import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
 
 import { hideMessage } from '../actions/app'
 import { logout } from '../actions/auth'
-import { TITLE } from '../constants'
+import { TITLE } from '../../constants'
 
 class ButtonMenu extends React.Component {
   static propTypes = {

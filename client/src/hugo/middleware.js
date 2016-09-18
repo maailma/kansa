@@ -1,4 +1,4 @@
-import { setPerson, showMessage } from '../actions/app'
+import { setPerson, showMessage } from '../app/actions/app'
 import { getNominations } from './actions'
 import { API_ROOT } from '../constants'
 import { categories, nominationFields } from './constants'
