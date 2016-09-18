@@ -8,7 +8,7 @@ import TextField from 'material-ui/TextField';
 
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
-import { UpgradeFields, CommentField } from './form';
+import { UpgradeFields, CommentField } from './form-components';
 import Member from './Member';
 
 function getIn(obj, path, unset) {
