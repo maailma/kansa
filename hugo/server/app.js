@@ -44,7 +44,8 @@ router.all('/canon/*', Canon.verifyCanonAccess);
 router.get('/canon/canon', canon.getCanon);
 router.get('/canon/nominations', canon.getNominations);
 router.post('/canon/classify', canon.classify);
-router.post('/canon/:id', canon.updateCanonEntry);
+router.post('/canon/entry/:id', canon.updateCanonEntry);
+
 router.get('/:id/nominations', nominate.getNominations);
 router.post('/:id/nominate', nominate.nominate);
 app.use('/', router);

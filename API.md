@@ -34,7 +34,7 @@ some relevant data and/or a `message` field.
   * [`GET /api/hugo/canon/canon`](#get-apihugocanoncanon)
   * [`GET /api/hugo/canon/nominations`](#get-apihugocanonnominations)
   * [`POST /api/hugo/canon/classify`](#post-apihugocanonclassify)
-  * [`POST /api/hugo/canon/:id`](#post-apihugocanonid)
+  * [`POST /api/hugo/canon/entry/:id`](#post-apihugocanonentryid)
 
 ----
 
@@ -461,7 +461,7 @@ canonicalisations are removed.
 ```
 
 
-### `POST /api/hugo/canon/:id`
+### `POST /api/hugo/canon/entry/:id`
 - Requires authentication and `hugo_admin` authority
 - Parameters: `category` (required), `nomination` (required)
 
