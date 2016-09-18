@@ -14,9 +14,12 @@ const db = pgp(process.env.DATABASE_URL);
 const nominate = require('./lib/nominate');
 const Canon = require('./lib/canon');
 const canon = new Canon(pgp, db);
+const CanonStream = require('./lib/canon-stream');
+const canonStream = new CanonStream(db);
 
 const app = express();
 const server = http.createServer(app);
+const expressWs = require('express-ws')(app, server);
 
 app.locals.db = db;
 app.use(logger('dev'));
@@ -48,6 +51,13 @@ router.post('/canon/entry/:id', canon.updateCanonEntry);
 
 router.get('/:id/nominations', nominate.getNominations);
 router.post('/:id/nominate', nominate.nominate);
+
+app.ws('/canon/updates', (ws, req) => {
+  if (req.session.user.hugo_admin) canonStream.addClient(ws);
+  else ws.close(4001, 'Unauthorized');
+});
+app.ws('/*', (ws, req) => ws.close(4004, 'Not Found'));
+  // express-ws monkeypatching breaks the server on unhandled paths
 app.use('/', router);
 
 // no match from router -> 404
