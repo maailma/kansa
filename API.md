@@ -26,7 +26,7 @@ some relevant data and/or a `message` field.
   * [`GET /api/kansa/people/:id/log`](#get-apikansapeopleidlog)
   * [`POST /api/kansa/people/:id`](#post-apikansapeopleid)
   * [`POST /api/kansa/people/:id/upgrade`](#post-apikansapeopleidupgrade)
-  * [WebSocket: `wss://kansa.server/api/kansa/people/updates`](#websocket-wsskansaserverapikansapeopleupdates)
+  * [WebSocket: `wss://server/api/kansa/people/updates`](#websocket-wssserverapikansapeopleupdates)
 * [Hugo Nominations](#hugo-nominations)
   * [`GET /api/hugo/:id/nominations`](#get-apihugoidnominations)
   * [`POST /api/hugo/:id/nominate`](#post-apihugoidnominate)
@@ -35,6 +35,7 @@ some relevant data and/or a `message` field.
   * [`GET /api/hugo/canon/nominations`](#get-apihugocanonnominations)
   * [`POST /api/hugo/canon/classify`](#post-apihugocanonclassify)
   * [`POST /api/hugo/canon/entry/:id`](#post-apihugocanonentryid)
+  * [WebSocket: `wss://server/api/hugo/canon/updates`](#websocket-wssserverapihugocanonupdates)
 
 ----
 
@@ -274,7 +275,7 @@ from membership changes.
 ```
 
 
-### WebSocket: `wss://kansa.server/api/kansa/people/updates`
+### WebSocket: `wss://server/api/kansa/people/updates`
 - Requires authentication and `member_admin` authority
 
 WebSocket connection endpoint. The server won't listen to any messages sent to
@@ -470,4 +471,22 @@ Sets the `category` and `nomination` for the canonical nomination `id`.
 #### Response
 ```
 { status: 'success' }
+```
+
+
+### WebSocket: `wss://server/api/hugo/canon/updates`
+- Requires authentication and `hugo_admin` authority
+
+WebSocket connection endpoint. The server won't listen to any messages sent to
+it, but will broadcast updates to `canon` and `classification` tables as they happen.
+Each message will contain as its data a JSON string representation of a single update.
+
+The API uses the app-specific codes `4001` and `4004` on WebSocket `'close'`
+events to signal `'Unauthorized'` and `'Not Found'` (respectively) to the client.
+
+#### Response
+```
+'{"canon":{"id":13,"category":"Novel","nomination":{"author":"That Guy","title":"That Book"}}}'
+'{"classification":{"nomination":{"author": "A friend"},"category":"Novel","canon_id":13}}'
+…
 ```
