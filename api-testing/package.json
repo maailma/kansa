@@ -1,0 +1,19 @@
+{
+  "name": "api-testing",
+  "version": "0.1.0",
+  "description": "Test API",
+  "author": "jautero@iki.fi",
+  "private": true,
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/worldcon75/api.git"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "dependencies": {
+      "mocha":"^3.0.2",
+      "supertest":"^2.0.0"
+  }
+}
