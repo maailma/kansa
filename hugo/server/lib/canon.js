@@ -23,7 +23,7 @@ class Canon {
   getCanon(req, res, next) {
     this.db.any(`SELECT id, category, nomination FROM Canon`)
       .then(data => res.status(200).json(data.reduce((canon, { id, category, nomination }) => {
-        const entry = [ nomination, id ];
+        const entry = [ id, nomination ];
         if (canon.hasOwnProperty(category)) {
           canon[category].push(entry);
         } else {
