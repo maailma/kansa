@@ -17,6 +17,8 @@ import App from './app/components/App'
 import Login from './app/components/Login'
 import MemberList from './kansa/components/MemberList'
 import Nominate from './hugo/components/Nominate'
+import { initHugoAdmin } from './hugo-admin/actions'
+import Canon from './hugo-admin/components/Canon'
 import middleware from './middleware'
 import reducers from './reducers'
 
@@ -41,6 +43,10 @@ const doLogin = ({ params: { email, key } }) => {
   store.dispatch(keyLogin(email, key));
 }
 
+const onEnterHugoAdmin = () => {
+  store.dispatch(initHugoAdmin())
+}
+
 ReactDOM.render(
   <Provider store={store} >
     <MuiThemeProvider muiTheme={theme}>
@@ -52,6 +58,7 @@ ReactDOM.render(
           <Route path="profile" onEnter={authCheck} component={MemberList} />
           <Route path="hugo" onEnter={authCheck} >
             <IndexRedirect to={PATH_IN} />
+            <Route path="admin" onEnter={onEnterHugoAdmin} component={Canon}/>
             <Route path=":id">
               <IndexRedirect to="nominate" />
               <Route path="nominate" component={Nominate} />
