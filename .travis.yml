@@ -15,11 +15,15 @@ before_install:
     - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
     - chmod +x docker-compose
     - sudo mv docker-compose /usr/local/bin
+    
+install:
+    - cd api-testing; npm install
 
 before_script:
     - docker-compose up -d
 
-script: true
+script: 
+    - cd api-testing*; npm test
 
 after_script:
     - docker-compose down
