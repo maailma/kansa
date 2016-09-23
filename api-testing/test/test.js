@@ -7,7 +7,7 @@ var cert = fs.readFileSync('../nginx/ssl/localhost.cert','utf8');
 describe("Check that API services are up",function () {
     this.retries(3);
     afterEach(function (done) {
-        if (this.currentTest.state === 'failed') {
+        if (this.currentTest.state !== 'passed') {
             setTimeout(done,1000);        
         } else {
             done();
@@ -25,7 +25,6 @@ describe("Check that API services are up",function () {
             .get("/api/kansa/")
             .expect("Content-Type",/json/)
         .end(done);
-        console.log("hei");
     })
     it("Should respond with json on api/hugo/", function (done) {
         request.agent(host,{ca:cert})
