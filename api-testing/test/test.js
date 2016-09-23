@@ -25,6 +25,7 @@ describe("Check that API services are up",function () {
             .get("/api/kansa/")
             .expect("Content-Type",/json/)
         .end(done);
+        console.log("hei");
     })
     it("Should respond with json on api/hugo/", function (done) {
         request.agent(host,{ca:cert})
