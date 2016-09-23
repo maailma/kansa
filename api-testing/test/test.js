@@ -1,9 +1,18 @@
 var host = "https://localhost:4430";
 var request = require('supertest');
+var assert = require('assert');
 var fs = require('fs');
 var cert = fs.readFileSync('../nginx/ssl/localhost.cert','utf8');
 
 describe("Check that API services are up",function () {
+    this.retries(3);
+    afterEach(function (done) {
+        if (this.currentTest.state === 'failed') {
+            setTimeout(done,1000);        
+        } else {
+            done();
+        }
+    })
     it("Should have web server running",function (done) {
         request.agent(host,{ca:cert})
             .get('/')
