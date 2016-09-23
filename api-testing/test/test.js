@@ -32,5 +32,15 @@ describe("Check that API services are up",function () {
             .expect("Content-Type",/json/)
         .end(done);
     })
-    
+})
+
+describe("GET /api/kansa/public/people",function () {
+    context("With empty database", function () {
+        it ("Returns empty JSON list", function (done) {
+            request.agent(host,{ca:cert})
+            .get("/api/kansa/public/people")
+            .expect(200,{status: 'success', data: []})
+            .end(done);
+        })
+    })
 })
