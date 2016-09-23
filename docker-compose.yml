@@ -46,7 +46,7 @@ services:
       - "6379"
 
   postgres:
-    image: postgres:9.5
+    image: danieldent/postgres-replication:9.5
     environment:
       PGDATA: /pgdata
       POSTGRES_DB: api
@@ -54,9 +54,26 @@ services:
     expose:
       - "5432"
     volumes:
-      - pgdata:/pgdata
+      - pgdata:/var/lib/postgresql/data/pgdata
       - ./postgres/damm:/damm:ro
-      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+      - ./postgres/init/00-install-damm-extension.sh:/docker-entrypoint-initdb.d/00-install-damm-extension.sh:ro
+      - ./postgres/init/10-admin-init.sql:/docker-entrypoint-initdb.d/10-admin-init.sql:ro
+      - ./postgres/init/20-kansa-init.sql:/docker-entrypoint-initdb.d/20-kansa-init.sql:ro
+      - ./postgres/init/30-hugo-init.sql:/docker-entrypoint-initdb.d/30-hugo-init.sql:ro
+      - ./postgres/init/90-dev-init-admin.sql:/docker-entrypoint-initdb.d/90-dev-init-admin.sql:ro
+
+  postgres-replica:
+    image: danieldent/postgres-replication:9.5
+    env_file: ./postgres/dev.env
+    environment:
+      REPLICATE_FROM: postgres
+    expose:
+      - "5432"
+    restart: always
+    volumes:
+      - /var/lib/postgresql/data
+    links:
+      - postgres
 
 volumes:
   pgdata:
