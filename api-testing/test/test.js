@@ -5,7 +5,7 @@ var fs = require('fs');
 var cert = fs.readFileSync('../nginx/ssl/localhost.cert','utf8');
 
 describe("Check that API services are up",function () {
-    this.retries(3);
+    this.retries(5);
     afterEach(function (done) {
         if (this.currentTest.state !== 'passed') {
             setTimeout(done,1000);        
