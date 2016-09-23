@@ -23,7 +23,7 @@ before_script:
     - docker-compose up -d
 
 script: 
-    - cd api-testing*; npm test
+    - cd api-testing; npm test
 
 after_script:
     - docker-compose down
