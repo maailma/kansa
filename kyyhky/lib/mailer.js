@@ -1,6 +1,6 @@
 const fs = require('fs');
 const mustache = require('mustache');
-const sendgrid  = require('sendgrid');
+const SendGrid  = require('sendgrid');
 const tfm = require('tiny-frontmatter');
 const wrap = require('wordwrap')(72);
 
@@ -8,24 +8,52 @@ class Mailer {
   constructor(tmplDir, tmplSuffix, sendgridApiKey) {
     this.tmplDir = tmplDir;
     this.tmplSuffix = tmplSuffix;
-    this.sendgrid = sendgrid(sendgridApiKey);
+    this.sendgrid = SendGrid(sendgridApiKey);
   }
 
   tmplFileName(tmplName) {
     return [ this.tmplDir, '/', tmplName, this.tmplSuffix ].filter(s => s).join('');
   }
 
-  sendEmail(tmplName, data, next) {
+  sgRequest(recipient, { from, fromname, subject }, msg) {
+    return this.sendgrid.emptyRequest({
+      method: 'POST',
+      path: '/v3/mail/send',
+      body: {
+        personalizations: [{
+          to: [{ email: recipient }],
+        }],
+        from: {
+          email: from,
+          name: fromname,
+        },
+        subject: subject,
+        content: [{
+          type: 'text/plain',
+          value: wrap(msg)
+        }]
+      }
+    });
+  }
+
+  sendEmail(tmplName, data, done) {
     fs.readFile(this.tmplFileName(tmplName), 'utf8', (err, raw) => {
-      if (err) return next(err);
-      const tmpl = tfm(raw);
-      const msg = tmpl.attributes;
-      msg.to = data.email;
-      msg.text = wrap(mustache.render(tmpl.body, data));
-      sendgrid.send(msg, (err) => {
-        delete msg.text;
-        next(err, msg);
-      });
+      if (err) return done(err);
+      try {
+        const {attributes, body} = tfm(raw);
+        const msg = mustache.render(body, data);
+        const request = this.sgRequest(data.email, attributes, msg);
+        this.sendgrid.API(request, (err, response) => {
+          if (err) {
+            console.warn('SendGrid error', err, response);
+            done(err, response);
+          } else {
+            done(null, { to: data.email });
+          }
+        });
+      } catch (err) {
+        done(err);
+      }
     });
   }
 }
