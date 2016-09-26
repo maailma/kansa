@@ -28,5 +28,8 @@ services:
     restart: always
 
   postgres:
-    env_file: ./postgres/dev.env
+    environment:
+      POSTGRES_PASSWORD:
+      KANSA_PG_PASSWORD:
+      HUGO_PG_PASSWORD:
     restart: always
