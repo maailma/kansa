@@ -28,11 +28,11 @@ services:
       CORS_ORIGIN:
       DATABASE_URL:
       SESSION_SECRET:
-      SENDGRID_APIKEY:
     restart: always
 
   kyyhky:
-    env_file: ./kyyhky/dev.env
+    environment:
+      SENDGRID_APIKEY:
     restart: always
 
   postgres:

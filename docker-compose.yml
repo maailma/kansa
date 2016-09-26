@@ -32,6 +32,9 @@ services:
   kyyhky:
     build: ./kyyhky
     entrypoint: ./wait-for-it.sh redis:6379 -- npm start
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     links:
       - redis
     expose:
