@@ -26,12 +26,9 @@
     "express-session": "^1.13.0",
     "express-ws": "^2.0.0",
     "morgan": "~1.7.0",
-    "mustache": "^2.2.1",
+    "node-fetch": "^1.6.2",
     "pg-monitor": "^0.5.8",
     "pg-promise": "^4.6.3",
-    "randomstring": "^1.1.5",
-    "sendgrid": "^2.0.0",
-    "tiny-frontmatter": "^1.0.0",
-    "wordwrap": "^1.0.0"
+    "randomstring": "^1.1.5"
   }
 }
