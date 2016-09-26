@@ -45,7 +45,7 @@ class Mailer {
         const request = this.sgRequest(data.email, attributes, msg);
         this.sendgrid.API(request, (err, response) => {
           if (err) {
-            console.warn('SendGrid error', err, response);
+            console.warn('SendGrid error', response);
             done(err, response);
           } else {
             done(null, { to: data.email });
