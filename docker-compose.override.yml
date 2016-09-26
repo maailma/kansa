@@ -1,0 +1,26 @@
+version: '2'
+
+# included by default along with docker-compose.yml
+
+services:
+  nginx:
+    environment:
+      API_SERVER_NAME: localhost
+      API_SSL_CERTIFICATE: /ssl/localhost.cert
+      API_SSL_CERTIFICATE_KEY: /ssl/localhost.key
+    ports:
+      - "4430:443"
+    volumes:
+      - ./nginx/ssl:/ssl:ro
+
+  hugo:
+    env_file: ./hugo/server/dev.env
+
+  kansa:
+    env_file: ./kansa/server/dev.env
+
+  kyyhky:
+    env_file: ./kyyhky/dev.env
+
+  postgres:
+    env_file: ./postgres/dev.env

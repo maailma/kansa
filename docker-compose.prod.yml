@@ -1,0 +1,32 @@
+version: '2'
+
+# Usage:  docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+# For hints on proper values for environment variables, see docker-compose.override.yml
+# DO NOT COMMIT PRODUCTION SECRETS TO ANY REPOSITORY
+
+services:
+  nginx:
+    environment:
+      API_SERVER_NAME:
+      API_SSL_CERTIFICATE:
+      API_SSL_CERTIFICATE_KEY:
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+
+  hugo:
+    env_file: ./hugo/server/dev.env
+    restart: always
+
+  kansa:
+    env_file: ./kansa/server/dev.env
+    restart: always
+
+  kyyhky:
+    env_file: ./kyyhky/dev.env
+    restart: always
+
+  postgres:
+    env_file: ./postgres/dev.env
+    restart: always
