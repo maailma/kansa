@@ -20,7 +20,12 @@ services:
     restart: always
 
   kansa:
-    env_file: ./kansa/server/dev.env
+    environment:
+      API_ROOT:
+      CORS_ORIGIN:
+      DATABASE_URL:
+      SESSION_SECRET:
+      SENDGRID_APIKEY:
     restart: always
 
   kyyhky:

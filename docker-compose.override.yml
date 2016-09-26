@@ -17,7 +17,12 @@ services:
     env_file: ./hugo/server/dev.env
 
   kansa:
-    env_file: ./kansa/server/dev.env
+    environment:
+      API_ROOT: https://localhost:4430
+      CORS_ORIGIN: http://localhost:8080
+      DATABASE_URL: postgres://kansa:pwd@postgres:5432/api
+      SESSION_SECRET: dev secret
+      SENDGRID_APIKEY:
 
   kyyhky:
     env_file: ./kyyhky/dev.env
