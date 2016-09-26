@@ -10,7 +10,7 @@
     "url": "https://github.com/worldcon75/api.git"
   },
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node server"
   },
   "dependencies": {
     "bluebird": "^3.4.0",
