@@ -8,12 +8,6 @@
     "type": "git",
     "url": "https://github.com/worldcon75/api.git"
   },
-  "scripts": {
-    "start:dotenv": "node -r dotenv/config server"
-  },
-  "devDependencies": {
-    "dotenv": "^2.0.0"
-  },
   "dependencies": {
     "kue": "^0.11.1",
     "mustache": "^2.2.1",
