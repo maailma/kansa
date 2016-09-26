@@ -28,7 +28,6 @@ services:
 
   hugo:
     environment:
-      CORS_ORIGIN:
       DATABASE_URL:
       SESSION_SECRET:
     restart: always
@@ -36,7 +35,6 @@ services:
   kansa:
     environment:
       API_ROOT:
-      CORS_ORIGIN:
       DATABASE_URL:
       SESSION_SECRET:
     restart: always

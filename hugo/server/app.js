@@ -25,10 +25,11 @@ app.locals.db = db;
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cors({
+const corsOrigins = process.env.CORS_ORIGIN;
+if (corsOrigins) app.use(cors({
   credentials: true,
   methods: [ 'GET', 'POST' ],
-  origin: process.env.CORS_ORIGIN.split(/[ ,]+/)
+  origin: corsOrigins.split(/[ ,]+/)
 }));
 app.use(session({
   cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 },  // 30 days
