@@ -34,8 +34,8 @@ services:
 
   kansa:
     environment:
-      API_ROOT:
       DATABASE_URL:
+      LOGIN_URI_ROOT:
       SESSION_SECRET:
     restart: always
 
