@@ -16,7 +16,10 @@ services:
     restart: always
 
   hugo:
-    env_file: ./hugo/server/dev.env
+    environment:
+      CORS_ORIGIN:
+      DATABASE_URL:
+      SESSION_SECRET:
     restart: always
 
   kansa:
