@@ -54,7 +54,22 @@ describe("Country statistics", function () {
 
 describe("Login",function () {
     it("gets a session cookie or it gets the hose again.",function (done) {
-        admin.get("/api/kansa/login").query(loginparams).expect(200,{status:'success', email:loginparams["email"]}).end(done)        
+        admin.get("/api/kansa/login")
+            .query(loginparams)
+            .expect(200,{status:'success', email:loginparams["email"]})
+            .end(done)
+    })
+    it("wrong email gets 401",function (done) {
+        unlogged.get("/api/kansa/login")
+            .query({email:"foo@doo.com",key:loginparams["key"]})
+            .expect(401)
+            .end(done)
+    })
+    it("wrong key gets 401",function (done) {
+        unlogged.get("/api/kansa/login")
+            .query({email:loginparams["email"],key:"foo"})
+            .expect(401)
+            .end(done)
     })
     
 })
