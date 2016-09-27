@@ -9,6 +9,7 @@ var memberstats = {"":{"total":0}};
 // Create agent for unlogged and admin sessions
 var unlogged=request.agent(host,{ca:cert});
 var admin=request.agent(host,{ca:cert});
+var loginparams={email:"admin@example.com",key:"key"}
 
 describe("Check that API services are up",function () {
     this.retries(5);
@@ -49,4 +50,11 @@ describe("Country statistics", function () {
     it("Returns country statistics", function (done) {
         unlogged.get("/api/kansa/public/stats").expect(200,{status:'success', members: memberstats}).end(done)
     })
+})
+
+describe("Login",function () {
+    it("gets a session cookie or it gets the hose again.",function (done) {
+        admin.get("/api/kansa/login").query(loginparams).expect(200,{status:'success', email:loginparams["email"]}).end(done)        
+    })
+    
 })
