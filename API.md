@@ -395,17 +395,17 @@ objects.
 - Requires authentication and `hugo_admin` authority
 
 Fetch the set of canonical nominations. Results are sorted by category, and
-expressed as `[ object, id ]` tuples.
+expressed as `[ id, object ]` tuples.
 
 #### Response
 ```
 {
   Fancast: [
-    [ { title: 'The Really Good One' }, 2 ],
-    [ { title: 'Three Little Piggies' }, 3 ]
+    [ 2, { title: 'The Really Good One' } ],
+    [ 3, { title: 'Three Little Piggies' } ]
   ],
   Novel: [
-    [ { author: 'Asimov', title: '1984' }, 6 ]
+    [ 6, { author: 'Asimov', title: '1984' } ]
   ],
   …
 }

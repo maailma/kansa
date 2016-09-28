@@ -1,0 +1,24 @@
+{
+  "name": "kyyhky",
+  "version": "0.1.0",
+  "description": "Email queuing service for hugo/server & kansa/server",
+  "author": "",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/worldcon75/api.git"
+  },
+  "scripts": {
+    "start:dotenv": "node -r dotenv/config server"
+  },
+  "devDependencies": {
+    "dotenv": "^2.0.0"
+  },
+  "dependencies": {
+    "kue": "^0.11.1",
+    "mustache": "^2.2.1",
+    "sendgrid": "^4.3.0",
+    "tiny-frontmatter": "^1.0.0",
+    "wordwrap": "^1.0.0"
+  }
+}

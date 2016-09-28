@@ -1,7 +1,7 @@
-import { setPerson, showMessage } from '../actions/app'
-import { getNominations } from '../actions/hugo'
+import { setPerson, showMessage } from '../app/actions/app'
+import { getNominations } from './actions'
 import { API_ROOT } from '../constants'
-import { categories, nominationFields } from '../constants/hugo'
+import { categories, nominationFields } from './constants'
 
 import API from '../lib/api'
 const api = new API(API_ROOT);

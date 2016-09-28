@@ -9,7 +9,7 @@ import ContentClear from 'material-ui/svg-icons/content/clear'
 import ContentUndo from 'material-ui/svg-icons/content/undo'
 import TextField from 'material-ui/TextField'
 
-import time_diff from '../lib/time_diff'
+import time_diff from '../../lib/time_diff'
 
 import './NominationCategory.css'
 

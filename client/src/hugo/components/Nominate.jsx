@@ -6,8 +6,8 @@ import FloatingActionButton from 'material-ui/FloatingActionButton'
 import ListCheck from 'material-ui/svg-icons/av/playlist-add-check'
 import Snackbar from 'material-ui/Snackbar'
 
-import { editNomination, submitNominations, resetNominations, clearNominationError } from '../actions/hugo'
-import { categories, maxNominationsPerCategory, nominationFields, categoryTexts } from '../constants/hugo'
+import { editNomination, submitNominations, resetNominations, clearNominationError } from '../actions'
+import { categories, maxNominationsPerCategory, nominationFields, categoryTexts } from '../constants'
 import NominationCategory from './NominationCategory'
 
 import './Nominate.css'

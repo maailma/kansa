@@ -11,17 +11,17 @@ injectTapEventPlugin();
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
-import { keyLogin, tryLogin } from './actions/auth'
-import { setNominator } from './actions/hugo'
+import { keyLogin, tryLogin } from './app/actions/auth'
+import { setNominator } from './hugo/actions'
 import { PATH_IN } from './constants'
-import App from './components/App'
-import LoginForm from './components/LoginForm'
-import MemberList from './components/MemberList'
-import Nominate from './components/Nominate'
+import App from './app/components/App'
+import LoginForm from './app/components/LoginForm'
+import MemberList from './kansa/components/MemberList'
+import Nominate from './hugo/components/Nominate'
 import middleware from './middleware'
 import reducers from './reducers'
 
-import './styles/app.css'
+import './app/style.css'
 
 const store = createStore(reducers, middleware(hashHistory));
 

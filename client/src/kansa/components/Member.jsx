@@ -7,7 +7,7 @@ import RaisedButton from 'material-ui/RaisedButton'
 
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
-import { CommonFields, PaperPubsFields } from './form'
+import { CommonFields, PaperPubsFields } from './form-components'
 import Upgrade from './Upgrade'
 
 export default class Member extends React.Component {
