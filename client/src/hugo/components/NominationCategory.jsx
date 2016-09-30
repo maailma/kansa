@@ -14,11 +14,12 @@ import time_diff from '../../lib/time_diff'
 import './NominationCategory.css'
 
 
-const NominationField = ({ changed, disabled, name, onChange, value }) => <TextField
+const NominationField = ({ changed, disabled, name, onChange, setRef, value }) => <TextField
   className={ 'NominationField' + (changed ? ' changed' : '') }
   disabled={disabled}
   name={name}
   onChange={onChange}
+  ref={setRef}
   value={value}
 />;
 
@@ -62,6 +63,7 @@ class NominationRow extends React.Component {
     fields: React.PropTypes.array.isRequired,
     onChange: React.PropTypes.func,
     onRemove: React.PropTypes.func,
+    setLastField: React.PropTypes.func,
     values: ImmutablePropTypes.map.isRequired
   }
 
@@ -71,7 +73,7 @@ class NominationRow extends React.Component {
   }
 
   render() {
-    const { defaultValues, disabled, fields, onChange, onRemove, values } = this.props;
+    const { defaultValues, disabled, fields, onChange, onRemove, setLastField, values } = this.props;
     return <tr>
       {
         fields.map(field => <td key={field}>
@@ -80,6 +82,7 @@ class NominationRow extends React.Component {
             disabled={disabled}
             name={field}
             onChange={ ev => onChange(field, ev.target.value) }
+            setRef={ ref => { if (ref && values.isEmpty()) setLastField(field, ref); } }
             value={ values.get(field, '') }
           />
         </td>)
@@ -129,6 +132,24 @@ class NominationActionsRow extends React.Component {
   }
 }
 
+const nominationRowLinks = (n, fields, lastRow) => {
+  if (n <= 0) return null;
+  const res = [];
+  for (let i = 0; i < n; ++i) res.push(<tr key={`link-${i}`}>
+    {
+      fields.map(field => <td key={field}>
+        <TextField
+          className="NominationField NominationLink"
+          name={field}
+          onFocus={ () => lastRow[field] && lastRow[field].focus() }
+          underlineFocusStyle={{ display: 'none' }}
+          value=""
+        />
+      </td>)
+    }
+  </tr>);
+  return res;
+}
 
 const NominationCategory = ({ fields, maxNominations, onChange, onSave, onReset, state }) => {
   const clientData = state.get('clientData');
@@ -136,6 +157,7 @@ const NominationCategory = ({ fields, maxNominations, onChange, onSave, onReset,
   const serverTime = state.get('serverTime');
   const isFetching = state.get('isFetching');
   const rows = clientData.size < maxNominations ? clientData.push(Map()) : clientData;
+  const lastRow = {};
   return <tbody className='NominationCategory'>
     {
       rows.map((rowValues, idx) => <NominationRow
@@ -145,9 +167,11 @@ const NominationCategory = ({ fields, maxNominations, onChange, onSave, onReset,
         fields={fields}
         onChange={ (field, value) => onChange(idx, rowValues.set(field, value)) }
         onRemove={ () => onChange(idx, null) }
+        setLastField={ (field, ref) => lastRow[field] = ref }
         values={rowValues}
       />)
     }
+    { nominationRowLinks(maxNominations - rows.size, fields, lastRow) }
     <NominationActionsRow
       colSpan={fields.length}
       disabled={ isFetching || clientData.equals(serverData) }
