@@ -9,8 +9,9 @@ export const keyRequest = (email) => ({
   email
 });
 
-export const tryLogin = () => ({
-  type: 'TRY_LOGIN'
+export const tryLogin = (callback) => ({
+  type: 'TRY_LOGIN',
+  callback
 });
 
 export const logout = () => ({

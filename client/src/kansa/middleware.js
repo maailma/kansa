@@ -38,13 +38,15 @@ export default ({ dispatch }) => (next) => (action) => {
     } return;
 
     case 'TRY_LOGIN': {
+      const { callback } = action;
       api.GET('kansa/user')
         .then(user => {
           dispatch(memberSet(user));
+          callback();
         })
         .catch(err => {
           if (err.status !== 'unauthorized') handleError(err);
-          dispatch(replace(PATH_OUT));
+          callback(err);
         });
     } return;
 
