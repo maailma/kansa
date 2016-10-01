@@ -1,3 +1,62 @@
+.NominationsHead {
+  margin: 0 auto;
+  width: 710px;
+  padding: 20px 0;
+}
+
+.NominationsHead h1 {
+  margin-top: 0;
+}
+
+.NominationCategory {
+  margin: 0 auto 24px;
+  padding: 15px;
+  width: 740px;
+}
+
+.NominationCategory h3 {
+  margin-top: 0;
+}
+
+.NominationCategory p {
+  width: 710px;
+  margin-bottom: 32px;
+}
+
+.NominationCategory table {
+  border-spacing: 0;
+}
+
+.NominationCategory tr {
+  text-align: left;
+}
+
+.NominationFieldCell {
+  padding: 0 10px 0 0;
+  vertical-align: bottom;
+}
+
+.NominationField.changed hr {
+  border-color: rgb(255, 152, 0) !important;
+}
+
+.NominationActions {
+  padding: 0 10px 0 0;
+}
+
+.NominationActions > span {
+  line-height: 36px;
+  color: rgba(0, 0, 0, 0.3);
+}
+
+.NominationActions > div {
+  float: right;
+  margin-left: 12px;
+}
+.NominationActions button[disabled] {
+  background-color: transparent !important;
+}
+
 .SaveAllButton {
   position: fixed;
   bottom: 24px;

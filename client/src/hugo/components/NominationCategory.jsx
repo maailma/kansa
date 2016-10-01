@@ -11,15 +11,15 @@ import TextField from 'material-ui/TextField'
 
 import time_diff from '../../lib/time_diff'
 
-import './NominationCategory.css'
 
-
-const NominationField = ({ changed, disabled, name, onChange, setRef, value }) => <TextField
+const NominationField = ({ changed, disabled, name, onChange, setRef, value, width }) => <TextField
   className={ 'NominationField' + (changed ? ' changed' : '') }
   disabled={disabled}
+  multiLine={true}
   name={name}
   onChange={onChange}
   ref={setRef}
+  style={{ width }}
   value={value}
 />;
 
@@ -64,7 +64,8 @@ class NominationRow extends React.Component {
     onChange: React.PropTypes.func,
     onRemove: React.PropTypes.func,
     setLastField: React.PropTypes.func,
-    values: ImmutablePropTypes.map.isRequired
+    values: ImmutablePropTypes.map.isRequired,
+    width: React.PropTypes.number.isRequired
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -73,10 +74,13 @@ class NominationRow extends React.Component {
   }
 
   render() {
-    const { defaultValues, disabled, fields, onChange, onRemove, setLastField, values } = this.props;
+    const { defaultValues, disabled, fields, onChange, onRemove, setLastField, values, width } = this.props;
     return <tr>
       {
-        fields.map(field => <td key={field}>
+        fields.map(field => <td
+          key={field}
+          className='NominationFieldCell'
+        >
           <NominationField
             changed={ values.get(field, '') != defaultValues.get(field, '') }
             disabled={disabled}
@@ -84,6 +88,7 @@ class NominationRow extends React.Component {
             onChange={ ev => onChange(field, ev.target.value) }
             setRef={ ref => { if (ref && values.isEmpty()) setLastField(field, ref); } }
             value={ values.get(field, '') }
+            width={width}
           />
         </td>)
       }
@@ -111,17 +116,15 @@ class NominationActionsRow extends React.Component {
   render() {
     const { colSpan, disabled, onSave, onReset, saveTime } = this.props;
     return <tr>
-      <td colSpan={colSpan}>
+      <td className='NominationActions' colSpan={colSpan}>
         { saveTime ? <span title={saveTime}>{ 'Last saved ' + time_diff(saveTime) }</span> : null }
         <RaisedButton
-          className='NominationActionButton'
           label='Save'
           disabled={disabled}
           icon={<ListCheck />}
           onTouchTap={onSave}
         />
         <RaisedButton
-          className='NominationActionButton'
           label='Reset'
           disabled={disabled}
           icon={<ContentUndo />}
@@ -132,7 +135,7 @@ class NominationActionsRow extends React.Component {
   }
 }
 
-const nominationRowLinks = (n, fields, lastRow) => {
+const nominationRowLinks = (n, fields, lastRow, width) => {
   if (n <= 0) return null;
   const res = [];
   for (let i = 0; i < n; ++i) res.push(<tr key={`link-${i}`}>
@@ -142,6 +145,7 @@ const nominationRowLinks = (n, fields, lastRow) => {
           className="NominationField NominationLink"
           name={field}
           onFocus={ () => lastRow[field] && lastRow[field].focus() }
+          style={{ width }}
           underlineFocusStyle={{ display: 'none' }}
           value=""
         />
@@ -158,6 +162,7 @@ const NominationCategory = ({ fields, maxNominations, onChange, onSave, onReset,
   const isFetching = state.get('isFetching');
   const rows = clientData.size < maxNominations ? clientData.push(Map()) : clientData;
   const lastRow = {};
+  const width = 720 / fields.length - 10;
   return <tbody className='NominationCategory'>
     {
       rows.map((rowValues, idx) => <NominationRow
@@ -169,9 +174,10 @@ const NominationCategory = ({ fields, maxNominations, onChange, onSave, onReset,
         onRemove={ () => onChange(idx, null) }
         setLastField={ (field, ref) => lastRow[field] = ref }
         values={rowValues}
+        width={width}
       />)
     }
-    { nominationRowLinks(maxNominations - rows.size, fields, lastRow) }
+    { nominationRowLinks(maxNominations - rows.size, fields, lastRow, width) }
     <NominationActionsRow
       colSpan={fields.length}
       disabled={ isFetching || clientData.equals(serverData) }
