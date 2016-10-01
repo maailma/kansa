@@ -1,8 +1,11 @@
 import { Map } from 'immutable'
 import React from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 
 import IconButton from 'material-ui/IconButton'
+import Paper from 'material-ui/Paper'
 import RaisedButton from 'material-ui/RaisedButton'
 import ListCheck from 'material-ui/svg-icons/av/playlist-add-check'
 import ContentClear from 'material-ui/svg-icons/content/clear'
@@ -10,6 +13,8 @@ import ContentUndo from 'material-ui/svg-icons/content/undo'
 import TextField from 'material-ui/TextField'
 
 import time_diff from '../../lib/time_diff'
+import { editNomination, submitNominations, resetNominations } from '../actions'
+import { categoryInfo, maxNominationsPerCategory, nominationFields } from '../constants'
 
 
 const NominationField = ({ changed, disabled, name, onChange, setRef, value, width }) => <TextField
@@ -38,7 +43,7 @@ class NominationRemoveButton extends React.Component {
     onRemove: React.PropTypes.func
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(nextProps) {
     return nextProps.disabled !== this.props.disabled;
   }
 
@@ -68,7 +73,7 @@ class NominationRow extends React.Component {
     width: React.PropTypes.number.isRequired
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(nextProps) {
     const { defaultValues, disabled, values } = this.props;
     return nextProps.disabled !== disabled || !defaultValues.equals(nextProps.defaultValues) || !values.equals(nextProps.values);
   }
@@ -109,7 +114,7 @@ class NominationActionsRow extends React.Component {
     saveTime: React.PropTypes.instanceOf(Date)
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(nextProps) {
     return nextProps.disabled !== this.props.disabled || nextProps.saveTime !== this.props.saveTime;
   }
 
@@ -155,7 +160,7 @@ const nominationRowLinks = (n, fields, lastRow, width) => {
   return res;
 }
 
-const NominationCategory = ({ fields, maxNominations, onChange, onSave, onReset, state }) => {
+const NominationBody = ({ fields, maxNominations, onChange, onSave, onReset, state }) => {
   const clientData = state.get('clientData');
   const serverData = state.get('serverData');
   const serverTime = state.get('serverTime');
@@ -188,7 +193,7 @@ const NominationCategory = ({ fields, maxNominations, onChange, onSave, onReset,
   </tbody>;
 }
 
-NominationCategory.propTypes = {
+NominationBody.propTypes = {
   fields: React.PropTypes.array.isRequired,
   maxNominations: React.PropTypes.number,
   onChange: React.PropTypes.func.isRequired,
@@ -203,4 +208,30 @@ NominationCategory.propTypes = {
   }).isRequired
 };
 
-export default NominationCategory;
+const NominationCategory = ({ category, ...props }) => {
+  const { title, description, nominationFieldLabels } = categoryInfo[category];
+  const fields = nominationFields(category);
+
+  return <Paper className='NominationCategory'>
+    <h3>{ title }</h3>
+    <p>{ description }</p>
+    <table>
+      <thead>
+      <tr>
+        { fields.map(field => <th key={field}>{ nominationFieldLabels[field] || field }</th>) }
+      </tr>
+      </thead>
+      <NominationBody {...props} fields={fields} maxNominations={maxNominationsPerCategory} />
+    </table>
+  </Paper>
+}
+
+export default connect(
+  (state, { category }) => ({
+    state: state.nominations.get(category)
+  }), (dispatch, { category }) => bindActionCreators({
+    onChange: (idx, values) => editNomination(category, idx, values),
+    onSave: () => submitNominations(category),
+    onReset: () => resetNominations(category)
+  }, dispatch)
+)(NominationCategory);
