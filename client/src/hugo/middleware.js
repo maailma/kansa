@@ -7,16 +7,15 @@ import API from '../lib/api'
 const api = new API(API_ROOT);
 
 
-function setNominator(dispatch, { person, callback }) {
-  if (!person || !callback) throw new Error(`Required parameters: person <${person}>, callback <${callback}>`);
+function setNominator(dispatch, { person }) {
+  if (!person) throw new Error(`Required parameter: person <${person}>`);
 
   dispatch(setPerson(person));
   api.GET(`hugo/${person}/nominations`)
     .then(data => {
-      data.forEach(catData => dispatch(getNominations(catData)))
-      callback();
+      data.forEach(catData => dispatch(getNominations(catData)));
     })
-    .catch(callback);
+    .catch(err => dispatch(showMessage(err.message)));
 }
 
 function submitNominations(dispatch, { app, nominations }, { category }) {
