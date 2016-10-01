@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 const randomstring = require('randomstring');
 
+const Person = require('./types/person');
 const LogEntry = require('./types/logentry');
 
 module.exports = { setKey };
@@ -45,14 +46,14 @@ function setKey(req, res, next) {
       message: 'An email address is required for setting its key!'
     });
   } else {
-    req.app.locals.db.one('SELECT COUNT(*) FROM People WHERE email=$1', req.body.email)
-      .then(data => {
-        if (data.count > 0) setKeyChecked(req, res, next);
-        else res.status(400).json({
-          status: 'error',
-          message: 'Email address ' + JSON.stringify(req.body.email) + ' not found'
-        });
-      })
+    const person = new Person({
+      email: req.body.email,
+      legal_name: req.body.email,
+      membership: 'NonMember',
+      can_hugo_nominate: true
+    });
+    req.app.locals.db.none(`INSERT INTO People ${person.sqlValues} ON CONFLICT DO NOTHING`, person.data)
+      .then(() => setKeyChecked(req, res, next))
       .catch(err => next(err));
   }
 }
