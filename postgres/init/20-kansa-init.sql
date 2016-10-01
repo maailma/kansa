@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS People (
     legal_name text NOT NULL,
     public_first_name text,
     public_last_name text,
-    email text,
+    email text UNIQUE,
     city text,
     state text,
     country text,
