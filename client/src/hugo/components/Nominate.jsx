@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 import Snackbar from 'material-ui/Snackbar'
 
 import { setNominator, editNomination, submitNominations, resetNominations, clearNominationError } from '../actions'
-import { categories, maxNominationsPerCategory, nominationFields, categoryTexts } from '../constants'
+import { categoryInfo, maxNominationsPerCategory, nominationFields } from '../constants'
 
 import NominationCategory from './NominationCategory'
 import SaveAllButton from './SaveAllButton'
@@ -39,8 +39,8 @@ const ActiveNominations = ({ person }) => <div>
   <h1>{ 'Hugo nominations for ' + getName(person) }</h1>
   <p>Introduction to Hugo nominations</p>
   {
-    categories.map(category => {
-      const { title, description, nominationFieldLabels } = categoryTexts[category];
+    Object.keys(categoryInfo).map(category => {
+      const { title, description, nominationFieldLabels } = categoryInfo[category];
       const fields = nominationFields(category);
       const ConnectedNominationCategory = connect(
         (state) => ({

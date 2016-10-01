@@ -19,10 +19,10 @@
 
 import { fromJS, List, Map } from 'immutable'
 
-import { categories } from '../constants'
+import { categoryInfo } from '../constants'
 
 
-const defaultState = Map(categories.map(
+const defaultState = Map(Object.keys(categoryInfo).map(
   category => [category, Map({
     clientData: List(),
     serverData: List(),
@@ -37,7 +37,7 @@ export default (state = defaultState, action) => {
   const { category, error, type } = action;
   //console.log(category, 'STATE', state.get(category).toJS());
   //console.log(category, 'ACTION', action);
-  if (categories.indexOf(category) === -1) {
+  if (!categoryInfo[category]) {
     return (type === 'SET_NOMINATOR') ? defaultState : state;
   }
   if (error) return state.mergeIn([category], { isFetching: false, error });

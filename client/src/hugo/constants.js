@@ -1,10 +1,6 @@
-export const categories = [ 'Novel', 'Novella', 'Novelette', 'ShortStory', 'RelatedWork',
-    'GraphicStory', 'DramaticLong', 'DramaticShort', 'EditorLong', 'EditorShort', 'ProArtist',
-    'Semiprozine', 'Fanzine', 'Fancast', 'FanWriter', 'FanArtist', 'Campbell' ];
-
 export const maxNominationsPerCategory = 5;
 
-export const categoryTexts = {
+export const categoryInfo = {
   Novel: {
     title: 'Best Novel',
     description: 'A science fiction or fantasy story of 40,000 words or more, which appeared for the first time in 2016.',
@@ -161,7 +157,7 @@ export const categoryTexts = {
 }
 
 export const nominationFields = (category) => {
-  const texts = categoryTexts[category];
+  const texts = categoryInfo[category];
   if (!texts) throw new Error('Unknown category ' + JSON.stringify(category));
   return Object.keys(texts.nominationFieldLabels);
 }
