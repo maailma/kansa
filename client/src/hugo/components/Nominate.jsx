@@ -3,6 +3,7 @@ import React from 'react'
 import * as ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux'
 
+import Paper from 'material-ui/Paper'
 import Snackbar from 'material-ui/Snackbar'
 
 import { setNominator, editNomination, submitNominations, resetNominations, clearNominationError } from '../actions'
@@ -36,8 +37,10 @@ function getName(person) {
 }
 
 const ActiveNominations = ({ person }) => <div>
-  <h1>{ 'Hugo nominations for ' + getName(person) }</h1>
-  <p>Introduction to Hugo nominations</p>
+  <div className='NominationsHead'>
+    <h1>{ 'Hugo nominations for ' + getName(person) }</h1>
+    <p>Introduction to Hugo nominations</p>
+  </div>
   {
     Object.keys(categoryInfo).map(category => {
       const { title, description, nominationFieldLabels } = categoryInfo[category];
@@ -51,7 +54,7 @@ const ActiveNominations = ({ person }) => <div>
           onReset: () => resetNominations(category)
         }
       )(NominationCategory);
-      return <div key={category}>
+      return <Paper key={category} className='NominationCategory'>
         <h3>{ title }</h3>
         <p>{ description }</p>
         <table>
@@ -62,7 +65,7 @@ const ActiveNominations = ({ person }) => <div>
           </thead>
           <ConnectedNominationCategory fields={fields} maxNominations={maxNominationsPerCategory} />
         </table>
-      </div>
+      </Paper>
     })
   }
   <SaveAllButton />
