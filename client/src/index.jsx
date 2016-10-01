@@ -12,7 +12,6 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import { keyLogin, tryLogin } from './app/actions/auth'
-import { setNominator } from './hugo/actions'
 import { PATH_IN, PATH_OUT } from './constants'
 import App from './app/components/App'
 import LoginForm from './app/components/LoginForm'
@@ -38,10 +37,6 @@ const doLogin = ({ params: { email, key } }) => {
   store.dispatch(keyLogin(email, key));
 }
 
-const onEnterNominations = ({ params: { id } }, _, callback) => {
-  store.dispatch(setNominator(id, callback));
-}
-
 ReactDOM.render(
   <Provider store={store} >
     <MuiThemeProvider muiTheme={getMuiTheme()}>
@@ -55,7 +50,7 @@ ReactDOM.render(
             <IndexRedirect to={PATH_IN} />
             <Route path=":id">
               <IndexRedirect to="nominate" />
-              <Route path="nominate" onEnter={onEnterNominations} component={Nominate} />
+              <Route path="nominate" component={Nominate} />
             </Route>
           </Route>
         </Route>
