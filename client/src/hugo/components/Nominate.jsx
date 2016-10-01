@@ -1,13 +1,12 @@
 import { Map } from 'immutable'
 import React from 'react'
-import * as ImmutablePropTypes from 'react-immutable-proptypes';
+import ImmutablePropTypes from 'react-immutable-proptypes'
 import { connect } from 'react-redux'
 
-import Paper from 'material-ui/Paper'
 import Snackbar from 'material-ui/Snackbar'
 
-import { setNominator, editNomination, submitNominations, resetNominations, clearNominationError } from '../actions'
-import { categoryInfo, maxNominationsPerCategory, nominationFields } from '../constants'
+import { setNominator, clearNominationError } from '../actions'
+import { categoryInfo } from '../constants'
 
 import NominationCategory from './NominationCategory'
 import SaveAllButton from './SaveAllButton'
@@ -42,31 +41,9 @@ const ActiveNominations = ({ person }) => <div>
     <p>Introduction to Hugo nominations</p>
   </div>
   {
-    Object.keys(categoryInfo).map(category => {
-      const { title, description, nominationFieldLabels } = categoryInfo[category];
-      const fields = nominationFields(category);
-      const ConnectedNominationCategory = connect(
-        (state) => ({
-          state: state.nominations.get(category)
-        }), {
-          onChange: (idx, values) => editNomination(category, idx, values),
-          onSave: () => submitNominations(category),
-          onReset: () => resetNominations(category)
-        }
-      )(NominationCategory);
-      return <Paper key={category} className='NominationCategory'>
-        <h3>{ title }</h3>
-        <p>{ description }</p>
-        <table>
-          <thead>
-            <tr>
-              { fields.map(field => <th key={field}>{ nominationFieldLabels[field] || field }</th>) }
-            </tr>
-          </thead>
-          <ConnectedNominationCategory fields={fields} maxNominations={maxNominationsPerCategory} />
-        </table>
-      </Paper>
-    })
+    Object.keys(categoryInfo).map(category => (
+      <NominationCategory category={category} key={category}/>
+    ))
   }
   <SaveAllButton />
   <Messages />
