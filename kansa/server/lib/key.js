@@ -6,8 +6,8 @@ const LogEntry = require('./types/logentry');
 module.exports = { setKey };
 
 function loginUri(email, key) {
-  const root = process.env.API_ROOT;
-  return encodeURI(`${root}/#/login/${email}/${key}`);
+  const root = process.env.LOGIN_URI_ROOT;
+  return encodeURI(`${root}/${email}/${key}`);
 }
 
 function setKeyChecked(req, res, next) {

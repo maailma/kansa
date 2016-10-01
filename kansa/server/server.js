@@ -1,8 +1,6 @@
-#!/usr/bin/env node
-
 const debug = require('debug')('db-api:server');
 
-const { app, server } = require('../app');
+const { app, server } = require('./app');
 const port = normalizePort(process.env.PORT || '3000');
 
 app.set('port', port);

@@ -1,0 +1,55 @@
+version: '2'
+
+# Usage:  docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+# For hints on proper values for environment variables, see docker-compose.override.yml
+# DO NOT COMMIT PRODUCTION SECRETS TO ANY REPOSITORY
+
+services:
+  nginx:
+    environment:
+      API_SERVER_NAME:
+      API_SSL_CERTIFICATE:
+      API_SSL_CERTIFICATE_KEY:
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+    volumes:
+      - client:/usr/share/nginx/html:ro
+
+  client-build:
+    build: ./client
+    environment:
+      API_HOST:
+      NODE_ENV: production
+      TITLE:
+    volumes:
+      - client:/usr/src/app/dist
+
+  hugo:
+    environment:
+      DATABASE_URL:
+      SESSION_SECRET:
+    restart: always
+
+  kansa:
+    environment:
+      DATABASE_URL:
+      LOGIN_URI_ROOT:
+      SESSION_SECRET:
+    restart: always
+
+  kyyhky:
+    environment:
+      SENDGRID_APIKEY:
+    restart: always
+
+  postgres:
+    environment:
+      POSTGRES_PASSWORD:
+      KANSA_PG_PASSWORD:
+      HUGO_PG_PASSWORD:
+    restart: always
+
+volumes:
+  client:
