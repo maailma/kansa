@@ -2,6 +2,7 @@
 
 CREATE USER kansa WITH PASSWORD :'kansaPwd' IN ROLE api_access;
 CREATE SCHEMA AUTHORIZATION kansa;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO kansa;
 SET ROLE kansa;
 
 CREATE SEQUENCE member_number_seq;
