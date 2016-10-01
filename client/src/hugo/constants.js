@@ -75,7 +75,7 @@ export const categoryInfo = {
     description: `Any television program or other production, with a complete running time of 90 minutes or less, in any medium of dramatized science fiction, fantasy or related subjects that has been publicly presented for the first time in its present dramatic form during the previous calendar year.`,
     nominationFieldLabels: {
       title: 'Title',
-      series: '(Series)'
+      series: '(Series)',
       producer: 'Studio/Network/Production Company'
     }
   },
