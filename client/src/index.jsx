@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import { IndexRedirect, IndexRoute, Router, Route, hashHistory } from 'react-router'
+import { IndexRoute, Router, Route, hashHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 import { createStore } from 'redux'
 
@@ -12,10 +12,9 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import { keyLogin, tryLogin } from './app/actions/auth'
-import { PATH_IN, PATH_OUT } from './constants'
+import { PATH_OUT } from './constants'
 import App from './app/components/App'
-import LoginForm from './app/components/LoginForm'
-import MemberList from './kansa/components/MemberList'
+import KeyRequest from './app/components/KeyRequest'
 import Nominate from './hugo/components/Nominate'
 import middleware from './middleware'
 import reducers from './reducers'
@@ -42,17 +41,9 @@ ReactDOM.render(
     <MuiThemeProvider muiTheme={getMuiTheme()}>
       <Router history={syncHistoryWithStore(hashHistory, store)}>
         <Route path="/" component={App} >
-          <IndexRedirect to={PATH_IN} />
-          <Route path="login" component={LoginForm} />
+          <IndexRoute onEnter={authCheck} component={Nominate} />
+          <Route path="participate" component={KeyRequest} />
           <Route path="login/:email/:key" onEnter={doLogin} />
-          <Route path="profile" onEnter={authCheck} component={MemberList} />
-          <Route path="hugo" onEnter={authCheck} >
-            <IndexRedirect to={PATH_IN} />
-            <Route path=":id">
-              <IndexRedirect to="nominate" />
-              <Route path="nominate" component={Nominate} />
-            </Route>
-          </Route>
         </Route>
       </Router>
     </MuiThemeProvider>
