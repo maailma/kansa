@@ -11,7 +11,7 @@ server {
   server_name                ${API_SERVER_NAME};
 
   location /.well-known/ {
-    root                     /usr/share/nginx/html;
+    root                     /usr/share/nginx/html-well-known;
   }
 
   location / {
