@@ -2,7 +2,23 @@ const fs = require('fs');
 const mustache = require('mustache');
 const SendGrid  = require('sendgrid');
 const tfm = require('tiny-frontmatter');
-const wrap = require('wordwrap')(72);
+const wrap = require('wordwrap');
+
+function loginUri(email, key) {
+  const root = process.env.LOGIN_URI_ROOT;
+  return encodeURI(`${root}/${email}/${key}`);
+}
+
+function nominationsString(data) {
+  return data.map(({ category, nominations }) => {
+    const ct = category.charAt(0) + category.slice(1).replace(/[A-Z]/g, ' $&');
+    const cn = nominations.map(n => {
+      const ns = Object.keys(n).map(k => n[k]).join('; ');
+      return '  - ' + wrap(68)(ns).replace(/\n/g, '\n    ');
+    });
+    return `${ct}:\n${cn.join('\n')}`;
+  }).join('\n\n');
+}
 
 class Mailer {
   constructor(tmplDir, tmplSuffix, sendgridApiKey) {
@@ -30,18 +46,28 @@ class Mailer {
         subject: subject,
         content: [{
           type: 'text/plain',
-          value: wrap(msg)
+          value: wrap(72)(msg)
         }]
       }
     });
   }
 
   sendEmail(tmplName, data, done) {
+    let tmplData = Object.assign({
+      login_uri: loginUri(data.email, data.key)
+    }, data);
+    switch (tmplName) {
+
+      case 'hugo-update-nominations':
+        tmplData.nominations = nominationsString(data.nominations);
+        break;
+
+    }
     fs.readFile(this.tmplFileName(tmplName), 'utf8', (err, raw) => {
       if (err) return done(err);
       try {
         const {attributes, body} = tfm(raw);
-        const msg = mustache.render(body, data);
+        const msg = mustache.render(body, tmplData);
         const request = this.sgRequest(data.email, attributes, msg);
         this.sendgrid.API(request, (err, response) => {
           if (err) {
