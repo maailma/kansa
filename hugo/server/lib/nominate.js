@@ -1,3 +1,5 @@
+const fetch = require('node-fetch');
+
 const AuthError = require('./errors').AuthError;
 const InputError = require('./errors').InputError;
 
@@ -30,6 +32,36 @@ function getNominations(req, res, next) {
 }
 
 
+function sendNominationEmail(db, id) {
+  db.task(t => t.batch([
+    t.one(`SELECT
+      k.email, k.key, p.legal_name, p.public_first_name AS pfn, p.public_last_name AS pln
+      FROM kansa.People AS p
+      JOIN kansa.Keys AS k USING (email)
+      WHERE id = $1`, id),
+    t.any(`SELECT DISTINCT ON (category) * FROM Nominations
+      WHERE person_id = $1 ORDER BY category, time DESC`, id)
+  ]))
+    .then(([ person, nominations ]) => fetch('http://kyyhky:3000/job', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'hugo-update-nominations',
+          data: {
+            email: person.email,
+            key: person.key,
+            name: [person.pfn, person.pln].filter(n => n).join(' ').trim() || person.legal_name,
+            nominations
+          },
+          options: {
+            delay: 5 * 1000, //60 * 60 * 1000,  // 60 min
+            searchKeys: ['email']
+          }
+        })
+      }))
+    .catch(err => console.error(err));
+}
+
 function nominate(req, res, next) {
   const data = {
     client_ip: req.ip,
@@ -56,6 +88,7 @@ function nominate(req, res, next) {
     })
     .then(({ time }) => {
       res.status(200).json(Object.assign({ status: 'success', time }, data));
+      sendNominationEmail(req.app.locals.db, data.person_id);
     })
     .catch(err => next(err));
 }

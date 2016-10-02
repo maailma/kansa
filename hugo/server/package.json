@@ -22,6 +22,7 @@
     "express-session": "^1.13.0",
     "express-ws": "^2.0.0",
     "morgan": "~1.7.0",
+    "node-fetch": "^1.6.2",
     "pg-monitor": "^0.5.8",
     "pg-promise": "^5.3.3"
   }
