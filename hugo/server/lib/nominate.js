@@ -54,7 +54,7 @@ function sendNominationEmail(db, id) {
             nominations
           },
           options: {
-            delay: 5 * 1000, //60 * 60 * 1000,  // 60 min
+            delay: 60 * 60 * 1000,  // 60 min
             searchKeys: ['email']
           }
         })
