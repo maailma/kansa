@@ -15,7 +15,7 @@ services:
       - "443:443"
     restart: always
     volumes:
-      - client:/usr/share/nginx/html:ro
+      - client:/usr/share/nginx/html/client:ro
 
   client-build:
     build: ./client
