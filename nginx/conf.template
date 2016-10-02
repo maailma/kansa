@@ -9,6 +9,11 @@ upstream kansa {
 server {                    
   listen                     80;
   server_name                ${API_SERVER_NAME};
+
+  location = /.well-known {
+    root /usr/share/nginx/html/
+  }
+
   return                     301 https://$server_name$request_uri;
 }                           
                             
