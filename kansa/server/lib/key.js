@@ -5,11 +5,6 @@ const LogEntry = require('./types/logentry');
 
 module.exports = { setKey };
 
-function loginUri(email, key) {
-  const root = process.env.LOGIN_URI_ROOT;
-  return encodeURI(`${root}/${email}/${key}`);
-}
-
 function setKeyChecked(req, res, next) {
   const email = req.body.email;
   const key = randomstring.generate(12);
@@ -25,10 +20,7 @@ function setKeyChecked(req, res, next) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         type: 'kansa-set-key',
-        data: {
-          email,
-          uri: loginUri(email, key)
-        },
+        data: { email, key },
         options: {
           searchKeys: []
         }

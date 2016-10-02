@@ -4,6 +4,11 @@ const SendGrid  = require('sendgrid');
 const tfm = require('tiny-frontmatter');
 const wrap = require('wordwrap')(72);
 
+function loginUri(email, key) {
+  const root = process.env.LOGIN_URI_ROOT;
+  return encodeURI(`${root}/${email}/${key}`);
+}
+
 class Mailer {
   constructor(tmplDir, tmplSuffix, sendgridApiKey) {
     this.tmplDir = tmplDir;
@@ -37,11 +42,14 @@ class Mailer {
   }
 
   sendEmail(tmplName, data, done) {
+    let tmplData = Object.assign({
+      login_uri: loginUri(data.email, data.key)
+    }, data);
     fs.readFile(this.tmplFileName(tmplName), 'utf8', (err, raw) => {
       if (err) return done(err);
       try {
         const {attributes, body} = tfm(raw);
-        const msg = mustache.render(body, data);
+        const msg = mustache.render(body, tmplData);
         const request = this.sgRequest(data.email, attributes, msg);
         this.sendgrid.API(request, (err, response) => {
           if (err) {

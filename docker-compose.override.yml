@@ -23,11 +23,11 @@ services:
     environment:
       CORS_ORIGIN: http://localhost:8080
       DATABASE_URL: postgres://kansa:pwd@postgres:5432/api
-      LOGIN_URI_ROOT: https://localhost:4430/#/login
       SESSION_SECRET: dev secret
 
   kyyhky:
     environment:
+      LOGIN_URI_ROOT: https://localhost:4430/#/login
       SENDGRID_APIKEY:
 
   postgres:
