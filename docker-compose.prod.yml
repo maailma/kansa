@@ -15,7 +15,7 @@ services:
       - "443:443"
     restart: always
     volumes:
-      - client:/usr/share/nginx/html:ro
+      - client:/usr/share/nginx/html/client:ro
 
   client-build:
     build: ./client
@@ -45,6 +45,13 @@ services:
     restart: always
 
   postgres:
+    environment:
+      POSTGRES_PASSWORD:
+      KANSA_PG_PASSWORD:
+      HUGO_PG_PASSWORD:
+    restart: always
+
+  postgres-replica:
     environment:
       POSTGRES_PASSWORD:
       KANSA_PG_PASSWORD:
