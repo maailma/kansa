@@ -14,17 +14,11 @@ services:
       - "80:80"
       - "443:443"
     restart: always
-    volumes:
-      - client:/usr/share/nginx/html:ro
 
   client-build:
-    build: ./client
     environment:
       API_HOST:
-      NODE_ENV: production
       TITLE:
-    volumes:
-      - client:/usr/src/app/dist
 
   hugo:
     environment:
@@ -50,6 +44,3 @@ services:
       KANSA_PG_PASSWORD:
       HUGO_PG_PASSWORD:
     restart: always
-
-volumes:
-  client:

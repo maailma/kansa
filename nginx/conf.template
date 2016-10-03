@@ -57,6 +57,6 @@ server {
   }
 
   location / {
-    root                     /usr/share/nginx/html;
+    root                     /usr/share/nginx/html/client;
   }
 }
