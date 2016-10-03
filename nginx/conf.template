@@ -58,5 +58,6 @@ server {
 
   location / {
     root                     /usr/share/nginx/html/client;
+    try_files                $uri /index.html;
   }
 }

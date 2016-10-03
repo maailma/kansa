@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import { IndexRedirect, IndexRoute, Router, Route, hashHistory } from 'react-router'
+import { IndexRedirect, Router, Route, browserHistory, hashHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 import { createStore } from 'redux'
 
@@ -22,7 +22,8 @@ import reducers from './reducers'
 
 import './app/style.css'
 
-const store = createStore(reducers, middleware(hashHistory));
+const history = process.env.NODE_ENV === 'production' ? browserHistory : hashHistory;
+const store = createStore(reducers, middleware(history));
 
 const authCheck = (_, replace, callback) => {
   const email = store.getState().user.get('email');
@@ -40,7 +41,7 @@ const doLogin = ({ params: { email, key } }) => {
 ReactDOM.render(
   <Provider store={store} >
     <MuiThemeProvider muiTheme={getMuiTheme()}>
-      <Router history={syncHistoryWithStore(hashHistory, store)}>
+      <Router history={syncHistoryWithStore(history, store)}>
         <Route path="/" component={App} >
           <IndexRedirect to={PATH_IN} />
           <Route path="login" component={LoginForm} />
