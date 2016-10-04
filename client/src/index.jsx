@@ -14,7 +14,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import { keyLogin, tryLogin } from './app/actions/auth'
 import { PATH_OUT } from './constants'
 import App from './app/components/App'
-import KeyRequest from './app/components/KeyRequest'
+import Participate from './1980/Participate'
 import Nominate from './hugo/components/Nominate'
 import middleware from './middleware'
 import reducers from './reducers'
@@ -43,7 +43,7 @@ ReactDOM.render(
       <Router history={syncHistoryWithStore(history, store)}>
         <Route path="/" component={App} >
           <IndexRoute onEnter={authCheck} component={Nominate} />
-          <Route path="participate" component={KeyRequest} />
+          <Route path="participate" component={Participate} />
           <Route path="login/:email/:key" onEnter={doLogin} />
         </Route>
       </Router>
