@@ -8,6 +8,7 @@ import Snackbar from 'material-ui/Snackbar'
 import { setNominator, clearNominationError } from '../actions'
 import { categoryInfo } from '../constants'
 
+import Intro from '../../1980/Intro'
 import NominationCategory from './NominationCategory'
 import SaveAllButton from './SaveAllButton'
 import './Nominate.css'
@@ -28,27 +29,48 @@ const Messages = connect(
   onRequestClose={ () => clearNominationError(category) }
 />);
 
-function getName(person) {
-  if (!Map.isMap(person)) return '<>';
-  const pna = [ person.get('public_first_name'), person.get('public_last_name') ];
-  const pns = pna.filter(s => s).join(' ');
-  return pns || person.get('legal_name');
-}
+class ActiveNominations extends React.Component {
 
-const ActiveNominations = ({ person }) => <div>
-  <div className='NominationsHead'>
-    <h1>{ 'Hugo nominations for ' + getName(person) }</h1>
-    <p>Introduction to Hugo nominations</p>
-  </div>
-  {
-    Object.keys(categoryInfo).map(category => (
-      <NominationCategory category={category} key={category}/>
-    ))
+  static propTypes = {
+    person: ImmutablePropTypes.map
   }
-  <SaveAllButton />
-  <Messages />
-</div>;
 
+  state = {
+    showMore: false
+  }
+
+  get name() {
+    const { person } = this.props;
+    if (!Map.isMap(person)) return '<>';
+    const pna = [ person.get('public_first_name'), person.get('public_last_name') ];
+    const pns = pna.filter(s => s).join(' ');
+    return pns || person.get('legal_name');
+  }
+
+  render() {
+    const { showMore } = this.state;
+    return <div>
+      <div className='NominationsHead'>
+        <h2>{ 'Nominations for ' + this.name }</h2>
+        <Intro
+          setShowMore={ showMore => this.setState({ showMore }) }
+          showMore={showMore}
+        />
+        { showMore ? <p>
+          Thank you for participating in the 1980 Timewarp Project! We hope you enjoy thinking back to an earlier time.
+        </p> : null }
+      </div>
+      {
+        Object.keys(categoryInfo).map(category => (
+          <NominationCategory category={category} key={category}/>
+        ))
+      }
+      <SaveAllButton />
+      <Messages />
+    </div>;
+  }
+
+}
 
 /*
 const ReadOnlyNominations = ({ fields, state }) => {
@@ -68,7 +90,7 @@ ReadOnlyNominations.propTypes = {
 };
 
 const connectSetCategories = connect(state => ({
-  setCategories: Object.keys(state.nominations).filter(category => 
+  setCategories: Object.keys(state.nominations).filter(category =>
     !state.nominations[category].get('serverData').isEmpty()
   )
 }));
