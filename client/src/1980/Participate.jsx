@@ -3,7 +3,10 @@ import React from 'react'
 import KeyRequest from '../app/components/KeyRequest'
 import Intro from './Intro'
 
-export default () => <div>
+export default () => <div style={{
+  margin: '0 auto',
+  maxWidth: 710
+}}>
 
   <Intro showMore={true}/>
   <p>
@@ -13,4 +16,3 @@ export default () => <div>
   <KeyRequest/>
 
 </div>;
-
