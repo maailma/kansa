@@ -24,6 +24,18 @@ import './app/style.css'
 const history = process.env.NODE_ENV === 'production' ? browserHistory : hashHistory;
 const store = createStore(reducers, middleware(history));
 
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-66635432-2', 'auto');
+
+history.listen(({ pathname }) => {
+  if (pathname.indexOf('/login') !== -1) pathname = '/login';
+  ga('set', 'page', pathname);
+  ga('send', 'pageview');
+});
+
 const authCheck = (_, replace, callback) => {
   const email = store.getState().user.get('email');
   if (email) callback();

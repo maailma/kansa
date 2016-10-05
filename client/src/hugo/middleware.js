@@ -32,7 +32,10 @@ function submitNominations(dispatch, { app, nominations }, { category }) {
   }
 
   api.POST(`hugo/${person}/nominate`, { category, nominations: list.toJS() })
-    .then(res => dispatch(getNominations(res)))
+    .then(res => {
+      dispatch(getNominations(res));
+      if (window.ga) ga('send', 'event', 'Nominations', 'set', category, list.size);
+    })
     .catch(error => dispatch({ type: 'ERROR', error}));
 }
 
