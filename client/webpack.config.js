@@ -1,3 +1,4 @@
+const CompressionPlugin = require('compression-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const url = require('url');
 const webpack = require('webpack');
@@ -27,6 +28,11 @@ module.exports = {
     extensions: [ '', '.js', '.jsx', '.css' ]
   },
   plugins: [
+    new CompressionPlugin({
+      algorithm: 'zopfli',
+      test: /\.js$|\.html$/,
+      threshold: 1000
+    }),
     new HtmlWebpackPlugin({
       inject: 'body',
       template: 'src/index.ejs',
