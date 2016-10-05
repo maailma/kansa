@@ -6,17 +6,23 @@ upstream kansa {
   server                     kansa:3000;
 }
 
-server {                    
+server {
   listen                     80;
   server_name                ${API_SERVER_NAME};
   return                     301 https://$server_name$request_uri;
-}                           
-                            
-server {                    
+}
+
+server {
   listen                     443 ssl;
   server_name                ${API_SERVER_NAME};
   keepalive_timeout          70;
-                            
+
+  gzip                       on;
+  gzip_comp_level            2;
+  gzip_min_length            1000;
+  gzip_types                 application/javascript application/json text/css text/plain;
+  gzip_vary                  on;
+
   ssl_certificate            ${API_SSL_CERTIFICATE};
   ssl_certificate_key        ${API_SSL_CERTIFICATE_KEY};
                              # http://www.selfsignedcertificate.com/ is useful for development testing
@@ -57,6 +63,7 @@ server {
   }
 
   location / {
+    gzip_static              on;
     root                     /usr/share/nginx/html/client;
     try_files                $uri /index.html;
   }
