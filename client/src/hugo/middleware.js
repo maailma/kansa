@@ -1,4 +1,4 @@
-import { setPerson, showMessage } from '../app/actions/app'
+import { setPerson } from '../app/actions/app'
 import { getNominations } from './actions'
 import { API_ROOT } from '../constants'
 import { nominationFields } from './constants'
@@ -15,7 +15,7 @@ function setNominator(dispatch, { person }) {
     .then(data => {
       data.forEach(catData => dispatch(getNominations(catData)));
     })
-    .catch(err => dispatch(showMessage(err.message)));
+    .catch(error => dispatch({ type: 'ERROR', error}));
 }
 
 function submitNominations(dispatch, { app, nominations }, { category }) {
@@ -33,7 +33,7 @@ function submitNominations(dispatch, { app, nominations }, { category }) {
 
   api.POST(`hugo/${person}/nominate`, { category, nominations: list.toJS() })
     .then(res => dispatch(getNominations(res)))
-    .catch(err => dispatch(showMessage(err.message)));
+    .catch(error => dispatch({ type: 'ERROR', error}));
 }
 
 export default ({ dispatch, getState }) => (next) => (action) => {
