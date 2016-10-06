@@ -20,12 +20,6 @@ describe("Check that API services are up",function () {
             done();
         }
     })
-    it("Should have web server running",function (done) {
-        unlogged.get('/')
-            .expect("Content-Type",/html/)
-            .expect(200)
-        .end(done);
-    });
     it("Should respond with json on api/kansa/", function (done) {
         unlogged.get("/api/kansa/")
             .expect("Content-Type",/json/)
