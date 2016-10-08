@@ -90,7 +90,7 @@ export class NominationRow extends React.Component {
 
   render() {
     const { colSpan, defaultValues, disabled, fields, onChange, onRemove, setLastField, values } = this.props;
-    return <Row>
+    return <Row bottom='xs'>
       {
         fields.map(field => <Col
           key={field}
