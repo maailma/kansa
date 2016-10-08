@@ -20,7 +20,8 @@ module.exports = {
   },
   module: {
     loaders: [
-      { test: /\.css$/, loader: "style!css" },
+      { test: /\.css$/, loader: 'style!css', exclude: /flexboxgrid/ },
+      { test: /\.css$/, loader: 'style!css?modules', include: /flexboxgrid/, },
       { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel' }
     ]
   },

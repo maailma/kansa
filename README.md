@@ -1,5 +1,6 @@
-# Worldcon 75 Member Services [![DockerPulls](https://img.shields.io/docker/stars/worldcon75/api.svg)](https://hub.docker.com/r/worldcon75/api/)
-
+[![DockerPulls](https://img.shields.io/docker/stars/worldcon75/api.svg)](https://hub.docker.com/r/worldcon75/api/)
+[![Build Status](https://travis-ci.org/worldcon75/api.svg?branch=master)](https://travis-ci.org/worldcon75/api)
+# Worldcon 75 Member Services 
 This project is under active development, so not everything is ready yet. The main components are:
 
 - **`client`** - The client front-end for our membership; a react + redux single-page app

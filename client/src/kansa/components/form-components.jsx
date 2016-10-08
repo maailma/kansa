@@ -4,15 +4,13 @@ import Checkbox from 'material-ui/Checkbox';
 import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
+const { Col, Row } = require('react-flexbox-grid');
 
 import Member from './Member';
 
 const styles = {
-  common: { marginLeft: '24px' },
   changed: { borderColor: 'rgb(255, 152, 0)' },
-  narrow: { width: '162px' },
-  wide: { width: '536px' },
-  paperPubs: { width: '162px', verticalAlign: 'top' }
+  paperPubs: { verticalAlign: 'top' }
 }
 
 const basePropTypes = {
@@ -34,7 +32,8 @@ const TextInput = ({ getDefaultValue, getValue, onChange, path, required, style 
   return <TextField
     floatingLabelText={label(path)}
     floatingLabelFixed={true}
-    style={{ ...styles.common, ...style }}
+    fullWidth={true}
+    style={style}
     className='memberInput'
     underlineStyle={ulStyle}
     underlineFocusStyle={ulStyle}
@@ -46,15 +45,33 @@ const TextInput = ({ getDefaultValue, getValue, onChange, path, required, style 
 }
 
 export const CommonFields = (props) => (<div>
-  <TextInput { ...props } path='legal_name' required={true} />
-  <TextInput { ...props } path='email' required={true} />
-  <br />
-  <TextInput { ...props } path='public_first_name' />
-  <TextInput { ...props } path='public_last_name' />
-  <br />
-  <TextInput { ...props } path='city' style={styles.narrow} />
-  <TextInput { ...props } path='state' style={styles.narrow} />
-  <TextInput { ...props } path='country' style={styles.narrow} />
+  <Row>
+    <Col xs={12} sm={6}>
+      <TextInput { ...props } path='legal_name' required={true} />
+    </Col>
+    <Col xs={12} sm={6}>
+      <TextInput { ...props } path='email' required={true} />
+    </Col>
+  </Row>
+  <Row>
+    <Col xs={12} sm={6}>
+      <TextInput { ...props } path='public_first_name' />
+    </Col>
+    <Col xs={12} sm={6}>
+      <TextInput { ...props } path='public_last_name' />
+    </Col>
+  </Row>
+  <Row>
+    <Col xs={12} sm={4}>
+      <TextInput { ...props } path='city' />
+    </Col>
+    <Col xs={12} sm={4}>
+      <TextInput { ...props } path='state' />
+    </Col>
+    <Col xs={12} sm={4}>
+      <TextInput { ...props } path='country' />
+    </Col>
+  </Row>
 </div>);
 CommonFields.propTypes = basePropTypes;
 
@@ -62,18 +79,23 @@ export const PaperPubsFields = ({ ...props }) => {
   if (!props.getValue(['paper_pubs'])) return null;
   props.required = true;
   props.style = styles.paperPubs;
-  return <div>
-    <TextInput { ...props } path={['paper_pubs', 'name']} />
-    <TextInput { ...props } path={['paper_pubs', 'address']} multiLine={true} />
-    <TextInput { ...props } path={['paper_pubs', 'country']} />
-  </div>;
+  return <Row>
+    <Col xs={12} sm={4}>
+      <TextInput { ...props } path={['paper_pubs', 'name']} />
+    </Col>
+    <Col xs={12} sm={4}>
+      <TextInput { ...props } path={['paper_pubs', 'address']} multiLine={true} />
+    </Col>
+    <Col xs={12} sm={4}>
+      <TextInput { ...props } path={['paper_pubs', 'country']} />
+    </Col>
+  </Row>;
 }
 PaperPubsFields.propTypes = basePropTypes;
 
 export const CommentField = (props) => (<TextInput
   path='comment'
   required={true}
-  style={styles.wide}
   multiLine={true}
   textareaStyle={{ marginBottom: '-24px' }}
   { ...props }

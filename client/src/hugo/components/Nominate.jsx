@@ -3,6 +3,7 @@ import React from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 import { connect } from 'react-redux'
 
+const { Col, Row } = require('react-flexbox-grid');
 import Snackbar from 'material-ui/Snackbar'
 
 import { setNominator, clearNominationError } from '../actions'
@@ -50,26 +51,42 @@ class ActiveNominations extends React.Component {
   render() {
     const { showMore } = this.state;
     return <div>
-      <div className='NominationsHead'>
-        <h2>{ 'Nominations for ' + this.name }</h2>
-        <Intro
-          setShowMore={ showMore => this.setState({ showMore }) }
-          showMore={showMore}
-        />
-        { showMore ? <p>
-          Thank you for participating in the 1980 Timewarp Project! We hope you enjoy thinking back to an earlier time.
-        </p> : null }
-      </div>
-      {
-        Object.keys(categoryInfo).map(category => (
-          <NominationCategory category={category} key={category}/>
-        ))
-      }
+      <Row>
+        <Col
+          xs={10} xsOffset={1}
+          lg={8} lgOffset={2}
+          style={{ paddingTop: 20 }}
+        >
+          <h2>{ 'Nominations for ' + this.name }</h2>
+        </Col>
+        <Col
+          xs={10} xsOffset={1}
+          sm={8} smOffset={2}
+          lg={6} lgOffset={3}
+        >
+          <Intro
+            setShowMore={ showMore => this.setState({ showMore }) }
+            showMore={showMore}
+          />
+          { showMore ? <p>
+            Thank you for participating in the 1980 Timewarp Project! We hope you enjoy thinking back to an earlier time.
+          </p> : null }
+        </Col>
+      </Row>
+      <Row>
+        <Col
+          xs={10} xsOffset={1}
+          lg={8} lgOffset={2}
+        >{
+          Object.keys(categoryInfo).map(category => (
+            <NominationCategory category={category} key={category}/>
+          ))
+        }</Col>
+      </Row>
       <SaveAllButton />
       <Messages />
     </div>;
   }
-
 }
 
 /*

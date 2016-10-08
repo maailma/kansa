@@ -20,6 +20,9 @@ import middleware from './middleware'
 import reducers from './reducers'
 
 import './app/style.css'
+const theme = getMuiTheme({
+  fontFamily: '"Open Sans", sans-serif'
+});
 
 const history = process.env.NODE_ENV === 'production' ? browserHistory : hashHistory;
 const store = createStore(reducers, middleware(history));
@@ -36,11 +39,11 @@ history.listen(({ pathname }) => {
   ga('send', 'pageview');
 });
 
-const authCheck = (_, replace, callback) => {
+const authCheck = ({ location: { pathname }}, replace, callback) => {
   const email = store.getState().user.get('email');
   if (email) callback();
   else store.dispatch(tryLogin(err => {
-    if (err) replace(PATH_OUT);
+    if (err && pathname !== PATH_OUT) replace(PATH_OUT);
     callback();
   }));
 }
@@ -51,11 +54,11 @@ const doLogin = ({ params: { email, key } }) => {
 
 ReactDOM.render(
   <Provider store={store} >
-    <MuiThemeProvider muiTheme={getMuiTheme()}>
+    <MuiThemeProvider muiTheme={theme}>
       <Router history={syncHistoryWithStore(history, store)}>
         <Route path="/" component={App} >
           <IndexRoute onEnter={authCheck} component={Nominate} />
-          <Route path="participate" component={Participate} />
+          <Route path="participate" onEnter={authCheck} component={Participate} />
           <Route path="login/:email/:key" onEnter={doLogin} />
         </Route>
       </Router>
