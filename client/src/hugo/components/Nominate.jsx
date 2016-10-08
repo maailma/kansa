@@ -32,20 +32,23 @@ const Messages = connect(
 const ActiveNominations = ({ name }) => <div>
   <Row>
     <Col
-      xs={12}
-      sm={10} smOffset={1}
-      md={8} mdOffset={2}
-      lg={6} lgOffset={3}
-      style={{ padding: '20px 0' }}
+      xs={10} xsOffset={1}
+      lg={8} lgOffset={2}
+      style={{ paddingTop: 20 }}
     >
       <h1>{ 'Hugo nominations for ' + name }</h1>
+    </Col>
+    <Col
+      xs={10} xsOffset={1}
+      sm={8} smOffset={2}
+      lg={6} lgOffset={3}
+    >
       <p>Introduction to Hugo nominations</p>
     </Col>
   </Row>
   <Row>
     <Col
-      xs={12}
-      md={10} mdOffset={1}
+      xs={10} xsOffset={1}
       lg={8} lgOffset={2}
     >{
       Object.keys(categoryInfo).map(category => (
