@@ -2,7 +2,7 @@ import Immutable, { Map } from 'immutable'
 import React from 'react'
 import { Link } from 'react-router'
 
-import Dialog from 'material-ui/Dialog'
+import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import RaisedButton from 'material-ui/RaisedButton'
 
 const ImmutablePropTypes = require('react-immutable-proptypes');
@@ -83,21 +83,30 @@ export default class Member extends React.Component {
       onChange: (path, value) => this.setState({ member: this.state.member.setIn(path, value) })
     };
 
-    return <div className="container">
-      <CommonFields { ...formProps } />
-      <br />
-      <PaperPubsFields { ...formProps } />
-      <RaisedButton key='ok'
-        disabled={ this.state.sent || this.changes.size == 0 || !this.valid }
-        label={ this.state.sent ? 'Working...' : 'Apply changes' }
-        onTouchTap={ () => {
-          this.setState({ sent: true });
-          console.log('updating', member, onUpdate);
-          onUpdate(member.get('id'), this.changes);
-        }}
-        style={{ margin: '0 24px' }}
+    return <Card>
+      <CardHeader
+        title={ membership }
+        subtitle={ membership !== 'NonMember' ? '#' + member.get('member_number') : null }
       />
-      { member.get('can_hugo_nominate') ? <Link to={`/hugo/${member.get('id')}/nominate`}>Nominate for the Hugo Awards</Link> : null }
-    </div>;
+      <CardText>
+        <CommonFields { ...formProps } />
+        <br />
+        <PaperPubsFields { ...formProps } />
+      </CardText>
+      <CardActions>
+        <RaisedButton key='ok'
+          disabled={ this.state.sent || this.changes.size == 0 || !this.valid }
+          label={ this.state.sent ? 'Working...' : 'Apply changes' }
+          onTouchTap={ () => {
+            this.setState({ sent: true });
+            console.log('updating', member, onUpdate);
+            onUpdate(member.get('id'), this.changes);
+          }}
+        />
+        { member.get('can_hugo_nominate') ? <Link
+          to={`/hugo/${member.get('id')}/nominate`}
+        >Nominate for the Hugo Awards</Link> : null }
+      </CardActions>
+    </Card>;
   }
 }
