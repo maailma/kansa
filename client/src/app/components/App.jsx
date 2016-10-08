@@ -60,24 +60,30 @@ class ButtonMenu extends React.Component {
   </div>;
 }
 
+const AppBar = ({ email, goHome, logout }) => <Paper zDepth={2} >
+  <Toolbar
+    style={{
+      backgroundColor: 'white'
+    }}
+  >
+    <ToolbarGroup>
+      <ToolbarTitle text={TITLE} />
+    </ToolbarGroup>
+    <ToolbarGroup>
+      <ButtonMenu label={email}>
+        <MenuItem primaryText="Home" onTouchTap={goHome} />
+        <MenuItem primaryText="Sign out" onTouchTap={logout} />
+      </ButtonMenu>
+    </ToolbarGroup>
+  </Toolbar>
+</Paper>;
+
 const App = ({ children, email, goHome, hideMessage, logout, message }) => <div>
-  <Paper zDepth={2} >
-    <Toolbar
-      style={{
-        backgroundColor: 'white'
-      }}
-    >
-      <ToolbarGroup>
-        <ToolbarTitle text={TITLE} />
-      </ToolbarGroup>
-      <ToolbarGroup>
-        <ButtonMenu label={email}>
-          <MenuItem primaryText="Home" onTouchTap={goHome} />
-          <MenuItem primaryText="Sign out" onTouchTap={logout} />
-        </ButtonMenu>
-      </ToolbarGroup>
-    </Toolbar>
-  </Paper>
+  { email ? <AppBar
+    email={email}
+    goHome={goHome}
+    logout={logout}
+  /> : null }
   <main>
     {children}
   </main>
