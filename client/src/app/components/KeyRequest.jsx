@@ -30,26 +30,24 @@ class KeyRequest extends React.Component {
     const { email } = this.state;
     const validEmail = email && /.@.*\../.test(email);
 
-    return <div>
-      <form style={{ paddingTop: '1em' }}>
-        <TextField
-          id="email"
-          fullWidth={true}
-          floatingLabelText="Email"
-          value={email}
-          onChange={ev => this.setState({ email: ev.target.value })}
-        />
-        <div style={{ height: 32 }} />
-        <RaisedButton
-          label="Send login link"
-          fullWidth={true}
-          primary={true}
-          disabled={!validEmail}
-          style={{ margin: '12px 0' }}
-          onTouchTap={() => keyRequest(email)}
-        />
-      </form>
-    </div>
+    return <form>
+      <TextField
+        id="email"
+        fullWidth={true}
+        floatingLabelText="Email"
+        value={email}
+        onChange={ev => this.setState({ email: ev.target.value })}
+      />
+      <div style={{ height: 32 }} />
+      <RaisedButton
+        label="Send login link"
+        fullWidth={true}
+        primary={true}
+        disabled={!validEmail}
+        style={{ margin: '12px 0' }}
+        onTouchTap={() => keyRequest(email)}
+      />
+    </form>
   }
 }
 

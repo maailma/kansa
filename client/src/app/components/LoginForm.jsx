@@ -32,41 +32,39 @@ class LoginForm extends React.Component {
     const { email, key } = this.state;
     const validEmail = email && /.@.*\../.test(email);
 
-    return <div>
-      <form style={{ paddingTop: '1em' }}>
-        <TextField
-          id="email"
-          fullWidth={true}
-          floatingLabelText="Email"
-          value={email}
-          onChange={ev => this.setState({ email: ev.target.value })}
-        />
-        <TextField
-          id="key"
-          fullWidth={true}
-          floatingLabelText="Key"
-          value={key}
-          onChange={ev => this.setState({ key: ev.target.value })}
-        />
-        <div style={{ height: 32 }} />
-        <RaisedButton
-          label="Login"
-          fullWidth={true}
-          primary={true}
-          disabled={!validEmail || !key}
-          style={{ margin: '12px 0' }}
-          onTouchTap={() => keyLogin(email, key)}
-        />
-        <RaisedButton
-          label="Send login key"
-          fullWidth={true}
-          primary={true}
-          disabled={!validEmail}
-          style={{ margin: '12px 0' }}
-          onTouchTap={() => keyRequest(email)}
-        />
-      </form>
-    </div>
+    return <form>
+      <TextField
+        id="email"
+        fullWidth={true}
+        floatingLabelText="Email"
+        value={email}
+        onChange={ev => this.setState({ email: ev.target.value })}
+      />
+      <TextField
+        id="key"
+        fullWidth={true}
+        floatingLabelText="Key"
+        value={key}
+        onChange={ev => this.setState({ key: ev.target.value })}
+      />
+      <div style={{ height: 32 }} />
+      <RaisedButton
+        label="Login"
+        fullWidth={true}
+        primary={true}
+        disabled={!validEmail || !key}
+        style={{ margin: '12px 0' }}
+        onTouchTap={() => keyLogin(email, key)}
+      />
+      <RaisedButton
+        label="Send login key"
+        fullWidth={true}
+        primary={true}
+        disabled={!validEmail}
+        style={{ margin: '12px 0' }}
+        onTouchTap={() => keyRequest(email)}
+      />
+    </form>;
   }
 }
 
