@@ -4,7 +4,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
-import Paper from 'material-ui/Paper'
+import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import RaisedButton from 'material-ui/RaisedButton'
 import ListCheck from 'material-ui/svg-icons/av/playlist-add-check'
 import ContentUndo from 'material-ui/svg-icons/content/undo'
@@ -123,24 +123,39 @@ const NominationCategory = ({ category, ...props }) => {
   const fields = nominationFields(category);
   const colSpan = Math.floor(12 / fields.size);
 
-  return <Paper className='NominationCategory'>
-    <h2>{ title }</h2>
-    <p>{ description }</p>
-    <Row>{
-      fields.map(field => <Col
-        key={field}
-        xs={colSpan}
-      >
-        <h3>{ nominationFieldLabels[field] || field }</h3>
-      </Col>)
-    }</Row>
-    <NominationBody
-      {...props}
-      colSpan={colSpan}
-      fields={fields}
-      maxNominations={maxNominationsPerCategory}
+  return <Card className='NominationCategory'>
+    <CardHeader
+      actAsExpander={true}
+      className='NominationHeader'
+      showExpandableButton={true}
+      title={title}
+      titleStyle={{
+        fontSize: 24,
+        fontWeight: 300,
+        textAlign: 'center',
+        width: '100%',
+      }}
     />
-  </Paper>
+    <CardText expandable={true}>
+      { description }
+    </CardText>
+    <CardText>
+      <Row>{
+        fields.map(field => <Col
+          key={field}
+          xs={colSpan}
+        >
+          <h3>{ nominationFieldLabels[field] || field }</h3>
+        </Col>)
+      }</Row>
+      <NominationBody
+        {...props}
+        colSpan={colSpan}
+        fields={fields}
+        maxNominations={maxNominationsPerCategory}
+      />
+    </CardText>
+  </Card>
 }
 
 export default connect(

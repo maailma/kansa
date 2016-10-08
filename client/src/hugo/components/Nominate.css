@@ -1,11 +1,12 @@
 .NominationCategory {
   margin: 30px 0;
-  padding: 20px;
+  padding: 5px 15px;
   position: relative;
 }
 
-.NominationCategory h2 {
-  margin-top: 0;
+.NominationHeader > div:first-child {
+  display: block !important;
+  padding: 0 !important;
 }
 
 .NominationCategory h3 {
@@ -21,4 +22,5 @@
   position: fixed;
   bottom: 24px;
   right: 24px;
+  z-index: 1;
 }
