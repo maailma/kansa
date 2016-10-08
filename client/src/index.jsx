@@ -21,6 +21,9 @@ import middleware from './middleware'
 import reducers from './reducers'
 
 import './app/style.css'
+const theme = getMuiTheme({
+  fontFamily: '"Open Sans", sans-serif'
+});
 
 const history = process.env.NODE_ENV === 'production' ? browserHistory : hashHistory;
 const store = createStore(reducers, middleware(history));
@@ -40,7 +43,7 @@ const doLogin = ({ params: { email, key } }) => {
 
 ReactDOM.render(
   <Provider store={store} >
-    <MuiThemeProvider muiTheme={getMuiTheme()}>
+    <MuiThemeProvider muiTheme={theme}>
       <Router history={syncHistoryWithStore(history, store)}>
         <Route path="/" component={App} >
           <IndexRedirect to={PATH_IN} />
