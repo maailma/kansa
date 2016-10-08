@@ -17,9 +17,14 @@ class LoginForm extends React.Component {
     router: routerShape.isRequired
   }
 
-  state = {
-    email: '',
-    key: ''
+  constructor(props) {
+    super(props);
+    const { email, router } = props;
+    if (email) router.replace(PATH_IN);
+    this.state = {
+      email: '',
+      key: ''
+    }
   }
 
   componentWillReceiveProps(nextProps) {

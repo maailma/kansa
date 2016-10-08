@@ -28,11 +28,11 @@ const theme = getMuiTheme({
 const history = process.env.NODE_ENV === 'production' ? browserHistory : hashHistory;
 const store = createStore(reducers, middleware(history));
 
-const authCheck = (_, replace, callback) => {
+const authCheck = ({ location: { pathname }}, replace, callback) => {
   const email = store.getState().user.get('email');
   if (email) callback();
   else store.dispatch(tryLogin(err => {
-    if (err) replace(PATH_OUT);
+    if (err && pathname !== PATH_OUT) replace(PATH_OUT);
     callback();
   }));
 }
@@ -47,7 +47,7 @@ ReactDOM.render(
       <Router history={syncHistoryWithStore(history, store)}>
         <Route path="/" component={App} >
           <IndexRedirect to={PATH_IN} />
-          <Route path="login" component={Login} />
+          <Route path="login" onEnter={authCheck} component={Login} />
           <Route path="login/:email/:key" onEnter={doLogin} />
           <Route path="profile" onEnter={authCheck} component={MemberList} />
           <Route path="hugo" onEnter={authCheck} >
