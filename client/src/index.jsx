@@ -14,7 +14,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import { keyLogin, tryLogin } from './app/actions/auth'
 import { PATH_IN, PATH_OUT } from './constants'
 import App from './app/components/App'
-import LoginForm from './app/components/LoginForm'
+import Login from './app/components/Login'
 import MemberList from './kansa/components/MemberList'
 import Nominate from './hugo/components/Nominate'
 import middleware from './middleware'
@@ -44,7 +44,7 @@ ReactDOM.render(
       <Router history={syncHistoryWithStore(history, store)}>
         <Route path="/" component={App} >
           <IndexRedirect to={PATH_IN} />
-          <Route path="login" component={LoginForm} />
+          <Route path="login" component={Login} />
           <Route path="login/:email/:key" onEnter={doLogin} />
           <Route path="profile" onEnter={authCheck} component={MemberList} />
           <Route path="hugo" onEnter={authCheck} >
