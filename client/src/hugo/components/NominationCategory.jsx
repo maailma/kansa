@@ -8,7 +8,7 @@ import Paper from 'material-ui/Paper'
 import RaisedButton from 'material-ui/RaisedButton'
 import ListCheck from 'material-ui/svg-icons/av/playlist-add-check'
 import ContentUndo from 'material-ui/svg-icons/content/undo'
-import TextField from 'material-ui/TextField'
+const { Col, Row } = require('react-flexbox-grid');
 
 import time_diff from '../../lib/time_diff'
 import { editNomination, submitNominations, resetNominations } from '../actions'
@@ -20,7 +20,6 @@ import { NominationFillerRow, NominationRow } from './NominationRow'
 
 class NominationActionsRow extends React.Component {
   static propTypes = {
-    colSpan: React.PropTypes.number.isRequired,
     disabled: React.PropTypes.bool.isRequired,
     onSave: React.PropTypes.func.isRequired,
     onReset: React.PropTypes.func.isRequired,
@@ -32,24 +31,36 @@ class NominationActionsRow extends React.Component {
   }
 
   render() {
-    const { colSpan, disabled, onSave, onReset, saveTime } = this.props;
-    return <tr>
-      <td className='NominationActions' colSpan={colSpan}>
-        { saveTime ? <span title={saveTime}>{ 'Last saved ' + time_diff(saveTime) }</span> : null }
+    const { disabled, onSave, onReset, saveTime } = this.props;
+    return <Row
+      middle='xs'
+      style={{ paddingTop: 20 }}
+    >
+      <Col xs>
+        { saveTime ? <span
+          style={{ color: 'rgba(0, 0, 0, 0.3)' }}
+          title={saveTime}
+        >{ 'Last saved ' + time_diff(saveTime) }</span> : null }
+      </Col>
+      <Col xs>
         <RaisedButton
           label='Save'
           disabled={disabled}
+          disabledBackgroundColor='transparent'
           icon={<ListCheck />}
           onTouchTap={onSave}
+          style={{ float: 'right', marginLeft: 15 }}
         />
         <RaisedButton
           label='Reset'
           disabled={disabled}
+          disabledBackgroundColor='transparent'
           icon={<ContentUndo />}
           onTouchTap={onReset}
+          style={{ float: 'right', marginLeft: 15 }}
         />
-      </td>
-    </tr>;
+      </Col>
+    </Row>;
   }
 }
 
@@ -60,18 +71,18 @@ const nominationRowLinks = (n, props) => {
   return res;
 }
 
-const NominationBody = ({ fields, maxNominations, onChange, onSave, onReset, state }) => {
+const NominationBody = ({ colSpan, fields, maxNominations, onChange, onSave, onReset, state }) => {
   const clientData = state.get('clientData');
   const serverData = state.get('serverData');
   const serverTime = state.get('serverTime');
   const isFetching = state.get('isFetching');
   const rows = clientData.size < maxNominations ? clientData.push(Map()) : clientData;
   const lastRow = {};
-  const width = 720 / fields.length - 10;
-  return <tbody className='NominationCategory'>
+  return <div>
     {
       rows.map((rowValues, idx) => <NominationRow
         key={idx}
+        colSpan={colSpan}
         defaultValues={ serverData.get(idx, Map()) }
         disabled={isFetching}
         fields={fields}
@@ -79,21 +90,20 @@ const NominationBody = ({ fields, maxNominations, onChange, onSave, onReset, sta
         onRemove={ () => onChange(idx, null) }
         setLastField={ (field, ref) => lastRow[field] = ref }
         values={rowValues}
-        width={width}
       />)
     }
-    { nominationRowLinks(maxNominations - rows.size, { fields, lastRow, width }) }
+    { nominationRowLinks(maxNominations - rows.size, { colSpan, fields, lastRow }) }
     <NominationActionsRow
-      colSpan={fields.length}
       disabled={ isFetching || clientData.equals(serverData) }
       onSave={onSave}
       onReset={onReset}
       saveTime={ serverTime ? new Date(serverTime) : null }
     />
-  </tbody>;
+  </div>;
 }
 
 NominationBody.propTypes = {
+  colSpan: React.PropTypes.number.isRequired,
   fields: React.PropTypes.array.isRequired,
   maxNominations: React.PropTypes.number,
   onChange: React.PropTypes.func.isRequired,
@@ -111,18 +121,25 @@ NominationBody.propTypes = {
 const NominationCategory = ({ category, ...props }) => {
   const { title, description, nominationFieldLabels } = categoryInfo[category];
   const fields = nominationFields(category);
+  const colSpan = Math.floor(12 / fields.size);
 
   return <Paper className='NominationCategory'>
     <h2>{ title }</h2>
     <p>{ description }</p>
-    <table>
-      <thead>
-      <tr>
-        { fields.map(field => <th key={field}>{ nominationFieldLabels[field] || field }</th>) }
-      </tr>
-      </thead>
-      <NominationBody {...props} fields={fields} maxNominations={maxNominationsPerCategory} />
-    </table>
+    <Row>{
+      fields.map(field => <Col
+        key={field}
+        xs={colSpan}
+      >
+        <h3>{ nominationFieldLabels[field] || field }</h3>
+      </Col>)
+    }</Row>
+    <NominationBody
+      {...props}
+      colSpan={colSpan}
+      fields={fields}
+      maxNominations={maxNominationsPerCategory}
+    />
   </Paper>
 }
 

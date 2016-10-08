@@ -4,16 +4,17 @@ import ImmutablePropTypes from 'react-immutable-proptypes'
 import IconButton from 'material-ui/IconButton'
 import ContentClear from 'material-ui/svg-icons/content/clear'
 import TextField from 'material-ui/TextField'
+const { Col, Row } = require('react-flexbox-grid');
 
 
-const NominationField = ({ changed, disabled, name, onChange, setRef, value, width }) => <TextField
+const NominationField = ({ changed, disabled, name, onChange, setRef, value }) => <TextField
   className={ 'NominationField' + (changed ? ' changed' : '') }
   disabled={disabled}
+  fullWidth={true}
   multiLine={true}
   name={name}
   onChange={onChange}
   ref={setRef}
-  style={{ width }}
   value={value}
 />;
 
@@ -41,6 +42,10 @@ class NominationRemoveButton extends React.Component {
     return <IconButton
       disabled={disabled}
       onTouchTap={onRemove}
+      style={{
+        position: 'absolute',
+        left: '100%'
+      }}
       tooltip='Remove nomination'
       tooltipStyles={{ top: 24 }}
     >
@@ -50,32 +55,32 @@ class NominationRemoveButton extends React.Component {
 }
 
 
-export const NominationFillerRow = ({ fields, lastRow, width }) => <tr>
+export const NominationFillerRow = ({ colSpan, fields, lastRow }) => <Row>
   {
-    fields.map(field => <td key={field}>
+    fields.map(field => <Col key={field} xs={colSpan}>
       <TextField
         className="NominationField NominationLink"
+        fullWidth={true}
         name={field}
         onFocus={ () => lastRow[field] && lastRow[field].focus() }
-        style={{ width }}
         underlineFocusStyle={{ display: 'none' }}
         value=""
       />
-    </td>)
+    </Col>)
   }
-</tr>;
+</Row>;
 
 
 export class NominationRow extends React.Component {
   static propTypes = {
+    colSpan: React.PropTypes.number.isRequired,
     defaultValues: ImmutablePropTypes.map.isRequired,
     disabled: React.PropTypes.bool,
     fields: React.PropTypes.array.isRequired,
     onChange: React.PropTypes.func,
     onRemove: React.PropTypes.func,
     setLastField: React.PropTypes.func,
-    values: ImmutablePropTypes.map.isRequired,
-    width: React.PropTypes.number.isRequired
+    values: ImmutablePropTypes.map.isRequired
   }
 
   shouldComponentUpdate(nextProps) {
@@ -84,12 +89,13 @@ export class NominationRow extends React.Component {
   }
 
   render() {
-    const { defaultValues, disabled, fields, onChange, onRemove, setLastField, values, width } = this.props;
-    return <tr>
+    const { colSpan, defaultValues, disabled, fields, onChange, onRemove, setLastField, values } = this.props;
+    return <Row>
       {
-        fields.map(field => <td
+        fields.map(field => <Col
           key={field}
           className='NominationFieldCell'
+          xs={colSpan}
         >
           <NominationField
             changed={ values.get(field, '') != defaultValues.get(field, '') }
@@ -98,13 +104,10 @@ export class NominationRow extends React.Component {
             onChange={ ev => onChange(field, ev.target.value) }
             setRef={ ref => { if (ref && values.isEmpty()) setLastField(field, ref); } }
             value={ values.get(field, '') }
-            width={width}
           />
-        </td>)
+        </Col>)
       }
-      <td>
-        { values.isEmpty() ? null : <NominationRemoveButton disabled={disabled} onRemove={onRemove} /> }
-      </td>
-    </tr>;
+      { values.isEmpty() ? null : <NominationRemoveButton disabled={disabled} onRemove={onRemove} /> }
+    </Row>;
   }
 }
