@@ -10,10 +10,6 @@ export default ({ setShowMore, showMore }) => <div>
   <p>
     We are therefore looking back as well as looking forward – and we are inviting fans to think themselves back to
     1979, and the SF and Fantasy of that year, for the purpose of giving us fresh data to test the software with.
-    { showMore ? null : <a href="#more" style={{ paddingLeft: 8 }} onClick={ (ev) => {
-      ev.preventDefault();
-      setShowMore(true);
-    } }>Read more...</a> }
   </p>
 
   { showMore ? <div>
@@ -47,6 +43,16 @@ export default ({ setShowMore, showMore }) => <div>
       will be deleted from our systems at its conclusion.
     </p>
 
-  </div> : null }
+  </div> : <a
+    href="#more"
+    style={{
+      display: 'block',
+      float: 'right'
+    }}
+    onClick={(ev) => {
+      ev.preventDefault();
+      setShowMore(true);
+    }}
+  >Read more...</a> }
 
 </div>;
