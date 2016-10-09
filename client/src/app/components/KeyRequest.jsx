@@ -17,7 +17,8 @@ class KeyRequest extends React.Component {
   }
 
   state = {
-    email: ''
+    email: '',
+    sent: false
   }
 
   componentWillReceiveProps(nextProps) {
@@ -26,8 +27,8 @@ class KeyRequest extends React.Component {
   }
 
   render() {
-    const { keyRequest } = this.props;
-    const { email } = this.state;
+    const { children, keyRequest } = this.props;
+    const { email, sent } = this.state;
     const validEmail = email && /.@.*\../.test(email);
 
     return <form>
@@ -38,15 +39,18 @@ class KeyRequest extends React.Component {
         value={email}
         onChange={ev => this.setState({ email: ev.target.value })}
       />
-      <div style={{ height: 32 }} />
       <RaisedButton
         label="Send login link"
         fullWidth={true}
         primary={true}
-        disabled={!validEmail}
+        disabled={!validEmail || sent}
         style={{ margin: '12px 0' }}
-        onTouchTap={() => keyRequest(email)}
+        onTouchTap={() => {
+          keyRequest(email);
+          this.setState({ sent: true });
+        }}
       />
+      { sent ? children : null }
     </form>
   }
 }
