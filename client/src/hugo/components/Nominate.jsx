@@ -57,7 +57,7 @@ class ActiveNominations extends React.Component {
           lg={8} lgOffset={2}
           style={{ paddingTop: 20 }}
         >
-          <h2>{ 'Nominations for ' + this.name }</h2>
+          <h1>{ 'Nominations for ' + this.name }</h1>
         </Col>
         <Col
           xs={10} xsOffset={1}

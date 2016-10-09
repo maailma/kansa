@@ -18,7 +18,7 @@ export default ({ setShowMore, showMore }) => <div>
 
   { showMore ? <div>
 
-    <h3>Why 1980?</h3>
+    <h2>Why 1980?</h2>
 
     <p>
       This was, frankly, a fairly arbitrary decision. We wanted to choose a year which was not too far back in the
@@ -32,7 +32,7 @@ export default ({ setShowMore, showMore }) => <div>
       Noreascon Two in Boston; those rewards remain part of history and will never be changed.
     </p>
 
-    <h3>So what are you doing?</h3>
+    <h2>So what are you doing?</h2>
 
     <p>
       From 9 to 26 October, fans are invited to make nominations for the Hugo categories under the rules for 2017,
