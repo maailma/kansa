@@ -12,10 +12,11 @@ var admin=request.agent(host,{ca:cert});
 var loginparams={email:"admin@example.com",key:"key"}
 
 describe("Check that API services are up",function () {
-    this.retries(5);
+    this.timeout(120000)
+    this.retries(10);
     afterEach(function (done) {
         if (this.currentTest.state !== 'passed') {
-            setTimeout(done,1000);        
+            setTimeout(done,2000);
         } else {
             done();
         }
