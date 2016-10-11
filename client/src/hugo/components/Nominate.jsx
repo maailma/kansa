@@ -3,6 +3,7 @@ import React from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 import { connect } from 'react-redux'
 
+const { Col, Row } = require('react-flexbox-grid');
 import Snackbar from 'material-ui/Snackbar'
 
 import { setNominator, clearNominationError } from '../actions'
@@ -28,23 +29,33 @@ const Messages = connect(
   onRequestClose={ () => clearNominationError(category) }
 />);
 
-function getName(person) {
-  if (!Map.isMap(person)) return '<>';
-  const pna = [ person.get('public_first_name'), person.get('public_last_name') ];
-  const pns = pna.filter(s => s).join(' ');
-  return pns || person.get('legal_name');
-}
-
-const ActiveNominations = ({ person }) => <div>
-  <div className='NominationsHead'>
-    <h1>{ 'Hugo nominations for ' + getName(person) }</h1>
-    <p>Introduction to Hugo nominations</p>
-  </div>
-  {
-    Object.keys(categoryInfo).map(category => (
-      <NominationCategory category={category} key={category}/>
-    ))
-  }
+const ActiveNominations = ({ name }) => <div>
+  <Row>
+    <Col
+      xs={10} xsOffset={1}
+      lg={8} lgOffset={2}
+      style={{ paddingTop: 20 }}
+    >
+      <h1>{ 'Hugo nominations for ' + name }</h1>
+    </Col>
+    <Col
+      xs={10} xsOffset={1}
+      sm={8} smOffset={2}
+      lg={6} lgOffset={3}
+    >
+      <p>Introduction to Hugo nominations</p>
+    </Col>
+  </Row>
+  <Row>
+    <Col
+      xs={10} xsOffset={1}
+      lg={8} lgOffset={2}
+    >{
+      Object.keys(categoryInfo).map(category => (
+        <NominationCategory category={category} key={category}/>
+      ))
+    }</Col>
+  </Row>
   <SaveAllButton />
   <Messages />
 </div>;
@@ -104,7 +115,15 @@ class Nominate extends React.Component {
 
   render() {
     const { person } = this.props;
-    return person ? <ActiveNominations person={person}/> : <div>Loading...</div>
+    return person ? <ActiveNominations name={this.name} /> : <div>Loading...</div>
+  }
+
+  get name() {
+    const { person } = this.props;
+    if (!Map.isMap(person)) return '<>';
+    const pna = [person.get('public_first_name'), person.get('public_last_name')];
+    const pns = pna.filter(s => s).join(' ');
+    return pns || person.get('legal_name');
   }
 
 }

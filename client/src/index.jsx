@@ -14,22 +14,25 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import { keyLogin, tryLogin } from './app/actions/auth'
 import { PATH_IN, PATH_OUT } from './constants'
 import App from './app/components/App'
-import LoginForm from './app/components/LoginForm'
+import Login from './app/components/Login'
 import MemberList from './kansa/components/MemberList'
 import Nominate from './hugo/components/Nominate'
 import middleware from './middleware'
 import reducers from './reducers'
 
 import './app/style.css'
+const theme = getMuiTheme({
+  fontFamily: '"Open Sans", sans-serif'
+});
 
 const history = process.env.NODE_ENV === 'production' ? browserHistory : hashHistory;
 const store = createStore(reducers, middleware(history));
 
-const authCheck = (_, replace, callback) => {
+const authCheck = ({ location: { pathname }}, replace, callback) => {
   const email = store.getState().user.get('email');
   if (email) callback();
   else store.dispatch(tryLogin(err => {
-    if (err) replace(PATH_OUT);
+    if (err && pathname !== PATH_OUT) replace(PATH_OUT);
     callback();
   }));
 }
@@ -40,11 +43,11 @@ const doLogin = ({ params: { email, key } }) => {
 
 ReactDOM.render(
   <Provider store={store} >
-    <MuiThemeProvider muiTheme={getMuiTheme()}>
+    <MuiThemeProvider muiTheme={theme}>
       <Router history={syncHistoryWithStore(history, store)}>
         <Route path="/" component={App} >
           <IndexRedirect to={PATH_IN} />
-          <Route path="login" component={LoginForm} />
+          <Route path="login" onEnter={authCheck} component={Login} />
           <Route path="login/:email/:key" onEnter={doLogin} />
           <Route path="profile" onEnter={authCheck} component={MemberList} />
           <Route path="hugo" onEnter={authCheck} >
