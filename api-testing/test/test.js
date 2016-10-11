@@ -9,7 +9,7 @@ var memberstats = {"":{"total":0}};
 // Create agent for unlogged and admin sessions
 var unlogged=request.agent(host,{ca:cert});
 var admin=request.agent(host,{ca:cert});
-var loginparams={email:"admin@example.com",key:"key"}
+var loginparams={email:"admin@example.com",key:"key"};
 
 describe("Check that API services are up",function () {
     this.retries(5);
@@ -56,8 +56,9 @@ describe("Login",function () {
     it("gets a session cookie or it gets the hose again.",function (done) {
         admin.get("/api/kansa/login")
             .query(loginparams)
+            .expect("set-cookie",/w75/)
             .expect(200,{status:'success', email:loginparams["email"]})
-            .end(done)
+        .end(done);
     })
     it("wrong email gets 401",function (done) {
         unlogged.get("/api/kansa/login")
@@ -72,4 +73,20 @@ describe("Login",function () {
             .end(done)
     })
     
+})
+
+describe("Logout",function() {
+    var testagent = request.agent(host,{ca:cert});
+    before(function (done) {
+        testagent.get("/api/kansa/login")
+            .query(loginparams)
+            .expect("set-cookie",/w75/)
+            .expect(200,{status:'success',email:loginparams["email"]})
+            .end(done)
+    });
+    it("Should be successfull",function (done) {
+        assert(testagent.jar.getCookie("w75",testagent.CookieAccess.All))
+        testagent.get("/api/kansa/logout")
+            .expect(200,{status:'success'});
+    })
 })
