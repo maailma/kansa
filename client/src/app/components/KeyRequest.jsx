@@ -5,26 +5,19 @@ import { routerShape, withRouter } from 'react-router'
 import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
 
-import { keyLogin, keyRequest } from '../actions/auth'
+import { keyRequest } from '../actions/auth'
 import { PATH_IN } from '../../constants'
 
-class LoginForm extends React.Component {
+class KeyRequest extends React.Component {
 
   static propTypes = {
     email: React.PropTypes.string,
-    keyLogin: React.PropTypes.func.isRequired,
     keyRequest: React.PropTypes.func.isRequired,
     router: routerShape.isRequired
   }
 
-  constructor(props) {
-    super(props);
-    const { email, router } = props;
-    if (email) router.replace(PATH_IN);
-    this.state = {
-      email: '',
-      key: ''
-    }
+  state = {
+    email: ''
   }
 
   componentWillReceiveProps(nextProps) {
@@ -33,8 +26,8 @@ class LoginForm extends React.Component {
   }
 
   render() {
-    const { keyLogin, keyRequest } = this.props;
-    const { email, key } = this.state;
+    const { keyRequest } = this.props;
+    const { email } = this.state;
     const validEmail = email && /.@.*\../.test(email);
 
     return <form>
@@ -45,31 +38,16 @@ class LoginForm extends React.Component {
         value={email}
         onChange={ev => this.setState({ email: ev.target.value })}
       />
-      <TextField
-        id="key"
-        fullWidth={true}
-        floatingLabelText="Key"
-        value={key}
-        onChange={ev => this.setState({ key: ev.target.value })}
-      />
       <div style={{ height: 32 }} />
       <RaisedButton
-        label="Login"
-        fullWidth={true}
-        primary={true}
-        disabled={!validEmail || !key}
-        style={{ margin: '12px 0' }}
-        onTouchTap={() => keyLogin(email, key)}
-      />
-      <RaisedButton
-        label="Send login key"
+        label="Send login link"
         fullWidth={true}
         primary={true}
         disabled={!validEmail}
         style={{ margin: '12px 0' }}
         onTouchTap={() => keyRequest(email)}
       />
-    </form>;
+    </form>
   }
 }
 
@@ -77,9 +55,8 @@ export default connect(
   (state) => ({
     email: state.user.get('email')
   }), {
-    keyLogin,
     keyRequest
   }
 )(
-  withRouter(LoginForm)
+  withRouter(KeyRequest)
 );

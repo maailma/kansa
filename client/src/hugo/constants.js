@@ -1,123 +1,88 @@
-export const categories = [ 'Novel', 'Novella', 'Novelette', 'ShortStory', 'RelatedWork',
-    'GraphicStory', 'DramaticLong', 'DramaticShort', 'EditorLong', 'EditorShort', 'ProArtist',
-    'Semiprozine', 'Fanzine', 'Fancast', 'FanWriter', 'FanArtist', 'Campbell' ];
-
 export const maxNominationsPerCategory = 5;
 
-export const nominationFields = (category) => { switch (category) {
-
-  case 'Novel':
-  case 'Novella':
-  case 'Novelette':
-  case 'ShortStory':
-  case 'RelatedWork':
-  case 'GraphicStory':
-    return [ 'author', 'title', 'publisher' ];
-
-  case 'DramaticLong':
-  case 'DramaticShort':
-    return [ 'title', 'set' ];
-
-  case 'EditorLong':
-  case 'EditorShort':
-    return [ 'editor' ];
-
-  case 'Semiprozine':
-  case 'Fanzine':
-  case 'Fancast':
-    return [ 'title' ];
-
-  case 'FanWriter':
-  case 'FanArtist':
-  case 'ProArtist':
-  case 'Campbell':
-    return [ 'author', 'example' ];
-
-  default: throw new Error('Unknown category ' + JSON.stringify(category));
-}}
-
-export const categoryTexts = {
+export const categoryInfo = {
   Novel: {
     title: 'Best Novel',
-    description: 'A science fiction or fantasy story of 40,000 words or more, which appeared for the first time in 2016.',
+    description: `A science fiction or fantasy story of forty thousand (40,000) words or more.`,
     nominationFieldLabels: {
       author: 'Author',
       title: 'Title',
-      publisher: 'Publisher'
+      publisher: 'Publisher/Where Published'
     }
   },
 
   Novella: {
     title: 'Best Novella',
-    description: 'A science fiction or fantasy story between 17,500 and 40,000 words, which appeared for the first time in 2016.',
+    description: `A science fiction or fantasy story of between seventeen thousand five hundred (17,500) and forty thousand (40,000) words.`,
     nominationFieldLabels: {
       author: 'Author',
       title: 'Title',
-      publisher: 'Where Published'
+      publisher: 'Publisher/Where Published'
     }
   },
 
   Novelette: {
     title: 'Best Novelette',
-    description: 'A science fiction or fantasy story between 7,500 and 17,500 words, which appeared for the first time in 2016.',
+    description: `A science fiction or fantasy story of between seven thousand five hundred (7,500) and seventeen thousand five hundred (17,500) words.`,
     nominationFieldLabels: {
       author: 'Author',
       title: 'Title',
-      publisher: 'Where Published'
+      publisher: 'Publisher/Where Published'
     }
   },
 
   ShortStory: {
     title: 'Best Short Story',
-    description: 'A science fiction or fantasy story of fewer than 7,500 words, which appeared for the first time in 2016.',
+    description: `A science fiction or fantasy story of less than seven thousand five hundred (7,500) words.`,
     nominationFieldLabels: {
       author: 'Author',
       title: 'Title',
-      publisher: 'Where Published'
+      publisher: 'Publisher/Where Published'
     }
   },
 
   RelatedWork: {
     title: 'Best Related Work',
-    description: 'Any work related to the field of science fiction, fantasy, or fandom, appearing for the first time in 2016, or which has been substantially modified during 2016, and which is either non-fiction or, if fictional, is noteworthy primarily for aspects other than the fictional text, and which is not eligible in any other category.',
+    description: `Any work related to the field of science fiction, fantasy, or fandom, appearing for the first time during the previous calendar year or which has been substantially modified during the previous calendar year, and which is either non-fiction or, if fictional, is noteworthy primarily for aspects other than the fictional text, and which is not eligible in any other category.`,
     nominationFieldLabels: {
       author: 'Author/Editor',
       title: 'Title',
-      publisher: 'Publisher'
+      publisher: 'Publisher/Where Published'
     }
   },
 
   GraphicStory: {
     title: 'Best Graphic Story',
-    description: 'Any science fiction or fantasy story told in graphic form, appearing for the first time in 2016.',
+    description: `Any science fiction or fantasy story told in graphic form appearing for the first time in the previous calendar year.`,
     nominationFieldLabels: {
       author: 'Author',
       title: 'Title',
-      publisher: 'Publisher'
+      publisher: 'Publisher/Where Published'
     }
   },
 
   DramaticLong: {
     title: 'Best Dramatic Presentation, Long Form',
-    description: 'Any theatrical feature or other production with a complete running time of more than 90 minutes, in any medium of dramatized science fiction, fantasy, or related subjects that has been publicly presented for the first time in its present dramatic form during 2016.',
+    description: `Any theatrical feature or other production, with a complete running time of more than 90 minutes, in any medium of dramatized science fiction, fantasy or related subjects that has been publicly presented for the first time in its present dramatic form during the previous calendar year.`,
     nominationFieldLabels: {
       title: 'Title',
-      set: 'Studio/Series'
+      producer: 'Studio/Network/Production Company'
     }
   },
 
   DramaticShort: {
     title: 'Best Dramatic Presentation, Short Form',
-    description: 'Any television program or other production with a complete running time of 90 minutes or less, in any medium of dramatized science fiction, fantasy, or related subjects that has been publicly presented for the first time in its present dramatic form during 2016.',
+    description: `Any television program or other production, with a complete running time of 90 minutes or less, in any medium of dramatized science fiction, fantasy or related subjects that has been publicly presented for the first time in its present dramatic form during the previous calendar year.`,
     nominationFieldLabels: {
       title: 'Title',
-      set: 'Studio/Series'
+      series: '(Series)',
+      producer: 'Studio/Network/Production Company'
     }
   },
 
   EditorShort: {
     title: 'Best Professional Editor, Short Form',
-    description: 'The editor of at least four (4) anthologies, collections, or magazine issues (or their equivalent in other media) primarily devoted to science fiction and/or fantasy, at least one of which was published in 2016.',
+    description: `The editor of at least four (4) anthologies, collections or magazine issues (or their equivalent in other media) primarily devoted to science fiction and / or fantasy, at least one of which was published in the previous calendar year.`,
     nominationFieldLabels: {
       editor: 'Editor'
     }
@@ -125,7 +90,7 @@ export const categoryTexts = {
 
   EditorLong: {
     title: 'Best Professional Editor, Long Form',
-    description: 'The editor of at least four (4) novel-length works primarily devoted to science fiction and/or fantasy that were published in 2016, and do not qualify under Best Editor, Short Form.',
+    description: `The editor of at least four (4) novel-length works primarily devoted to science fiction and / or fantasy published in the previous calendar year that do not qualify as works under Best Editor, Shot Form.`,
     nominationFieldLabels: {
       editor: 'Editor'
     }
@@ -133,7 +98,7 @@ export const categoryTexts = {
 
   ProArtist: {
     title: 'Best Professional Artist',
-    description: 'An illustrator whose work has appeared in a professional publication in the field of science fiction or fantasy during 2016. A professional publication is one that meets at least one (1) of the following criteria: 1) It provided at least a quarter of the income of any one person; or 2) It was owned or published by any entity which provided at least a quarter of the income of any of its staff and/or owner. If possible, please cite an example of the nominee’s work. (Failure to provide such references will not invalidate a nomination.)',
+    description: `An illustrator whose work has appeared in a professional publication in the field of science fiction or fantasy during the previous calendar year.`,
     nominationFieldLabels: {
       author: 'Artist/Illustrator',
       example: 'Example'
@@ -142,7 +107,7 @@ export const categoryTexts = {
 
   Semiprozine: {
     title: 'Best Semiprozine',
-    description: 'Any generally available non-professional publication devoted to science fiction or fantasy which by the close of 2016 had published at least four (4) issues (or the equivalent in other media), and at least one (1) of which appeared in 2016, which does not qualify as a fancast, and which in 2016 has met at least one (1) of the following criteria: 1) Paid its contributors or staff in other than copies of the publication; or 2) Was generally available only for paid purchase.',
+    description: `Any generally available non-professional periodical publication devoted to science fiction or fantasy, or related subjects which by the close of the previous calendar year has published four (4) or more issues (or the equivalent in other media), at least one (1) of which appeared in the previous calendar year, which does not qualify as a fancast, and which in the previous calendar year met at least one (1) of the following criteria: (1) paid its contributors and/or staff in other than copies of the publication, (2) was generally available only for paid purchase.`,
     nominationFieldLabels: {
       title: 'Title'
     }
@@ -150,7 +115,7 @@ export const categoryTexts = {
 
   Fanzine: {
     title: 'Best Fanzine',
-    description: 'Any generally available non-professional publication devoted to science fiction, fantasy, or related subjects which, by the close of 2016, had published at least four (4) issues (or the equivalent in other media), at least one (1) of which appeared in 2016, and which does not qualify as a semiprozine or a fancast, and which in 2016 met neither of the following criteria: 1) Paid its contributors or staff in other than copies of the publication; or 2) Was generally available only for paid purchase.',
+    description: `Any generally available non-professional periodical publication devoted to science fiction, fantasy, or related subjects that by the close of the previous calendar year has published four (4) or more issues (or the equivalent in other media), at least one (1) of which appeared in the previous calendar year, that does not qualify as a semiprozine or a fancast, and that in the previous calendar year met neither of the following criteria: (1) paid its contributors or staff monetarily in other than copies of the publication, (2) was generally available only for paid purchase.`,
     nominationFieldLabels: {
       title: 'Title'
     }
@@ -158,7 +123,7 @@ export const categoryTexts = {
 
   Fancast: {
     title: 'Best Fancast',
-    description: 'Any generally available non-professional audio or video periodical devoted to science fiction, fantasy, or related subjects that by the close of 2016 has released four (4) or more episodes, at least one (1) of which appeared in 2016, and that does not qualify as a dramatic presentation.',
+    description: `Any generally available non-professional audio or video periodical devoted to science fiction, fantasy, or related subjects that by the close of the previous calendar year has released four (4) or more episodes, at least one (1) of which appeared in the previous calendar year, and that does not qualify as a dramatic presentation.`,
     nominationFieldLabels: {
       title: 'Title'
     }
@@ -166,7 +131,7 @@ export const categoryTexts = {
 
   FanWriter: {
     title: 'Best Fan Writer',
-    description: 'A person whose writing has appeared in fanzines or semiprozines, or in generally available electronic media in 2016.',
+    description: `Any person whose writing has appeared in semiprozines or fanzines or in generally available electronic media during the previous calendar year.`,
     nominationFieldLabels: {
       author: 'Author',
       example: 'Example'
@@ -175,19 +140,35 @@ export const categoryTexts = {
 
   FanArtist: {
     title: 'Best Fan Artist',
-    description: 'An artist or cartoonist whose work has appeared through publication in fanzines, semiprozines, or through any other public non-professional display (including at conventions) in 2016.',
+    description: `An artist or cartoonist whose work has appeared through publication in semiprozines or fanzines or through other public, non-professional, display (including at a convention or conventions), during the previous calendar year.`,
     nominationFieldLabels: {
       author: 'Artist/Illustrator',
       example: 'Example'
     }
   },
 
-  Campbell: {
-    title: 'John W. Campbell Award',
-    description: 'Award for the best new science fiction writer, sponsored by Dell Magazines (not a Hugo Award). A new writer is one whose first work of science fiction or fantasy appeared in 2015 or 2016 in a professional publication. For Campbell Award purposes, a professional publication is one for which more than a nominal amount was paid, any publication that had an average press run of at least 10,000 copies, or any other criteria that the Award sponsors may designate.',
+  Series: {
+    title: 'Best Series',
+    description: `A multi-volume science fiction or fantasy story, unified by elements such as plot, characters, setting, and presentation, which has appeared in at least three (3) volumes consisting of a total of at least 240,000 words by the close of the calendar year 2016, at least one of which was published in 2016. If any series and a subset series thereof both receive sufficient nominations to appear on the final ballot, only the version which received more nominations shall appear.`,
+    nominationFieldLabels: {
+      author: 'Author',
+      title: 'Title',
+      publisher: 'Publisher'
+    }
+  },
+
+  NewWriter: {
+    title: 'John W. Campbell Award (not a Hugo)',
+    description: `(Award for the best new science fiction writer, sponsored by Dell Magazines) A new writer is one whose first work of science fiction or fantasy appeared in 2015 or 2016 in a professional publication. For Campbell Award purposes, a professional publication is one for which more than a nominal amount was paid, any publication that had an average press run of at least 10,000 copies, or any other criteria that the Award sponsors may designate.`,
     nominationFieldLabels: {
       author: 'Author',
       example: 'Example'
     }
   }
+}
+
+export const nominationFields = (category) => {
+  const texts = categoryInfo[category];
+  if (!texts) throw new Error('Unknown category ' + JSON.stringify(category));
+  return Object.keys(texts.nominationFieldLabels);
 }

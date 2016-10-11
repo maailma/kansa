@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import { IndexRedirect, IndexRoute, Router, Route, hashHistory } from 'react-router'
+import { IndexRedirect, Router, Route, browserHistory, hashHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 import { createStore } from 'redux'
 
@@ -12,54 +12,49 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import { keyLogin, tryLogin } from './app/actions/auth'
-import { setNominator } from './hugo/actions'
-import { PATH_IN } from './constants'
+import { PATH_IN, PATH_OUT } from './constants'
 import App from './app/components/App'
-import LoginForm from './app/components/LoginForm'
+import Login from './app/components/Login'
 import MemberList from './kansa/components/MemberList'
 import Nominate from './hugo/components/Nominate'
 import middleware from './middleware'
 import reducers from './reducers'
 
 import './app/style.css'
+const theme = getMuiTheme({
+  fontFamily: '"Open Sans", sans-serif'
+});
 
-const store = createStore(reducers, middleware(hashHistory));
+const history = process.env.NODE_ENV === 'production' ? browserHistory : hashHistory;
+const store = createStore(reducers, middleware(history));
 
-const authCheck = (nextState, replace) => {
-  const loc = nextState.location.pathname;
+const authCheck = ({ location: { pathname }}, replace, callback) => {
   const email = store.getState().user.get('email');
-  if (!email) store.dispatch(tryLogin());
-  else if (loc == '/') replace(PATH_IN);
+  if (email) callback();
+  else store.dispatch(tryLogin(err => {
+    if (err && pathname !== PATH_OUT) replace(PATH_OUT);
+    callback();
+  }));
 }
 
 const doLogin = ({ params: { email, key } }) => {
   store.dispatch(keyLogin(email, key));
 }
 
-const onEnterHugo = (nextState, replace) => {
-  const id = parseInt(nextState.params.id);
-  const person = store.getState().user.get('people', []).find(p => p.id === id);
-  if (!person) store.dispatch(tryLogin());
-}
-
-const onEnterNominations = ({ params: { id } }, _, callback) => {
-  store.dispatch(setNominator(id, callback));
-}
-
 ReactDOM.render(
   <Provider store={store} >
-    <MuiThemeProvider muiTheme={getMuiTheme()}>
-      <Router history={syncHistoryWithStore(hashHistory, store)}>
+    <MuiThemeProvider muiTheme={theme}>
+      <Router history={syncHistoryWithStore(history, store)}>
         <Route path="/" component={App} >
           <IndexRedirect to={PATH_IN} />
-          <Route path="login" component={LoginForm} />
+          <Route path="login" onEnter={authCheck} component={Login} />
           <Route path="login/:email/:key" onEnter={doLogin} />
           <Route path="profile" onEnter={authCheck} component={MemberList} />
           <Route path="hugo" onEnter={authCheck} >
             <IndexRedirect to={PATH_IN} />
-            <Route path=":id" onEnter={onEnterHugo} >
+            <Route path=":id">
               <IndexRedirect to="nominate" />
-              <Route path="nominate" onEnter={onEnterNominations} component={Nominate} />
+              <Route path="nominate" component={Nominate} />
             </Route>
           </Route>
         </Route>

@@ -1,0 +1,42 @@
+version: '2'
+
+# included by default along with docker-compose.yml
+
+services:
+  nginx:
+    environment:
+      API_SERVER_NAME: localhost
+      API_SSL_CERTIFICATE: /ssl/localhost.cert
+      API_SSL_CERTIFICATE_KEY: /ssl/localhost.key
+    ports:
+      - "4430:443"
+    volumes:
+      - ./nginx/ssl:/ssl:ro
+
+  client-build:
+    environment:
+      API_HOST: localhost:4430
+      TITLE: Production Test
+
+  hugo:
+    environment:
+      CORS_ORIGIN: http://localhost:8080
+      DATABASE_URL: postgres://hugo:pwd@postgres:5432/api
+      SESSION_SECRET: dev secret
+
+  kansa:
+    environment:
+      CORS_ORIGIN: http://localhost:8080
+      DATABASE_URL: postgres://kansa:pwd@postgres:5432/api
+      SESSION_SECRET: dev secret
+
+  kyyhky:
+    environment:
+      LOGIN_URI_ROOT: https://localhost:4430/#/login
+      SENDGRID_APIKEY:
+
+  postgres:
+    environment:
+      POSTGRES_PASSWORD: adminpwd
+      KANSA_PG_PASSWORD: pwd
+      HUGO_PG_PASSWORD: pwd

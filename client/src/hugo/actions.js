@@ -1,8 +1,7 @@
-export const setNominator = (person, callback) => ({
+export const setNominator = (person) => ({
   module: 'hugo-nominations',
   type: 'SET_NOMINATOR',
-  person,
-  callback
+  person
 });
 
 export const getNominations = ({ category, nominations, time }) => ({

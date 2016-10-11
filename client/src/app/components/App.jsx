@@ -5,6 +5,7 @@ import { push } from 'react-router-redux'
 import FlatButton from 'material-ui/FlatButton'
 import Menu from 'material-ui/Menu'
 import MenuItem from 'material-ui/MenuItem'
+import Paper from 'material-ui/Paper'
 import Popover from 'material-ui/Popover'
 import Snackbar from 'material-ui/Snackbar'
 import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
@@ -59,8 +60,12 @@ class ButtonMenu extends React.Component {
   </div>;
 }
 
-const App = ({ children, email, goHome, hideMessage, logout, message }) => <div>
-   <Toolbar>
+const AppBar = ({ email, goHome, logout }) => <Paper zDepth={2} >
+  <Toolbar
+    style={{
+      backgroundColor: 'white'
+    }}
+  >
     <ToolbarGroup>
       <ToolbarTitle text={TITLE} />
     </ToolbarGroup>
@@ -71,6 +76,14 @@ const App = ({ children, email, goHome, hideMessage, logout, message }) => <div>
       </ButtonMenu>
     </ToolbarGroup>
   </Toolbar>
+</Paper>;
+
+const App = ({ children, email, goHome, hideMessage, logout, message }) => <div>
+  { email ? <AppBar
+    email={email}
+    goHome={goHome}
+    logout={logout}
+  /> : null }
   <main>
     {children}
   </main>

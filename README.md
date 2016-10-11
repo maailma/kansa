@@ -1,10 +1,10 @@
 [![DockerPulls](https://img.shields.io/docker/stars/worldcon75/api.svg)](https://hub.docker.com/r/worldcon75/api/)
-[![Build Status](https://travis-ci.org/jautero/api.svg?branch=master)](https://travis-ci.org/jautero/api)
+[![Build Status](https://travis-ci.org/worldcon75/api.svg?branch=master)](https://travis-ci.org/worldcon75/api)
 # Worldcon 75 Member Services 
 This project is under active development, so not everything is ready yet. The main components are:
 
 - **`client`** - The client front-end for our membership; a react + redux single-page app
-- **`docker-compose.yml`** - Service configuration
+- **`docker-compose*.yml`** - Service configuration
 - **`hakkapeliitta`** - A deprecated Scala webshop implementation, due to be ported to node.js
 - **`hugo/server`** - An express.js app providing the `/api/hugo/` parts of [this API](API.md)
 - **`kansa/server`** - An express.js app providing the `/api/kansa/` parts of [this API](API.md)
@@ -19,12 +19,12 @@ the name for our member registry. The [Hugo Awards](http://www.thehugoawards.org
 are nominated and selected by the members of each year's Worldcon. Kyyhky is Finnish for "pigeon".
 
 
-### Installation & Configuration
+### Getting Started
 
 To get a dev environment up and running, first clone this repo with `git clone --recursive`, or run
 `git submodule update --init` after cloning. The database and server are set up to be run using
 [docker-compose](https://docs.docker.com/compose/); for other tools you'll need a recent-ish version
-of node.
+of node if you want to build them locally.
 
 Here's a series of commands that should get the full working system installed and operational,
 provided that `git`, `docker-compose` and `npm` are already installed:
@@ -57,6 +57,24 @@ or by visiting the API endpoint `https://localhost:4430/api/kansa/login?email=ad
 to set the proper auth cookie.
 
 
+### Configuration
+
+For production use and otherwise, the services' configuration is controlled by the Docker Compose
+config files. By default, `docker-compose` will include both [docker-compose.yml](docker-compose.yml)
+and [docker-compose.override.yml](docker-compose.override.yml); the former acts as the base config,
+which the latter expands/overrides with development-specific configuration. For production use, the
+base config will instead need to be overridden by [docker-compose.prod.yml](docker-compose.prod.yml)
+(see [`make prod`](Makefile)).
+
+For the most part, services are configured using environment variables, some of which need to match
+across services:
+  - `SESSION_SECRET` allows hugo/server and kansa/server to share authenticated sessions
+  - `DATABASE_URL` and `*_PG_PASSWORD` are required for the services' database connections
+
+The [production config](docker-compose.prod.yml) includes the `client-build` service, which is used
+to build the client's JS assets, which are then served by `nginx`.
+
+
 ### Common Issues
 
 The particular places that may need manual adjustment are:
@@ -66,7 +84,8 @@ The particular places that may need manual adjustment are:
   be automatically accepted by browsers or other clients. If you have a signed certificate you can
   use (and therefore a publicly visible address), you'll want to add the certificate files to
   `nginx/ssl/` and adjust the environment values set for the `nginx` service in
-  [docker-compose.yml](docker-compose.yml).
+  [docker-compose.override.yml](docker-compose.override.yml) and/or
+  [docker-compose.prod.yml](docker-compose.prod.yml).
 
 - The `CORS_ORIGIN` variables in [hugo/server/dev.env](hugo/server/dev.env) and
   [kansa/server/dev.env](kansa/server/dev.env) need to be space- or comma-separated lists of

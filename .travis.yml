@@ -17,13 +17,14 @@ before_install:
     - sudo mv docker-compose /usr/local/bin
     
 install:
-    - cd api-testing; npm install
+    - cd integration-tests; npm install
 
 before_script:
+    - docker-compose build
     - docker-compose up -d
 
 script: 
-    - cd api-testing; npm test
+    - cd integration-tests; npm test
 
 after_script:
     - docker-compose down
