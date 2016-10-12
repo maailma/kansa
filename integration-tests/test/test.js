@@ -48,24 +48,47 @@ describe("Country statistics", function () {
 })
 
 describe("Login",function () {
-    it("gets a session cookie or it gets the hose again.",function (done) {
-        admin.get("/api/kansa/login")
-            .query(loginparams)
-            .expect("set-cookie",/w75/)
-            .expect(200,{status:'success', email:loginparams["email"]})
-        .end(done);
+    describe("Successful login",function () {
+        it("gets a session cookie or it gets the hose again.",function (done) {
+            admin.get("/api/kansa/login")
+                .query(loginparams)
+                .expect("set-cookie",/w75/)
+                .expect(200,{status:'success', email:loginparams["email"]})
+            .end(done);
+        });
+        it("gets user information",function (done) {
+            admin.get("/api/kansa/user")
+                .expect(200)
+                .end(done);
+        })
+    });
+    describe("Login with wrong email",function () {
+        it("gets 401 response",function (done) {
+            unlogged.get("/api/kansa/login")
+                .query({email:"foo@doo.com",key:loginparams["key"]})
+                .expect(401)
+                .end(done)
+        });
+        it("gets unauthorized from /api/kansa/usr",function (done) {
+            unlogged.get("/api/kansa/user")
+                .expect(401,{status:"unauthorized"})
+                .end(done)
+        })
     })
-    it("wrong email gets 401",function (done) {
-        unlogged.get("/api/kansa/login")
-            .query({email:"foo@doo.com",key:loginparams["key"]})
-            .expect(401)
-            .end(done)
-    })
-    it("wrong key gets 401",function (done) {
-        unlogged.get("/api/kansa/login")
-            .query({email:loginparams["email"],key:"foo"})
-            .expect(401)
-            .end(done)
+    describe("Login with wrong key",function () {
+        it("gets 401 response",function (done) {
+            unlogged.get("/api/kansa/login")
+                .query({email:loginparams["email"],key:"foo"})
+                .expect(401)
+                .end(done)
+        })
+        
+        it("gets unauthorized from /api/kansa/usr",function (done) {
+            unlogged.get("/api/kansa/user")
+                .expect(401,{status:"unauthorized"})
+                .end(done)
+        })
+        
     })
     
 })
@@ -79,9 +102,17 @@ describe("Logout",function() {
             .expect(200,{status:'success',email:loginparams["email"]})
             .end(done)
     });
-    it("Should be successfull",function (done) {
-        assert(testagent.jar.getCookie("w75",testagent.CookieAccess.All))
-        testagent.get("/api/kansa/logout")
-            .expect(200,{status:'success'});
-    })
-})
+    describe("Successfull logout",function () {
+        it("should be successfull",function (done) {
+            testagent.get("/api/kansa/logout")
+                .expect(200,{status:'success',email:loginparams["email"]})
+                .end(done);
+        });
+        it ("gets unauthorized from /api/kansa/user",function (done) {
+            testagent.get("/api/kansa/user")
+                .expect(401,{status:"unauthorized"})
+                .end(done);
+        });
+        
+    });
+});
