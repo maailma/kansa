@@ -48,7 +48,7 @@ describe("Country statistics", function () {
 })
 
 describe("Login",function () {
-    describe("Successful login",function () {
+    context("Successful login",function () {
         it("gets a session cookie or it gets the hose again.",function (done) {
             admin.get("/api/kansa/login")
                 .query(loginparams)
@@ -62,7 +62,7 @@ describe("Login",function () {
                 .end(done);
         })
     });
-    describe("Login with wrong email",function () {
+    context("Login with wrong email",function () {
         it("gets 401 response",function (done) {
             unlogged.get("/api/kansa/login")
                 .query({email:"foo@doo.com",key:loginparams["key"]})
@@ -75,7 +75,7 @@ describe("Login",function () {
                 .end(done)
         })
     })
-    describe("Login with wrong key",function () {
+    context("Login with wrong key",function () {
         it("gets 401 response",function (done) {
             unlogged.get("/api/kansa/login")
                 .query({email:loginparams["email"],key:"foo"})
@@ -102,7 +102,7 @@ describe("Logout",function() {
             .expect(200,{status:'success',email:loginparams["email"]})
             .end(done)
     });
-    describe("Successfull logout",function () {
+    context("Successfull logout",function () {
         it("should be successfull",function (done) {
             testagent.get("/api/kansa/logout")
                 .expect(200,{status:'success',email:loginparams["email"]})
@@ -114,5 +114,17 @@ describe("Logout",function() {
                 .end(done);
         });
         
+    });
+    context("Not logged in", function () {
+        it("logout should be unauthorized", function (done) {
+            unlogged.get("/api/kansa/logout")
+                .expect(401,{status:"unauthorized"})
+                .end(done);
+        });
+        it ("gets unauthorized from /api/kansa/user",function (done) {
+            testagent.get("/api/kansa/user")
+                .expect(401,{status:"unauthorized"})
+                .end(done);
+        });
     });
 });
