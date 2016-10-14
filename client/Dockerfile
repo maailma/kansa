@@ -1,3 +1,5 @@
 FROM node:6-onbuild
 
-CMD ["npm", "run", "build:prod"]
+COPY build.sh /usr/local/bin/build.sh
+
+CMD ["/usr/local/bin/build.sh"]
