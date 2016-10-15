@@ -9,7 +9,15 @@ upstream kansa {
 server {
   listen                     80;
   server_name                ${API_SERVER_NAME};
-  return                     301 https://$server_name$request_uri;
+
+  # Used by Let's Encrypt automation
+  location /.well-known/ {
+    root                     /usr/share/nginx/html;
+  }
+
+  location / {
+    return                   301 https://$server_name$request_uri;
+  }
 }
 
 server {
