@@ -13,8 +13,15 @@ export default ({ setShowMore, showMore }) => <div>
     of giving us fresh data to test the software with.
   </p>
   <p>
-    We are not making this into a big public process, but at the same time feel free to invite friends
-    who are not on Worldcon 75 staff to participate.
+    In order to avoid any confusion about the purpose of the exercise - specifically, to avert any
+    suggestion that this might be a re-do of the 1980 Hugos - we are not pushing the 1980 Timewarp
+    Project on social media. At the same time feel free to quietly invite friends who are not on
+    Worldcon 75 staff to participate.
+  </p>
+
+  <p>
+    Please direct any comments or queries to <a
+    href="mailto:timewarp-coordinators@worldcon.fi">timewarp-coordinators@worldcon.fi</a>.
   </p>
 
   { showMore ? <div>
