@@ -47,7 +47,7 @@ router.all('/people/:id*', user.verifyPeopleAccess);
 router.get('/people/:id', people.getPerson);
 router.post('/people/:id', people.updatePerson);
 router.get('/people/:id/log', log.getPersonLog);
-router.post('/people/:id/upgrade', upgrade.upgradePerson);
+router.post('/people/:id/upgrade', upgrade.authUpgradePerson);
 
 router.get('/user', user.getInfo);
 router.get('/user/log', log.getUserLog);
