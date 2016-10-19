@@ -41,7 +41,7 @@ router.use(user.authenticate);
 router.all('/logout', user.logout);
 
 router.get('/people', people.getPeople);
-router.post('/people', people.addPerson);
+router.post('/people', people.authAddPerson);
 
 router.all('/people/:id*', user.verifyPeopleAccess);
 router.get('/people/:id', people.getPerson);
