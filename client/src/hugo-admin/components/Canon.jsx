@@ -3,8 +3,9 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 import { nominationFields } from '../../hugo/constants'
-import { classify, initHugoAdmin } from '../actions'
+import { classify, initHugoAdmin, setCategory } from '../actions'
 import CanonNominationList from './CanonNominationList'
+import NominationFilter from './NominationFilter'
 import NominationMerger from './NominationMerger'
 
 class Canon extends React.Component {
@@ -41,28 +42,34 @@ class Canon extends React.Component {
   }
 
   render() {
-    const { canon, category, classify, isAdmin, nominations } = this.props;
+    const { canon, category, classify, isAdmin, nominations, setCategory } = this.props;
     const { selected } = this.state;
     return <div
       style={{ display: 'flex', height: 'calc(100vh - 56px - 48px)' }}
-    >{
-      isAdmin && nominations ? <CanonNominationList
-        canon={canon}
-        fields={nominationFields(category)}
-        nominations={nominations}
-        onSelect={this.onSelect}
-        selected={selected}
-        style={{ flex: '1 1 auto' }}
-      /> : isAdmin ? 'Loading...' : 'Admin rights required'
-    }{
-      selected.size >= 2 ? <NominationMerger
+    >
+      <NominationFilter
         category={category}
-        classify={classify}
-        nominations={nominations}
-        onSuccess={ () => this.setState({ selected: selected.clear() }) }
-        selected={selected}
-      /> : null
-    }</div>
+        setCategory={setCategory}
+      />
+      {
+        isAdmin && nominations ? <CanonNominationList
+          canon={canon}
+          fields={nominationFields(category)}
+          nominations={nominations}
+          onSelect={this.onSelect}
+          selected={selected}
+          style={{ flex: '1 1 auto' }}
+        /> : isAdmin ? 'Loading...' : 'Admin rights required'
+      }{
+        selected.size >= 2 ? <NominationMerger
+          category={category}
+          classify={classify}
+          nominations={nominations}
+          onSuccess={ () => this.setState({ selected: selected.clear() }) }
+          selected={selected}
+        /> : null
+      }
+    </div>
   }
 }
 
@@ -77,6 +84,7 @@ export default connect(
     }
   }, {
     classify,
-    initHugoAdmin
+    initHugoAdmin,
+    setCategory
   }
 )(Canon);
