@@ -3,14 +3,16 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 import { nominationFields } from '../../hugo/constants'
-import { initHugoAdmin } from '../actions'
+import { classify, initHugoAdmin } from '../actions'
 import CanonNominationList from './CanonNominationList'
+import NominationMerger from './NominationMerger'
 
 class Canon extends React.Component {
 
   static propTypes = {
     canon: React.PropTypes.instanceOf(Map).isRequired,
     category: React.PropTypes.string.isRequired,
+    classify: React.PropTypes.func.isRequired,
     initHugoAdmin: React.PropTypes.func.isRequired,
     isAdmin: React.PropTypes.bool.isRequired,
     nominations: React.PropTypes.instanceOf(List)
@@ -39,7 +41,8 @@ class Canon extends React.Component {
   }
 
   render() {
-    const { canon, category, isAdmin, nominations } = this.props;
+    const { canon, category, classify, isAdmin, nominations } = this.props;
+    const { selected } = this.state;
     return <div
       style={{ display: 'flex', height: 'calc(100vh - 56px - 48px)' }}
     >{
@@ -48,9 +51,17 @@ class Canon extends React.Component {
         fields={nominationFields(category)}
         nominations={nominations}
         onSelect={this.onSelect}
-        selected={this.state.selected}
+        selected={selected}
         style={{ flex: '1 1 auto' }}
       /> : isAdmin ? 'Loading...' : 'Admin rights required'
+    }{
+      selected.size >= 2 ? <NominationMerger
+        category={category}
+        classify={classify}
+        nominations={nominations}
+        onSuccess={ () => this.setState({ selected: selected.clear() }) }
+        selected={selected}
+      /> : null
     }</div>
   }
 }
@@ -65,6 +76,7 @@ export default connect(
       nominations: hugoAdmin.getIn(['nominations', category])
     }
   }, {
+    classify,
     initHugoAdmin
   }
 )(Canon);
