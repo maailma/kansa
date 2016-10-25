@@ -85,6 +85,18 @@ export default class CanonNominationList extends React.Component {
               sortDirection={sortDirection}
               width={width}
             >
+              <Column
+                cellDataGetter = { ({ rowData }) => {
+                  const ci = rowData.get('canon_id');
+                  return typeof ci === 'number' ? canon.get(ci) : null;
+                } }
+                cellRenderer={ ({ cellData }) => {
+                  return cellData ? <span>+</span> : '';
+                } }
+                dataKey='canon'
+                key='canon'
+                width={10}
+              />
               { fields.map(key => {
                 return <Column
                   cellDataGetter = { ({ dataKey, rowData }) => rowData.get(dataKey) }
@@ -92,19 +104,6 @@ export default class CanonNominationList extends React.Component {
                   flexGrow={1}
                   key={'r-'+key}
                   label={key}
-                  width={100}
-                />
-              }) }
-              { fields.map(key => {
-                return <Column
-                  cellDataGetter = { ({ dataKey, rowData }) => {
-                    const ci = rowData.get('canon_id');
-                    return ci ? canon.getIn([ci, dataKey]) : '';
-                  } }
-                  dataKey={key}
-                  flexGrow={1}
-                  key={'c-'+key}
-                  label={'C:'+key}
                   width={100}
                 />
               }) }
