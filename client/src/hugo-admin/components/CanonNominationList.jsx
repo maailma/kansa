@@ -1,9 +1,10 @@
 import { List, Map } from 'immutable'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-
 import { AutoSizer, Column, SortDirection, Table } from 'react-virtualized'
 import 'react-virtualized/styles.css'
+
+import './CanonNominationList.css'
 
 const noRowsRenderer = () => (
   <div>
@@ -15,7 +16,10 @@ export default class CanonNominationList extends React.Component {
   static propTypes = {
     canon: React.PropTypes.instanceOf(Map).isRequired,
     fields: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-    nominations: React.PropTypes.instanceOf(List).isRequired
+    nominations: React.PropTypes.instanceOf(List).isRequired,
+    onSelect: React.PropTypes.func.isRequired,
+    selected: React.PropTypes.instanceOf(List).isRequired,
+    style: React.PropTypes.object
   }
 
   static headerHeight = 30;
@@ -27,22 +31,42 @@ export default class CanonNominationList extends React.Component {
     sortDirection: SortDirection.ASC
   }
 
+  onRowClick = (list) => ({ index }) => {
+    this.props.onSelect(list.get(index));
+    this.setState({ hoverPos: index });
+  }
+
+  rowClassName = (nominations, index) => {
+    const nom = index >= 0 && nominations.get(index);
+    return nom && this.props.selected.includes(nom) ? 'selected' : '';
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
   }
 
   render() {
-    const { canon, fields } = this.props;
+    const { canon, fields, style } = this.props;
     const { sortBy, sortDirection } = this.state;
+
+    const seenCanon = [];
     let nominations = this.props.nominations
-      .filter(n => !!n)
+      .filter(n => {
+        if (!n) return false;
+        const ci = n.get('canon_id');
+        if (typeof ci === 'number' && ci >= 0) {
+          if (seenCanon.indexOf(ci) !== -1) return false;
+          seenCanon.push(ci);
+        }
+        return true;
+      })
       .sortBy(n => n.get(sortBy, ''));
     if (sortDirection === SortDirection.DESC) nominations = nominations.reverse();
 
     return (
       <div
         onKeyDown={this.onKeyDown}
-        style={{ flex: '1 1 auto' }}
+        style={style}
       >
         <AutoSizer>
           { ({ height, width }) => (
@@ -50,7 +74,9 @@ export default class CanonNominationList extends React.Component {
               headerHeight={CanonNominationList.headerHeight}
               height={height}
               noRowsRenderer={noRowsRenderer}
+              onRowClick={this.onRowClick(nominations)}
               overscanRowCount={CanonNominationList.overscanRowCount}
+              rowClassName={({ index }) => this.rowClassName(nominations, index)}
               rowHeight={CanonNominationList.rowHeight}
               rowGetter={({ index }) => nominations.get(index)}
               rowCount={nominations.size}

@@ -30,6 +30,14 @@ class Canon extends React.Component {
     if (!nominations && isAdmin) initHugoAdmin();
   }
 
+  onSelect = (item) => {
+    if (Map.isMap(item)) {
+      const s = this.state.selected;
+      const i = s.indexOf(item);
+      this.setState({ selected: i < 0 ? s.push(item) : s.delete(i) });
+    }
+  }
+
   render() {
     const { canon, category, isAdmin, nominations } = this.props;
     return <div
@@ -39,6 +47,9 @@ class Canon extends React.Component {
         canon={canon}
         fields={nominationFields(category)}
         nominations={nominations}
+        onSelect={this.onSelect}
+        selected={this.state.selected}
+        style={{ flex: '1 1 auto' }}
       /> : isAdmin ? 'Loading...' : 'Admin rights required'
     }</div>
   }

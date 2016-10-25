@@ -1,0 +1,8 @@
+[role="row"] {
+    cursor: pointer;
+    outline: none;
+}
+
+[role="row"].selected {
+    background: #008080;
+}
