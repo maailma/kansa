@@ -60,7 +60,7 @@ export default class CanonNominationList extends React.Component {
         }
         return true;
       })
-      .sortBy(n => n.get(sortBy, ''));
+      .sortBy(n => n.getIn(['data', sortBy], ''));
     if (sortDirection === SortDirection.DESC) nominations = nominations.reverse();
 
     return (
@@ -99,7 +99,7 @@ export default class CanonNominationList extends React.Component {
               />
               { fields.map(key => {
                 return <Column
-                  cellDataGetter = { ({ dataKey, rowData }) => rowData.get(dataKey) }
+                  cellDataGetter = { ({ dataKey, rowData }) => rowData.getIn(['data', dataKey]) }
                   dataKey={key}
                   flexGrow={1}
                   key={'r-'+key}
