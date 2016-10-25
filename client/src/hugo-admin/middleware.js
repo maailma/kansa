@@ -1,8 +1,10 @@
-import { setCanon, setNominations } from './actions'
+import { addCanon, addClassification, setCanon, setNominations } from './actions'
 import { API_ROOT } from '../constants'
 
 import API from '../lib/api'
 const api = new API(API_ROOT);
+
+let ws = null;
 
 export default ({ dispatch, getState }) => (next) => (action) => {
   if (action.error || action.module !== 'hugo-admin') return next(action);
@@ -10,10 +12,25 @@ export default ({ dispatch, getState }) => (next) => (action) => {
   switch (action.type) {
 
     case 'INIT_HUGO_ADMIN':
-      api.GET(`hugo/canon/canon`)
+      if (!ws) {
+        ws = new WebSocket(`wss://${process.env.API_HOST}/api/hugo/canon/updates`);
+        ws.onmessage = (msg) => {
+          const { canon, classification } = JSON.parse(msg.data);
+          if (canon) dispatch(addCanon(canon));
+          if (classification) dispatch(addClassification(classification));
+        };
+        ws.onclose = (event) => {
+          dispatch({
+            type: 'WebSocket',
+            error: {message: `closed (code ${event.code})`, event}
+          });
+          ws = null;
+        }
+      }
+      api.GET('hugo/canon/canon')
         .then(canon => dispatch(setCanon(null, canon)))
         .catch(handleError(setCanon));
-      api.GET(`hugo/canon/nominations`)
+      api.GET('hugo/canon/nominations')
         .then(nominations => dispatch(setNominations(null, nominations)))
         .catch(handleError(setNominations));
       break;
