@@ -1,3 +1,19 @@
+export const addCanon = ({ category, id, nomination }) => ({
+  module: 'hugo-admin',
+  type: 'ADD_CANON',
+  category,
+  id,
+  nomination
+});
+
+export const addClassification = ({ canon_id, category, nomination }) => ({
+  module: 'hugo-admin',
+  type: 'ADD_CLASSIFICATION',
+  canon_id,
+  category,
+  nomination
+});
+
 export const initHugoAdmin = () => ({
   module: 'hugo-admin',
   type: 'INIT_HUGO_ADMIN'
