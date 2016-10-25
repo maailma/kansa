@@ -36,7 +36,7 @@ export const setCanon = (category, canon) => ({
 
 export const setCategory = (category) => ({
   module: 'hugo-admin',
-  type: 'SET_CANON',
+  type: 'SET_CATEGORY',
   category
 });
 

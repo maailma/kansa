@@ -1,6 +1,6 @@
 import { fromJS, List, Map } from 'immutable'
 
-import { categories } from '../hugo/constants'
+import { categoryInfo } from '../hugo/constants'
 
 
 const defaultState = Map({
@@ -39,7 +39,7 @@ export default (state = defaultState, action) => {
       )));
 
     case 'SET_CATEGORY':
-      return categories.indexOf(category) >= 0
+      return categoryInfo[category]
         ? state.set('category', category)
         : state.set('error', JSON.stringify(category) + ' is not a valid category' );
 
