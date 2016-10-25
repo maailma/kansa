@@ -11,6 +11,24 @@ export default ({ dispatch, getState }) => (next) => (action) => {
   const handleError = (src) => (error) => dispatch({ ...src(), error });
   switch (action.type) {
 
+    case 'CLASSIFY':
+      const { canon, category, nominations } = action;
+      const payload = { category, nominations };
+      if (canon) switch (typeof canon) {
+        case 'number':
+          payload.canon_id = canon;
+          break;
+        case 'string':
+          payload.canon_id = Number(canon) || null;
+          break;
+        case 'object':
+          payload.canon_nom = canon.toJS();
+          break;
+      }
+      return api.POST('hugo/canon/classify', payload)
+        .then(() => next(action))
+        .catch(handleError(action));
+
     case 'INIT_HUGO_ADMIN':
       if (!ws) {
         ws = new WebSocket(`wss://${process.env.API_HOST}/api/hugo/canon/updates`);
