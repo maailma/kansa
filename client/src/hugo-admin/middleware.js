@@ -25,13 +25,13 @@ export default ({ dispatch, getState }) => (next) => (action) => {
           payload.canon_nom = canon.toJS();
           break;
       }
-      return api.POST('hugo/canon/classify', payload)
+      return api.POST('hugo/admin/classify', payload)
         .then(() => next(action))
         .catch(handleError(action));
 
     case 'INIT_HUGO_ADMIN':
       if (!ws) {
-        ws = new WebSocket(`wss://${process.env.API_HOST}/api/hugo/canon/updates`);
+        ws = new WebSocket(`wss://${process.env.API_HOST}/api/hugo/admin/canon-updates`);
         ws.onmessage = (msg) => {
           const { canon, classification } = JSON.parse(msg.data);
           if (canon) dispatch(addCanon(canon));
@@ -45,10 +45,10 @@ export default ({ dispatch, getState }) => (next) => (action) => {
           ws = null;
         }
       }
-      api.GET('hugo/canon/canon')
+      api.GET('hugo/admin/canon')
         .then(canon => dispatch(setCanon(null, canon)))
         .catch(handleError(setCanon));
-      api.GET('hugo/canon/nominations')
+      api.GET('hugo/admin/nominations')
         .then(nominations => dispatch(setNominations(null, nominations)))
         .catch(handleError(setNominations));
       break;

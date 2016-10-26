@@ -44,16 +44,16 @@ app.use(session({
 }));
 
 const router = express.Router();
-router.all('/canon/*', Admin.verifyAdminAccess);
-router.get('/canon/canon', admin.getCanon);
-router.get('/canon/nominations', admin.getNominations);
-router.post('/canon/classify', admin.classify);
-router.post('/canon/entry/:id', admin.updateCanonEntry);
+router.all('/admin/*', Admin.verifyAdminAccess);
+router.get('/admin/canon', admin.getCanon);
+router.get('/admin/nominations', admin.getNominations);
+router.post('/admin/classify', admin.classify);
+router.post('/admin/canon/:id', admin.updateCanonEntry);
 
 router.get('/:id/nominations', nominate.getNominations);
 router.post('/:id/nominate', nominate.nominate);
 
-app.ws('/canon/updates', (ws, req) => {
+app.ws('/admin/canon-updates', (ws, req) => {
   if (req.session.user.hugo_admin) canonStream.addClient(ws);
   else ws.close(4001, 'Unauthorized');
 });
