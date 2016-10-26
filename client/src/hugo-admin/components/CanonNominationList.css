@@ -1,3 +1,7 @@
+[role="grid"] {
+    outline: none;
+}
+
 [role="row"] {
     cursor: pointer;
     outline: none;

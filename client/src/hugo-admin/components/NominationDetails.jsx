@@ -7,7 +7,7 @@ import Dialog from 'material-ui/Dialog'
 
 import { nominationFields } from '../../hugo/constants'
 
-import { fetchBallots } from '../actions'
+import { classify, fetchBallots } from '../actions'
 
 const headerHeight = 30;
 const overscanRowCount = 10;
@@ -18,6 +18,7 @@ class NominationDetails extends React.Component {
   static propTypes = {
     ballots: React.PropTypes.instanceOf(List),
     category: React.PropTypes.string.isRequired,
+    classify: React.PropTypes.func.isRequired,
     fetchBallots: React.PropTypes.func.isRequired,
     nominations: React.PropTypes.instanceOf(List).isRequired,
     onRequestClose: React.PropTypes.func.isRequired,
@@ -25,12 +26,15 @@ class NominationDetails extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { ballots, category, fetchBallots, selected } = nextProps;
-    if (selected && !ballots) fetchBallots(category);
+    const { ballots, category, fetchBallots, nominations, onRequestClose, selected } = nextProps;
+    if (selected) {
+      if (nominations.size === 0) onRequestClose();
+      else if (!ballots) fetchBallots(category);
+    }
   }
 
   render() {
-    const { ballots, category, nominations, onRequestClose, selected } = this.props;
+    const { ballots, category, classify, nominations, onRequestClose, selected } = this.props;
     return <Dialog
       onRequestClose={onRequestClose}
       open={!!selected}
@@ -68,6 +72,16 @@ class NominationDetails extends React.Component {
                   width={100}
                 />
               )) }
+              <Column
+                cellDataGetter={() => {}}
+                cellRenderer={ ({ rowData }) => <span
+                  onClick={ () => classify(category, [rowData], null) }
+                  style={{ cursor: 'pointer' }}
+                >x</span> }
+                dataKey='drop'
+                label=''
+                width={20}
+              />
             </Table>
           ) }
         </AutoSizer>
@@ -92,6 +106,7 @@ export default connect(
       ) || List.of(selected.get('data'))
     }
   }, {
+    classify,
     fetchBallots
   }
 )(NominationDetails);
