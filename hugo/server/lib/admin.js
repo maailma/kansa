@@ -14,10 +14,25 @@ class Admin {
   constructor(pgp, db) {
     this.pgp = pgp;
     this.db = db;
+    this.getBallots = this.getBallots.bind(this);
     this.getCanon = this.getCanon.bind(this);
     this.getNominations = this.getNominations.bind(this);
     this.classify = this.classify.bind(this);
     this.updateCanonEntry = this.updateCanonEntry.bind(this);
+  }
+
+  getBallots(req, res, next) {
+    const category = req.params.category;
+    if (!category) return next(new InputError('category is required'));
+    this.db.any(`
+        SELECT DISTINCT ON (person_id)
+               id, nominations
+          FROM Nominations
+         WHERE category = $1
+      ORDER BY person_id, time DESC
+    `, category)
+      .then(data => res.status(200).json(data))
+      .catch(next);
   }
 
   getCanon(req, res, next) {

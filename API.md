@@ -30,7 +30,8 @@ some relevant data and/or a `message` field.
 * [Hugo Nominations](#hugo-nominations)
   * [`GET /api/hugo/:id/nominations`](#get-apihugoidnominations)
   * [`POST /api/hugo/:id/nominate`](#post-apihugoidnominate)
-* [Hugo Canonicalisation](#hugo-canonicalisation)
+* [Hugo Admin](#hugo-admin)
+  * [`GET /api/hugo/admin/ballots/:category`](#get-apihugoadminballotscategory)
   * [`GET /api/hugo/admin/canon`](#get-apihugoadmincanon)
   * [`GET /api/hugo/admin/nominations`](#get-apihugoadminnominations)
   * [`POST /api/hugo/admin/classify`](#post-apihugoadminclassify)
@@ -389,7 +390,28 @@ objects.
 ```
 
 
-## Hugo Canonicalisation
+## Hugo Admin
+
+### `GET /api/hugo/admin/ballots/:category`
+- Requires authentication and `hugo_admin` authority
+
+Fetch the current uncanonicalised ballots for `category`.
+
+#### Response
+```
+[
+  {
+    id: 24,
+    nominations: [ { title: 'Three Little Piggies' }, … ]
+  },
+  {
+    id: 42,
+    nominations: [ { title: 'The Really Good One' }, { title: '3 pigs' }, … ]
+  },
+  …
+]
+```
+
 
 ### `GET /api/hugo/admin/canon`
 - Requires authentication and `hugo_admin` authority
@@ -409,6 +431,18 @@ expressed as `[ id, object ]` tuples.
   ],
   …
 }
+```
+
+
+### `POST /api/hugo/admin/canon/:id`
+- Requires authentication and `hugo_admin` authority
+- Parameters: `category` (required), `nomination` (required)
+
+Sets the `category` and `nomination` for the canonical nomination `id`.
+
+#### Response
+```
+{ status: 'success' }
 ```
 
 
@@ -455,18 +489,6 @@ canonicalisations are removed.
   canon_nom: { title: 'Three Little Piggies' }
 }
 ```
-
-#### Response
-```
-{ status: 'success' }
-```
-
-
-### `POST /api/hugo/admin/canon/:id`
-- Requires authentication and `hugo_admin` authority
-- Parameters: `category` (required), `nomination` (required)
-
-Sets the `category` and `nomination` for the canonical nomination `id`.
 
 #### Response
 ```
