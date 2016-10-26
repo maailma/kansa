@@ -1,0 +1,7 @@
+.drop-nom {
+    visibility: hidden;
+}
+
+.ReactVirtualized__Table__row:hover .drop-nom {
+    visibility: visible;
+}

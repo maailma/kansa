@@ -3,6 +3,7 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { AutoSizer, Column, SortDirection, Table } from 'react-virtualized'
 import 'react-virtualized/styles.css'
+import More from 'material-ui/svg-icons/navigation/more-horiz'
 
 import './CanonNominationList.css'
 
@@ -92,16 +93,17 @@ export default class CanonNominationList extends React.Component {
             >
               <Column
                 cellRenderer={ ({ cellData, rowData }) => {
-                  return cellData ? <span
+                  return cellData ? <More
                     onClick={ (ev) => {
                       onShowDetails(rowData);
                       ev.stopPropagation();
                     } }
-                  >+</span> : '';
+                  /> : '';
                 } }
                 dataKey='canon_id'
                 key='canon'
-                width={10}
+                style={{ display: 'flex' }}
+                width={20}
               />
               { fields.map(key => {
                 return <Column
