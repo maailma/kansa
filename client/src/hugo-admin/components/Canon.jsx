@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { nominationFields } from '../../hugo/constants'
 import { classify, initHugoAdmin, setCategory } from '../actions'
 import CanonNominationList from './CanonNominationList'
+import NominationDetails from './NominationDetails'
 import NominationFilter from './NominationFilter'
 import NominationMerger from './NominationMerger'
 
@@ -25,7 +26,8 @@ class Canon extends React.Component {
     if (isAdmin) initHugoAdmin();
     this.state = {
       query: '',
-      selected: List()
+      selected: List(),
+      show: null
     }
   }
 
@@ -44,7 +46,7 @@ class Canon extends React.Component {
 
   render() {
     const { canon, category, classify, isAdmin, nominations, setCategory } = this.props;
-    const { query, selected } = this.state;
+    const { query, selected, show } = this.state;
     return <div
       style={{ display: 'flex', height: 'calc(100vh - 56px - 48px)' }}
     >
@@ -66,6 +68,7 @@ class Canon extends React.Component {
           fields={nominationFields(category)}
           nominations={nominations}
           onSelect={this.onSelect}
+          onShowDetails={ selected => this.setState({ show: selected }) }
           query={query}
           selected={selected}
           style={{ flex: '1 1 auto' }}
@@ -79,6 +82,11 @@ class Canon extends React.Component {
           selected={selected}
         /> : null
       }
+      <NominationDetails
+        category={category}
+        onRequestClose={ () => this.setState({ show: null }) }
+        selected={show}
+      />
     </div>
   }
 }

@@ -18,6 +18,7 @@ export default class CanonNominationList extends React.Component {
     fields: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
     nominations: React.PropTypes.instanceOf(List).isRequired,
     onSelect: React.PropTypes.func.isRequired,
+    onShowDetails: React.PropTypes.func.isRequired,
     query: React.PropTypes.string,
     selected: React.PropTypes.instanceOf(List).isRequired,
     style: React.PropTypes.object
@@ -47,7 +48,7 @@ export default class CanonNominationList extends React.Component {
   }
 
   render() {
-    const { canon, fields, query, style } = this.props;
+    const { canon, fields, onShowDetails, query, style } = this.props;
     const { sortBy, sortDirection } = this.state;
 
     const seenCanon = [];
@@ -90,14 +91,15 @@ export default class CanonNominationList extends React.Component {
               width={width}
             >
               <Column
-                cellDataGetter = { ({ rowData }) => {
-                  const ci = rowData.get('canon_id');
-                  return typeof ci === 'number' ? canon.get(ci) : null;
+                cellRenderer={ ({ cellData, rowData }) => {
+                  return cellData ? <span
+                    onClick={ (ev) => {
+                      onShowDetails(rowData);
+                      ev.stopPropagation();
+                    } }
+                  >+</span> : '';
                 } }
-                cellRenderer={ ({ cellData }) => {
-                  return cellData ? <span>+</span> : '';
-                } }
-                dataKey='canon'
+                dataKey='canon_id'
                 key='canon'
                 width={10}
               />
