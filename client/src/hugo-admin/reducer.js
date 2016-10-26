@@ -17,15 +17,13 @@ export default (state = defaultState, action) => {
   switch (type) {
 
     case 'ADD_CANON':
-      console.log(action);
       return state.setIn(['canon', category, action.id], fromJS(action.nomination));
 
     case 'ADD_CLASSIFICATION':
-      console.log(action);
       return state.updateIn(['nominations', category], (nominations) => {
         const canon_id = action.canon_id;
         const data = fromJS(action.nomination);
-        if (typeof canon_id !== 'number' || !Map.isMap(data)) return nominations;
+        if (!Map.isMap(data)) return nominations;
         const key = nominations.findKey(nomination => data.equals(nomination.get('data')));
         return typeof key === 'number'
           ? nominations.setIn([key, 'canon_id'], canon_id)
