@@ -24,6 +24,7 @@ class Canon extends React.Component {
     const { initHugoAdmin, isAdmin } = props;
     if (isAdmin) initHugoAdmin();
     this.state = {
+      query: '',
       selected: List()
     }
   }
@@ -43,13 +44,21 @@ class Canon extends React.Component {
 
   render() {
     const { canon, category, classify, isAdmin, nominations, setCategory } = this.props;
-    const { selected } = this.state;
+    const { query, selected } = this.state;
     return <div
       style={{ display: 'flex', height: 'calc(100vh - 56px - 48px)' }}
     >
       <NominationFilter
         category={category}
-        setCategory={setCategory}
+        query={query}
+        setCategory={ category => {
+          setCategory(category);
+          this.setState({ query: '' });
+        } }
+        setQuery={ query => this.setState({
+          query: query.toLowerCase(),
+          selected: selected.clear()
+        }) }
       />
       {
         isAdmin && nominations ? <CanonNominationList
@@ -57,6 +66,7 @@ class Canon extends React.Component {
           fields={nominationFields(category)}
           nominations={nominations}
           onSelect={this.onSelect}
+          query={query}
           selected={selected}
           style={{ flex: '1 1 auto' }}
         /> : isAdmin ? 'Loading...' : 'Admin rights required'

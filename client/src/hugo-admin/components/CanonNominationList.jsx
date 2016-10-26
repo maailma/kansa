@@ -18,6 +18,7 @@ export default class CanonNominationList extends React.Component {
     fields: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
     nominations: React.PropTypes.instanceOf(List).isRequired,
     onSelect: React.PropTypes.func.isRequired,
+    query: React.PropTypes.string,
     selected: React.PropTypes.instanceOf(List).isRequired,
     style: React.PropTypes.object
   }
@@ -46,13 +47,16 @@ export default class CanonNominationList extends React.Component {
   }
 
   render() {
-    const { canon, fields, style } = this.props;
+    const { canon, fields, query, style } = this.props;
     const { sortBy, sortDirection } = this.state;
 
     const seenCanon = [];
     let nominations = this.props.nominations
       .filter(n => {
         if (!n) return false;
+        if (query) {
+          if (n.every(v => String(v).toLowerCase().indexOf(query) === -1)) return false;
+        }
         const ci = n.get('canon_id');
         if (typeof ci === 'number' && ci >= 0) {
           if (seenCanon.indexOf(ci) !== -1) return false;
