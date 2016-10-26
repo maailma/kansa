@@ -2,12 +2,12 @@ import { List, Map } from 'immutable'
 import React from 'react'
 import { connect } from 'react-redux'
 import { AutoSizer, Column, Table } from 'react-virtualized'
-
 import Dialog from 'material-ui/Dialog'
+import ContentClear from 'material-ui/svg-icons/content/clear'
 
 import { nominationFields } from '../../hugo/constants'
-
 import { classify, fetchBallots } from '../actions'
+import './NominationDetails.css'
 
 const headerHeight = 30;
 const overscanRowCount = 10;
@@ -74,10 +74,11 @@ class NominationDetails extends React.Component {
               )) }
               <Column
                 cellDataGetter={() => {}}
-                cellRenderer={ ({ rowData }) => <span
+                cellRenderer={ ({ rowData }) => <ContentClear
+                  className='drop-nom'
                   onClick={ () => classify(category, [rowData], null) }
                   style={{ cursor: 'pointer' }}
-                >x</span> }
+                /> }
                 dataKey='drop'
                 label=''
                 width={20}
