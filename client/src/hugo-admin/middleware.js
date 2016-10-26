@@ -29,6 +29,11 @@ export default ({ dispatch, getState }) => (next) => (action) => {
         .then(() => next(action))
         .catch(handleError(action));
 
+    case 'FETCH_BALLOTS':
+      return api.GET(`hugo/admin/ballots/${action.category}`)
+        .then(data => next({ ...action, data }))
+        .catch(handleError(action));
+
     case 'INIT_HUGO_ADMIN':
       if (!ws) {
         ws = new WebSocket(`wss://${process.env.API_HOST}/api/hugo/admin/canon-updates`);
@@ -40,7 +45,7 @@ export default ({ dispatch, getState }) => (next) => (action) => {
         ws.onclose = (event) => {
           dispatch({
             type: 'WebSocket',
-            error: {message: `closed (code ${event.code})`, event}
+            error: { message: `closed (code ${event.code})`, event }
           });
           ws = null;
         }

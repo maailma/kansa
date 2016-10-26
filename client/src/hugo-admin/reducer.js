@@ -4,6 +4,7 @@ import { categoryInfo } from '../hugo/constants'
 
 
 const defaultState = Map({
+  ballots: Map(),  // { [category]: { id: number, nominations: nomination[] }[] }
   canon: Map(),
   category: 'Novel',
   error: null,
@@ -30,6 +31,9 @@ export default (state = defaultState, action) => {
           ? nominations.setIn([key, 'canon_id'], canon_id)
           : nominations.push(Map({ data, canon_id }));
       });
+
+    case 'FETCH_BALLOTS':
+      return state.setIn(['ballots', category], fromJS(action.data));
 
     case 'SET_CANON':
       return state.set('canon', Map(Object.keys(action.canon).map(
