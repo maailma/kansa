@@ -30,12 +30,13 @@ some relevant data and/or a `message` field.
 * [Hugo Nominations](#hugo-nominations)
   * [`GET /api/hugo/:id/nominations`](#get-apihugoidnominations)
   * [`POST /api/hugo/:id/nominate`](#post-apihugoidnominate)
-* [Hugo Canonicalisation](#hugo-canonicalisation)
-  * [`GET /api/hugo/canon/canon`](#get-apihugocanoncanon)
-  * [`GET /api/hugo/canon/nominations`](#get-apihugocanonnominations)
-  * [`POST /api/hugo/canon/classify`](#post-apihugocanonclassify)
-  * [`POST /api/hugo/canon/entry/:id`](#post-apihugocanonentryid)
-  * [WebSocket: `wss://server/api/hugo/canon/updates`](#websocket-wssserverapihugocanonupdates)
+* [Hugo Admin](#hugo-admin)
+  * [`GET /api/hugo/admin/ballots/:category`](#get-apihugoadminballotscategory)
+  * [`GET /api/hugo/admin/canon`](#get-apihugoadmincanon)
+  * [`GET /api/hugo/admin/nominations`](#get-apihugoadminnominations)
+  * [`POST /api/hugo/admin/classify`](#post-apihugoadminclassify)
+  * [`POST /api/hugo/admin/canon/:id`](#post-apihugoadmincanonid)
+  * [WebSocket: `wss://server/api/hugo/admin/canon-updates`](#websocket-wssserverapihugoadmincanonupdates)
 
 ----
 
@@ -389,9 +390,30 @@ objects.
 ```
 
 
-## Hugo Canonicalisation
+## Hugo Admin
 
-### `GET /api/hugo/canon/canon`
+### `GET /api/hugo/admin/ballots/:category`
+- Requires authentication and `hugo_admin` authority
+
+Fetch the current uncanonicalised ballots for `category`.
+
+#### Response
+```
+[
+  {
+    id: 24,
+    nominations: [ { title: 'Three Little Piggies' }, … ]
+  },
+  {
+    id: 42,
+    nominations: [ { title: 'The Really Good One' }, { title: '3 pigs' }, … ]
+  },
+  …
+]
+```
+
+
+### `GET /api/hugo/admin/canon`
 - Requires authentication and `hugo_admin` authority
 
 Fetch the set of canonical nominations. Results are sorted by category, and
@@ -412,7 +434,19 @@ expressed as `[ id, object ]` tuples.
 ```
 
 
-### `GET /api/hugo/canon/nominations`
+### `POST /api/hugo/admin/canon/:id`
+- Requires authentication and `hugo_admin` authority
+- Parameters: `category` (required), `nomination` (required)
+
+Sets the `category` and `nomination` for the canonical nomination `id`.
+
+#### Response
+```
+{ status: 'success' }
+```
+
+
+### `GET /api/hugo/admin/nominations`
 - Requires authentication and `hugo_admin` authority
 
 Fetch all unique nomination entries. Results are sorted by category, and
@@ -436,7 +470,7 @@ nomination's canonical form, if such has been assigned.
 ```
 
 
-### `POST /api/hugo/canon/classify`
+### `POST /api/hugo/admin/classify`
 - Requires authentication and `hugo_admin` authority
 - Parameters: `category` (required), `nominations` (required), `canon_id`, `canon_nom`
 
@@ -462,19 +496,7 @@ canonicalisations are removed.
 ```
 
 
-### `POST /api/hugo/canon/entry/:id`
-- Requires authentication and `hugo_admin` authority
-- Parameters: `category` (required), `nomination` (required)
-
-Sets the `category` and `nomination` for the canonical nomination `id`.
-
-#### Response
-```
-{ status: 'success' }
-```
-
-
-### WebSocket: `wss://server/api/hugo/canon/updates`
+### WebSocket: `wss://server/api/hugo/admin/canon-updates`
 - Requires authentication and `hugo_admin` authority
 
 WebSocket connection endpoint. The server won't listen to any messages sent to

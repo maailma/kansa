@@ -16,6 +16,7 @@ import { PATH_OUT } from './constants'
 import App from './app/components/App'
 import Participate from './1980/Participate'
 import Nominate from './hugo/components/Nominate'
+import Canon from './hugo-admin/components/Canon'
 import middleware from './middleware'
 import reducers from './reducers'
 
@@ -58,6 +59,7 @@ ReactDOM.render(
       <Router history={syncHistoryWithStore(history, store)}>
         <Route path="/" component={App} >
           <IndexRoute onEnter={authCheck} component={Nominate} />
+          <Route path="admin" onEnter={authCheck} component={Canon}/>
           <Route path="participate" onEnter={authCheck} component={Participate} />
           <Route path="login/:email/:key" onEnter={doLogin} />
         </Route>

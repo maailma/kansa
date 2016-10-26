@@ -12,8 +12,8 @@ require('pg-monitor').attach(pgOptions);
 const db = pgp(process.env.DATABASE_URL);
 
 const nominate = require('./lib/nominate');
-const Canon = require('./lib/canon');
-const canon = new Canon(pgp, db);
+const Admin = require('./lib/admin');
+const admin = new Admin(pgp, db);
 const CanonStream = require('./lib/canon-stream');
 const canonStream = new CanonStream(db);
 
@@ -44,16 +44,17 @@ app.use(session({
 }));
 
 const router = express.Router();
-router.all('/canon/*', Canon.verifyCanonAccess);
-router.get('/canon/canon', canon.getCanon);
-router.get('/canon/nominations', canon.getNominations);
-router.post('/canon/classify', canon.classify);
-router.post('/canon/entry/:id', canon.updateCanonEntry);
+router.all('/admin/*', Admin.verifyAdminAccess);
+router.get('/admin/ballots/:category', admin.getBallots);
+router.get('/admin/canon', admin.getCanon);
+router.get('/admin/nominations', admin.getNominations);
+router.post('/admin/classify', admin.classify);
+router.post('/admin/canon/:id', admin.updateCanonEntry);
 
 router.get('/:id/nominations', nominate.getNominations);
 router.post('/:id/nominate', nominate.nominate);
 
-app.ws('/canon/updates', (ws, req) => {
+app.ws('/admin/canon-updates', (ws, req) => {
   if (req.session.user.hugo_admin) canonStream.addClient(ws);
   else ws.close(4001, 'Unauthorized');
 });
