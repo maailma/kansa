@@ -4,6 +4,7 @@ import Menu from 'material-ui/Menu'
 import MenuItem from 'material-ui/MenuItem'
 import Popover from 'material-ui/Popover'
 import RaisedButton from 'material-ui/RaisedButton'
+import TextField from 'material-ui/TextField'
 
 import { categoryInfo } from '../../hugo/constants'
 
@@ -24,7 +25,7 @@ export default class NominationFilter extends React.Component {
   };
 
   render() {
-    const { category, setCategory } = this.props;
+    const { category, query, setCategory, setQuery } = this.props;
     const { anchorEl, open } = this.state;
 
     return <div
@@ -40,7 +41,7 @@ export default class NominationFilter extends React.Component {
         zIndex: 1
       }}
     >
-      <div style={{ minWidth: 150 }}>
+      <div style={{ minWidth: 180 }}>
         <RaisedButton
           onTouchTap={this.handleTouchTap}
           label={category}
@@ -64,6 +65,11 @@ export default class NominationFilter extends React.Component {
           }</Menu>
         </Popover>
       </div>
+      <TextField
+        hintText='Search'
+        onChange={ ev => setQuery(ev.target.value) }
+        value={query}
+      />
     </div>
   }
 
