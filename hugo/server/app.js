@@ -12,8 +12,8 @@ require('pg-monitor').attach(pgOptions);
 const db = pgp(process.env.DATABASE_URL);
 
 const nominate = require('./lib/nominate');
-const Canon = require('./lib/canon');
-const canon = new Canon(pgp, db);
+const Admin = require('./lib/admin');
+const admin = new Admin(pgp, db);
 const CanonStream = require('./lib/canon-stream');
 const canonStream = new CanonStream(db);
 
@@ -44,11 +44,11 @@ app.use(session({
 }));
 
 const router = express.Router();
-router.all('/canon/*', Canon.verifyCanonAccess);
-router.get('/canon/canon', canon.getCanon);
-router.get('/canon/nominations', canon.getNominations);
-router.post('/canon/classify', canon.classify);
-router.post('/canon/entry/:id', canon.updateCanonEntry);
+router.all('/canon/*', Admin.verifyAdminAccess);
+router.get('/canon/canon', admin.getCanon);
+router.get('/canon/nominations', admin.getNominations);
+router.post('/canon/classify', admin.classify);
+router.post('/canon/entry/:id', admin.updateCanonEntry);
 
 router.get('/:id/nominations', nominate.getNominations);
 router.post('/:id/nominate', nominate.nominate);

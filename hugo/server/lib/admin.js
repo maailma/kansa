@@ -1,8 +1,8 @@
 const AuthError = require('./errors').AuthError;
 const InputError = require('./errors').InputError;
 
-class Canon {
-  static verifyCanonAccess(req, res, next) {
+class Admin {
+  static verifyAdminAccess(req, res, next) {
     const user = req.session.user;
     if (user.hugo_admin) {
       next();
@@ -125,4 +125,4 @@ class Canon {
   }
 }
 
-module.exports = Canon;
+module.exports = Admin;
