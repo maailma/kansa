@@ -1,3 +1,10 @@
+.canon-entry > * {
+    text-decoration: underline;
+}
+.canon-entry > *:first-child {
+    text-decoration: none;
+}
+
 .drop-nom {
     visibility: hidden;
 }

@@ -17,6 +17,7 @@ class NominationDetails extends React.Component {
 
   static propTypes = {
     ballots: React.PropTypes.instanceOf(List),
+    canon: React.PropTypes.instanceOf(Map).isRequired,
     category: React.PropTypes.string.isRequired,
     classify: React.PropTypes.func.isRequired,
     fetchBallots: React.PropTypes.func.isRequired,
@@ -34,7 +35,7 @@ class NominationDetails extends React.Component {
   }
 
   render() {
-    const { ballots, category, classify, nominations, onRequestClose, selected } = this.props;
+    const { ballots, canon, category, classify, nominations, onRequestClose, selected } = this.props;
     return <Dialog
       onRequestClose={onRequestClose}
       open={!!selected}
@@ -46,6 +47,7 @@ class NominationDetails extends React.Component {
               headerHeight={headerHeight}
               height={height}
               overscanRowCount={overscanRowCount}
+              rowClassName={ ({ index }) => canon.equals(nominations.get(index)) ? 'canon-entry' : '' }
               rowCount={nominations.size}
               rowGetter={({ index }) => nominations.get(index)}
               rowHeight={rowHeight}
@@ -95,11 +97,13 @@ export default connect(
   ({ hugoAdmin }, ownProps) => {
     const { category, selected } = ownProps;
     if (!Map.isMap(selected)) return {
+      canon: Map(),
       nominations: List()
     }
     const canonId = selected.get('canon_id');
     return {
       ballots: hugoAdmin.getIn(['ballots', category]),
+      canon: canonId && hugoAdmin.getIn(['canon', category, canonId]) || Map(),
       nominations: canonId && (
         hugoAdmin.getIn(['nominations', category])
           .filter(nom => nom.get('canon_id') === canonId)
