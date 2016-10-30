@@ -11,6 +11,7 @@ import NominationMerger from './NominationMerger'
 class Canon extends React.Component {
 
   static propTypes = {
+    ballots: React.PropTypes.instanceOf(List),
     canon: React.PropTypes.instanceOf(Map).isRequired,
     category: React.PropTypes.string.isRequired,
     classify: React.PropTypes.func.isRequired,
@@ -39,12 +40,13 @@ class Canon extends React.Component {
   }
 
   render() {
-    const { canon, category, classify, nominations, query } = this.props;
+    const { ballots, canon, category, classify, nominations, query } = this.props;
     const { selected, show } = this.state;
     return nominations ? <div
       style={{ display: 'flex', height: 'calc(100vh - 56px - 48px)' }}
     >
       <CanonNominationList
+        ballots={ballots}
         canon={canon}
         fields={nominationFields(category)}
         nominations={nominations}
@@ -74,6 +76,7 @@ class Canon extends React.Component {
 
 export default connect(
   ({ hugoAdmin }, { category }) => ({
+    ballots: hugoAdmin.getIn(['ballots', category]),
     canon: hugoAdmin.getIn(['canon', category]) || Map(),
     nominations: hugoAdmin.getIn(['nominations', category])
   }), {

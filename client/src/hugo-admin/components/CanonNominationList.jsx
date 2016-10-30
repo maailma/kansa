@@ -6,6 +6,7 @@ import 'react-virtualized/styles.css'
 import More from 'material-ui/svg-icons/navigation/more-horiz'
 
 import './CanonNominationList.css'
+import { countRawBallots } from '../nomination-count';
 
 const noRowsRenderer = () => (
   <div>
@@ -15,6 +16,7 @@ const noRowsRenderer = () => (
 
 export default class CanonNominationList extends React.Component {
   static propTypes = {
+    ballots: React.PropTypes.instanceOf(List),
     canon: React.PropTypes.instanceOf(Map).isRequired,
     fields: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
     nominations: React.PropTypes.instanceOf(List).isRequired,
@@ -34,6 +36,22 @@ export default class CanonNominationList extends React.Component {
     sortDirection: SortDirection.ASC
   }
 
+  ballotCount(nomination) {
+    const { ballots, nominations } = this.props;
+    if (!ballots || !nomination) return 0;
+    const ci = nomination.get('canon_id');
+    if (ci) {
+      return nominations.reduce((sum, nom) => {
+        if (nom.get('canon_id') === ci) {
+          sum += countRawBallots(ballots, nom.get('data'));
+        }
+        return sum;
+      }, 0);
+    } else {
+      return countRawBallots(ballots, nomination.get('data'));
+    }
+  }
+
   onRowClick = (list) => ({ index }) => {
     this.props.onSelect(list.get(index));
     this.setState({ hoverPos: index });
@@ -49,7 +67,7 @@ export default class CanonNominationList extends React.Component {
   }
 
   render() {
-    const { canon, fields, onShowDetails, query, style } = this.props;
+    const { ballots, canon, fields, onShowDetails, query, style } = this.props;
     const { sortBy, sortDirection } = this.state;
 
     const seenCanon = [];
@@ -70,7 +88,10 @@ export default class CanonNominationList extends React.Component {
         const ci = n.get('canon_id');
         return ci ? n.set('data', canon.get(ci)) : n;
       })
-      .sortBy(n => n.getIn(['data', sortBy], '').toLowerCase());
+      .sortBy(n => sortBy === 'ballotCount'
+        ? this.ballotCount(n)
+        : n.getIn(['data', sortBy], '').toLowerCase()
+      );
     if (sortDirection === SortDirection.DESC) nominations = nominations.reverse();
 
     return (
@@ -105,20 +126,27 @@ export default class CanonNominationList extends React.Component {
                   /> : '';
                 } }
                 dataKey='canon_id'
-                key='canon'
                 style={{ display: 'flex' }}
                 width={20}
               />
-              { fields.map(key => {
-                return <Column
+              {
+                ballots ? <Column
+                  cellDataGetter = { ({ rowData }) => this.ballotCount(rowData) }
+                  dataKey='ballotCount'
+                  label='#'
+                  width={30}
+                /> : null
+              }
+              {
+                fields.map(key => <Column
                   cellDataGetter = { ({ dataKey, rowData }) => rowData.getIn(['data', dataKey]) }
                   dataKey={key}
                   flexGrow={1}
-                  key={'r-'+key}
+                  key={key}
                   label={key}
                   width={100}
-                />
-              }) }
+                />)
+              }
             </Table>
           ) }
         </AutoSizer>
