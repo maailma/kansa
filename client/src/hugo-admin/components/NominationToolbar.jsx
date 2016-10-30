@@ -16,7 +16,7 @@ import { fetchBallots } from '../actions'
 import { HUGO_ADMIN_ROUTE_ROOT } from '../constants';
 
 
-class NominationFilter extends React.Component {
+class NominationToolbar extends React.Component {
 
   static propTypes = {
     category: React.PropTypes.string.isRequired,
@@ -113,4 +113,4 @@ export default connect(null,
     showNominations: category => push(`${HUGO_ADMIN_ROUTE_ROOT}/${category}/nominations`),
     showFinalists: category => push(`${HUGO_ADMIN_ROUTE_ROOT}/${category}/finalists`)
   }
-)(NominationFilter);
+)(NominationToolbar);

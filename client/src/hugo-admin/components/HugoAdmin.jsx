@@ -3,7 +3,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 import { initHugoAdmin } from '../actions'
-import NominationFilter from './NominationFilter'
+import NominationToolbar from './NominationToolbar'
 
 class HugoAdmin extends React.Component {
 
@@ -34,7 +34,7 @@ class HugoAdmin extends React.Component {
     const { children, isAdmin, params: { category } } = this.props;
     const { query } = this.state;
     return <div>
-      <NominationFilter
+      <NominationToolbar
         category={category}
         query={query}
         setQuery={ query => this.setState({ query: query.toLowerCase() }) }
