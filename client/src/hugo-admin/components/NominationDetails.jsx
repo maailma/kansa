@@ -7,6 +7,7 @@ import ContentClear from 'material-ui/svg-icons/content/clear'
 
 import { nominationFields } from '../../hugo/constants'
 import { classify, fetchBallots, updateCanonEntry } from '../actions'
+import { countRawBallots } from '../nomination-count';
 import './NominationDetails.css'
 
 const headerHeight = 30;
@@ -76,11 +77,7 @@ class NominationDetails extends React.Component {
             >
               <Column
                 cellDataGetter={ ({ rowData }) => {
-                  if (!ballots) return '';
-                  return ballots.reduce((res, ballot) => {
-                    if (ballot.get('nominations').includes(rowData)) ++res;
-                    return res;
-                  }, 0);
+                  return ballots ? countRawBallots(ballots, rowData) : '';
                 } }
                 dataKey='count'
                 label='#'

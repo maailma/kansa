@@ -18,15 +18,31 @@ import { Map } from 'immutable'
 
 
 /**
+ * Count the number of uncanonicalised ballots that contain the specified
+ * `nomination`
+ *
+ * @param {List<Map<{ nominations: Iterable<Nomination> }>>} rawBallots
+ * @param {Nomination} nomination
+ * @returns {number}
+ */
+export function countRawBallots(rawBallots, nomination) {
+  return rawBallots.reduce((res, ballot) => {
+    if (ballot.get('nominations').includes(nomination)) ++res;
+    return res;
+  }, 0);
+}
+
+
+/**
  * Canonicalise & simplify ballots, removing duplicates and empty nominations
  *
- * @param {List<Map<{ nominations: Iterable<Nomination> }>>} ballots
+ * @param {List<Map<{ nominations: Iterable<Nomination> }>>} rawBallots
  * @param {List<Map<{ canon_id: number, data: Nomination }>>} nominations
  * @param {Map<canon_id, Nomination>} canon
  * @returns {List<Set<Nomination>>}
  */
-export function cleanBallots(ballots, nominations, canon) {
-  ballots = ballots.map(ballot => ballot.get('nominations'));
+export function cleanBallots(rawBallots, nominations, canon) {
+  let ballots = rawBallots.map(ballot => ballot.get('nominations'));
   nominations.forEach(nomination => {
     const rawNom = nomination.get('data');
     const canonNom = canon.get(nomination.get('canon_id'));
