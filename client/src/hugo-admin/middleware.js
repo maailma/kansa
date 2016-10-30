@@ -8,7 +8,7 @@ let ws = null;
 
 export default ({ dispatch, getState }) => (next) => (action) => {
   if (action.error || action.module !== 'hugo-admin') return next(action);
-  const handleError = (src) => (error) => dispatch({ ...src(), error });
+  const handleError = (src) => (error) => dispatch({ ...src, error });
   switch (action.type) {
 
     case 'CLASSIFY':
@@ -52,10 +52,10 @@ export default ({ dispatch, getState }) => (next) => (action) => {
       }
       api.GET('hugo/admin/canon')
         .then(canon => dispatch(setCanon(null, canon)))
-        .catch(handleError(setCanon));
+        .catch(handleError(setCanon()));
       api.GET('hugo/admin/nominations')
         .then(nominations => dispatch(setNominations(null, nominations)))
-        .catch(handleError(setNominations));
+        .catch(handleError(setNominations()));
       break;
 
   }
