@@ -17,7 +17,8 @@ class HugoAdmin extends React.Component {
     params: React.PropTypes.shape({
       category: React.PropTypes.string.isRequired
     }).isRequired,
-    setCategory: React.PropTypes.func.isRequired
+    showFinalists: React.PropTypes.func.isRequired,
+    showNominations: React.PropTypes.func.isRequired
   }
 
   constructor(props) {
@@ -35,18 +36,16 @@ class HugoAdmin extends React.Component {
   }
 
   render() {
-    const { children, fetchBallots, isAdmin, params: { category }, setCategory } = this.props;
+    const { children, fetchBallots, isAdmin, params: { category }, showFinalists, showNominations } = this.props;
     const { query } = this.state;
     return <div>
       <NominationFilter
         category={category}
         getBallots={ () => fetchBallots(category) }
         query={query}
-        setCategory={ category => {
-          setCategory(category);
-          this.setState({ query: '' });
-        } }
         setQuery={ query => this.setState({ query: query.toLowerCase() }) }
+        showFinalists={showFinalists}
+        showNominations={showNominations}
       />
       { isAdmin
         ? React.Children.map(children, (child) => React.cloneElement(child, { category, query }))
@@ -63,6 +62,7 @@ export default connect(
   }), {
     fetchBallots,
     initHugoAdmin,
-    setCategory: category => push(`${HUGO_ADMIN_ROUTE_ROOT}/${category}/nominations`)
+    showNominations: category => push(`${HUGO_ADMIN_ROUTE_ROOT}/${category}/nominations`),
+    showFinalists: category => push(`${HUGO_ADMIN_ROUTE_ROOT}/${category}/finalists`)
   }
 )(HugoAdmin);

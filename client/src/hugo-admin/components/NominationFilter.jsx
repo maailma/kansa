@@ -1,6 +1,7 @@
 import React from 'react'
 
 import DownloadIcon from 'material-ui/svg-icons/file/cloud-download'
+import FinalistsIcon from 'material-ui/svg-icons/image/filter-6'
 import IconButton from 'material-ui/IconButton'
 import Menu from 'material-ui/Menu'
 import MenuItem from 'material-ui/MenuItem'
@@ -17,8 +18,9 @@ export default class NominationFilter extends React.Component {
     category: React.PropTypes.string.isRequired,
     getBallots: React.PropTypes.func.isRequired,
     query: React.PropTypes.string,
-    setCategory: React.PropTypes.func.isRequired,
-    setQuery: React.PropTypes.func.isRequired
+    setQuery: React.PropTypes.func.isRequired,
+    showFinalists: React.PropTypes.func.isRequired,
+    showNominations: React.PropTypes.func.isRequired
   }
 
   state = {
@@ -35,7 +37,7 @@ export default class NominationFilter extends React.Component {
   };
 
   render() {
-    const { category, getBallots, query, setCategory, setQuery } = this.props;
+    const { category, getBallots, query, setQuery, showFinalists, showNominations } = this.props;
     const { anchorEl, open } = this.state;
 
     return <div
@@ -54,6 +56,7 @@ export default class NominationFilter extends React.Component {
       <RaisedButton
         onTouchTap={this.handleTouchTap}
         label={category}
+        style={{ marginRight: 12 }}
       />
       <Popover
         open={open}
@@ -66,13 +69,23 @@ export default class NominationFilter extends React.Component {
           Object.keys(categoryInfo).map(cat => <MenuItem
             key={cat}
             onTouchTap={ () => {
-              setCategory(cat);
               this.setState({ open: false });
+              showNominations(cat);
+              setQuery('');
             } }
             primaryText={cat}
           />)
         }</Menu>
       </Popover>
+      <IconButton
+        onTouchTap={ () => {
+          showFinalists(category);
+          setQuery('');
+        } }
+        tooltip={`Show ${category} finalists`}
+      >
+        <FinalistsIcon />
+      </IconButton>
       <IconButton
         onTouchTap={getBallots}
         tooltip={`Refresh ${category} ballots`}
@@ -82,6 +95,7 @@ export default class NominationFilter extends React.Component {
       <TextField
         hintText='Search'
         onChange={ ev => setQuery(ev.target.value) }
+        style={{ paddingLeft: 12 }}
         value={query}
       />
     </div>
