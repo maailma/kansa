@@ -18,19 +18,20 @@ import { Map } from 'immutable'
 
 
 /**
- * Canonicalises ballots and removes duplicates
+ * Canonicalise & simplify ballots, removing duplicates and empty nominations
  *
- * @param {List<Iterable<Nomination>>} ballots
+ * @param {List<Map<{ nominations: Iterable<Nomination> }>>} ballots
  * @param {List<Map<{ canon_id: number, data: Nomination }>>} nominations
  * @param {Map<canon_id, Nomination>} canon
  * @returns {List<Set<Nomination>>}
  */
 export function cleanBallots(ballots, nominations, canon) {
+  ballots = ballots.map(ballot => ballot.get('nominations'));
   nominations.forEach(nomination => {
     const rawNom = nomination.get('data');
     const canonNom = canon.get(nomination.get('canon_id'));
     if (rawNom && canonNom) ballots = ballots.map(ballot => (
-      ballot.map(nom => nom.is(rawNom) ? canonNom : nom)
+      ballot.map(nom => nom.equals(rawNom) ? canonNom : nom)
     ))
   });
   const emptyNom = Map();
@@ -127,7 +128,7 @@ function nominationsWithLeastNominations(counts) {
   const nomLimit = counts.minBy(count => count.nominations).nominations;
   let selected = counts.filter(count => count.nominations === nomLimit);
   if (selected.size > 1) {
-    const ptLimit = counts.minBy(count => count.points).points;
+    const ptLimit = selected.minBy(count => count.points).points;
     selected = selected.filter(count => count.points === ptLimit);
   }
   return selected;

@@ -26,7 +26,7 @@ class Canon extends React.Component {
   componentWillReceiveProps(nextProps) {
     const { category, query } = this.props;
     if (nextProps.category !== category || nextProps.query !== query) {
-      this.setState({ selected: selected.clear() });
+      this.setState({ selected: this.state.selected.clear() });
     }
   }
 
