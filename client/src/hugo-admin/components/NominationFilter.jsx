@@ -1,5 +1,7 @@
 import React from 'react'
 
+import DownloadIcon from 'material-ui/svg-icons/file/cloud-download'
+import IconButton from 'material-ui/IconButton'
 import Menu from 'material-ui/Menu'
 import MenuItem from 'material-ui/MenuItem'
 import Popover from 'material-ui/Popover'
@@ -10,6 +12,14 @@ import { categoryInfo } from '../../hugo/constants'
 
 
 export default class NominationFilter extends React.Component {
+
+  static propTypes = {
+    category: React.PropTypes.string.isRequired,
+    getBallots: React.PropTypes.func.isRequired,
+    query: React.PropTypes.string,
+    setCategory: React.PropTypes.func.isRequired,
+    setQuery: React.PropTypes.func.isRequired
+  }
 
   state = {
     anchorEl: null,
@@ -25,7 +35,7 @@ export default class NominationFilter extends React.Component {
   };
 
   render() {
-    const { category, query, setCategory, setQuery } = this.props;
+    const { category, getBallots, query, setCategory, setQuery } = this.props;
     const { anchorEl, open } = this.state;
 
     return <div
@@ -41,30 +51,34 @@ export default class NominationFilter extends React.Component {
         zIndex: 1
       }}
     >
-      <div style={{ minWidth: 180 }}>
-        <RaisedButton
-          onTouchTap={this.handleTouchTap}
-          label={category}
-        />
-        <Popover
-          open={open}
-          anchorEl={anchorEl}
-          anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
-          targetOrigin={{ horizontal: 'left', vertical: 'top' }}
-          onRequestClose={ () => this.setState({ open: false }) }
-        >
-          <Menu>{
-            Object.keys(categoryInfo).map(cat => <MenuItem
-              key={cat}
-              onTouchTap={ () => {
-                setCategory(cat);
-                this.setState({ open: false });
-              } }
-              primaryText={cat}
-            />)
-          }</Menu>
-        </Popover>
-      </div>
+      <RaisedButton
+        onTouchTap={this.handleTouchTap}
+        label={category}
+      />
+      <Popover
+        open={open}
+        anchorEl={anchorEl}
+        anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
+        targetOrigin={{ horizontal: 'left', vertical: 'top' }}
+        onRequestClose={ () => this.setState({ open: false }) }
+      >
+        <Menu>{
+          Object.keys(categoryInfo).map(cat => <MenuItem
+            key={cat}
+            onTouchTap={ () => {
+              setCategory(cat);
+              this.setState({ open: false });
+            } }
+            primaryText={cat}
+          />)
+        }</Menu>
+      </Popover>
+      <IconButton
+        onTouchTap={getBallots}
+        tooltip={`Refresh ${category} ballots`}
+      >
+        <DownloadIcon />
+      </IconButton>
       <TextField
         hintText='Search'
         onChange={ ev => setQuery(ev.target.value) }
