@@ -30,7 +30,7 @@ export default class CanonNominationList extends React.Component {
   static rowHeight = 30;
 
   state = {
-    sortBy: 'title',
+    sortBy: '',
     sortDirection: SortDirection.ASC
   }
 
@@ -60,13 +60,17 @@ export default class CanonNominationList extends React.Component {
           if (n.every(v => String(v).toLowerCase().indexOf(query) === -1)) return false;
         }
         const ci = n.get('canon_id');
-        if (typeof ci === 'number' && ci >= 0) {
+        if (ci) {
           if (seenCanon.indexOf(ci) !== -1) return false;
           seenCanon.push(ci);
         }
         return true;
       })
-      .sortBy(n => n.getIn(['data', sortBy], ''));
+      .map(n => {
+        const ci = n.get('canon_id');
+        return ci ? n.set('data', canon.get(ci)) : n;
+      })
+      .sortBy(n => n.getIn(['data', sortBy], '').toLowerCase());
     if (sortDirection === SortDirection.DESC) nominations = nominations.reverse();
 
     return (
