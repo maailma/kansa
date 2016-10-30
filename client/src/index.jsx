@@ -18,6 +18,7 @@ import Login from './app/components/Login'
 import MemberList from './kansa/components/MemberList'
 import Nominate from './hugo/components/Nominate'
 import Canon from './hugo-admin/components/Canon'
+import HugoAdmin from './hugo-admin/components/HugoAdmin'
 import middleware from './middleware'
 import reducers from './reducers'
 
@@ -53,7 +54,7 @@ ReactDOM.render(
           <Route path="profile" onEnter={authCheck} component={MemberList} />
           <Route path="hugo" onEnter={authCheck} >
             <IndexRedirect to={PATH_IN} />
-            <Route path="admin">
+            <Route path="admin" component={HugoAdmin}>
               <IndexRedirect to='Novel' />
               <Route path=":category">
                 <IndexRedirect to='nominations' />
