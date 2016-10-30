@@ -1,12 +1,9 @@
 import { fromJS, List, Map } from 'immutable'
 
-import { categoryInfo } from '../hugo/constants'
-
 
 const defaultState = Map({
   ballots: Map(),  // { [category]: { id: number, nominations: nomination[] }[] }
   canon: Map(),
-  category: 'Novel',
   error: null,
   nominations: Map()
 })
@@ -39,11 +36,6 @@ export default (state = defaultState, action) => {
           ([ id, nomination ]) => ([ id, fromJS(nomination) ])
         )) ]
       )));
-
-    case 'SET_CATEGORY':
-      return categoryInfo[category]
-        ? state.set('category', category)
-        : state.set('error', JSON.stringify(category) + ' is not a valid category' );
 
     case 'SET_NOMINATIONS':
       return state.set('nominations', Map(Object.keys(action.nominations).map(

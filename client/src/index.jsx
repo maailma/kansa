@@ -53,7 +53,13 @@ ReactDOM.render(
           <Route path="profile" onEnter={authCheck} component={MemberList} />
           <Route path="hugo" onEnter={authCheck} >
             <IndexRedirect to={PATH_IN} />
-            <Route path="admin" component={Canon}/>
+            <Route path="admin">
+              <IndexRedirect to='Novel' />
+              <Route path=":category">
+                <IndexRedirect to='nominations' />
+                <Route path="nominations" component={Canon} />
+              </Route>
+            </Route>
             <Route path=":id">
               <IndexRedirect to="nominate" />
               <Route path="nominate" component={Nominate} />
