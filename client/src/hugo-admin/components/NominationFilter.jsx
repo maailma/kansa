@@ -1,4 +1,6 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import { push } from 'react-router-redux'
 
 import DownloadIcon from 'material-ui/svg-icons/file/cloud-download'
 import FinalistsIcon from 'material-ui/svg-icons/image/filter-6'
@@ -10,13 +12,15 @@ import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
 
 import { categoryInfo } from '../../hugo/constants'
+import { fetchBallots } from '../actions'
+import { HUGO_ADMIN_ROUTE_ROOT } from '../constants';
 
 
-export default class NominationFilter extends React.Component {
+class NominationFilter extends React.Component {
 
   static propTypes = {
     category: React.PropTypes.string.isRequired,
-    getBallots: React.PropTypes.func.isRequired,
+    fetchBallots: React.PropTypes.func.isRequired,
     query: React.PropTypes.string,
     setQuery: React.PropTypes.func.isRequired,
     showFinalists: React.PropTypes.func.isRequired,
@@ -37,7 +41,7 @@ export default class NominationFilter extends React.Component {
   };
 
   render() {
-    const { category, getBallots, query, setQuery, showFinalists, showNominations } = this.props;
+    const { category, fetchBallots, query, setQuery, showFinalists, showNominations } = this.props;
     const { anchorEl, open } = this.state;
 
     return <div
@@ -87,7 +91,7 @@ export default class NominationFilter extends React.Component {
         <FinalistsIcon />
       </IconButton>
       <IconButton
-        onTouchTap={getBallots}
+        onTouchTap={ () => fetchBallots(category) }
         tooltip={`Refresh ${category} ballots`}
       >
         <DownloadIcon />
@@ -102,3 +106,11 @@ export default class NominationFilter extends React.Component {
   }
 
 }
+
+export default connect(null,
+  {
+    fetchBallots,
+    showNominations: category => push(`${HUGO_ADMIN_ROUTE_ROOT}/${category}/nominations`),
+    showFinalists: category => push(`${HUGO_ADMIN_ROUTE_ROOT}/${category}/finalists`)
+  }
+)(NominationFilter);
