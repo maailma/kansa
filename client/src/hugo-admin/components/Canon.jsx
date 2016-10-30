@@ -1,9 +1,11 @@
 import { List, Map } from 'immutable'
 import React from 'react'
 import { connect } from 'react-redux'
+import { push } from 'react-router-redux'
 
 import { nominationFields } from '../../hugo/constants'
-import { classify, initHugoAdmin, setCategory } from '../actions'
+import { classify, initHugoAdmin } from '../actions'
+import { HUGO_ADMIN_ROUTE_ROOT } from '../constants';
 import CanonNominationList from './CanonNominationList'
 import NominationDetails from './NominationDetails'
 import NominationFilter from './NominationFilter'
@@ -13,11 +15,14 @@ class Canon extends React.Component {
 
   static propTypes = {
     canon: React.PropTypes.instanceOf(Map).isRequired,
-    category: React.PropTypes.string.isRequired,
     classify: React.PropTypes.func.isRequired,
     initHugoAdmin: React.PropTypes.func.isRequired,
     isAdmin: React.PropTypes.bool.isRequired,
-    nominations: React.PropTypes.instanceOf(List)
+    nominations: React.PropTypes.instanceOf(List),
+    params: React.PropTypes.shape({
+      category: React.PropTypes.string.isRequired
+    }).isRequired,
+    setCategory: React.PropTypes.func.isRequired
   }
 
   constructor(props) {
@@ -45,7 +50,7 @@ class Canon extends React.Component {
   }
 
   render() {
-    const { canon, category, classify, isAdmin, nominations, setCategory } = this.props;
+    const { canon, classify, isAdmin, nominations, params: { category }, setCategory } = this.props;
     const { query, selected, show } = this.state;
     return <div
       style={{ display: 'flex', height: 'calc(100vh - 56px - 48px)' }}
@@ -92,17 +97,13 @@ class Canon extends React.Component {
 }
 
 export default connect(
-  ({ hugoAdmin, user }) => {
-    const category = hugoAdmin.get('category');
-    return {
-      canon: hugoAdmin.getIn(['canon', category]) || Map(),
-      category,
-      isAdmin: user.get('hugoAdmin', false),
-      nominations: hugoAdmin.getIn(['nominations', category])
-    }
-  }, {
+  ({ hugoAdmin, user }, { params: { category }}) => ({
+    canon: hugoAdmin.getIn(['canon', category]) || Map(),
+    isAdmin: user.get('hugoAdmin', false),
+    nominations: hugoAdmin.getIn(['nominations', category])
+  }), {
     classify,
     initHugoAdmin,
-    setCategory
+    setCategory: category => push(`${HUGO_ADMIN_ROUTE_ROOT}/${category}/nominations`)
   }
 )(Canon);
