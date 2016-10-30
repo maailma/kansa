@@ -30,8 +30,21 @@ class NominationDetails extends React.Component {
   componentWillReceiveProps(nextProps) {
     const { ballots, category, fetchBallots, nominations, onRequestClose, selected } = nextProps;
     if (selected) {
-      if (nominations.size === 0) onRequestClose();
-      else if (!ballots) fetchBallots(category);
+      if (nominations.size === 0) {
+        // TODO: remove canonicalisation here
+        onRequestClose();
+      } else if (!ballots) {
+        fetchBallots(category);
+      }
+    }
+  }
+
+  removeNomination(nomination) {
+    const { canon, category, classify, nominations } = this.props;
+    classify(category, [nomination], null);
+    if (canon.equals(nomination)) {
+      const ce = nominations.filterNot(nom => nom.equals(nomination)).first();
+      if (ce) this.setCanonicalEntry(ce);
     }
   }
 
@@ -42,7 +55,7 @@ class NominationDetails extends React.Component {
   }
 
   render() {
-    const { ballots, canon, category, classify, nominations, onRequestClose, selected } = this.props;
+    const { ballots, canon, category, nominations, onRequestClose, selected } = this.props;
     return <Dialog
       onRequestClose={onRequestClose}
       open={!!selected}
@@ -87,7 +100,7 @@ class NominationDetails extends React.Component {
                 cellRenderer={ ({ rowData }) => <ContentClear
                   className='drop-nom'
                   onClick={ (ev) => {
-                    classify(category, [rowData], null);
+                    this.removeNomination(rowData);
                     ev.stopPropagation();
                   } }
                   style={{ cursor: 'pointer' }}
