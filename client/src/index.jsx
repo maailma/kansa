@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import { IndexRoute, Router, Route, browserHistory, hashHistory } from 'react-router'
+import { IndexRedirect, IndexRoute, Router, Route, browserHistory, hashHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 import { createStore } from 'redux'
 
@@ -17,6 +17,8 @@ import App from './app/components/App'
 import Participate from './1980/Participate'
 import Nominate from './hugo/components/Nominate'
 import Canon from './hugo-admin/components/Canon'
+import Finalists from './hugo-admin/components/Finalists'
+import HugoAdmin from './hugo-admin/components/HugoAdmin'
 import middleware from './middleware'
 import reducers from './reducers'
 
@@ -59,7 +61,14 @@ ReactDOM.render(
       <Router history={syncHistoryWithStore(history, store)}>
         <Route path="/" component={App} >
           <IndexRoute onEnter={authCheck} component={Nominate} />
-          <Route path="admin" onEnter={authCheck} component={Canon}/>
+          <Route path="admin" onEnter={authCheck} component={HugoAdmin}>
+            <IndexRedirect to='Novel' />
+            <Route path=":category">
+              <IndexRedirect to='nominations' />
+              <Route path="finalists" component={Finalists} />
+              <Route path="nominations" component={Canon} />
+            </Route>
+          </Route>
           <Route path="participate" onEnter={authCheck} component={Participate} />
           <Route path="login/:email/:key" onEnter={doLogin} />
         </Route>

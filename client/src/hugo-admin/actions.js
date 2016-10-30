@@ -40,15 +40,17 @@ export const setCanon = (category, canon) => ({
   category
 });
 
-export const setCategory = (category) => ({
-  module: 'hugo-admin',
-  type: 'SET_CATEGORY',
-  category
-});
-
 export const setNominations = (category, nominations) => ({
   module: 'hugo-admin',
   type: 'SET_NOMINATIONS',
   category,
   nominations
+});
+
+export const updateCanonEntry = (canon_id, category, nomination) => ({
+  module: 'hugo-admin',
+  type: 'UPDATE_CANON_ENTRY',
+  canon_id,
+  category,
+  nomination
 });

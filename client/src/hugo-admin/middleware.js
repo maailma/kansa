@@ -8,10 +8,10 @@ let ws = null;
 
 export default ({ dispatch, getState }) => (next) => (action) => {
   if (action.error || action.module !== 'hugo-admin') return next(action);
-  const handleError = (src) => (error) => dispatch({ ...src(), error });
+  const handleError = (src) => (error) => dispatch({ ...src, error });
   switch (action.type) {
 
-    case 'CLASSIFY':
+    case 'CLASSIFY': {
       const { canon, category, nominations } = action;
       const payload = { category, nominations };
       if (canon) switch (typeof canon) {
@@ -28,13 +28,15 @@ export default ({ dispatch, getState }) => (next) => (action) => {
       return api.POST('hugo/admin/classify', payload)
         .then(() => next(action))
         .catch(handleError(action));
+    }
 
-    case 'FETCH_BALLOTS':
+    case 'FETCH_BALLOTS': {
       return api.GET(`hugo/admin/ballots/${action.category}`)
         .then(data => next({ ...action, data }))
         .catch(handleError(action));
+    }
 
-    case 'INIT_HUGO_ADMIN':
+    case 'INIT_HUGO_ADMIN': {
       if (!ws) {
         ws = new WebSocket(`wss://${process.env.API_HOST}/api/hugo/admin/canon-updates`);
         ws.onmessage = (msg) => {
@@ -52,11 +54,18 @@ export default ({ dispatch, getState }) => (next) => (action) => {
       }
       api.GET('hugo/admin/canon')
         .then(canon => dispatch(setCanon(null, canon)))
-        .catch(handleError(setCanon));
+        .catch(handleError(setCanon()));
       api.GET('hugo/admin/nominations')
         .then(nominations => dispatch(setNominations(null, nominations)))
-        .catch(handleError(setNominations));
+        .catch(handleError(setNominations()));
       break;
+    }
+
+    case 'UPDATE_CANON_ENTRY': {
+      const { canon_id, category, nomination } = action;
+      return api.POST(`hugo/admin/canon/${canon_id}`, { category, nomination })
+        .catch(handleError(action));
+    }
 
   }
   next(action);
