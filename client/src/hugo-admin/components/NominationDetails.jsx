@@ -6,7 +6,7 @@ import Dialog from 'material-ui/Dialog'
 import ContentClear from 'material-ui/svg-icons/content/clear'
 
 import { nominationFields } from '../../hugo/constants'
-import { classify, fetchBallots } from '../actions'
+import { classify, fetchBallots, updateCanonEntry } from '../actions'
 import './NominationDetails.css'
 
 const headerHeight = 30;
@@ -23,7 +23,8 @@ class NominationDetails extends React.Component {
     fetchBallots: React.PropTypes.func.isRequired,
     nominations: React.PropTypes.instanceOf(List).isRequired,
     onRequestClose: React.PropTypes.func.isRequired,
-    selected: React.PropTypes.instanceOf(Map)
+    selected: React.PropTypes.instanceOf(Map),
+    updateCanonEntry: React.PropTypes.func.isRequired
   }
 
   componentWillReceiveProps(nextProps) {
@@ -32,6 +33,12 @@ class NominationDetails extends React.Component {
       if (nominations.size === 0) onRequestClose();
       else if (!ballots) fetchBallots(category);
     }
+  }
+
+  setCanonicalEntry(nomination) {
+    const { category, selected, updateCanonEntry } = this.props;
+    const canonId = selected.get('canon_id');
+    updateCanonEntry(canonId, category, nomination);
   }
 
   render() {
@@ -46,6 +53,7 @@ class NominationDetails extends React.Component {
             <Table
               headerHeight={headerHeight}
               height={height}
+              onRowClick={ ({ index }) => this.setCanonicalEntry(nominations.get(index)) }
               overscanRowCount={overscanRowCount}
               rowClassName={ ({ index }) => canon.equals(nominations.get(index)) ? 'canon-entry' : '' }
               rowCount={nominations.size}
@@ -78,7 +86,10 @@ class NominationDetails extends React.Component {
                 cellDataGetter={() => {}}
                 cellRenderer={ ({ rowData }) => <ContentClear
                   className='drop-nom'
-                  onClick={ () => classify(category, [rowData], null) }
+                  onClick={ (ev) => {
+                    classify(category, [rowData], null);
+                    ev.stopPropagation();
+                  } }
                   style={{ cursor: 'pointer' }}
                 /> }
                 dataKey='drop'
@@ -112,6 +123,7 @@ export default connect(
     }
   }, {
     classify,
-    fetchBallots
+    fetchBallots,
+    updateCanonEntry
   }
 )(NominationDetails);

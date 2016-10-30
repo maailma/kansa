@@ -46,3 +46,11 @@ export const setNominations = (category, nominations) => ({
   category,
   nominations
 });
+
+export const updateCanonEntry = (canon_id, category, nomination) => ({
+  module: 'hugo-admin',
+  type: 'UPDATE_CANON_ENTRY',
+  canon_id,
+  category,
+  nomination
+});
