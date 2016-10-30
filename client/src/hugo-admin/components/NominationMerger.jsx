@@ -9,15 +9,28 @@ export default ({ category, classify, nominations, onSuccess, selected }) => (
       const canonIds = selected.map(sel => sel.get('canon_id')).filter(id => !!id);
       let canon = null;
       switch (canonIds.size) {
+
         case 0:
           canon = selected.first().get('data');
           break;
+
         case 1:
           canon = canonIds.first();
           selected = selected.filter(sel => sel.get('canon_id') !== canon);
           break;
+
         default:
-          throw new Error('Not yet handling merger of multiple canonicalisations');
+          canon = canonIds.first();
+          const otherIds = canonIds.rest();
+          selected = selected
+            .filterNot(sel => sel.get('canon_id'))
+            .concat(nominations.filter(nom => {
+              const ci = nom.get('canon_id');
+              return ci && otherIds.contains(ci);
+            }));
+          // TODO: remove empty canonicalisations
+          break;
+
       }
       classify(category, selected.map(sel => sel.get('data')), canon);
       onSuccess();
