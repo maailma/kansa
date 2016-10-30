@@ -18,6 +18,7 @@ import Login from './app/components/Login'
 import MemberList from './kansa/components/MemberList'
 import Nominate from './hugo/components/Nominate'
 import Canon from './hugo-admin/components/Canon'
+import Finalists from './hugo-admin/components/Finalists'
 import HugoAdmin from './hugo-admin/components/HugoAdmin'
 import middleware from './middleware'
 import reducers from './reducers'
@@ -58,6 +59,7 @@ ReactDOM.render(
               <IndexRedirect to='Novel' />
               <Route path=":category">
                 <IndexRedirect to='nominations' />
+                <Route path="finalists" component={Finalists} />
                 <Route path="nominations" component={Canon} />
               </Route>
             </Route>
