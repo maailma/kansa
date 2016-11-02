@@ -26,12 +26,14 @@ class Admin {
     if (!category) return next(new InputError('category is required'));
     this.db.any(`
         SELECT DISTINCT ON (person_id)
-               id, nominations
+               person_id, nominations
           FROM Nominations
          WHERE category = $1
       ORDER BY person_id, time DESC
     `, category)
-      .then(data => res.status(200).json(data))
+      .then(data => res.status(200).json(
+        data.map(({ nominations, person_id }) => [ person_id, nominations ])
+      ))
       .catch(next);
   }
 

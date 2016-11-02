@@ -395,19 +395,15 @@ objects.
 ### `GET /api/hugo/admin/ballots/:category`
 - Requires authentication and `hugo_admin` authority
 
-Fetch the current uncanonicalised ballots for `category`.
+Fetch the current uncanonicalised ballots for `category`. Results are expressed
+as `[ id, array ]` tuples where ballots with the same `id` in different
+categories are from the same nominator.
 
 #### Response
 ```
 [
-  {
-    id: 24,
-    nominations: [ { title: 'Three Little Piggies' }, … ]
-  },
-  {
-    id: 42,
-    nominations: [ { title: 'The Really Good One' }, { title: '3 pigs' }, … ]
-  },
+  [ 24, { title: 'Three Little Piggies' }, … ],
+  [ 42, { title: 'The Really Good One' }, { title: '3 pigs' }, … ],
   …
 ]
 ```
