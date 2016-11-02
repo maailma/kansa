@@ -22,6 +22,11 @@ export const classify = (category, nominations, canon) => ({
   nominations
 });
 
+export const fetchAllBallots = () => ({
+  module: 'hugo-admin',
+  type: 'FETCH_ALL_BALLOTS'
+});
+
 export const fetchBallots = (category) => ({
   module: 'hugo-admin',
   type: 'FETCH_BALLOTS',

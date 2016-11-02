@@ -30,6 +30,12 @@ export default ({ dispatch, getState }) => (next) => (action) => {
         .catch(handleError(action));
     }
 
+    case 'FETCH_ALL_BALLOTS': {
+      return api.GET('hugo/admin/ballots')
+        .then(data => next({ ...action, data }))
+        .catch(handleError(action));
+    }
+
     case 'FETCH_BALLOTS': {
       return api.GET(`hugo/admin/ballots/${action.category}`)
         .then(data => next({ ...action, data }))

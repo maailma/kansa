@@ -14,11 +14,33 @@ class Admin {
   constructor(pgp, db) {
     this.pgp = pgp;
     this.db = db;
+    this.getAllBallots = this.getAllBallots.bind(this);
     this.getBallots = this.getBallots.bind(this);
     this.getCanon = this.getCanon.bind(this);
     this.getNominations = this.getNominations.bind(this);
     this.classify = this.classify.bind(this);
     this.updateCanonEntry = this.updateCanonEntry.bind(this);
+  }
+
+  getAllBallots(req, res, next) {
+    this.db.any(`
+        SELECT DISTINCT ON (category, person_id)
+               category, person_id, nominations
+          FROM Nominations
+      ORDER BY category, person_id, time DESC
+    `)
+      .then(data => res.status(200).json(
+        data.reduce((ballots, { category, nominations, person_id }) => {
+          const entry = [ person_id, nominations ];
+          if (ballots[category]) {
+            ballots[category].push(entry);
+          } else {
+            ballots[category] = [entry];
+          }
+          return ballots;
+        }, {})
+      ))
+      .catch(next);
   }
 
   getBallots(req, res, next) {
