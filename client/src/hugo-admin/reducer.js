@@ -2,7 +2,7 @@ import { fromJS, List, Map } from 'immutable'
 
 
 const defaultState = Map({
-  ballots: Map(),  // { [category]: { id: number, nominations: nomination[] }[] }
+  ballots: Map(),  // { [category]: { [id: number]: nomination[] } }
   canon: Map(),
   error: null,
   nominations: Map()
@@ -28,7 +28,9 @@ export default (state = defaultState, action) => {
       });
 
     case 'FETCH_BALLOTS':
-      return state.setIn(['ballots', category], fromJS(action.data));
+      return state.setIn(['ballots', category], Map(action.data.map(
+        ([ id, nominations ]) => ([ id, fromJS(nominations) ])
+      )));
 
     case 'SET_CANON':
       return state.set('canon', Map(Object.keys(action.canon).map(
