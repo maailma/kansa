@@ -27,6 +27,13 @@ export default (state = defaultState, action) => {
           : nominations.push(Map({ data, canon_id }));
       });
 
+    case 'FETCH_ALL_BALLOTS':
+      return state.set('ballots', Map(Object.keys(action.data).map(
+        category => [ category, Map(action.data[category].map(
+          ([ id, nominations ]) => ([ id, fromJS(nominations) ])
+        )) ]
+      )));
+
     case 'FETCH_BALLOTS':
       return state.setIn(['ballots', category], Map(action.data.map(
         ([ id, nominations ]) => ([ id, fromJS(nominations) ])

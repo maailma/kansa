@@ -17,7 +17,7 @@ const rowHeight = 30;
 class NominationDetails extends React.Component {
 
   static propTypes = {
-    ballots: React.PropTypes.instanceOf(List),
+    ballots: React.PropTypes.instanceOf(Map),
     canon: React.PropTypes.instanceOf(Map).isRequired,
     category: React.PropTypes.string.isRequired,
     classify: React.PropTypes.func.isRequired,
