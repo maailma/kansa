@@ -1,6 +1,7 @@
 import { List, Map } from 'immutable'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
+import { connect } from 'react-redux'
 import { AutoSizer, Column, SortDirection, Table } from 'react-virtualized'
 import 'react-virtualized/styles.css'
 import More from 'material-ui/svg-icons/navigation/more-horiz'
@@ -10,14 +11,15 @@ import { countRawBallots } from '../nomination-count';
 
 const noRowsRenderer = () => (
   <div>
-    No nominations to list!
+    Loading...
   </div>
 );
 
-export default class CanonNominationList extends React.Component {
+class CanonNominationList extends React.Component {
   static propTypes = {
     ballots: React.PropTypes.instanceOf(List),
     canon: React.PropTypes.instanceOf(Map).isRequired,
+    category: React.PropTypes.string.isRequired,
     fields: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
     nominations: React.PropTypes.instanceOf(List).isRequired,
     onSelect: React.PropTypes.func.isRequired,
@@ -73,21 +75,25 @@ export default class CanonNominationList extends React.Component {
     const { canon, nominations, query } = this.props;
     const seenCanon = [];
     return nominations
-      .filter(n => {
-        if (!n) return false;
+      .filter(nom => {
+        if (!nom) return false;
         if (query) {
-          if (n.every(v => String(v).toLowerCase().indexOf(query) === -1)) return false;
+          if (nom.every(v => String(v).toLowerCase().indexOf(query) === -1)) return false;
         }
-        const ci = n.get('canon_id');
+        const ci = nom.get('canon_id');
         if (ci) {
           if (seenCanon.indexOf(ci) !== -1) return false;
           seenCanon.push(ci);
         }
         return true;
       })
-      .map(n => {
-        const ci = n.get('canon_id');
-        return ci ? n.set('data', canon.get(ci)) : n;
+      .map(nom => {
+        const ci = nom.get('canon_id');
+        if (ci) {
+          return nom.set('data', canon.get(ci));
+        } else {
+          return nom;
+        }
       });
   }
 
@@ -159,3 +165,11 @@ export default class CanonNominationList extends React.Component {
     )
   }
 }
+
+export default connect(
+  ({ hugoAdmin }, { category }) => ({
+    ballots: hugoAdmin.getIn(['ballots', category]),
+    canon: hugoAdmin.getIn(['canon', category]),
+    nominations: hugoAdmin.getIn(['nominations', category]) || List()
+  })
+)(CanonNominationList);
