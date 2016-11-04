@@ -1,9 +1,12 @@
 import React from 'react'
+import { connect } from 'react-redux'
 
 import FloatingActionButton from 'material-ui/FloatingActionButton'
 import MergeIcon from 'material-ui/svg-icons/editor/merge-type'
 
-export default ({ category, classify, nominations, onSuccess, selected }) => (
+import { classify } from '../actions'
+
+const NominationMerger = ({ category, classify, nominations, onSuccess, selected }) => (
   <FloatingActionButton
     onTouchTap={() => {
       const canonIds = selected.map(sel => sel.get('canon_id')).filter(id => !!id);
@@ -45,3 +48,11 @@ export default ({ category, classify, nominations, onSuccess, selected }) => (
     <MergeIcon/>
   </FloatingActionButton>
 );
+
+export default connect(
+  ({ hugoAdmin }, { category }) => ({
+    nominations: hugoAdmin.getIn(['nominations', category])
+  }), {
+    classify
+  }
+)(NominationMerger);

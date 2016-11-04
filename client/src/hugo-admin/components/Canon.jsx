@@ -1,21 +1,15 @@
 import { List, Map } from 'immutable'
 import React from 'react'
-import { connect } from 'react-redux'
 
 import { nominationFields } from '../../hugo/constants'
-import { classify } from '../actions'
 import CanonNominationList from './CanonNominationList'
 import NominationDetails from './NominationDetails'
 import NominationMerger from './NominationMerger'
 
-class Canon extends React.Component {
+export default class Canon extends React.Component {
 
   static propTypes = {
-    ballots: React.PropTypes.instanceOf(List),
-    canon: React.PropTypes.instanceOf(Map).isRequired,
     category: React.PropTypes.string.isRequired,
-    classify: React.PropTypes.func.isRequired,
-    nominations: React.PropTypes.instanceOf(List),
     query: React.PropTypes.string
   }
 
@@ -40,16 +34,14 @@ class Canon extends React.Component {
   }
 
   render() {
-    const { ballots, canon, category, classify, nominations, query } = this.props;
+    const { category, query } = this.props;
     const { selected, show } = this.state;
-    return nominations ? <div
+    return <div
       style={{ display: 'flex', height: 'calc(100vh - 56px - 48px)' }}
     >
       <CanonNominationList
-        ballots={ballots}
-        canon={canon}
+        category={category}
         fields={nominationFields(category)}
-        nominations={nominations}
         onSelect={this.onSelect}
         onShowDetails={ selected => this.setState({ show: selected }) }
         query={query}
@@ -59,8 +51,6 @@ class Canon extends React.Component {
       {
         selected.size >= 2 ? <NominationMerger
           category={category}
-          classify={classify}
-          nominations={nominations}
           onSuccess={ () => this.setState({ selected: selected.clear() }) }
           selected={selected}
         /> : null
@@ -70,16 +60,6 @@ class Canon extends React.Component {
         onRequestClose={ () => this.setState({ show: null }) }
         selected={show}
       />
-    </div> : <span>Loading...</span>
+    </div>
   }
 }
-
-export default connect(
-  ({ hugoAdmin }, { category }) => ({
-    ballots: hugoAdmin.getIn(['ballots', category]),
-    canon: hugoAdmin.getIn(['canon', category]) || Map(),
-    nominations: hugoAdmin.getIn(['nominations', category])
-  }), {
-    classify
-  }
-)(Canon);
