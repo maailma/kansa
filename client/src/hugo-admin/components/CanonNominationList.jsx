@@ -36,6 +36,28 @@ export default class CanonNominationList extends React.Component {
     sortDirection: SortDirection.ASC
   }
 
+  get list() {
+    const { canon, nominations, query } = this.props;
+    const seenCanon = [];
+    return nominations
+      .filter(n => {
+        if (!n) return false;
+        if (query) {
+          if (n.every(v => String(v).toLowerCase().indexOf(query) === -1)) return false;
+        }
+        const ci = n.get('canon_id');
+        if (ci) {
+          if (seenCanon.indexOf(ci) !== -1) return false;
+          seenCanon.push(ci);
+        }
+        return true;
+      })
+      .map(n => {
+        const ci = n.get('canon_id');
+        return ci ? n.set('data', canon.get(ci)) : n;
+      });
+  }
+
   ballotCount(nomination) {
     const { ballots, nominations } = this.props;
     if (!ballots || !nomination) return 0;
@@ -67,33 +89,13 @@ export default class CanonNominationList extends React.Component {
   }
 
   render() {
-    const { ballots, canon, fields, onShowDetails, query, style } = this.props;
+    const { ballots, fields, onShowDetails, style } = this.props;
     const { sortBy, sortDirection } = this.state;
-
-    const seenCanon = [];
-    let nominations = this.props.nominations
-      .filter(n => {
-        if (!n) return false;
-        if (query) {
-          if (n.every(v => String(v).toLowerCase().indexOf(query) === -1)) return false;
-        }
-        const ci = n.get('canon_id');
-        if (ci) {
-          if (seenCanon.indexOf(ci) !== -1) return false;
-          seenCanon.push(ci);
-        }
-        return true;
-      })
-      .map(n => {
-        const ci = n.get('canon_id');
-        return ci ? n.set('data', canon.get(ci)) : n;
-      })
-      .sortBy(n => sortBy === 'ballotCount'
-        ? this.ballotCount(n)
-        : n.getIn(['data', sortBy], '').toLowerCase()
-      );
-    if (sortDirection === SortDirection.DESC) nominations = nominations.reverse();
-
+    let list = this.list.sortBy(n => sortBy === 'ballotCount'
+      ? this.ballotCount(n)
+      : n.getIn(['data', sortBy], '').toLowerCase()
+    );
+    if (sortDirection === SortDirection.DESC) list = list.reverse();
     return (
       <div
         onKeyDown={this.onKeyDown}
@@ -105,12 +107,12 @@ export default class CanonNominationList extends React.Component {
               headerHeight={CanonNominationList.headerHeight}
               height={height}
               noRowsRenderer={noRowsRenderer}
-              onRowClick={this.onRowClick(nominations)}
+              onRowClick={this.onRowClick(list)}
               overscanRowCount={CanonNominationList.overscanRowCount}
-              rowClassName={({ index }) => this.rowClassName(nominations, index)}
+              rowClassName={({ index }) => this.rowClassName(list, index)}
               rowHeight={CanonNominationList.rowHeight}
-              rowGetter={({ index }) => nominations.get(index)}
-              rowCount={nominations.size}
+              rowGetter={({ index }) => list.get(index)}
+              rowCount={list.size}
               sort={({ sortBy, sortDirection }) => this.setState({ sortBy, sortDirection })}
               sortBy={sortBy}
               sortDirection={sortDirection}
