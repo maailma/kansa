@@ -36,6 +36,39 @@ export default class CanonNominationList extends React.Component {
     sortDirection: SortDirection.ASC
   }
 
+  get columns() {
+    const { ballots, fields, onShowDetails } = this.props;
+    const controls = [<Column
+      cellRenderer={
+        ({ cellData, rowData }) => cellData ? <More
+          onClick={ (ev) => {
+            onShowDetails(rowData);
+            ev.stopPropagation();
+          } }
+        /> : ''
+      }
+      dataKey='canon_id'
+      key='canon_id'
+      style={{ display: 'flex' }}
+      width={20}
+    />];
+    if (ballots) controls.push(<Column
+      cellDataGetter = { ({ rowData }) => this.ballotCount(rowData) }
+      dataKey='ballotCount'
+      key='ballotCount'
+      label='#'
+      width={30}
+    />);
+    return controls.concat(fields.map(key => <Column
+      cellDataGetter = { ({ dataKey, rowData }) => rowData.getIn(['data', dataKey]) }
+      dataKey={key}
+      flexGrow={1}
+      key={key}
+      label={key}
+      width={100}
+    />));
+  }
+
   get list() {
     const { canon, nominations, query } = this.props;
     const seenCanon = [];
@@ -89,7 +122,7 @@ export default class CanonNominationList extends React.Component {
   }
 
   render() {
-    const { ballots, fields, onShowDetails, style } = this.props;
+    const { style } = this.props;
     const { sortBy, sortDirection } = this.state;
     let list = this.list.sortBy(n => sortBy === 'ballotCount'
       ? this.ballotCount(n)
@@ -118,37 +151,7 @@ export default class CanonNominationList extends React.Component {
               sortDirection={sortDirection}
               width={width}
             >
-              <Column
-                cellRenderer={ ({ cellData, rowData }) => {
-                  return cellData ? <More
-                    onClick={ (ev) => {
-                      onShowDetails(rowData);
-                      ev.stopPropagation();
-                    } }
-                  /> : '';
-                } }
-                dataKey='canon_id'
-                style={{ display: 'flex' }}
-                width={20}
-              />
-              {
-                ballots ? <Column
-                  cellDataGetter = { ({ rowData }) => this.ballotCount(rowData) }
-                  dataKey='ballotCount'
-                  label='#'
-                  width={30}
-                /> : null
-              }
-              {
-                fields.map(key => <Column
-                  cellDataGetter = { ({ dataKey, rowData }) => rowData.getIn(['data', dataKey]) }
-                  dataKey={key}
-                  flexGrow={1}
-                  key={key}
-                  label={key}
-                  width={100}
-                />)
-              }
+              { this.columns }
             </Table>
           ) }
         </AutoSizer>
