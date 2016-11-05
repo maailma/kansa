@@ -1,7 +1,7 @@
 import { List, Map } from 'immutable'
 import React from 'react'
 
-import { nominationFields } from '../../hugo/constants'
+import { categoryGroups } from '../constants';
 import CanonNominationList from './CanonNominationList'
 import NominationDetails from './NominationDetails'
 import NominationMerger from './NominationMerger'
@@ -16,6 +16,12 @@ export default class Canon extends React.Component {
   state = {
     selected: List(),
     show: null
+  }
+
+  get categories() {
+    const { category } = this.props;
+    const cg = categoryGroups[category];
+    return !cg || cg.length === 0 ? [category] : cg;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -41,8 +47,7 @@ export default class Canon extends React.Component {
       style={{ display: 'flex', height: 'calc(100vh - 56px - 48px)' }}
     >
       <CanonNominationList
-        categories={[category]}
-        fields={nominationFields(category)}
+        categories={this.categories}
         onSelect={this.onSelect}
         onShowDetails={ selected => this.setState({ show: selected }) }
         query={query}
