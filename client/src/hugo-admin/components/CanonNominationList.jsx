@@ -9,12 +9,6 @@ import More from 'material-ui/svg-icons/navigation/more-horiz'
 import './CanonNominationList.css'
 import { countRawBallots } from '../nomination-count';
 
-const noRowsRenderer = () => (
-  <div>
-    Loading...
-  </div>
-);
-
 class CanonNominationList extends React.Component {
   static propTypes = {
     ballots: React.PropTypes.instanceOf(Seq).isRequired,
@@ -122,6 +116,12 @@ class CanonNominationList extends React.Component {
     }
   }
 
+  noRowsRenderer = () => (
+    <div>
+      Loading... Or maybe there are no nominations for { this.props.categories.join('/') }?
+    </div>
+  );
+
   onRowClick = (list) => ({ index }) => {
     this.props.onSelect(list.get(index));
     this.setState({ hoverPos: index });
@@ -154,7 +154,7 @@ class CanonNominationList extends React.Component {
             <Table
               headerHeight={CanonNominationList.headerHeight}
               height={height}
-              noRowsRenderer={noRowsRenderer}
+              noRowsRenderer={this.noRowsRenderer}
               onRowClick={this.onRowClick(list)}
               overscanRowCount={CanonNominationList.overscanRowCount}
               rowClassName={({ index }) => this.rowClassName(list, index)}
