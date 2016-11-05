@@ -50,7 +50,6 @@ export default class Canon extends React.Component {
       />
       {
         selected.size >= 2 ? <NominationMerger
-          category={category}
           onSuccess={ () => this.setState({ selected: selected.clear() }) }
           selected={selected}
         /> : null
