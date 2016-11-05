@@ -11,10 +11,8 @@ import Popover from 'material-ui/Popover'
 import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
 
-import { categoryInfo } from '../../hugo/constants'
 import { fetchBallots } from '../actions'
-import { HUGO_ADMIN_ROUTE_ROOT } from '../constants';
-
+import { HUGO_ADMIN_ROUTE_ROOT, categoryGroups } from '../constants';
 
 class NominationToolbar extends React.Component {
 
@@ -32,7 +30,20 @@ class NominationToolbar extends React.Component {
     open: false
   }
 
-  handleTouchTap = (event) => {
+  categoryMenuItem = (category, indent) => {
+    const { setQuery, showNominations } = this.props;
+    return <MenuItem
+      key={category}
+      onTouchTap={ () => {
+        this.setState({ open: false });
+        showNominations(category);
+        setQuery('');
+      } }
+      primaryText={ indent ? `- ${category}` : category }
+    />
+  }
+
+  openMenu = (event) => {
     event.preventDefault();
     this.setState({
       open: true,
@@ -41,7 +52,7 @@ class NominationToolbar extends React.Component {
   };
 
   render() {
-    const { category, fetchBallots, query, setQuery, showFinalists, showNominations } = this.props;
+    const { category, fetchBallots, query, setQuery, showFinalists } = this.props;
     const { anchorEl, open } = this.state;
 
     return <div
@@ -58,7 +69,7 @@ class NominationToolbar extends React.Component {
       }}
     >
       <RaisedButton
-        onTouchTap={this.handleTouchTap}
+        onTouchTap={this.openMenu}
         label={category}
         style={{ marginRight: 12 }}
       />
@@ -70,15 +81,10 @@ class NominationToolbar extends React.Component {
         onRequestClose={ () => this.setState({ open: false }) }
       >
         <Menu>{
-          Object.keys(categoryInfo).map(cat => <MenuItem
-            key={cat}
-            onTouchTap={ () => {
-              this.setState({ open: false });
-              showNominations(cat);
-              setQuery('');
-            } }
-            primaryText={cat}
-          />)
+          Object.keys(categoryGroups).reduce((items, gn) => items.concat(
+            this.categoryMenuItem(gn, false),
+            categoryGroups[gn].map(category => this.categoryMenuItem(category, true))
+          ), [])
         }</Menu>
       </Popover>
       <IconButton
@@ -104,7 +110,6 @@ class NominationToolbar extends React.Component {
       />
     </div>
   }
-
 }
 
 export default connect(null,
