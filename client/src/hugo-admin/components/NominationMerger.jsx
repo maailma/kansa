@@ -6,7 +6,7 @@ import MergeIcon from 'material-ui/svg-icons/editor/merge-type'
 
 import { classify } from '../actions'
 
-const NominationMerger = ({ category, classify, nominations, onSuccess, selected }) => (
+const NominationMerger = ({ classify, nominations, onSuccess, selected }) => (
   <FloatingActionButton
     onTouchTap={() => {
       const canonIds = selected.map(sel => sel.get('canon_id')).filter(id => !!id);
@@ -27,15 +27,28 @@ const NominationMerger = ({ category, classify, nominations, onSuccess, selected
           const otherIds = canonIds.rest();
           selected = selected
             .filterNot(sel => sel.get('canon_id'))
-            .concat(nominations.filter(nom => {
-              const ci = nom.get('canon_id');
-              return ci && otherIds.contains(ci);
-            }));
+            .concat(nominations
+              .valueSeq()
+              .flatten(true)
+              .filter(nom => {
+                const ci = nom.get('canon_id');
+                return ci && otherIds.contains(ci);
+              })
+            );
           // TODO: remove empty canonicalisations
           break;
 
       }
-      classify(category, selected.map(sel => sel.get('data')), canon);
+      const categories = Object.keys(selected.reduce((categories, sel) => {
+        categories[sel.get('category')] = true;
+        return categories;
+      }, {}));
+      categories.forEach(category => {
+        const catData = selected
+          .filter(sel => sel.get('category') === category)
+          .map(sel => sel.get('data'));
+        classify(category, catData, canon);
+      });
       onSuccess();
     }}
     style={{
@@ -50,8 +63,8 @@ const NominationMerger = ({ category, classify, nominations, onSuccess, selected
 );
 
 export default connect(
-  ({ hugoAdmin }, { category }) => ({
-    nominations: hugoAdmin.getIn(['nominations', category])
+  ({ hugoAdmin }) => ({
+    nominations: hugoAdmin.get('nominations')
   }), {
     classify
   }

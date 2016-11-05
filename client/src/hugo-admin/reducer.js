@@ -14,6 +14,10 @@ export default (state = defaultState, action) => {
   switch (type) {
 
     case 'ADD_CANON':
+      const prevCategory = state.get('canon').findKey(canon => canon.has(action.id));
+      if (prevCategory && prevCategory !== category) {
+        state = state.deleteIn(['canon', prevCategory, action.id]);
+      }
       return state.setIn(['canon', category, action.id], fromJS(action.nomination));
 
     case 'ADD_CLASSIFICATION':
