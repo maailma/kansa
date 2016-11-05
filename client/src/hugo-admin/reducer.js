@@ -2,7 +2,7 @@ import { fromJS, List, Map } from 'immutable'
 
 
 const defaultState = Map({
-  ballots: Map(),  // { [category]: { id: number, nominations: nomination[] }[] }
+  ballots: Map(),  // { [category]: { [id: number]: nomination[] } }
   canon: Map(),
   error: null,
   nominations: Map()
@@ -14,6 +14,10 @@ export default (state = defaultState, action) => {
   switch (type) {
 
     case 'ADD_CANON':
+      const prevCategory = state.get('canon').findKey(canon => canon.has(action.id));
+      if (prevCategory && prevCategory !== category) {
+        state = state.deleteIn(['canon', prevCategory, action.id]);
+      }
       return state.setIn(['canon', category, action.id], fromJS(action.nomination));
 
     case 'ADD_CLASSIFICATION':
@@ -27,8 +31,17 @@ export default (state = defaultState, action) => {
           : nominations.push(Map({ data, canon_id }));
       });
 
+    case 'FETCH_ALL_BALLOTS':
+      return state.set('ballots', Map(Object.keys(action.data).map(
+        category => [ category, Map(action.data[category].map(
+          ([ id, nominations ]) => ([ id, fromJS(nominations) ])
+        )) ]
+      )));
+
     case 'FETCH_BALLOTS':
-      return state.setIn(['ballots', category], fromJS(action.data));
+      return state.setIn(['ballots', category], Map(action.data.map(
+        ([ id, nominations ]) => ([ id, fromJS(nominations) ])
+      )));
 
     case 'SET_CANON':
       return state.set('canon', Map(Object.keys(action.canon).map(
@@ -40,7 +53,7 @@ export default (state = defaultState, action) => {
     case 'SET_NOMINATIONS':
       return state.set('nominations', Map(Object.keys(action.nominations).map(
         category => [ category, List(action.nominations[category].map(
-          ([ data, canon_id ]) => fromJS({ data, canon_id })
+          ([ data, canon_id ]) => fromJS({ canon_id, category, data })
         )) ]
       )));
 

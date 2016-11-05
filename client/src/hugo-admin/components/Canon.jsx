@@ -1,27 +1,27 @@
 import { List, Map } from 'immutable'
 import React from 'react'
-import { connect } from 'react-redux'
 
-import { nominationFields } from '../../hugo/constants'
-import { classify } from '../actions'
+import { categoryGroups } from '../constants';
 import CanonNominationList from './CanonNominationList'
 import NominationDetails from './NominationDetails'
 import NominationMerger from './NominationMerger'
 
-class Canon extends React.Component {
+export default class Canon extends React.Component {
 
   static propTypes = {
-    ballots: React.PropTypes.instanceOf(List),
-    canon: React.PropTypes.instanceOf(Map).isRequired,
-    category: React.PropTypes.string.isRequired,
-    classify: React.PropTypes.func.isRequired,
-    nominations: React.PropTypes.instanceOf(List),
+    category: React.PropTypes.string,
     query: React.PropTypes.string
   }
 
   state = {
     selected: List(),
     show: null
+  }
+
+  get categories() {
+    const { category } = this.props;
+    const cg = categoryGroups[category];
+    return !cg || cg.length === 0 ? [category] : cg;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -40,16 +40,14 @@ class Canon extends React.Component {
   }
 
   render() {
-    const { ballots, canon, category, classify, nominations, query } = this.props;
+    const { category, query } = this.props;
     const { selected, show } = this.state;
-    return nominations ? <div
+    if (!category) return null;
+    return <div
       style={{ display: 'flex', height: 'calc(100vh - 56px - 48px)' }}
     >
       <CanonNominationList
-        ballots={ballots}
-        canon={canon}
-        fields={nominationFields(category)}
-        nominations={nominations}
+        categories={this.categories}
         onSelect={this.onSelect}
         onShowDetails={ selected => this.setState({ show: selected }) }
         query={query}
@@ -58,28 +56,14 @@ class Canon extends React.Component {
       />
       {
         selected.size >= 2 ? <NominationMerger
-          category={category}
-          classify={classify}
-          nominations={nominations}
           onSuccess={ () => this.setState({ selected: selected.clear() }) }
           selected={selected}
         /> : null
       }
       <NominationDetails
-        category={category}
-        onRequestClose={ () => this.setState({ show: null }) }
+        setSelected={ show => this.setState({ show }) }
         selected={show}
       />
-    </div> : <span>Loading...</span>
+    </div>
   }
 }
-
-export default connect(
-  ({ hugoAdmin }, { category }) => ({
-    ballots: hugoAdmin.getIn(['ballots', category]),
-    canon: hugoAdmin.getIn(['canon', category]) || Map(),
-    nominations: hugoAdmin.getIn(['nominations', category])
-  }), {
-    classify
-  }
-)(Canon);

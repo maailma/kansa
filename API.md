@@ -31,12 +31,13 @@ some relevant data and/or a `message` field.
   * [`GET /api/hugo/:id/nominations`](#get-apihugoidnominations)
   * [`POST /api/hugo/:id/nominate`](#post-apihugoidnominate)
 * [Hugo Admin](#hugo-admin)
+  * [`GET /api/hugo/admin/ballots`](#get-apihugoadminballots)
   * [`GET /api/hugo/admin/ballots/:category`](#get-apihugoadminballotscategory)
   * [`GET /api/hugo/admin/canon`](#get-apihugoadmincanon)
-  * [`GET /api/hugo/admin/nominations`](#get-apihugoadminnominations)
-  * [`POST /api/hugo/admin/classify`](#post-apihugoadminclassify)
   * [`POST /api/hugo/admin/canon/:id`](#post-apihugoadmincanonid)
-  * [WebSocket: `wss://server/api/hugo/admin/canon-updates`](#websocket-wssserverapihugoadmincanonupdates)
+  * [`POST /api/hugo/admin/classify`](#post-apihugoadminclassify)
+  * [`GET /api/hugo/admin/nominations`](#get-apihugoadminnominations)
+  * [WebSocket: `wss://server/api/hugo/admin/canon-updates`](#websocket-wssserverapihugoadmincanon-updates)
 
 ----
 
@@ -392,22 +393,42 @@ objects.
 
 ## Hugo Admin
 
+### `GET /api/hugo/admin/ballots`
+- Requires authentication and `hugo_admin` authority
+
+Fetch all current uncanonicalised ballots. Results are sorted by category, and
+expressed as `[ id, array ]` tuples where ballots with the same `id` in
+different categories are from the same nominator.
+
+#### Response
+```
+{
+  Fancast: [
+    [ 24, [ { title: 'Three Little Piggies' }, … ] ],
+    [ 42, [ { title: 'The Really Good One' }, { title: '3 pigs' }, … ] ],
+    …
+  ],
+  Novel: {
+    [ 42, [ { author: 'Asimov', title: '1984' }, … ] ],
+    …
+  },
+  …
+}
+```
+
+
 ### `GET /api/hugo/admin/ballots/:category`
 - Requires authentication and `hugo_admin` authority
 
-Fetch the current uncanonicalised ballots for `category`.
+Fetch the current uncanonicalised ballots for `category`. Results are expressed
+as `[ id, array ]` tuples where ballots with the same `id` in different
+categories are from the same nominator.
 
 #### Response
 ```
 [
-  {
-    id: 24,
-    nominations: [ { title: 'Three Little Piggies' }, … ]
-  },
-  {
-    id: 42,
-    nominations: [ { title: 'The Really Good One' }, { title: '3 pigs' }, … ]
-  },
+  [ 24, [ { title: 'Three Little Piggies' }, … ] ],
+  [ 42, [ { title: 'The Really Good One' }, { title: '3 pigs' }, … ] ],
   …
 ]
 ```

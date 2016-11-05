@@ -9,7 +9,7 @@ import { cleanBallots, selectFinalists } from '../nomination-count'
 class Finalists extends React.Component {
 
   static propTypes = {
-    ballots: React.PropTypes.instanceOf(List),
+    ballots: React.PropTypes.instanceOf(Map),
     canon: React.PropTypes.instanceOf(Map).isRequired,
     category: React.PropTypes.string.isRequired,
     fetchBallots: React.PropTypes.func.isRequired,

@@ -1,25 +1,21 @@
-import { List, Map } from 'immutable'
+import { List, Map, Seq } from 'immutable'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
+import { connect } from 'react-redux'
 import { AutoSizer, Column, SortDirection, Table } from 'react-virtualized'
 import 'react-virtualized/styles.css'
 import More from 'material-ui/svg-icons/navigation/more-horiz'
 
+import { nominationFields } from '../../hugo/constants'
+import { countRawBallots } from '../nomination-count'
 import './CanonNominationList.css'
-import { countRawBallots } from '../nomination-count';
 
-const noRowsRenderer = () => (
-  <div>
-    No nominations to list!
-  </div>
-);
-
-export default class CanonNominationList extends React.Component {
+class CanonNominationList extends React.Component {
   static propTypes = {
-    ballots: React.PropTypes.instanceOf(List),
+    ballots: React.PropTypes.instanceOf(Seq).isRequired,
     canon: React.PropTypes.instanceOf(Map).isRequired,
-    fields: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-    nominations: React.PropTypes.instanceOf(List).isRequired,
+    categories: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+    nominations: React.PropTypes.instanceOf(Seq).isRequired,
     onSelect: React.PropTypes.func.isRequired,
     onShowDetails: React.PropTypes.func.isRequired,
     query: React.PropTypes.string,
@@ -36,9 +32,77 @@ export default class CanonNominationList extends React.Component {
     sortDirection: SortDirection.ASC
   }
 
+  get columns() {
+    const { ballots, categories, onShowDetails } = this.props;
+    const controls = [<Column
+      cellRenderer={
+        ({ cellData, rowData }) => cellData ? <More
+          onClick={ (ev) => {
+            onShowDetails(rowData);
+            ev.stopPropagation();
+          } }
+        /> : ''
+      }
+      dataKey='canon_id'
+      key='canon_id'
+      style={{ display: 'flex' }}
+      width={20}
+    />];
+    if (!ballots.isEmpty()) controls.push(<Column
+      cellDataGetter={ ({ rowData }) => this.ballotCount(rowData) || '' }
+      dataKey='ballotCount'
+      key='ballotCount'
+      label='#'
+      width={30}
+    />);
+    if (categories.length > 1) controls.push(<Column
+      dataKey='category'
+      key='category'
+      label='Category'
+      width={80}
+    />);
+    return controls.concat(nominationFields(categories).map(key => <Column
+      cellDataGetter = { ({ dataKey, rowData }) => rowData.getIn(['data', dataKey]) }
+      dataKey={key}
+      flexGrow={1}
+      key={key}
+      label={key}
+      width={100}
+    />));
+  }
+
+  get list() {
+    const { canon, nominations, query } = this.props;
+    const seenCanon = [];
+    return nominations
+      .filter(nom => {
+        if (!nom) return false;
+        if (query) {
+          if (nom.every(v => String(v).toLowerCase().indexOf(query) === -1)) return false;
+        }
+        const ci = nom.get('canon_id');
+        if (ci) {
+          if (seenCanon.indexOf(ci) !== -1) return false;
+          const nc = nom.get('category');
+          if (!canon.hasIn([nc, ci])) return false;
+          seenCanon.push(ci);
+        }
+        return true;
+      })
+      .map(nom => {
+        const ci = nom.get('canon_id');
+        if (ci) {
+          const nc = nom.get('category');
+          return nom.set('data', canon.getIn([nc, ci]));
+        } else {
+          return nom;
+        }
+      });
+  }
+
   ballotCount(nomination) {
     const { ballots, nominations } = this.props;
-    if (!ballots || !nomination) return 0;
+    if (ballots.isEmpty() || !nomination || nomination.isEmpty()) return 0;
     const ci = nomination.get('canon_id');
     if (ci) {
       return nominations.reduce((sum, nom) => {
@@ -51,6 +115,12 @@ export default class CanonNominationList extends React.Component {
       return countRawBallots(ballots, nomination.get('data'));
     }
   }
+
+  noRowsRenderer = () => (
+    <div>
+      Loading... Or maybe there are no nominations for { this.props.categories.join('/') }?
+    </div>
+  );
 
   onRowClick = (list) => ({ index }) => {
     this.props.onSelect(list.get(index));
@@ -67,33 +137,13 @@ export default class CanonNominationList extends React.Component {
   }
 
   render() {
-    const { ballots, canon, fields, onShowDetails, query, style } = this.props;
+    const { style } = this.props;
     const { sortBy, sortDirection } = this.state;
-
-    const seenCanon = [];
-    let nominations = this.props.nominations
-      .filter(n => {
-        if (!n) return false;
-        if (query) {
-          if (n.every(v => String(v).toLowerCase().indexOf(query) === -1)) return false;
-        }
-        const ci = n.get('canon_id');
-        if (ci) {
-          if (seenCanon.indexOf(ci) !== -1) return false;
-          seenCanon.push(ci);
-        }
-        return true;
-      })
-      .map(n => {
-        const ci = n.get('canon_id');
-        return ci ? n.set('data', canon.get(ci)) : n;
-      })
-      .sortBy(n => sortBy === 'ballotCount'
-        ? this.ballotCount(n)
-        : n.getIn(['data', sortBy], '').toLowerCase()
-      );
-    if (sortDirection === SortDirection.DESC) nominations = nominations.reverse();
-
+    let list = this.list.sortBy(n => sortBy === 'ballotCount'
+      ? this.ballotCount(n)
+      : n.getIn(['data', sortBy], '').toLowerCase()
+    );
+    if (sortDirection === SortDirection.DESC) list = list.reverse();
     return (
       <div
         onKeyDown={this.onKeyDown}
@@ -104,49 +154,19 @@ export default class CanonNominationList extends React.Component {
             <Table
               headerHeight={CanonNominationList.headerHeight}
               height={height}
-              noRowsRenderer={noRowsRenderer}
-              onRowClick={this.onRowClick(nominations)}
+              noRowsRenderer={this.noRowsRenderer}
+              onRowClick={this.onRowClick(list)}
               overscanRowCount={CanonNominationList.overscanRowCount}
-              rowClassName={({ index }) => this.rowClassName(nominations, index)}
+              rowClassName={({ index }) => this.rowClassName(list, index)}
               rowHeight={CanonNominationList.rowHeight}
-              rowGetter={({ index }) => nominations.get(index)}
-              rowCount={nominations.size}
+              rowGetter={({ index }) => list.get(index)}
+              rowCount={list.size}
               sort={({ sortBy, sortDirection }) => this.setState({ sortBy, sortDirection })}
               sortBy={sortBy}
               sortDirection={sortDirection}
               width={width}
             >
-              <Column
-                cellRenderer={ ({ cellData, rowData }) => {
-                  return cellData ? <More
-                    onClick={ (ev) => {
-                      onShowDetails(rowData);
-                      ev.stopPropagation();
-                    } }
-                  /> : '';
-                } }
-                dataKey='canon_id'
-                style={{ display: 'flex' }}
-                width={20}
-              />
-              {
-                ballots ? <Column
-                  cellDataGetter = { ({ rowData }) => this.ballotCount(rowData) }
-                  dataKey='ballotCount'
-                  label='#'
-                  width={30}
-                /> : null
-              }
-              {
-                fields.map(key => <Column
-                  cellDataGetter = { ({ dataKey, rowData }) => rowData.getIn(['data', dataKey]) }
-                  dataKey={key}
-                  flexGrow={1}
-                  key={key}
-                  label={key}
-                  width={100}
-                />)
-              }
+              { this.columns }
             </Table>
           ) }
         </AutoSizer>
@@ -154,3 +174,13 @@ export default class CanonNominationList extends React.Component {
     )
   }
 }
+
+export default connect(
+  ({ hugoAdmin }, { categories }) => ({
+    ballots: hugoAdmin.get('ballots').valueSeq().flatten(true),
+    canon: hugoAdmin.get('canon'),
+    nominations: hugoAdmin.get('nominations')
+      .filter((_, cat) => categories.indexOf(cat) !== -1)
+      .valueSeq(true).flatten(true)
+  })
+)(CanonNominationList);

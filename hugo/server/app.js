@@ -45,6 +45,7 @@ app.use(session({
 
 const router = express.Router();
 router.all('/admin/*', Admin.verifyAdminAccess);
+router.get('/admin/ballots', admin.getAllBallots);
 router.get('/admin/ballots/:category', admin.getBallots);
 router.get('/admin/canon', admin.getCanon);
 router.get('/admin/nominations', admin.getNominations);
