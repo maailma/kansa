@@ -9,7 +9,7 @@ import NominationMerger from './NominationMerger'
 export default class Canon extends React.Component {
 
   static propTypes = {
-    category: React.PropTypes.string.isRequired,
+    category: React.PropTypes.string,
     query: React.PropTypes.string
   }
 
@@ -36,6 +36,7 @@ export default class Canon extends React.Component {
   render() {
     const { category, query } = this.props;
     const { selected, show } = this.state;
+    if (!category) return null;
     return <div
       style={{ display: 'flex', height: 'calc(100vh - 56px - 48px)' }}
     >
