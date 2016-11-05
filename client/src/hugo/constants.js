@@ -167,8 +167,13 @@ export const categoryInfo = {
   }
 }
 
-export const nominationFields = (category) => {
-  const texts = categoryInfo[category];
-  if (!texts) throw new Error('Unknown category ' + JSON.stringify(category));
-  return Object.keys(texts.nominationFieldLabels);
+export const nominationFields = (categories) => {
+  if (!Array.isArray(categories)) categories = [categories];
+  const nf = {};
+  categories.forEach(cat => {
+    const texts = categoryInfo[cat];
+    if (!texts) throw new Error('Unknown category ' + JSON.stringify(cat));
+    for (const key in texts.nominationFieldLabels) nf[key] = true;
+  });
+  return Object.keys(nf);
 }

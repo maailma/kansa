@@ -6,15 +6,15 @@ import { AutoSizer, Column, SortDirection, Table } from 'react-virtualized'
 import 'react-virtualized/styles.css'
 import More from 'material-ui/svg-icons/navigation/more-horiz'
 
+import { nominationFields } from '../../hugo/constants'
+import { countRawBallots } from '../nomination-count'
 import './CanonNominationList.css'
-import { countRawBallots } from '../nomination-count';
 
 class CanonNominationList extends React.Component {
   static propTypes = {
     ballots: React.PropTypes.instanceOf(Seq).isRequired,
     canon: React.PropTypes.instanceOf(Map).isRequired,
     categories: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-    fields: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
     nominations: React.PropTypes.instanceOf(Seq).isRequired,
     onSelect: React.PropTypes.func.isRequired,
     onShowDetails: React.PropTypes.func.isRequired,
@@ -33,7 +33,7 @@ class CanonNominationList extends React.Component {
   }
 
   get columns() {
-    const { ballots, categories, fields, onShowDetails } = this.props;
+    const { ballots, categories, onShowDetails } = this.props;
     const controls = [<Column
       cellRenderer={
         ({ cellData, rowData }) => cellData ? <More
@@ -61,7 +61,7 @@ class CanonNominationList extends React.Component {
       label='Category'
       width={80}
     />);
-    return controls.concat(fields.map(key => <Column
+    return controls.concat(nominationFields(categories).map(key => <Column
       cellDataGetter = { ({ dataKey, rowData }) => rowData.getIn(['data', dataKey]) }
       dataKey={key}
       flexGrow={1}
