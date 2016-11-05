@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
 import DownloadIcon from 'material-ui/svg-icons/file/cloud-download'
+import NominationsIcon from 'material-ui/svg-icons/action/list'
 import FinalistsIcon from 'material-ui/svg-icons/image/filter-6'
 import IconButton from 'material-ui/IconButton'
 import Menu from 'material-ui/Menu'
@@ -11,14 +12,16 @@ import Popover from 'material-ui/Popover'
 import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
 
-import { fetchBallots } from '../actions'
+import { categoryInfo } from '../../hugo/constants';
+import { fetchAllBallots } from '../actions'
 import { HUGO_ADMIN_ROUTE_ROOT, categoryGroups } from '../constants';
 
 class NominationToolbar extends React.Component {
 
   static propTypes = {
     category: React.PropTypes.string.isRequired,
-    fetchBallots: React.PropTypes.func.isRequired,
+    fetchAllBallots: React.PropTypes.func.isRequired,
+    pathname: React.PropTypes.string.isRequired,
     query: React.PropTypes.string,
     setQuery: React.PropTypes.func.isRequired,
     showFinalists: React.PropTypes.func.isRequired,
@@ -43,6 +46,28 @@ class NominationToolbar extends React.Component {
     />
   }
 
+  get categoryViewButton() {
+    const { category, showFinalists, showNominations } = this.props;
+    if (!categoryInfo[category]) return null;
+    return (this.currentView === 'nominations')
+      ? <IconButton
+          onTouchTap={ () => showFinalists(category) }
+          tooltip={`Show ${category} finalists`}
+        >
+          <FinalistsIcon />
+        </IconButton>
+      : <IconButton
+          onTouchTap={ () => showNominations(category) }
+          tooltip={`Show ${category} nominations`}
+        >
+          <NominationsIcon />
+        </IconButton>;
+  }
+
+  get currentView() {
+    return this.props.pathname.replace(/.*\//, '');
+  }
+
   openMenu = (event) => {
     event.preventDefault();
     this.setState({
@@ -52,7 +77,7 @@ class NominationToolbar extends React.Component {
   };
 
   render() {
-    const { category, fetchBallots, query, setQuery, showFinalists } = this.props;
+    const { category, fetchAllBallots, query, setQuery } = this.props;
     const { anchorEl, open } = this.state;
 
     return <div
@@ -87,34 +112,28 @@ class NominationToolbar extends React.Component {
           ), [])
         }</Menu>
       </Popover>
+      { this.categoryViewButton }
       <IconButton
-        onTouchTap={ () => {
-          showFinalists(category);
-          setQuery('');
-        } }
-        tooltip={`Show ${category} finalists`}
-      >
-        <FinalistsIcon />
-      </IconButton>
-      <IconButton
-        onTouchTap={ () => fetchBallots(category) }
-        tooltip={`Refresh ${category} ballots`}
+        onTouchTap={fetchAllBallots}
+        tooltip={'Refresh ballots'}
       >
         <DownloadIcon />
       </IconButton>
-      <TextField
-        hintText='Search'
-        onChange={ ev => setQuery(ev.target.value) }
-        style={{ paddingLeft: 12 }}
-        value={query}
-      />
+      {
+        this.currentView === 'nominations' ? <TextField
+          hintText='Search'
+          onChange={ ev => setQuery(ev.target.value) }
+          style={{ paddingLeft: 12 }}
+          value={query}
+        /> : null
+      }
     </div>
   }
 }
 
 export default connect(null,
   {
-    fetchBallots,
+    fetchAllBallots,
     showNominations: category => push(`${HUGO_ADMIN_ROUTE_ROOT}/${category}/nominations`),
     showFinalists: category => push(`${HUGO_ADMIN_ROUTE_ROOT}/${category}/finalists`)
   }
