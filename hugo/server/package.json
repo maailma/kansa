@@ -15,7 +15,7 @@
   "dependencies": {
     "bluebird": "^3.4.0",
     "body-parser": "~1.15.2",
-    "connect-pg-simple": "^3.1.0",
+    "connect-pg-simple": "3.1.0",
     "cors": "^2.7.1",
     "debug": "~2.2.0",
     "express": "~4.14.0",
