@@ -55,8 +55,7 @@ export default class Canon extends React.Component {
         /> : null
       }
       <NominationDetails
-        category={category}
-        onRequestClose={ () => this.setState({ show: null }) }
+        setSelected={ show => this.setState({ show }) }
         selected={show}
       />
     </div>
