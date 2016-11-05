@@ -1,6 +1,7 @@
 import { List } from 'immutable'
 import React from 'react'
 import { connect } from 'react-redux'
+import { locationShape } from 'react-router'
 
 import { initHugoAdmin } from '../actions'
 import NominationToolbar from './NominationToolbar'
@@ -10,6 +11,7 @@ class HugoAdmin extends React.Component {
   static propTypes = {
     initHugoAdmin: React.PropTypes.func.isRequired,
     isAdmin: React.PropTypes.bool.isRequired,
+    location: locationShape.isRequired,
     nominations: React.PropTypes.instanceOf(List),
     params: React.PropTypes.shape({
       category: React.PropTypes.string.isRequired
@@ -31,11 +33,12 @@ class HugoAdmin extends React.Component {
   }
 
   render() {
-    const { children, isAdmin, params: { category } } = this.props;
+    const { children, isAdmin, location: { pathname }, params: { category } } = this.props;
     const { query } = this.state;
     return <div>
       <NominationToolbar
         category={category}
+        pathname={pathname}
         query={query}
         setQuery={ query => this.setState({ query: query.toLowerCase() }) }
       />
