@@ -40,7 +40,7 @@ export default class Canon extends React.Component {
       style={{ display: 'flex', height: 'calc(100vh - 56px - 48px)' }}
     >
       <CanonNominationList
-        category={category}
+        categories={[category]}
         fields={nominationFields(category)}
         onSelect={this.onSelect}
         onShowDetails={ selected => this.setState({ show: selected }) }

@@ -49,7 +49,7 @@ export default (state = defaultState, action) => {
     case 'SET_NOMINATIONS':
       return state.set('nominations', Map(Object.keys(action.nominations).map(
         category => [ category, List(action.nominations[category].map(
-          ([ data, canon_id ]) => fromJS({ data, canon_id })
+          ([ data, canon_id ]) => fromJS({ canon_id, category, data })
         )) ]
       )));
 

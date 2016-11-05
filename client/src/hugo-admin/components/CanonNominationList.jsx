@@ -1,4 +1,4 @@
-import { List, Map } from 'immutable'
+import { List, Map, Seq } from 'immutable'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { connect } from 'react-redux'
@@ -17,11 +17,11 @@ const noRowsRenderer = () => (
 
 class CanonNominationList extends React.Component {
   static propTypes = {
-    ballots: React.PropTypes.instanceOf(List),
+    ballots: React.PropTypes.instanceOf(Seq).isRequired,
     canon: React.PropTypes.instanceOf(Map).isRequired,
-    category: React.PropTypes.string.isRequired,
+    categories: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
     fields: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-    nominations: React.PropTypes.instanceOf(List).isRequired,
+    nominations: React.PropTypes.instanceOf(Seq).isRequired,
     onSelect: React.PropTypes.func.isRequired,
     onShowDetails: React.PropTypes.func.isRequired,
     query: React.PropTypes.string,
@@ -39,7 +39,7 @@ class CanonNominationList extends React.Component {
   }
 
   get columns() {
-    const { ballots, fields, onShowDetails } = this.props;
+    const { ballots, categories, fields, onShowDetails } = this.props;
     const controls = [<Column
       cellRenderer={
         ({ cellData, rowData }) => cellData ? <More
@@ -54,12 +54,18 @@ class CanonNominationList extends React.Component {
       style={{ display: 'flex' }}
       width={20}
     />];
-    if (ballots) controls.push(<Column
-      cellDataGetter = { ({ rowData }) => this.ballotCount(rowData) }
+    if (!ballots.isEmpty()) controls.push(<Column
+      cellDataGetter={ ({ rowData }) => this.ballotCount(rowData) || '' }
       dataKey='ballotCount'
       key='ballotCount'
       label='#'
       width={30}
+    />);
+    if (categories.length > 1) controls.push(<Column
+      dataKey='category'
+      key='category'
+      label='Category'
+      width={80}
     />);
     return controls.concat(fields.map(key => <Column
       cellDataGetter = { ({ dataKey, rowData }) => rowData.getIn(['data', dataKey]) }
@@ -83,6 +89,8 @@ class CanonNominationList extends React.Component {
         const ci = nom.get('canon_id');
         if (ci) {
           if (seenCanon.indexOf(ci) !== -1) return false;
+          const nc = nom.get('category');
+          if (!canon.hasIn([nc, ci])) return false;
           seenCanon.push(ci);
         }
         return true;
@@ -90,7 +98,8 @@ class CanonNominationList extends React.Component {
       .map(nom => {
         const ci = nom.get('canon_id');
         if (ci) {
-          return nom.set('data', canon.get(ci));
+          const nc = nom.get('category');
+          return nom.set('data', canon.getIn([nc, ci]));
         } else {
           return nom;
         }
@@ -99,7 +108,7 @@ class CanonNominationList extends React.Component {
 
   ballotCount(nomination) {
     const { ballots, nominations } = this.props;
-    if (!ballots || !nomination) return 0;
+    if (ballots.isEmpty() || !nomination || nomination.isEmpty()) return 0;
     const ci = nomination.get('canon_id');
     if (ci) {
       return nominations.reduce((sum, nom) => {
@@ -167,9 +176,11 @@ class CanonNominationList extends React.Component {
 }
 
 export default connect(
-  ({ hugoAdmin }, { category }) => ({
-    ballots: hugoAdmin.getIn(['ballots', category]),
-    canon: hugoAdmin.getIn(['canon', category]),
-    nominations: hugoAdmin.getIn(['nominations', category]) || List()
+  ({ hugoAdmin }, { categories }) => ({
+    ballots: hugoAdmin.get('ballots').valueSeq().flatten(true),
+    canon: hugoAdmin.get('canon'),
+    nominations: hugoAdmin.get('nominations')
+      .filter((_, cat) => categories.indexOf(cat) !== -1)
+      .valueSeq(true).flatten(true)
   })
 )(CanonNominationList);
