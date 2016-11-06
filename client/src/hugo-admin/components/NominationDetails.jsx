@@ -63,6 +63,11 @@ class NominationDetails extends React.Component {
       width={20}
     />;
     const cat = <Column
+      cellDataGetter={ ({ rowData }) => {
+        const category = rowData.get('category');
+        const cm = category && category.match(/^(..).*(Long|Short)$/);
+        return cm ? cm[1] + cm[2] : category;
+      } }
       dataKey='category'
       key='category'
       label='Category'
