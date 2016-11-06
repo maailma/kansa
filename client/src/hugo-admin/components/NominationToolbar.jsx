@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
 import DownloadIcon from 'material-ui/svg-icons/file/cloud-download'
+import CatInfoIcon from 'material-ui/svg-icons/action/info-outline'
 import NominationsIcon from 'material-ui/svg-icons/action/list'
 import FinalistsIcon from 'material-ui/svg-icons/image/filter-6'
 import IconButton from 'material-ui/IconButton'
@@ -15,6 +16,7 @@ import TextField from 'material-ui/TextField'
 import { categoryInfo } from '../../hugo/constants';
 import { fetchAllBallots } from '../actions'
 import { HUGO_ADMIN_ROUTE_ROOT, categoryGroups } from '../constants';
+import CategoryInfo from './CategoryInfo'
 
 class NominationToolbar extends React.Component {
 
@@ -30,7 +32,8 @@ class NominationToolbar extends React.Component {
 
   state = {
     anchorEl: null,
-    open: false
+    infoOpen: false,
+    menuOpen: false
   }
 
   categoryMenuItem = (category, indent) => {
@@ -38,12 +41,32 @@ class NominationToolbar extends React.Component {
     return <MenuItem
       key={category}
       onTouchTap={ () => {
-        this.setState({ open: false });
+        this.setState({ menuOpen: false });
         showNominations(category);
         setQuery('');
       } }
       primaryText={ indent ? `- ${category}` : category }
     />
+  }
+
+  get categoryInfoButton() {
+    const { category } = this.props;
+    const { infoOpen } = this.state;
+    if (!categoryInfo[category]) return null;
+    return [
+      <IconButton
+        key='cib'
+        onTouchTap={() => this.setState({ infoOpen: true })}
+        tooltip={`Show ${category} information`}
+      >
+        <CatInfoIcon />
+      </IconButton>,
+      <CategoryInfo
+        category={infoOpen ? category : null}
+        key='cid'
+        onRequestClose={() => this.setState({ infoOpen: false })}
+      />
+    ];
   }
 
   get categoryViewButton() {
@@ -71,14 +94,14 @@ class NominationToolbar extends React.Component {
   openMenu = (event) => {
     event.preventDefault();
     this.setState({
-      open: true,
+      menuOpen: true,
       anchorEl: event.currentTarget
     });
   };
 
   render() {
     const { category, fetchAllBallots, query, setQuery } = this.props;
-    const { anchorEl, open } = this.state;
+    const { anchorEl, menuOpen } = this.state;
 
     return <div
       style={{
@@ -99,11 +122,11 @@ class NominationToolbar extends React.Component {
         style={{ marginRight: 12 }}
       />
       <Popover
-        open={open}
+        open={menuOpen}
         anchorEl={anchorEl}
         anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
         targetOrigin={{ horizontal: 'left', vertical: 'top' }}
-        onRequestClose={ () => this.setState({ open: false }) }
+        onRequestClose={ () => this.setState({ menuOpen: false }) }
       >
         <Menu>{
           Object.keys(categoryGroups).reduce((items, gn) => items.concat(
@@ -113,6 +136,7 @@ class NominationToolbar extends React.Component {
         }</Menu>
       </Popover>
       { this.categoryViewButton }
+      { this.categoryInfoButton }
       <IconButton
         onTouchTap={fetchAllBallots}
         tooltip={'Refresh ballots'}
