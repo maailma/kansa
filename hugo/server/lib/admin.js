@@ -98,10 +98,10 @@ class Admin {
       case 0:
         return tx.one(`
           INSERT INTO Canon (category, nomination)
-          VALUES ($(category), $(nomination)::jsonb)
+               VALUES ($(category), $(nomination)::jsonb)
           ON CONFLICT (category, nomination)
             DO UPDATE SET category = EXCLUDED.category
-          RETURNING id
+            RETURNING id
         `, { category, nomination });  // DO UPDATE required for non-empty RETURNING id
       case 1:
         return tx.none(getInsertQuery(data.id));
@@ -153,12 +153,39 @@ class Admin {
     if (!data.category || !data.nomination) {
       return next(new InputError('Required fields: category, nomination'));
     }
-    this.db.one(`
-      UPDATE Canon
-      SET category = $(category), nomination = $(nomination)::jsonb
-      WHERE id = $(id)
+    const updateCmd = `
+         UPDATE Canon
+            SET category = $(category),
+                nomination = $(nomination)::jsonb
+          WHERE id = $(id)
       RETURNING id
-    `, data)
+    `;
+    this.db.one(updateCmd, data)
+      .catch(error => {
+        if (error.constraint !== 'canon_category_nomination_key') throw error;
+        let prevId;
+        return this.db.tx(tx => tx.sequence((i, res) => { switch (i) {
+
+          case 0:
+            return tx.one(`
+              SELECT id
+                FROM Canon
+               WHERE category = $(category) AND
+                     nomination = $(nomination)::jsonb
+            `, data);
+
+          case 1:
+            prevId = res.id;
+            return tx.none('SELECT 1 FROM Classification WHERE canon_id = $1', prevId);
+
+          case 2:
+            return tx.none('DELETE FROM Canon WHERE id = $1', prevId);
+
+          case 3:
+            return tx.one(updateCmd, data);
+
+        }}))
+      })
       .then(() => res.status(200).json({ status: 'success' }))
       .catch(next);
   }
