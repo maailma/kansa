@@ -53,12 +53,21 @@ export function cleanBallots(category, allBallots, allNominations, canon) {
         if (cat === category) {
           const nd = nomination.get('data');
           if (cd) {
-            // canonicalise nomination within category
-            ballots.forEach((ballot, id) => {
-              if (ballot.includes(nd)) {
-                ballots.set(id, ballot.map(nom => nd.equals(nom) ? cd : nom));
-              }
-            });
+            if (cd.get('disqualified')) {
+              // remove disqualified nomination
+              ballots.forEach((ballot, id) => {
+                if (ballot.includes(nd)) {
+                  ballots.set(id, ballot.filter(nom => !nd.equals(nom)));
+                }
+              });
+            } else {
+              // canonicalise nomination within category
+              ballots.forEach((ballot, id) => {
+                if (ballot.includes(nd)) {
+                  ballots.set(id, ballot.map(nom => nd.equals(nom) ? cd : nom));
+                }
+              });
+            }
           } else if (ci) {
             // canonicalise nomination to another category
             ballots.forEach((ballot, id) => {
@@ -67,7 +76,7 @@ export function cleanBallots(category, allBallots, allNominations, canon) {
               }
             });
           }
-        } else if (cd) {
+        } else if (cd && !cd.get('disqualified')) {
           // canonicalise nomination from another category
           const nd = nomination.get('data');
           allBallots.get(cat).forEach((srcBallot, id) => {

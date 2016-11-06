@@ -133,8 +133,13 @@ class CanonNominationList extends React.Component {
   }
 
   rowClassName = (nominations, index) => {
+    const cl = [];
     const nom = index >= 0 && nominations.get(index);
-    return nom && this.props.selected.includes(nom) ? 'selected' : '';
+    if (nom) {
+      if (nom.getIn(['data', 'disqualified'])) cl.push('disqualified');
+      if (this.props.selected.includes(nom)) cl.push('selected');
+    }
+    return cl.join(' ');
   }
 
   shouldComponentUpdate(nextProps, nextState) {

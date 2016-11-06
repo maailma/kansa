@@ -3,7 +3,10 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { AutoSizer, Column, Table } from 'react-virtualized'
 import Dialog from 'material-ui/Dialog'
+import FlatButton from 'material-ui/FlatButton'
 import ContentClear from 'material-ui/svg-icons/content/clear'
+import DisqualifyChecked from 'material-ui/svg-icons/navigation/cancel'
+import DisqualifyUnchecked from 'material-ui/svg-icons/toggle/radio-button-unchecked'
 
 import { nominationFields } from '../../hugo/constants'
 import { classify, fetchAllBallots, updateCanonEntry } from '../actions'
@@ -101,6 +104,16 @@ class NominationDetails extends React.Component {
     return [ count, cat, ...data, remove ];
   }
 
+  get disqualified() {
+    const { canon } = this.props;
+    return canon.get('disqualified', false);
+  }
+
+  set disqualified(dq) {
+    const { canon, updateCanonEntry } = this.props;
+    updateCanonEntry(this.canonId, this.category, canon.set('disqualified', dq));
+  }
+
   get fields() {
     const { nominations } = this.props;
     const fields = {};
@@ -128,11 +141,29 @@ class NominationDetails extends React.Component {
 
   render() {
     const { nominations, selected, setSelected } = this.props;
+    const disqualified = this.disqualified;
     return <Dialog
+      actions={
+        <FlatButton
+          icon={ disqualified ? <DisqualifyChecked /> : <DisqualifyUnchecked />}
+          label='Disqualified'
+          labelPosition='after'
+          onTouchTap={ () => this.disqualified = !disqualified }
+          secondary={disqualified}
+          style={ disqualified ? {} : { color: 'rgba(0, 0, 0, 0.6)' } }
+        />
+      }
       onRequestClose={() => setSelected(null)}
       open={!!selected}
+      actionsContainerStyle={ disqualified ? {
+        background: 'rgba(0, 0, 0, 0.8)'
+      } : {} }
+      bodyStyle={ disqualified ? {
+        background: 'rgba(0, 0, 0, 0.8)',
+        color: 'white'
+      } : {} }
     >
-      <div style={{ height: '75vh' }}>
+      <div style={{ height: '60vh' }}>
         <AutoSizer>
           { ({ height, width }) => (
             <Table
@@ -159,15 +190,15 @@ class NominationDetails extends React.Component {
     const nomination = nominations.get(index);
     const isCanon = nomination &&
       this.category === nomination.get('category') &&
-      canon.equals(nomination.get('data'));
+      canon.delete('disqualified').equals(nomination.get('data'));
     return isCanon ? 'canon-entry' : '';
   }
 
   setCanonicalEntry = ({ index }) => {
-    const { nominations, setSelected, updateCanonEntry } = this.props;
+    const { canon, nominations, setSelected, updateCanonEntry } = this.props;
     const nomination = nominations.get(index);
     const category = nomination.get('category');
-    const data = nomination.get('data');
+    const data = nomination.get('data').set('disqualified', canon.get('disqualified', false));
     updateCanonEntry(this.canonId, category, data);
     setSelected(nomination);
   }
