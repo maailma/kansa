@@ -56,6 +56,11 @@ class CanonNominationList extends React.Component {
       width={30}
     />);
     if (categories.length > 1) controls.push(<Column
+      cellDataGetter={ ({ rowData }) => {
+        const category = rowData.get('category');
+        const cm = category && category.match(/^(..).*(Long|Short)$/);
+        return cm ? cm[1] + cm[2] : category;
+      } }
       dataKey='category'
       key='category'
       label='Category'
