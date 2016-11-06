@@ -2,9 +2,11 @@ import { List, Map } from 'immutable'
 import React from 'react'
 import { connect } from 'react-redux'
 
-import { fetchAllBallots } from '../actions';
-import { minFinalistsPerCategory } from '../constants';
+import { fetchAllBallots } from '../actions'
+import { minFinalistsPerCategory } from '../constants'
 import { cleanBallots, selectFinalists } from '../nomination-count'
+
+import FinalistResults from './FinalistResults'
 
 class Finalists extends React.Component {
 
@@ -46,25 +48,30 @@ class Finalists extends React.Component {
   getFinalists() {
     setTimeout(() => {
       const { allBallots, allNominations, canon, category } = this.props;
-      console.warn('Calculating finalists for', category);
       const cb = cleanBallots(category, allBallots, allNominations, canon);
       const results = selectFinalists(minFinalistsPerCategory, cb, this.logSelectionRound);
       this.setState({ results });
-      console.warn('RESULTS', results.toJS());
     });
   }
 
-  logSelectionRound = (ballots, counts, nextEliminations) => {
-    const entry = Map({ ballots, counts, nextEliminations });
-    this.setState({ log: this.state.log.push(entry) });
-    console.log('ballots:', ballots.toJS(), 'counts:', counts.toJS(), 'next:', nextEliminations.toJS());
+  logSelectionRound = (ballots, counts, next) => {
+    const { log } = this.state;
+    this.setState({ log: log.push(Map({ counts, next })) });
   }
 
   render() {
-    const { results } = this.state;
-    return results ? <pre>
-      { JSON.stringify(results.toJS(), null, '  ') }
-    </pre> : <span>Counting...</span>
+    const { category } = this.props;
+    const { log, results } = this.state;
+    return results ? <div
+      style={{ display: 'flex', height: 'calc(100vh - 56px - 48px)' }}
+    >
+      <FinalistResults
+        category={category}
+        log={log}
+        results={results}
+        style={{ flex: '1 1 auto' }}
+      />
+    </div> : <span>Counting...</span>
   }
 }
 
