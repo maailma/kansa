@@ -44,7 +44,8 @@ export default ({ dispatch, getState }) => (next) => (action) => {
 
     case 'INIT_HUGO_ADMIN': {
       if (!ws) {
-        ws = new WebSocket(`wss://${process.env.API_HOST}/api/hugo/admin/canon-updates`);
+        const host = API_HOST ? `wss://${API_HOST}` : '';
+        ws = new WebSocket(`${host}/api/hugo/admin/canon-updates`);
         ws.onmessage = (msg) => {
           const { canon, classification } = JSON.parse(msg.data);
           if (canon) dispatch(addCanon(canon));

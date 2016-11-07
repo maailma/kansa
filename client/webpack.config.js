@@ -1,17 +1,11 @@
-const CompressionPlugin = require('compression-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const url = require('url');
 const webpack = require('webpack');
 
-const apiHost = process.env.API_HOST || (process.env.DOCKER_HOST && url.parse(process.env.DOCKER_HOST).hostname || 'localhost') + ':4430';
-console.log('Using API host', apiHost);
+const title = process.env.TITLE || 'Worldcon 75';
 
-const title = process.env.TITLE || 'Your Membership';
-
-module.exports = {
+const cfg = {
   entry: [
-    './src/index.jsx',
-    'webpack/hot/dev-server'
+    './src/index.jsx'
   ],
   output: {
     path: __dirname + '/dist',
@@ -29,23 +23,45 @@ module.exports = {
     extensions: [ '', '.js', '.jsx', '.css' ]
   },
   plugins: [
-    new CompressionPlugin({
-      algorithm: 'zopfli',
-      test: /\.js$|\.html$/,
-      threshold: 1000
-    }),
-    new HtmlWebpackPlugin({
-      inject: 'body',
-      template: 'src/index.ejs',
-      title
-    }),
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify(process.env.NODE_ENV || ''),
-        API_HOST: JSON.stringify(apiHost),
-        TITLE: JSON.stringify(title)
-      }
-    }),
     new webpack.NoErrorsPlugin()
   ]
 };
+
+const globals = {
+  API_HOST: JSON.stringify(''),
+  ENV: JSON.stringify(process.env.NODE_ENV || ''),
+  TITLE: JSON.stringify(title)
+}
+
+if (process.env.NODE_ENV === 'production') {
+
+  console.log('PRODUCTION build\n');
+  const CompressionPlugin = require('compression-webpack-plugin');
+
+  cfg.plugins.push(new CompressionPlugin({
+    algorithm: 'zopfli',
+    test: /\.js$|\.html$/,
+    threshold: 1000
+  }));
+
+} else {
+
+  console.log((process.env.NODE_ENV || 'development').toUpperCase() + ' build');
+  const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+  cfg.entry.push('webpack/hot/dev-server');
+  cfg.plugins.push(new HtmlWebpackPlugin({
+    inject: 'body',
+    template: 'src/index.ejs',
+    title
+  }));
+
+  const apiHost = process.env.API_HOST ||
+    (process.env.DOCKER_HOST && url.parse(process.env.DOCKER_HOST).hostname || 'localhost') + ':4430';
+  globals.API_HOST = JSON.stringify(apiHost);
+  console.log('Using API host', apiHost, '\n');
+
+}
+cfg.plugins.push(new webpack.DefinePlugin(globals));
+
+module.exports = cfg;

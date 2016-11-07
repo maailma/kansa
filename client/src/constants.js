@@ -1,4 +1,3 @@
-export const API_ROOT = `https://${process.env.API_HOST}/api/`;
+export const API_ROOT = API_HOST ? `https://${API_HOST}/api/` : '/api/';
 export const PATH_IN = '/profile';
 export const PATH_OUT = '/login';
-export const TITLE = process.env.TITLE;

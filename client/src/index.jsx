@@ -28,7 +28,7 @@ const theme = getMuiTheme({
   fontFamily: '"Open Sans", sans-serif'
 });
 
-const history = process.env.NODE_ENV === 'production' ? browserHistory : hashHistory;
+const history = ENV === 'production' ? browserHistory : hashHistory;
 const store = createStore(reducers, middleware(history));
 
 const authCheck = ({ location: { pathname }}, replace, callback) => {
