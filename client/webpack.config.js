@@ -36,6 +36,9 @@ const globals = {
 if (process.env.NODE_ENV === 'production') {
 
   console.log('PRODUCTION build\n');
+  globals['process.env'] = {
+    NODE_ENV: JSON.stringify('production')
+  }
 
 } else {
 
