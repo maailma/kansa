@@ -13,11 +13,6 @@ services:
     volumes:
       - ./nginx/ssl:/ssl:ro
 
-  client-build:
-    environment:
-      API_HOST: localhost:4430
-      TITLE: Production Test
-
   hugo:
     environment:
       CORS_ORIGIN: http://localhost:8080
