@@ -36,13 +36,6 @@ const globals = {
 if (process.env.NODE_ENV === 'production') {
 
   console.log('PRODUCTION build\n');
-  const CompressionPlugin = require('compression-webpack-plugin');
-
-  cfg.plugins.push(new CompressionPlugin({
-    algorithm: 'zopfli',
-    test: /\.js$|\.html$/,
-    threshold: 1000
-  }));
 
 } else {
 
