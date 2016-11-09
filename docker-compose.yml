@@ -40,6 +40,14 @@ services:
       - postgres
     expose:
       - "3000"
+  
+  raami:
+    build: ./raami
+    entrypoint: ./wait-for-it.sh postgres:5432 -- npm start
+    links:
+      - postgres
+    expose:
+      - "3000"
 
   kyyhky:
     build: ./kyyhky
