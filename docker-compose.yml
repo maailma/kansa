@@ -12,6 +12,7 @@ services:
     links:
       - hugo
       - kansa
+      - raami
     volumes:
       - ./nginx/conf.template:/nginx.conf.template:ro
       - client:/usr/share/nginx/html/client:ro
