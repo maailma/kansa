@@ -97,6 +97,23 @@ export function cleanBallots(ballots, nominations, canon) {
         }));
       });
     });
+    canonById.forEach(ca => {
+      const rc = ca.getIn(['data', 'relocated']);
+      if (rc) {
+        const cc = ca.get('category');
+        const cd = ca.get('data');
+        ballots.set(cc, ballots.get(cc).withMutations(srcCatBallots => {
+          srcCatBallots.forEach((srcBallot, id) => {
+            if (srcBallot.includes(cd)) {
+              srcCatBallots.set(id, srcBallot.filter(nom => !cd.equals(nom)));
+              const tgtCatBallots = ballots.get(rc);
+              const tgtBallot = tgtCatBallots.get(id);
+              ballots.set(rc, tgtCatBallots.set(id, tgtBallot ? tgtBallot.push(cd) : List.of(cd)));
+            }
+          });
+        }));
+      }
+    });
   });
   const emptyNom = Map();
   return ballots.map(catBallots => catBallots.toList().map(ballot => ballot.toSet().delete(emptyNom)));
