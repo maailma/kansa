@@ -4,6 +4,9 @@ import { connect } from 'react-redux'
 import { AutoSizer, Column, Table } from 'react-virtualized'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
+import Menu from 'material-ui/Menu'
+import MenuItem from 'material-ui/MenuItem'
+import Popover from 'material-ui/Popover'
 import ContentClear from 'material-ui/svg-icons/content/clear'
 import DisqualifyChecked from 'material-ui/svg-icons/navigation/cancel'
 import DisqualifyUnchecked from 'material-ui/svg-icons/toggle/radio-button-unchecked'
@@ -12,6 +15,7 @@ import { nominationFields } from '../../hugo/constants'
 import { classify, fetchAllBallots, updateCanonEntry } from '../actions'
 import { countRawBallots } from '../nomination-count';
 import './NominationDetails.css'
+import { categoryInfo } from '../../hugo/constants';
 
 const headerHeight = 30;
 const overscanRowCount = 10;
@@ -28,6 +32,11 @@ class NominationDetails extends React.Component {
     selected: React.PropTypes.instanceOf(Map),
     setSelected: React.PropTypes.func.isRequired,
     updateCanonEntry: React.PropTypes.func.isRequired
+  }
+
+  state = {
+    relocateOpen: false,
+    relocateAnchorEl: null
   }
 
   componentWillReceiveProps(nextProps) {
@@ -127,6 +136,24 @@ class NominationDetails extends React.Component {
     return Object.keys(fields);
   }
 
+  openRelocateMenu = (event) => {
+    event.preventDefault();
+    this.setState({
+      relocateOpen: true,
+      relocateAnchorEl: event.currentTarget
+    });
+  };
+
+  get relocated() {
+    const { canon } = this.props;
+    return canon.get('relocated');
+  }
+
+  set relocated(rc) {
+    const { canon, updateCanonEntry } = this.props;
+    updateCanonEntry(this.canonId, this.category, canon.set('relocated', rc));
+  }
+
   removeNomination(nomination) {
     const { canon, classify, nominations } = this.props;
     const category = nomination.get('category');
@@ -143,7 +170,36 @@ class NominationDetails extends React.Component {
     const { nominations, selected, setSelected } = this.props;
     const disqualified = this.disqualified;
     return <Dialog
-      actions={
+      actions={[
+        <FlatButton
+          label={ this.relocated ? `Relocated: ${this.relocated}` : 'Relocate' }
+          onTouchTap={this.openRelocateMenu}
+        />,
+        <Popover
+          anchorEl={this.state.relocateAnchorEl}
+          onRequestClose={ () => this.setState({ relocateOpen: false }) }
+          open={this.state.relocateOpen}
+        >
+          <Menu>
+            <MenuItem
+              onTouchTap={ () => {
+                this.relocated = null;
+                this.setState({ relocateOpen: false });
+              }}
+              primaryText='[Do not relocate]'
+            />
+            {
+              Object.keys(categoryInfo).map(category => <MenuItem
+                key={category}
+                onTouchTap={ () => {
+                  this.relocated = category;
+                  this.setState({ relocateOpen: false });
+                }}
+                primaryText={category}
+              />)
+            }
+          </Menu>
+        </Popover>,
         <FlatButton
           icon={ disqualified ? <DisqualifyChecked /> : <DisqualifyUnchecked />}
           label='Disqualified'
@@ -152,7 +208,7 @@ class NominationDetails extends React.Component {
           secondary={disqualified}
           style={ disqualified ? {} : { color: 'rgba(0, 0, 0, 0.6)' } }
         />
-      }
+      ]}
       onRequestClose={() => setSelected(null)}
       open={!!selected}
       actionsContainerStyle={ disqualified ? {
@@ -190,7 +246,7 @@ class NominationDetails extends React.Component {
     const nomination = nominations.get(index);
     const isCanon = nomination &&
       this.category === nomination.get('category') &&
-      canon.delete('disqualified').equals(nomination.get('data'));
+      canon.delete('disqualified').delete('relocated').equals(nomination.get('data'));
     return isCanon ? 'canon-entry' : '';
   }
 
@@ -198,7 +254,9 @@ class NominationDetails extends React.Component {
     const { canon, nominations, setSelected, updateCanonEntry } = this.props;
     const nomination = nominations.get(index);
     const category = nomination.get('category');
-    const data = nomination.get('data').set('disqualified', canon.get('disqualified', false));
+    const data = nomination.get('data')
+      .set('disqualified', canon.get('disqualified', false))
+      .set('relocated', canon.get('relocated'));
     updateCanonEntry(this.canonId, category, data);
     setSelected(nomination);
   }
