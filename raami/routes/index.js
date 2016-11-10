@@ -8,14 +8,14 @@ router.get('/', function(req, res, next) {
 
 var db = require('../queries');
 
-router.get('/api/artists', db.getArtists);
-router.get('/api/artist/:id', db.getArtist);
-router.post('/api/artist', db.createArtist);
-router.put('/api/artist/:id', db.updateArtist);
-router.get('/api/work', db.getWorks);
-router.get('/api/work/:id', db.getWork);
-router.post('/api/work', db.createWork);
-router.put('/api/work/:id', db.updateWork);
-router.delete('/api/work/:id', db.removeWork);
+router.get('/artists', db.getArtists);
+router.get('/artist/:id', db.getArtist);
+router.post('/artist', db.createArtist);
+router.put('/artist/:id', db.updateArtist);
+router.get('/work', db.getWorks);
+router.get('/work/:id', db.getWork);
+router.post('/work', db.createWork);
+router.put('/work/:id', db.updateWork);
+router.delete('/work/:id', db.removeWork);
 
 module.exports = router;

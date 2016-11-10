@@ -6,8 +6,9 @@ var options = {
 };
 
 var pgp = require('pg-promise')(options);
-var connectionString = 'postgres://localhost:5432/raami';
+var connectionString = 'postgres://localhost:5432/api';
 var db = pgp(connectionString);
+// var db = pgp(process.env.DATABASE_URL)
 
 // add query functions
 
@@ -24,7 +25,7 @@ module.exports = {
 };
 
 function getArtists(req, res, next) {
-  db.any('select * from artist')
+  db.any('select * from Artist')
     .then(function (data) {
       res.status(200)
         .json({
@@ -40,13 +41,13 @@ function getArtists(req, res, next) {
 
 function getArtist(req, res, next) {
   var member_id = parseInt(req.params.id);
-  db.one('select * from artist where member_id = $1', member_id)
+  db.one('select * from Artist where member_id = $1', member_id)
     .then(function (data) {
       res.status(200)
         .json({
           status: 'success',
           data: data,
-          message: 'Retrieved ONE artist'
+          message: 'Retrieved ONE Artist'
         });
     })
     .catch(function (err) {
@@ -57,7 +58,7 @@ function getArtist(req, res, next) {
 
 function createArtist(req, res, next) {
   req.body.age = parseInt(req.body.age);
-  db.none('insert into artist(name, breed, age, sex)' +
+  db.none('insert into Artist(name, breed, age, sex)' +
       'values(${name}, ${breed}, ${age}, ${sex})',
     req.body)
     .then(function () {
@@ -74,7 +75,7 @@ function createArtist(req, res, next) {
 
 
 function updateArtist(req, res, next) {
-  db.none('update artists set name=$1, breed=$2, age=$3, sex=$4 where id=$5',
+  db.none('update Artists set name=$1, breed=$2, age=$3, sex=$4 where id=$5',
     [req.body.name, req.body.breed, parseInt(req.body.age),
       req.body.sex, parseInt(req.params.id)])
     .then(function () {
@@ -91,7 +92,7 @@ function updateArtist(req, res, next) {
 
 function removeArtists(req, res, next) {
   var _id = parseInt(req.params.id);
-  db.result('delete from artist where id = $1', _id)
+  db.result('delete from Artist where id = $1', _id)
     .then(function (result) {
       /* jshint ignore:start */
       res.status(200)
@@ -109,13 +110,13 @@ function removeArtists(req, res, next) {
 /**** WORKS ***/
 
 function getWorks(req, res, next) {
-  db.any('select * from works where member_id = $1', member_id)
+  db.any('select * from Works where artist_id = $1', artist_id)
     .then(function (data) {
       res.status(200)
         .json({
           status: 'success',
           data: data,
-          message: 'Retrieved ALL puppies'
+          message: 'Retrieved ALL Works'
         });
     })
     .catch(function (err) {
@@ -124,14 +125,14 @@ function getWorks(req, res, next) {
 }
 
 function getWork(req, res, next) {
-  var work_id = parseInt(req.params.id);
-  db.one('select * from works where id = $1', work_id)
+  var Work_id = parseInt(req.params.id);
+  db.one('select * from Works where id = $1', work_id)
     .then(function (data) {
       res.status(200)
         .json({
           status: 'success',
           data: data,
-          message: 'Retrieved ONE work'
+          message: 'Retrieved ONE Work'
         });
     })
     .catch(function (err) {
@@ -142,14 +143,14 @@ function getWork(req, res, next) {
 
 function createWork(req, res, next) {
   req.body.age = parseInt(req.body.age);
-  db.none('insert into works(name, breed, age, sex)' +
+  db.none('insert into Works(name, breed, age, sex)' +
       'values(${name}, ${breed}, ${age}, ${sex})',
     req.body)
     .then(function () {
       res.status(200)
         .json({
           status: 'success',
-          message: 'Inserted one puppy'
+          message: 'Inserted one Work'
         });
     })
     .catch(function (err) {
@@ -159,14 +160,14 @@ function createWork(req, res, next) {
 
 
 function updateWork(req, res, next) {
-  db.none('update works set name=$1, breed=$2, age=$3, sex=$4 where id=$5',
+  db.none('update Works set name=$1, breed=$2, age=$3, sex=$4 where id=$5',
     [req.body.name, req.body.breed, parseInt(req.body.age),
       req.body.sex, parseInt(req.params.id)])
     .then(function () {
       res.status(200)
         .json({
           status: 'success',
-          message: 'Updated puppy'
+          message: 'Updated Work'
         });
     })
     .catch(function (err) {
@@ -176,13 +177,13 @@ function updateWork(req, res, next) {
 
 function removeWork(req, res, next) {
   var _id = parseInt(req.params.id);
-  db.result('delete from work where id = $1', _id)
+  db.result('delete from Work where id = $1', _id)
     .then(function (result) {
       /* jshint ignore:start */
       res.status(200)
         .json({
           status: 'success',
-          message: `Removed ${result.rowCount} puppy`
+          message: 'Removed ${result.rowCount} Work'
         });
       /* jshint ignore:end */
     })

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node --debug ./bin/www"
   },
   "dependencies": {
     "bluebird": "^3.3.4",

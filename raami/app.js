@@ -36,13 +36,14 @@ app.use(function(req, res, next) {
 
 // development error handler
 // will print stacktrace
+const isDevEnv = (app.get('env') === 'development');
 if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status( err.code || 500 )
-    .json({
-      status: 'error',
-      message: err
-    });
+  app.use((err, req, res, next) => {
+    const error = err.error || err;
+    const data = { status: 'error', message: error.message };
+    if (isDevEnv) data.error = err;
+    const status = err.status || error.status || error.name == 'InputError' && 400 || 500;
+    res.status(status).json(data);
   });
 }
 
