@@ -48,8 +48,8 @@ class Finalists extends React.Component {
   getFinalists() {
     setTimeout(() => {
       const { allBallots, allNominations, canon, category } = this.props;
-      const cb = cleanBallots(category, allBallots, allNominations, canon);
-      const results = selectFinalists(minFinalistsPerCategory, cb, this.logSelectionRound);
+      const cb = cleanBallots(allBallots, allNominations, canon);
+      const results = selectFinalists(minFinalistsPerCategory, cb.get(category), this.logSelectionRound);
       this.setState({ results });
     });
   }
@@ -76,10 +76,10 @@ class Finalists extends React.Component {
 }
 
 export default connect(
-  ({ hugoAdmin }, { category }) => ({
+  ({ hugoAdmin }) => ({
     allBallots: hugoAdmin.get('ballots'),
     allNominations: hugoAdmin.get('nominations'),
-    canon: hugoAdmin.getIn(['canon', category]) || Map()
+    canon: hugoAdmin.get('canon')
   }), {
     fetchAllBallots
   }

@@ -37,7 +37,7 @@ class CategoryInfo extends React.Component {
     if (!category || allBallots.isEmpty()) return null;
     const ballots = allBallots.get(category, Map()).filter(ballot => ballot.size);
     const nominations = allNominations.get(category);
-    const cb = cleanBallots(category, allBallots, allNominations, canon).filter(ballot => ballot.size);
+    const cb = cleanBallots(allBallots, allNominations, canon).get(category).filter(ballot => ballot.size);
     return <Dialog
       onRequestClose={onRequestClose}
       open={!!category}
@@ -53,7 +53,7 @@ class CategoryInfo extends React.Component {
           <li>Clean ballots: <b>{ cb.size }</b></li>
           <li>By size: { CategoryInfo.ballotSizer(cb, 'c') }</li>
           <li>Clean unique nominations: <b>{ cb.flatten(true).toSet().size }</b></li>
-          <li>Disqualified: <b>{ canon.filter(cd => cd.get('disqualified')).size }</b></li>
+          <li>Disqualified: <b>{ canon.get(category).filter(cd => cd.get('disqualified')).size }</b></li>
         </ul>
       </div>
     </Dialog>
@@ -62,10 +62,10 @@ class CategoryInfo extends React.Component {
 }
 
 export default connect(
-  ({ hugoAdmin }, { category }) => ({
+  ({ hugoAdmin }) => ({
     allBallots: hugoAdmin.get('ballots'),
     allNominations: hugoAdmin.get('nominations'),
-    canon: category && hugoAdmin.getIn(['canon', category]) || Map()
+    canon: hugoAdmin.get('canon')
   }), {
     fetchAllBallots
   }

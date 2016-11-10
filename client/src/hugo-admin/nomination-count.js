@@ -38,69 +38,68 @@ export function countRawBallots(rawBallots, nomination) {
 /**
  * Canonicalise & simplify ballots, removing duplicates and empty nominations
  *
- * @param {string} category
- * @param {Map<string, Map<number, List<Nomination>>>} allBallots
- * @param {Map<string, List<Map<{ canon_id: number, data: Nomination }>>>} allNominations
- * @param {Map<canon_id, Nomination>} canon
- * @returns {List<Set<Nomination>>}
+ * @param {Map<string, Map<number, List<Nomination>>>} ballots
+ * @param {Map<string, List<Map<{ canon_id: number, data: Nomination }>>>} nominations
+ * @param {Map<string, Map<canon_id, Nomination>>} canon
+ * @returns {Map<string, List<Set<Nomination>>>}
  */
-export function cleanBallots(category, allBallots, allNominations, canon) {
-  const ballots = allBallots.get(category).withMutations(ballots => {
-    allNominations.forEach((nominations, cat) => {
-      nominations.forEach(nomination => {
+export function cleanBallots(ballots, nominations, canon) {
+  const canonById = Map(canon.reduce((res, catData, category) => {
+    catData.forEach((data, id) => {
+      res.push([id, Map({ category, data })]);
+    });
+    return res;
+  }, []));
+  ballots = ballots.withMutations(ballots => {
+    nominations.forEach((noms, cat) => {
+      noms.forEach(nomination => {
         const ci = nomination.get('canon_id');
-        const cd = ci && canon.get(ci);
-        if (cat === category) {
+        const ca = ci && canonById.get(ci);
+        if (ca) ballots.set(cat, ballots.get(cat).withMutations(catBallots => {
+          const cc = ca.get('category');
+          const cd = ca.get('data');
           const nd = nomination.get('data');
-          if (cd) {
-            if (cd.get('disqualified')) {
-              // remove disqualified nomination
-              ballots.forEach((ballot, id) => {
-                if (ballot.includes(nd)) {
-                  ballots.set(id, ballot.filter(nom => !nd.equals(nom)));
-                }
-              });
-            } else {
-              // canonicalise nomination within category
-              ballots.forEach((ballot, id) => {
-                if (ballot.includes(nd)) {
-                  ballots.set(id, ballot.map(nom => nd.equals(nom) ? cd : nom));
-                }
-              });
-            }
-          } else if (ci) {
-            // canonicalise nomination to another category
-            ballots.forEach((ballot, id) => {
+          if (cd.get('disqualified')) {
+            // remove disqualified nomination
+            catBallots.forEach((ballot, id) => {
               if (ballot.includes(nd)) {
-                ballots.set(id, ballot.filter(nom => !nd.equals(nom)));
+                catBallots.set(id, ballot.filter(nom => !nd.equals(nom)));
+              }
+            });
+          } else if (cc === cat) {
+            // canonicalise nomination within category
+            catBallots.forEach((ballot, id) => {
+              if (ballot.includes(nd)) {
+                catBallots.set(id, ballot.map(nom => nd.equals(nom) ? cd : nom));
+              }
+            });
+          } else {
+            // canonicalise nomination between categories
+            catBallots.forEach((srcBallot, id) => {
+              if (srcBallot.includes(nd)) {
+                catBallots.set(id, srcBallot.filter(nom => !nd.equals(nom)));
+                const tgtCatBallots = ballots.get(cc);
+                const tgtBallot = tgtCatBallots.get(id);
+                if (!tgtBallot) {
+                  ballots.set(cc, tgtCatBallots.set(id, List.of(cd)));
+                } else if (tgtBallot.size < maxNominationsPerCategory) {
+                  ballots.set(cc, tgtCatBallots.set(id, tgtBallot.push(cd)));
+                } else {
+                  console.log(
+                    `Dropping mis-nomination by #${id} due to full ballot`,
+                    cd.toJS(), `from ${cat}`, srcBallot.toJS(),
+                    `to ${cc}`, tgtBallot.toJS()
+                  );
+                }
               }
             });
           }
-        } else if (cd && !cd.get('disqualified')) {
-          // canonicalise nomination from another category
-          const nd = nomination.get('data');
-          allBallots.get(cat).forEach((srcBallot, id) => {
-            if (srcBallot.includes(nd)) {
-              const tgtBallot = ballots.get(id);
-              if (!tgtBallot) {
-                ballots.set(id, List.of(cd));
-              } else if (tgtBallot.size < maxNominationsPerCategory) {
-                ballots.set(id, tgtBallot.push(cd));
-              } else {
-                console.log(
-                  `Dropping mis-nomination by #${id} due to full ballot`,
-                  cd.toJS(), `from ${cat}`, srcBallot.toJS(),
-                  `to ${category}`, tgtBallot.toJS()
-                );
-              }
-            }
-          });
-        }
+        }));
       });
     });
   });
   const emptyNom = Map();
-  return ballots.toList().map(ballot => ballot.toSet().delete(emptyNom));
+  return ballots.map(catBallots => catBallots.toList().map(ballot => ballot.toSet().delete(emptyNom)));
 }
 
 
