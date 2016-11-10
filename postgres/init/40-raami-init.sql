@@ -3,11 +3,13 @@
 CREATE USER raami WITH PASSWORD :'raamiPwd' IN ROLE api_access;
 CREATE SCHEMA AUTHORIZATION raami;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO raami;
+GRANT USAGE ON SCHEMA kansa TO raami;
+GRANT SELECT, REFERENCES ON ALL TABLES IN SCHEMA kansa TO raami;
 SET ROLE raami;
 
-CREATE TABLE if NOT EXISTS Artist (
+CREATE TABLE IF NOT EXISTS Artist (
     id SERIAL PRIMARY KEY,
-    member_id REFERENCES People(id),
+    person_id integer REFERENCES kansa.People NOT NULL,
     continent boolean,
     url text,
     filename text,
@@ -15,12 +17,12 @@ CREATE TABLE if NOT EXISTS Artist (
     category text,
     orientation boolean,
     description text,
-    trasnport text)
- ;
+    trasnport text
+    );
 
-CREATE TABLE if NOT EXISTS Works(
+CREATE TABLE IF NOT EXISTS Works (
     id SERIAL PRIMARY KEY,
-    artist_id REFERENCES artist(id),
+    artist_id integer REFERENCES Artist NOT NULL,
     title text,
     width decimal,
     height decimal,
@@ -31,12 +33,24 @@ CREATE TABLE if NOT EXISTS Works(
     price decimal
     );
 
+CREATE FUNCTION arists_notify() RETURNS trigger as $$
 BEGIN
-    PERFORM pg_notify('people', row_to_json(NEW)::text);
+    PERFORM pg_notify('artist', row_to_json(NEW)::text);
+    RETURN null;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE FUNCTION work_notify() RETURNS trigger as $$
+BEGIN
+    PERFORM pg_notify('work', row_to_json(NEW)::text);
     RETURN null;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER notify
-    AFTER INSERT OR UPDATE ON People
-    FOR EACH ROW EXECUTE PROCEDURE people_notify();
+    AFTER INSERT OR UPDATE ON Artist
+    FOR EACH ROW EXECUTE PROCEDURE arists_notify();
+
+CREATE TRIGGER notify
+    AFTER INSERT OR UPDATE ON Works
+    FOR EACH ROW EXECUTE PROCEDURE work_notify();

@@ -35,9 +35,9 @@ services:
       LOGIN_URI_ROOT: https://localhost:4430/#/login
       SENDGRID_APIKEY:
 
-
   raami:
     environment:
+      CORS_ORIGIN: http://localhost:8080
       DATABASE_URL: postgres://raami:pwd@postgres:5432/api
 
   postgres:
