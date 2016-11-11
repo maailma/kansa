@@ -37,6 +37,7 @@ some relevant data and/or a `message` field.
   * [`POST /api/hugo/admin/classify`](#post-apihugoadminclassify)
   * [`POST /api/hugo/admin/canon/:id`](#post-apihugoadmincanonid)
   * [WebSocket: `wss://server/api/hugo/admin/canon-updates`](#websocket-wssserverapihugoadmincanonupdates)
+* [Raami exhibitions](#raami)
 
 ----
 
@@ -512,3 +513,146 @@ events to signal `'Unauthorized'` and `'Not Found'` (respectively) to the client
 '{"classification":{"nomination":{"author": "A friend"},"category":"Novel","canon_id":13}}'
 …
 ```
+
+## Raami exhibition
+
+### `GET /api/raami/artists`
+List of members who have opted to participate in the art exhibition
+
+#### Response
+```
+[
+  { person\_id: 'person_id',
+    continent: 'Europe',
+    }
+  …
+]
+```
+
+### `GET /api/raami/artists/id`
+
+- Parameters: `id` (required)
+
+Full details for singular artist.
+
+#### Response
+```
+[
+  { continent: 'Europe',
+    url: 'http://www.example.com',
+    filename: 'portfolio.pdf',
+    portfolio: [bytes],
+    category: 'Cover artist',
+    orientation: 'Fantasy',
+    description: 'Who is the artist etc.',
+    trasnport: 'Air mail' 
+    }
+  …
+]
+```
+
+### `POST /api/raami/artist`
+
+- Parameters: `continent`, `url`, `filename`, `portfolio`, `category`, `orientation`, `description`, `transport`
+
+Insert new artist's details.
+
+#### Response
+```
+{
+  status: 'success',
+  inserted: [ `id`, `continent`, `url`,`filename`, `portfolio`, `category`, `orientation`, `description`, `transport`]
+}
+```
+
+### `PUT /api/raami/artist/id`
+
+- Parameters: `id` (required), `continent`, `url`, `filename`, `portfolio`, `category`, `orientation`, `description`, `transport`
+
+Update new artist's details.
+
+#### Response
+```
+{
+  status: 'success',
+  updated: [ `id`, `continent`, `url`, `filename`, `portfolio`, `category`, `orientation`, `description`, `transport`]
+}
+```
+
+### `GET /api/raami/works/id`
+
+- Parameters: ìd`(required) artists id
+
+Ids of works for particular artists
+
+#### Response
+```
+[
+  { id: 1 }
+  …
+]
+```
+
+
+### `GET /api/raami/work/id`
+
+- Parameters: `id` ( required ) work id
+
+Full details for singular work.
+
+#### Response
+```
+[
+  { artist_id: 1,
+    title: 'Book cover',
+    width: 10.0,
+    height: 10.0 ,
+    technique: 'Oil on canvas',
+    graduation: 0,
+    filename: 'file.jpg',
+    image: bytes,
+    price: 100.0
+    }
+  …
+]
+```
+
+### `POST /api/raami/work`
+
+- Parameters: `artist_id`, `title` , `width` , `height` , `technique` , `graduation` , `filename` , `image` , `price` 
+
+Insert new works's details.
+
+#### Response
+```
+{
+  status: 'success',
+  inserted: [ `artist_id`, `title` , `width` , `height` , `technique` , `graduation` , `filename` , `image` , `price` ]
+}
+```
+
+### `PUT /api/raami/work/id`
+
+- Parameters: `id`,`artist_id`, `title` , `width` , `height` , `technique` , `graduation` , `filename` , `image` , `price` 
+Update works's details.
+
+#### Response
+```
+{
+  status: 'success',
+  updated: [ `id`,`artist_id`, `title` , `width` , `height` , `technique` , `graduation` , `filename` , `image` , `price` ]
+}
+```
+
+### `DELETE /api/raami/work/id`
+
+- Patameters: id (required)
+
+#### Response
+```
+{
+  status: 'success',
+  deleted: [ `id`]
+}
+```
+
