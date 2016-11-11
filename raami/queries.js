@@ -108,7 +108,8 @@ function updateArtist(req, res, next) {
 /**** WORKS ***/
 
 function getWorks(req, res, next) {
-  db.any('select id from Works where artist_id = $1', artist_id)
+	  var _id = parseInt(req.params.id);
+  db.any('select id,title from Works where artist_id = $1', _id)
     .then(function (data) {
       res.status(200)
         .json({
@@ -121,8 +122,8 @@ function getWorks(req, res, next) {
 }
 
 function getWork(req, res, next) {
-  var Work_id = parseInt(req.params.id);
-  db.one('select * from Works where id = $1', work_id)
+  var _id = parseInt(req.params.id);
+  db.one('select * from Works where id = $1', _id)
     .then(function (data) {
       res.status(200)
         .json(data);
@@ -134,14 +135,13 @@ function getWork(req, res, next) {
 
 
 function createWork(req, res, next) {
-  db.none('insert into Works(`artist_id`, `title` , `width` , `height` , `technique` , `graduation` , `filename` , `image` , `price` )' +
-      'values(${aritst_id}, ${title}, ${width}, ${height}, ${technique}, ${graduation}, ${filename}, ${image}, ${price})',
+  db.none('insert into Works(artist_id, title, width, height, technique, graduation , filename, image, price )' +
+      'values(${artist_id}, ${title}, ${width}, ${height}, ${technique}, ${graduation}, ${filename}, ${image}, ${price})',
     req.body)
     .then(function () {
       res.status(200)
         .json({
           status: 'success',
-          // inserted: id,
         });
     })
     .catch(function (err) {

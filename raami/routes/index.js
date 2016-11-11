@@ -12,7 +12,7 @@ router.get('/artists', db.getArtists);
 router.get('/artist/:id', db.getArtist);
 router.post('/artist', db.createArtist);
 router.put('/artist/:id', db.updateArtist);
-router.get('/work', db.getWorks);
+router.get('/works/:id', db.getWorks);
 router.get('/work/:id', db.getWork);
 router.post('/work', db.createWork);
 router.put('/work/:id', db.updateWork);
