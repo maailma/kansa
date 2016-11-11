@@ -65,16 +65,17 @@ function createArtist(req, res, next) {
 
 
 function updateArtist(req, res, next) {
-  db.none('update Artists set continent=$1, url=$2, filename=$3, portfolio=$4, category=$5, orientation=$6, description=$7, transport=$8 where id=$0',
-    [req.params.id, 
-     req.body.continent, 
+  var _id = parseInt(req.params.id);
+  db.none('update Artists set continent=$1, url=$2, filename=$3, portfolio=$4, category=$5, orientation=$6, description=$7, transport=$8 where id=$9',
+    [req.body.continent, 
      req.body.url,
      req.body.filename,
      req.body.portfolio,
      req.body.category,
      req.body.orientation,
      req.body.description,
-     req.body.transport
+     req.body.transport,
+     _id
      ])
     .then(function () {
       res.status(200)
@@ -108,7 +109,7 @@ function updateArtist(req, res, next) {
 /**** WORKS ***/
 
 function getWorks(req, res, next) {
-	  var _id = parseInt(req.params.id);
+  var _id = parseInt(req.params.id);
   db.any('select id,title from Works where artist_id = $1', _id)
     .then(function (data) {
       res.status(200)
@@ -151,8 +152,18 @@ function createWork(req, res, next) {
 
 
 function updateWork(req, res, next) {
-  db.none('update Works set artist_id=$1, title=$2, width=$3, height=$4, technique=$5, graduation=$6, filename=$7, image=$8, price=$9 where id=$0',
-    [parseInt(req.params.id), req.body.title, req.body.width, req.body.height, req.body.technique, req.body.graduation, req.body.filename, req.body.image, req.body.price])
+  var _id = parseInt(req.params.id)	
+  db.none('update Works set artist_id=$1, title=$2, width=$3, height=$4, technique=$5, graduation=$6, filename=$7, image=$8, price=$9 where id=$10',
+    [ req.body.artist_id,
+      req.body.title, 
+      req.body.width, 
+      req.body.height, 
+      req.body.technique, 
+      req.body.graduation, 
+      req.body.filename, 
+      req.body.image, 
+      req.body.price, 
+      _id])
     .then(function () {
       res.status(200)
         .json({
