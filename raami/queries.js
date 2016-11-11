@@ -178,7 +178,7 @@ function updateWork(req, res, next) {
 
 function removeWork(req, res, next) {
   var _id = parseInt(req.params.id);
-  db.result('delete from Work where id = $1', _id)
+  db.result('delete from Works where id = $1', _id)
     .then(function (result) {
       /* jshint ignore:start */
       res.status(200)
