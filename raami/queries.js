@@ -26,9 +26,7 @@ function getArtists(req, res, next) {
   db.any('select id,continent from Artist')
     .then(function (data) {
       res.status(200)
-        .json({
-          data: data,
-        });
+        .json(data);
     })
     .catch(function (err) {
       return next(err);
@@ -36,13 +34,11 @@ function getArtists(req, res, next) {
 }
 
 function getArtist(req, res, next) {
-  var person_id = parseInt(req.params.id);
-  db.one('select * from Artist where person_id = $1', person_id)
+  var _id = parseInt(req.params.id);
+  db.one('select * from Artist where id = $1', _id)
     .then(function (data) {
       res.status(200)
-        .json({
-          data: data,
-        });
+        .json(data);
     })
     .catch(function (err) {
       return next(err);
@@ -51,16 +47,15 @@ function getArtist(req, res, next) {
 
 
 function createArtist(req, res, next) {
-  req.body.age = parseInt(req.body.age);
-  // continent, url, filename, portfolio, category, orientation, description, transport
-  db.none('insert into Artist(continent, url, filename, portfolio, category, orientation, description, transport)' +
-      'values(${continent}, ${url}, ${filename}, ${portfolio},${category}, ${orientation},${description},${transport})',
+
+  db.none('insert into Artist(person_id, continent, url, filename, portfolio, category, orientation, description, transport)' +
+      'values(${person_id}, ${continent}, ${url}, ${filename}, ${portfolio}, ${category}, ${orientation}, ${description}, ${transport})',
     req.body)
     .then(function () {
       res.status(200)
         .json({
           status: 'success',
-          //inserted: id
+          inserted: res
         });
     })
     .catch(function (err) {
@@ -117,8 +112,7 @@ function getWorks(req, res, next) {
     .then(function (data) {
       res.status(200)
         .json({
-          status: 'success',
-          data: data,
+          works: data,
         });
     })
     .catch(function (err) {
@@ -131,10 +125,7 @@ function getWork(req, res, next) {
   db.one('select * from Works where id = $1', work_id)
     .then(function (data) {
       res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-        });
+        .json(data);
     })
     .catch(function (err) {
       return next(err);

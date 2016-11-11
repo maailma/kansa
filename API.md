@@ -537,7 +537,6 @@ Full details for singular artist.
 
 #### Response
 ```
-[
   { continent: 'Europe',
     url: 'http://www.example.com',
     filename: 'portfolio.pdf',
@@ -548,12 +547,11 @@ Full details for singular artist.
     trasnport: 'Air mail' 
     }
   …
-]
 ```
 
 ### `POST /api/raami/artist`
 
-- Parameters: `continent`, `url`, `filename`, `portfolio`, `category`, `orientation`, `description`, `transport`
+- Parameters: `person_id`, `continent`, `url`, `filename`, `portfolio`, `category`, `orientation`, `description`, `transport`
 
 Insert new artist's details.
 

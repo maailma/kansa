@@ -10,14 +10,15 @@ SET ROLE raami;
 CREATE TABLE IF NOT EXISTS Artist (
     id SERIAL PRIMARY KEY,
     person_id integer REFERENCES kansa.People NOT NULL,
-    continent boolean,
+    name text,
+    continent text,
     url text,
     filename text,
     portfolio bytea,
     category text,
     orientation boolean,
     description text,
-    trasnport text
+    transport text
     );
 
 CREATE TABLE IF NOT EXISTS Works (
