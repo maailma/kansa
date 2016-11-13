@@ -48,8 +48,8 @@ function getArtist(req, res, next) {
 
 function createArtist(req, res, next) {
 
-  db.none('insert into Artist(person_id, continent, url, filename, portfolio, category, orientation, description, transport)' +
-      'values(${person_id}, ${continent}, ${url}, ${filename}, ${portfolio}, ${category}, ${orientation}, ${description}, ${transport})',
+  db.none('insert into Artist(person_id, name, continent, url, filename, filedata, description, transport, legal)' +
+      'values(${person_id}, ${name}, ${continent}, ${url}, ${filename}, ${filedata}, ${description}, ${transport}, ${legal})',
     req.body)
     .then(function () {
       res.status(200)
@@ -66,15 +66,15 @@ function createArtist(req, res, next) {
 
 function updateArtist(req, res, next) {
   var _id = parseInt(req.params.id);
-  db.none('update Artists set continent=$1, url=$2, filename=$3, portfolio=$4, category=$5, orientation=$6, description=$7, transport=$8 where id=$9',
+  db.none('update Artist set continent=$1, url=$2, filename=$3, filedata=$4, name=$6, description=$6, transport=$7, legal=$8 where id=$9',
     [req.body.continent, 
      req.body.url,
      req.body.filename,
-     req.body.portfolio,
-     req.body.category,
-     req.body.orientation,
+     req.body.filedata,
+     req.body.name,
      req.body.description,
      req.body.transport,
+     req.body.legal,
      _id
      ])
     .then(function () {
@@ -136,13 +136,14 @@ function getWork(req, res, next) {
 
 
 function createWork(req, res, next) {
-  db.none('insert into Works(artist_id, title, width, height, technique, graduation , filename, image, price )' +
-      'values(${artist_id}, ${title}, ${width}, ${height}, ${technique}, ${graduation}, ${filename}, ${image}, ${price})',
+  db.none('insert into Works(artist_id, title, width, height, type, orientation, filename, filedata, year, price )' +
+      'values(${artist_id}, ${title}, ${width}, ${height}, ${type}, ${orientation} ${filename}, ${filedata}, ${year}, ${price})',
     req.body)
     .then(function () {
       res.status(200)
         .json({
           status: 'success',
+          data: res
         });
     })
     .catch(function (err) {
@@ -153,16 +154,17 @@ function createWork(req, res, next) {
 
 function updateWork(req, res, next) {
   var _id = parseInt(req.params.id)	
-  db.none('update Works set artist_id=$1, title=$2, width=$3, height=$4, technique=$5, graduation=$6, filename=$7, image=$8, price=$9 where id=$10',
+  db.none('update Works set artist_id=$1, title=$2, width=$3, height=$4, type=$5, filename=$7, filedata=$8, price=$9, year=$10, orientation=$11 where id=$12',
     [ req.body.artist_id,
       req.body.title, 
       req.body.width, 
       req.body.height, 
-      req.body.technique, 
-      req.body.graduation, 
+      req.body.type, 
       req.body.filename, 
-      req.body.image, 
-      req.body.price, 
+      req.body.filedata, 
+      req.body.price,
+      req.body.year,
+      req.body.orientation, 
       _id])
     .then(function () {
       res.status(200)
@@ -184,7 +186,7 @@ function removeWork(req, res, next) {
       res.status(200)
         .json({
           status: 'success',
-          deleted: [_id]
+          deleted: _id
         });
       /* jshint ignore:end */
     })
