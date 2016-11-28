@@ -9,12 +9,15 @@ const pgSession = require('connect-pg-simple')(session);
 const pgOptions = { promiseLib: require('bluebird') };
 const pgp = require('pg-promise')(pgOptions);
 require('pg-monitor').attach(pgOptions);
+const db = pgp(process.env.DATABASE_URL);
 
 const admin = require('./lib/admin');
 const key = require('./lib/key');
 const log = require('./lib/log');
 const people = require('./lib/people');
 const PeopleStream = require('./lib/PeopleStream');
+const Purchase = require('./lib/purchase');
+const purchase = new Purchase(pgp, db);
 const upgrade = require('./lib/upgrade');
 const user = require('./lib/user');
 
@@ -22,7 +25,6 @@ const app = express();
 const server = http.createServer(app);
 const expressWs = require('express-ws')(app, server);
 const router = express.Router();
-const db = pgp(process.env.DATABASE_URL);
 const peopleStream = new PeopleStream(db);
 
 // these are accessible without authentication
@@ -35,6 +37,8 @@ router.all('/login', user.login);
 router.get('/favicon.ico', (req, res, next) => {
   res.sendFile('static/favicon.ico', { root: __dirname }, err => err && next(err));
 });
+
+router.post('/purchase', purchase.makePurchase);
 
 // subsequent routes require authentication
 router.use(user.authenticate);
