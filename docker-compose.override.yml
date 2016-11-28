@@ -24,6 +24,7 @@ services:
       CORS_ORIGIN: http://localhost:8080
       DATABASE_URL: postgres://kansa:pwd@postgres:5432/api
       SESSION_SECRET: dev secret
+      STRIPE_SECRET_APIKEY: sk_test_zq022Drx7npYPVEtXAVMaOJT
 
   kyyhky:
     environment:
