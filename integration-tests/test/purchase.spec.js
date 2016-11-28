@@ -46,6 +46,40 @@ describe('Purchase', () => {
     });
   });
 
+  context('New members (using Stripe API)', function() {
+    this.timeout(10000);
+    const agent = request.agent(host, { ca: cert });
+    const testName = 'test-' + (Math.random().toString(36)+'00000000000000000').slice(2, 7);
+
+    it('should get new memberships', (done) => {
+      stripe.tokens.create({
+        card: {
+          number: '4242424242424242',
+          exp_month: 12,
+          exp_year: 2020,
+          cvc: '123'
+        }
+      }).then(testToken => {
+        agent.post('/api/kansa/purchase')
+          .send({
+            amount: prices.Supporter.amount + prices.Adult.amount + prices.PaperPubs.amount,
+            email: 'test@example.com',
+            token: testToken.id,
+            new_members: [
+              { membership: 'Supporter', email: '@', legal_name: `s-${testName}` },
+              { membership: 'Adult', email: '@', legal_name: `a-${testName}`,
+                paper_pubs: { name: testName, address: 'address', country: 'land'} }
+            ]
+          })
+          .expect((res) => {
+            if (res.status !== 200) throw new Error(`Purchase failed! ${JSON.stringify(res.body)}`);
+            // HERE
+          })
+          .end(done);
+      });
+    });
+  });
+
   context('Upgrades (using Stripe API)', function() {
     this.timeout(10000);
     const admin = request.agent(host, { ca: cert });
