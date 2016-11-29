@@ -46,6 +46,21 @@ describe('Purchase', () => {
     });
   });
 
+  context('Prices', function() {
+    const agent = request.agent(host, { ca: cert });
+
+    it('should get prices', (done) => {
+      agent.get('/api/kansa/purchase/prices')
+        .expect(200)
+        .expect(res => {
+          if (!res.body.Adult || !res.body.Adult.amount || !res.body.Supporter) throw new Error(
+            `Bad response! ${JSON.stringify(res.body)}`
+          );
+        })
+        .end(done);
+    });
+  });
+
   context('New members (using Stripe API)', function() {
     this.timeout(10000);
     const agent = request.agent(host, { ca: cert });

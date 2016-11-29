@@ -29,6 +29,7 @@ some relevant data and/or a `message` field.
   * [WebSocket: `wss://server/api/kansa/people/updates`](#websocket-wssserverapikansapeopleupdates)
 * [Purchases](#purchases)
   * [`POST /api/kansa/purchase`](#post-apikansapurchase)
+  * [`GET /api/kansa/purchase/prices`](#get-apikansapurchaseprices)
 * [Hugo Nominations](#hugo-nominations)
   * [`GET /api/hugo/:id/nominations`](#get-apihugoidnominations)
   * [`POST /api/hugo/:id/nominate`](#post-apihugoidnominate)
@@ -313,6 +314,20 @@ to each address. Send the receipt of the purchase to the `email` address.
 {
   status: 'success',
   emails: ['address@example.com', ...]
+}
+```
+
+### `GET /api/kansa/purchase/prices`
+
+Current membership and paper publications prices, with `amount` in EUR cents.
+
+#### Response
+```
+{
+  Supporter: { amount: 3500, description: 'Supporting Membership' },
+  ...,
+  Adult: { amount: 12000, description: 'Adult Membership' },
+  PaperPubs: { amount: 1000, description: 'Paper publications' }
 }
 ```
 

@@ -39,6 +39,7 @@ router.get('/favicon.ico', (req, res, next) => {
 });
 
 router.post('/purchase', purchase.makePurchase);
+router.get('/purchase/prices', purchase.getPrices);
 
 // subsequent routes require authentication
 router.use(user.authenticate);

@@ -54,7 +54,13 @@ class Purchase {
   constructor(pgp, db) {
     this.pgp = pgp;
     this.db = db;
+    this.getPrices = this.getPrices.bind(this);
     this.makePurchase = this.makePurchase.bind(this);
+  }
+
+  getPrices(req, res, next) {
+    if (!membershipPrices) next(new Error('Missing membership prices!?'));
+    res.status(200).json(membershipPrices);
   }
 
   checkUpgrades(reqUpgrades) {
