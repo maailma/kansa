@@ -1,4 +1,4 @@
-import Immutable, { Map } from 'immutable'
+import { Map } from 'immutable'
 import React from 'react'
 import { Link } from 'react-router'
 
@@ -7,7 +7,7 @@ import RaisedButton from 'material-ui/RaisedButton'
 
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
-import { CommonFields, PaperPubsFields } from './form-components'
+import MemberForm from './MemberForm'
 import Upgrade from './Upgrade'
 
 export default class Member extends React.Component {
@@ -15,7 +15,6 @@ export default class Member extends React.Component {
     member: ImmutablePropTypes.mapContains({
       paper_pubs: ImmutablePropTypes.map
     }),
-    onUpdate: React.PropTypes.func.isRequired,
     showHugoActions: React.PropTypes.bool
   }
 
@@ -23,59 +22,23 @@ export default class Member extends React.Component {
     member: Map()
   }
 
-  static paperPubsIsValid(pp) {
-    return !pp || pp.get('name') && pp.get('address') && pp.get('country');
-  }
-
-  static isValid(member) {
-    return Map.isMap(member)
-      && member.get('legal_name', false) && member.get('email', false)
-      && Member.paperPubsIsValid(member.get('paper_pubs'));
-  }
-
-  get changes() {
-    const m0 = this.props.member;
-    return this.state.member.filter((value, key) => {
-      const v0 = m0.get(key, '');
-      return Map.isMap(value) ? !value.equals(v0) : value !== v0;
-    });
-  }
-
-  get valid() {
-    return Member.isValid(this.state.member);
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      member: props.member,
-      sent: false
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({
-      member: nextProps.member,
-      sent: false
-    });
+  state = {
+    canSubmit: false,
+    form: null
   }
 
   shouldComponentUpdate(nextProps, nextState) {
+    if (nextState.canSubmit !== this.state.canSubmit) return true;
+    if (nextState.form !== this.state.form) return true;
     if (!nextProps.member.equals(this.props.member)) return true;
-    if (nextState.sent !== this.state.sent) return true;
-    if (!nextState.member.equals(this.state.member)) return true;
     return false;
   }
 
   render() {
-    const { member, onUpdate, showHugoActions } = this.props;
+    const { member, showHugoActions } = this.props;
     if (!member) return null;
     const membership = member.get('membership', 'NonMember');
-    const formProps = {
-      getDefaultValue: path => member.getIn(path) || '',
-      getValue: path => this.state.member.getIn(path) || '',
-      onChange: (path, value) => this.setState({ member: this.state.member.setIn(path, value) })
-    };
+    const { canSubmit, form } = this.state;
 
     return <Card style={{ marginBottom: 24 }}>
       <CardHeader
@@ -83,9 +46,11 @@ export default class Member extends React.Component {
         subtitle={ membership !== 'NonMember' ? '#' + member.get('member_number') : null }
       />
       <CardText>
-        <CommonFields { ...formProps } />
-        <br />
-        <PaperPubsFields { ...formProps } />
+        <MemberForm
+          member={member}
+          onChange={ (canSubmit) => this.setState({ canSubmit }) }
+          setForm={ (form) => this.setState({ form }) }
+        />
       </CardText>
       <CardActions
         style={{
@@ -96,13 +61,9 @@ export default class Member extends React.Component {
         }}
       >
         <RaisedButton key='ok'
-          disabled={ this.state.sent || this.changes.size == 0 || !this.valid }
-          label={ this.state.sent ? 'Working...' : 'Apply changes' }
-          onTouchTap={ () => {
-            this.setState({ sent: true });
-            console.log('updating', member, onUpdate);
-            onUpdate(member.get('id'), this.changes);
-          }}
+          disabled={ !canSubmit }
+          label={ form && form.sent ? 'Working...' : 'Apply changes' }
+          onTouchTap={ form && form.submit }
           style={{ flexShrink: 0 }}
         />
         <Upgrade

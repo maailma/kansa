@@ -8,7 +8,7 @@ const ImmutablePropTypes = require('react-immutable-proptypes');
 
 import { buyUpgrade, getPrices } from '../actions'
 import { UpgradeFields } from './form-components';
-import Member from './Member';
+import MemberForm from './MemberForm';
 
 function getIn(obj, path, unset) {
   const val = obj[path[0]];
@@ -77,7 +77,7 @@ class Upgrade extends React.Component {
     const { membership, paper_pubs, sent, open } = this.state;
     const button = React.Children.only(this.props.children);
     const amount = this.upgradeAmount(prevMembership, membership, paper_pubs);
-    const disabled = sent || amount <= 0 || !Member.paperPubsIsValid(paper_pubs);
+    const disabled = sent || amount <= 0 || !MemberForm.paperPubsIsValid(paper_pubs);
     const descriptions = [];
     if (membership !== prevMembership) descriptions.push(`${membership} upgrade`);
     if (paper_pubs) descriptions.push(prices.getIn(['PaperPubs', 'description']));
