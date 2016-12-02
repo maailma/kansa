@@ -23,13 +23,6 @@ export default class Member extends React.Component {
     member: Map()
   }
 
-  static fields = [ 'membership', 'legal_name', 'email', 'public_first_name', 'public_last_name',
-    'country', 'state', 'city', 'paper_pubs' ];
-
-  static membershipTypes = [ 'NonMember', 'Supporter', 'KidInTow', 'Child', 'Youth', 'FirstWorldcon', 'Adult' ];
-
-  static emptyPaperPubsMap = Map({ name: '', address: '', country: '' });
-
   static paperPubsIsValid(pp) {
     return !pp || pp.get('name') && pp.get('address') && pp.get('country');
   }

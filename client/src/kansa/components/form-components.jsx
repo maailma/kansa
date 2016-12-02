@@ -1,4 +1,3 @@
-import { Map } from 'immutable'
 import React from 'react'
 import Checkbox from 'material-ui/Checkbox';
 import MenuItem from 'material-ui/MenuItem';
@@ -6,7 +5,7 @@ import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 const { Col, Row } = require('react-flexbox-grid');
 
-import Member from './Member';
+import { emptyPaperPubsMap, membershipTypes} from '../constants'
 
 const styles = {
   changed: { borderColor: 'rgb(255, 152, 0)' },
@@ -114,7 +113,7 @@ CommentField.propTypes = {
 const MembershipSelect = ({ getDefaultValue, getValue, onChange, prices }) => {
   const path = ['membership'];
   const prevMembership = getDefaultValue(path);
-  const prevIdx = Member.membershipTypes.indexOf(prevMembership);
+  const prevIdx = membershipTypes.indexOf(prevMembership);
   const prevAmount = prices && prevMembership && prices.getIn(['memberships', prevMembership, 'amount']) || 0;
   return <SelectField
     style={{ marginRight: 24, width: 224 }}
@@ -123,7 +122,7 @@ const MembershipSelect = ({ getDefaultValue, getValue, onChange, prices }) => {
     value={ getValue(path) || 'NonMember' }
     onChange={ (ev, idx, value) => onChange(path, value) }
   >
-    { Member.membershipTypes.map((type, idx) => {
+    { membershipTypes.map((type, idx) => {
       if (type === 'NonMember' && prevMembership !== 'NonMember') return null;
       const amount = prices ? prices.getIn(['memberships', type, 'amount'], -100) : -100;
       const eurAmount = (amount - prevAmount) / 100;
@@ -146,7 +145,7 @@ const PaperPubsCheckbox = ({ getDefaultValue, getValue, onChange, prices }) => {
     label={`Add paper publications (€${eurAmount})`}
     checked={!!getValue(path)}
     disabled={!!getDefaultValue(path)}
-    onCheck={ (ev, checked) => onChange(path, checked ? Member.emptyPaperPubsMap : null) }
+    onCheck={ (ev, checked) => onChange(path, checked ? emptyPaperPubsMap : null) }
   />;
 }
 
