@@ -3,7 +3,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 const { Col, Row } = require('react-flexbox-grid');
 
-import Member from './Member'
+import MemberCard from './MemberCard'
 
 const MemberList = ({ people }) => <Row>
   <Col
@@ -11,7 +11,7 @@ const MemberList = ({ people }) => <Row>
     smOffset={1} sm={10}
     mdOffset={2} md={8}
   >{
-    people.map(member => <Member
+    people.map(member => <MemberCard
       key={member.get('id')}
       member={member}
       showHugoActions={
