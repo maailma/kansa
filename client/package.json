@@ -10,8 +10,8 @@
     "url": "https://github.com/worldcon75/api.git"
   },
   "scripts": {
-    "start": "webpack-dev-server -d --hot --progress --colors",
-    "build": "webpack -d --progress --colors",
+    "start": "webpack-dev-server -d --inline --progress --colors",
+    "build": "webpack -d --inline --progress --colors",
     "build:prod": "NODE_ENV=production webpack -p",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -44,5 +44,8 @@
     "webpack": "^1.13.2",
     "webpack-dev-server": "^1.16.1",
     "whatwg-fetch": "^1.0.0"
+  },
+  "dependencies": {
+    "react-file-uploader": "^0.3.3"
   }
 }

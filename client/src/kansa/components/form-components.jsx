@@ -143,3 +143,4 @@ export const UpgradeFields = (props) => (<div>
   <PaperPubsFields { ...props } />
 </div>);
 UpgradeFields.propTypes = basePropTypes;
+

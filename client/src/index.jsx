@@ -16,6 +16,7 @@ import { PATH_IN, PATH_OUT } from './constants'
 import App from './app/components/App'
 import Login from './app/components/Login'
 import MemberList from './kansa/components/MemberList'
+import ExhibitReg from './kansa/components/Exhibition'
 import Nominate from './hugo/components/Nominate'
 import Canon from './hugo-admin/components/Canon'
 import Finalists from './hugo-admin/components/Finalists'
@@ -44,6 +45,8 @@ const doLogin = ({ params: { email, key } }) => {
   store.dispatch(keyLogin(email, key));
 }
 
+const Test = 
+
 ReactDOM.render(
   <Provider store={store} >
     <MuiThemeProvider muiTheme={theme}>
@@ -53,6 +56,7 @@ ReactDOM.render(
           <Route path="login" onEnter={authCheck} component={Login} />
           <Route path="login/:email/:key" onEnter={doLogin} />
           <Route path="profile" onEnter={authCheck} component={MemberList} />
+          <Route path="exhibition" component={ExhibitReg} />
           <Route path="hugo" onEnter={authCheck} >
             <IndexRedirect to={PATH_IN} />
             <Route path="admin" component={HugoAdmin}>
