@@ -8,7 +8,7 @@ ERR := $(call VT,31;1)✖${VT0}
 DIST_DIR = dist
 REL_BRANCH = gh-pages
 
-release: release-master release-1980
+release: release-master
 
 release-%:
 	git checkout $*
