@@ -10,135 +10,40 @@ import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 const { Col, Row } = require('react-flexbox-grid');
-import { Receiver } from 'react-file-uploader';
+// import { Receiver } from 'react-file-uploader';
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
-
+import Divider from 'material-ui/Divider';
+import Paper from 'material-ui/Paper';
 
 const Works = [1]
 
+// const ddstyle= {
+//         display: 'block', 
+//         padding: '25px',
+//         border: '1px solid #ddd',
+//         background: '#ccc',
+//         verticalAlign: 'middle',
+//         textAlign: 'center',
+//         position: 'relative',
 
-// export default class ExhibitReg extends React.Component {
-//   handleSubmit(artist) {
-//     const { dispatch } = this.props;
+//       }
 
-//     // Do whatever you like in here.
-//     // You can use actions such as:
-//     // dispatch(actions.submit('user', somePromise));
-//     // etc.
-//   }
+const grey = { 
+      color: '#bbb',
+      fontSize: '17px'
+     }
 
-//   render() {
-//     return (<div>
-//       <Form model="artist"
-//         onSubmit={(artist) => this.handleSubmit(artist)}>
-//                 <div className="field">
-//         <label>Artist´s name:<br/>
-//         <Control.text model="artist.name" /></label>
-//         </div>
-//                 <div className="field">
-//         <label>(EU/NO-EU):</label><br/>
-//         <Control.select model="artist.continent"><br/>
-//           <option value="EU">IN EU</option>
-//           <option value="NON-EU">NOT IN EU</option>
-//         </Control.select>          
-//         </div>
-//         <div className="field">
-//         <label>Website:<br/>
-//         <Control.text model="artist.url" /></label><br/>
-//         </div>
-//         <div className="field">
-//         <label>Image:</label><br/>
-//         <Control.file model="artist.filedata" /><br/>
-//         </div>
-//                 <div className="field">
-//         <label>Artist´s Description:</label><br/>
-//         <Control.text model="artist.description" /><br/>
-//         </div>
-//                 <div className="field">
-//         <label>Method of transportation:</label><br/>
-//         <Control.select model="artist.transport">
-//             <option value="Airmail">Air mail</option>
-//             <option value="Courier">Courier</option>
-//             <option value="Self">Deliver self</option>
-//         </Control.select><br/>
-//         </div>
-//                 <div className="field">
-//         <label>Upload your portfolio<br/>
-//         <Control.file model="artist.filedata" /></label><br/>
-//         </div>
-//         <div className="field">
-//         <label>Accept legal:<br/>
-//         <Control.checkbox model="artist.legal" /></label><br/>
-//         </div>
-//         <label>Submitted works:</label><br/>
-//         <Control.button >Add</Control.button><br/>
-//         <button type="submit">Save
-//         </button>
-//       </Form>
-//       </div>
-//     );
-//   }
-// }
-
-
-// class WorkForm extends React.Component {
-
-//   handleSubmit(work) {
-//     const { dispatch } = this.props;
-
-//       Works.push(Works.length +1)
-
-//     // Do whatever you like in here.
-//     // You can use actions such as:
-//     // dispatch(actions.submit('user', somePromise));
-//     // etc.
-//   }
-
-//   render() {
-//     return (
-//       <LocalForm model="work"
-//         onSubmit={(work) => this.handleSubmit(work)}>
-//         <label>Work´s title:</label>
-//         <Control.text model="work.title" />
-    
-//         <label>Orientation (EU/NO-EU):</label>
-//         <Control.select model="work.orientation">
-//           <option value="Table-top display">Table-top display</option>
-//           <option value="Wall mounted">Wall mounted</option>
-//         </Control.select>
-//         <label>Width (cm):</label>
-//         <Control.text model="work.width" />
-//         <label>Height (cm):</label>
-//         <Control.text model="work.height" />
-//         <label>Technique (EU/NO-EU):</label>
-//         <Control.select model="work.technique">
-//             <option value='Painting'>Painting</option>
-//             <option value='Drawing'>Drawing</option>
-//             <option value='Mixed media'>Mixed media</option>
-//             <option value='Photograph'>Photograph</option>
-//             <option value='Digital'>Digital</option>
-//             <option value='3D'>3D</option>
-//         </Control.select>
-//         <label>Image:</label>
-//         <Control.file model="work.filedata" />
-//         <label>Year:</label>
-//         <Control.text model="work.year" />
-//         <label>Price:</label>
-//         <Control.text model="work.price" />
-
-//         <button type="submit">
-//         </button>
-//       </LocalForm>
-//     );
-//   }
-// }
-
-
-
+const paper = {
+    display: 'inline-block',
+    float: 'left',
+    padding: '20px'
+}
 
 export default class ExhibitReg extends React.Component {
-    handleSubmit(user) {
+    handleSubmit(artist) {
     const { dispatch } = this.props;
+
+    Work.push(Work.length+1)
 
     // Do whatever you like in here.
     // You can use actions such as:
@@ -147,21 +52,11 @@ export default class ExhibitReg extends React.Component {
   }
 
   render() {
-    const ddstyle= {
-        display: 'block', 
-        width:300,
-        height: 200,
-        border: '1px solid #ddd',
-        background: '#ccc',
-        verticalAlign: 'middle',
-        textAlign: 'center'}
-
-    const grey = { color: #ddd }
-
+  
     return (
   <Card>
   <CardHeader>
-  <h3>Worlcon 75 Art Exhibition Registration Form</h3>
+  <h2>Worlcon 75 Art Exhibition Registration Form</h2>
   </CardHeader>
   <CardText>
   <Row>
@@ -184,23 +79,13 @@ export default class ExhibitReg extends React.Component {
   </Row>
   <Row>
     <Col xs={12} sm={4}>
-      <TextField floatingLabelText="Artist's description" />
+      <TextField floatingLabelText="Artist's description" multiLine={true} rows={5}/>
     </Col>
     </Row>
     <Row>
-    <h4 style={grey}>Upload your portfolio</h4>
-    <div>
-  <Receiver   
-  onDragEnter={()=> {} }
-  onDragOver={()=> {} }
-  onDragLeave={()=> {} }
-  onFileDrop={()=> {} }
-  isOpen={true}>
-      <div style={ddstyle}>
-        <h4>(drag & drop panel)</h4>
-      </div>
-  </Receiver>    
-  </div>
+    <p style={grey}>Upload your portfolio<br/>
+    <input type="file" />   
+  </p>
   </Row>
   <Row>
   <SelectField
@@ -213,14 +98,103 @@ export default class ExhibitReg extends React.Component {
     </Row>
     <Row>
     <Col xs={12} sm={4}>
-    <h4 style={grey} >Accept legal notification</h4>
+      <p style={grey} >Accept legal note</p>
       <Checkbox />
     </Col>
       </Row>
       <Row>
       <FlatButton type="submit" label="Save" className="button-submit" primary={true} />
       </Row>
+      <Row>
+      <Col xs={12}>
+            <h3>Submitted art works</h3>
+          </Col>
+      </Row>
+      <Row>
+        < WorkForm />
+        { Works.forEach(works => <WorkForm />) }
+        </Row>
       </CardText>
-  </Card>)
+  </Card>
+
+      )
   };
 }
+
+export class WorkForm extends React.Component {
+    handleSubmit(work) {
+    Work.push(Work.length+1)
+    
+    const { dispatch } = this.props;
+    
+
+    // Do whatever you like in here.
+    // You can use actions such as:
+    // dispatch(actions.submit('user', somePromise));
+    // etc.
+  }
+  render() {
+
+    return (
+    <Col xs={12} sm={6}>
+      <Paper style={paper}>
+  <Row>
+    <Col >
+      <TextField  floatingLabelText="Work title" required={true} />
+    </Col>
+  </Row>
+  <Row>
+    <p style={grey}>Upload image<br/>
+  <input type="file" />    
+  </p>
+  </Row>
+  <Row>
+    <Col xs={12} sm={6}>
+      <TextField  floatingLabelText="Width (cm)" required={true} />
+    </Col>
+      <Col xs={12} sm={6}>
+      <TextField  floatingLabelText="Height (cm)" required={true} />
+    </Col>
+  </Row>
+    <Row>
+    <Col>
+  <SelectField
+      floatingLabelText="Display"
+      onChange={this.handleChange}>
+          <MenuItem value={'Table'} primaryText="Table-top display" />
+          <MenuItem value={'Wall'} primaryText="Wall mounted" />
+      </SelectField>
+      </Col>
+    </Row>
+    <Row>
+    <Col>
+  <SelectField
+      floatingLabelText="Technique"
+      onChange={this.handleChange}>
+          <MenuItem value={'Paiting'} primaryText="Paiting" />
+          <MenuItem value={'Drawing'} primaryText="Drawing" />
+          <MenuItem value={'Mixed'} primaryText="Mixed media" />
+          <MenuItem value={'Photograph'} primaryText="Photograph" />
+          <MenuItem value={'Digital'} primaryText="Digital" />
+          <MenuItem value={'3D'} primaryText="3D" />
+      </SelectField>
+      </Col>
+    </Row>
+  <Row>
+    <Col xs={12} sm={6}>
+      <TextField  floatingLabelText="Year" required={true} />
+    </Col>
+      <Col xs={12} sm={6}>
+      <TextField  floatingLabelText="Price" required={true} />
+    </Col>
+  </Row>
+  <Row>
+   <Col>
+      <FlatButton type="submit" label="Add" className="button-submit" primary={true} />
+    </Col>
+    </Row>
+    </Paper>
+    </Col>
+      )
+    }
+};    
