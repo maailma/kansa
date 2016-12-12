@@ -125,9 +125,7 @@ const NominationCategory = ({ category, ...props }) => {
 
   return <Card className='NominationCategory'>
     <CardHeader
-      actAsExpander={true}
       className='NominationHeader'
-      showExpandableButton={true}
       title={title}
       titleStyle={{
         fontSize: 24,
@@ -136,7 +134,7 @@ const NominationCategory = ({ category, ...props }) => {
         width: '100%',
       }}
     />
-    <CardText expandable={true}>
+    <CardText>
       { description }
     </CardText>
     <CardText>

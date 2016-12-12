@@ -45,7 +45,7 @@ const SaveAllButton = ({ changedCategories, submitNominations }) => (
           textAlign: 'center',
           verticalAlign: 'bottom'
         }}
-        tooltip='Save all categories'
+        tooltip='Click here to save all categories'
         tooltipPosition='top-left'
         tooltipStyles={{
           fontSize: 12,
