@@ -5,8 +5,8 @@ export const categoryInfo = {
     title: 'Best Novel',
     description: `A science fiction or fantasy story of forty thousand (40,000) words or more.`,
     nominationFieldLabels: {
-      author: 'Author',
       title: 'Title',
+      author: 'Author',
       publisher: 'Publisher/Where Published'
     }
   },
@@ -15,8 +15,8 @@ export const categoryInfo = {
     title: 'Best Novella',
     description: `A science fiction or fantasy story of between seventeen thousand five hundred (17,500) and forty thousand (40,000) words.`,
     nominationFieldLabels: {
-      author: 'Author',
       title: 'Title',
+      author: 'Author',
       publisher: 'Publisher/Where Published'
     }
   },
@@ -25,8 +25,8 @@ export const categoryInfo = {
     title: 'Best Novelette',
     description: `A science fiction or fantasy story of between seven thousand five hundred (7,500) and seventeen thousand five hundred (17,500) words.`,
     nominationFieldLabels: {
-      author: 'Author',
       title: 'Title',
+      author: 'Author',
       publisher: 'Publisher/Where Published'
     }
   },
@@ -35,8 +35,8 @@ export const categoryInfo = {
     title: 'Best Short Story',
     description: `A science fiction or fantasy story of less than seven thousand five hundred (7,500) words.`,
     nominationFieldLabels: {
-      author: 'Author',
       title: 'Title',
+      author: 'Author',
       publisher: 'Publisher/Where Published'
     }
   },
@@ -45,8 +45,8 @@ export const categoryInfo = {
     title: 'Best Related Work',
     description: `Any work related to the field of science fiction, fantasy, or fandom, appearing for the first time during the previous calendar year or which has been substantially modified during the previous calendar year, and which is either non-fiction or, if fictional, is noteworthy primarily for aspects other than the fictional text, and which is not eligible in any other category.`,
     nominationFieldLabels: {
-      author: 'Author/Editor',
       title: 'Title',
+      author: 'Author/Editor',
       publisher: 'Publisher/Where Published'
     }
   },
@@ -55,8 +55,8 @@ export const categoryInfo = {
     title: 'Best Graphic Story',
     description: `Any science fiction or fantasy story told in graphic form appearing for the first time in the previous calendar year.`,
     nominationFieldLabels: {
-      author: 'Author',
       title: 'Title',
+      author: 'Author',
       publisher: 'Publisher/Where Published'
     }
   },
@@ -151,15 +151,16 @@ export const categoryInfo = {
     title: 'Best Series',
     description: `A multi-volume science fiction or fantasy story, unified by elements such as plot, characters, setting, and presentation, which has appeared in at least three (3) volumes consisting of a total of at least 240,000 words by the close of the calendar year 2016, at least one of which was published in 2016. If any series and a subset series thereof both receive sufficient nominations to appear on the final ballot, only the version which received more nominations shall appear.`,
     nominationFieldLabels: {
+      title: 'Name of Series',
       author: 'Author',
-      title: 'Title',
+      volume: 'Qualifying Volume',
       publisher: 'Publisher'
     }
   },
 
   NewWriter: {
-    title: 'John W. Campbell Award (not a Hugo)',
-    description: `(Award for the best new science fiction writer, sponsored by Dell Magazines) A new writer is one whose first work of science fiction or fantasy appeared in 2015 or 2016 in a professional publication. For Campbell Award purposes, a professional publication is one for which more than a nominal amount was paid, any publication that had an average press run of at least 10,000 copies, or any other criteria that the Award sponsors may designate.`,
+    title: 'John W. Campbell Award',
+    description: `Award for the best new science fiction writer, sponsored by Dell Magazines (not a Hugo Award). A new writer is one whose first work of science fiction or fantasy appeared in 2015 or 2016 in a professional publication. For Campbell Award purposes, a professional publication is one for which more than a nominal amount was paid, any publication that had an average press run of at least 10,000 copies, or any other criteria that the Award sponsors may designate.`,
     nominationFieldLabels: {
       author: 'Author',
       example: 'Example'
