@@ -11,6 +11,7 @@ var db = pgp(process.env.DATABASE_URL)
 // add query functions
 
 module.exports = {
+  getPeople: getPeople,
 	getArtists: getArtists,
 	createArtist: createArtist,
 	getArtist: getArtist,
@@ -21,6 +22,18 @@ module.exports = {
 	updateWork: updateWork,
 	removeWork: removeWork,
 };
+
+function getPeople(req, res, next) {
+  var _id = parseInt(req.params.id);
+  db.any('select * from Artist where person_id = $1', _id)
+    .then(function (data) {
+      res.status(200)
+        .json(data);
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+}
 
 function getArtists(req, res, next) {
   db.any('select id,continent from Artist')

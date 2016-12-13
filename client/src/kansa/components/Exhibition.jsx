@@ -17,16 +17,9 @@ import Paper from 'material-ui/Paper';
 
 const Works = [1]
 
-// const ddstyle= {
-//         display: 'block', 
-//         padding: '25px',
-//         border: '1px solid #ddd',
-//         background: '#ccc',
-//         verticalAlign: 'middle',
-//         textAlign: 'center',
-//         position: 'relative',
-
-//       }
+const raami = 'https://localhost:4430/api/raami/'
+const people = 'https://localhost:4430/api/people/'
+var data = new Array();
 
 const grey = { 
       color: '#bbb',
@@ -39,8 +32,56 @@ const paper = {
     padding: '20px'
 }
 
+  function api(url) {
+    // RETURN the promise
+    return fetch(url).then((response)=>{
+        return response.json(); // process it inside the `then`
+    });
+  }
+
 export default class ExhibitReg extends React.Component {
-    handleSubmit(artist) {
+
+  constructor(props) {
+    super(props);
+    const member = props.params.id
+
+    this.state = {
+      name: '',
+      url:'',
+      description:'',
+      transport:'',
+      continent: '',
+      legal: false,
+      }
+
+    api(raami+'people/'+member).then((data)=>{
+
+      this.state.name = data[0].name;
+      this.state.url = data[0].url;
+      this.state.description = data[0].description;
+      this.state.transport = data[0].transport;
+      this.state.continent = data[0].continent;
+      this.state.legal = data[0].legal;
+
+    // access the value inside the `then`
+    })
+
+    console.log(this.state)
+    // new Promise(function(reject, resolve) {
+    //   fetch(raami+'people/'+member)
+    //        .then(result=> result.json() )
+    //        .resolve(data => {
+    //           return data
+    //           })
+    //   });    
+    
+    // console.log(data)
+     
+    }
+
+
+
+  handleSubmit(artist) {
     const { dispatch } = this.props;
 
     Work.push(Work.length+1)
@@ -49,6 +90,12 @@ export default class ExhibitReg extends React.Component {
     // You can use actions such as:
     // dispatch(actions.submit('user', somePromise));
     // etc.
+
+    }
+
+
+  handleChange(e) {
+    console.log(e.target)
   }
 
   render() {
@@ -56,30 +103,23 @@ export default class ExhibitReg extends React.Component {
     return (
   <Card>
   <CardHeader>
-  <h2>Worlcon 75 Art Exhibition Registration Form</h2>
+  <h2>Worldcon 75 Art Exhibition Registration Form</h2>
   </CardHeader>
   <CardText>
   <Row>
     <Col xs={12} sm={6}>
-      <TextField  floatingLabelText="Artist name" required={true} />
+    {this.state.name}
+      <TextField  floatingLabelText="Artist name" value={this.state.name} required={true} />
     </Col>
   </Row>
-  <Row>
-  <SelectField
-      floatingLabelText="Continent"
-      onChange={this.handleChange}>
-            <MenuItem value={'EU'} primaryText="EU" />
-          <MenuItem value={'NON-EU'} primaryText="NON-EU" />
-      </SelectField>
-    </Row>
     <Row>
     <Col xs={12} sm={6}>
-      <TextField  floatingLabelText="Website URL"/>
+      <TextField  floatingLabelText="Website URL" value={this.state.url}/>
     </Col>
   </Row>
   <Row>
     <Col xs={12} sm={4}>
-      <TextField floatingLabelText="Artist's description" multiLine={true} rows={5}/>
+      <TextField floatingLabelText="Artist's description" value={this.state.description} multiLine={true} rows={5}/>
     </Col>
     </Row>
     <Row>
@@ -89,8 +129,16 @@ export default class ExhibitReg extends React.Component {
   </Row>
   <Row>
   <SelectField
+      floatingLabelText="Continent for tax purposes"
+      onChange={this.handleChange} value={this.state.continent}>
+          <MenuItem value={'EU'} primaryText="EU" />
+          <MenuItem value={'NON-EU'} primaryText="NON-EU" />
+      </SelectField>
+    </Row>
+  <Row>
+  <SelectField
       floatingLabelText="Select Transportation method"
-      onChange={this.handleChange}>
+      onChange={this.handleChange} value={this.state.transport}>
             <MenuItem value={'Air mail'} primaryText="Air mail" />
             <MenuItem value={'Courier'} primaryText="Couerier" />
             <MenuItem value={'Self'} primaryText="Deliver self" />
@@ -98,8 +146,8 @@ export default class ExhibitReg extends React.Component {
     </Row>
     <Row>
     <Col xs={12} sm={4}>
-      <p style={grey} >Accept legal note</p>
-      <Checkbox />
+      <p ><a href="#" style={grey}>Accept legal note</a></p>
+      <Checkbox value={this.state.legal} />
     </Col>
       </Row>
       <Row>
@@ -112,7 +160,7 @@ export default class ExhibitReg extends React.Component {
       </Row>
       <Row>
         < WorkForm />
-        { Works.forEach(works => <WorkForm />) }
+        { Works.forEach(works =>  <WorkForm /> ) }
         </Row>
       </CardText>
   </Card>
@@ -124,6 +172,7 @@ export default class ExhibitReg extends React.Component {
 export class WorkForm extends React.Component {
     handleSubmit(work) {
     Work.push(Work.length+1)
+      console.log(Work)
     
     const { dispatch } = this.props;
     

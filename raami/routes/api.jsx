@@ -8,6 +8,7 @@ router.get('/', function(req, res, next) {
 
 var db = require('../queries');
 
+router.get('/people/:id', db.getPeople);
 router.get('/artists', db.getArtists);
 router.get('/artist/:id', db.getArtist);
 router.post('/artist', db.createArtist);

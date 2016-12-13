@@ -6,7 +6,7 @@ CREATE DATABASE raami;
 
 CREATE TABLE artist (
 	id SERIAL PRIMARY KEY,
-	member_id INTEGER,
+	person_id INTEGER,
 	continent boolean,
 	url VARCHAR,
 	filename VARCHAR,

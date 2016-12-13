@@ -56,7 +56,7 @@ ReactDOM.render(
           <Route path="login" onEnter={authCheck} component={Login} />
           <Route path="login/:email/:key" onEnter={doLogin} />
           <Route path="profile" onEnter={authCheck} component={MemberList} />
-          <Route path="exhibition" component={ExhibitReg} />
+          <Route path="exhibition/:id" component={ExhibitReg} />
           <Route path="hugo" onEnter={authCheck} >
             <IndexRedirect to={PATH_IN} />
             <Route path="admin" component={HugoAdmin}>
