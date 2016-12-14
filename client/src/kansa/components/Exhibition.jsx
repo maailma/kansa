@@ -15,11 +15,10 @@ import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
 
-const Works = [1]
+var Works = [1]
 
 const raami = 'https://localhost:4430/api/raami/'
 const people = 'https://localhost:4430/api/people/'
-var data = new Array();
 
 const grey = { 
       color: '#bbb',
@@ -40,13 +39,14 @@ const paper = {
   }
 
 export default class ExhibitReg extends React.Component {
-
+  
   constructor(props) {
     super(props);
+    
     const member = props.params.id
 
     this.state = {
-      name: '',
+      name: 'xxx',
       url:'',
       description:'',
       transport:'',
@@ -63,20 +63,10 @@ export default class ExhibitReg extends React.Component {
       this.state.continent = data[0].continent;
       this.state.legal = data[0].legal;
 
-    // access the value inside the `then`
-    })
+      })
 
-    console.log(this.state)
-    // new Promise(function(reject, resolve) {
-    //   fetch(raami+'people/'+member)
-    //        .then(result=> result.json() )
-    //        .resolve(data => {
-    //           return data
-    //           })
-    //   });    
-    
-    // console.log(data)
-     
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this); 
     }
 
 
@@ -95,11 +85,11 @@ export default class ExhibitReg extends React.Component {
 
 
   handleChange(e) {
-    console.log(e.target)
+    // this.setState({value: event.target.value});
   }
 
   render() {
-  
+  console.log(this.state.name)
     return (
   <Card>
   <CardHeader>
@@ -108,13 +98,12 @@ export default class ExhibitReg extends React.Component {
   <CardText>
   <Row>
     <Col xs={12} sm={6}>
-    {this.state.name}
-      <TextField  floatingLabelText="Artist name" value={this.state.name} required={true} />
+      <TextField  floatingLabelText="Artist name" name="name" value={this.state.name} onChange={this.handleChange} required={true} />
     </Col>
   </Row>
     <Row>
     <Col xs={12} sm={6}>
-      <TextField  floatingLabelText="Website URL" value={this.state.url}/>
+      <TextField  floatingLabelText="Website URL" value={this.state.url} />
     </Col>
   </Row>
   <Row>
