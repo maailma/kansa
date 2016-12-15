@@ -46,6 +46,5 @@
     "whatwg-fetch": "^1.0.0"
   },
   "dependencies": {
-    "react-file-uploader": "^0.3.3"
   }
 }
