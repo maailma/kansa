@@ -16,9 +16,11 @@ CREATE TABLE IF NOT EXISTS Artist (
     filename text,
     portfolio bytea,
     category text,
-    orientation boolean,
     description text,
-    transport text
+    transport text,
+    auction integer,
+    print integer,
+    digital boolean
     );
 
 CREATE TABLE IF NOT EXISTS Works (
@@ -28,10 +30,12 @@ CREATE TABLE IF NOT EXISTS Works (
     width decimal,
     height decimal,
     technique text,
+    orientation text,
     graduation text,
     filename text,
     image bytea,
-    price decimal
+    price decimal,
+    gallery text
     );
 
 CREATE FUNCTION arists_notify() RETURNS trigger as $$
