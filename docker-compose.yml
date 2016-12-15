@@ -60,18 +60,3 @@ services:
       - "5432"
     volumes:
       - pgdata:/pgdata
-
-  postgres-replica:
-    image: danieldent/postgres-replication:9.5
-    environment:
-      PGDATA: /pgdata
-      PGUSER: admin
-      POSTGRES_DB: api
-      POSTGRES_USER: admin
-      REPLICATE_FROM: postgres
-    expose:
-      - "5432"
-    volumes:
-      - /pgdata
-    links:
-      - postgres

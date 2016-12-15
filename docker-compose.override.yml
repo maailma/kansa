@@ -35,9 +35,3 @@ services:
       POSTGRES_PASSWORD: adminpwd
       KANSA_PG_PASSWORD: pwd
       HUGO_PG_PASSWORD: pwd
-
-  postgres-replica:
-    environment:
-      POSTGRES_PASSWORD: adminpwd
-      KANSA_PG_PASSWORD: pwd
-      HUGO_PG_PASSWORD: pwd
