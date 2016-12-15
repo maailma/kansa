@@ -109,6 +109,8 @@ export default class Member extends React.Component {
         { member.get('can_hugo_nominate') ? <Link
           to={`/hugo/${member.get('id')}/nominate`}
         >Nominate for the Hugo Awards</Link> : null }
+        <br />
+        <Link to={`/exhibition/${member.get('id')}`}>Register to Art Exhibtion</Link>
       </CardActions>
     </Card>;
   }
