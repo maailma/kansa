@@ -20,10 +20,11 @@ export const editNomination = (category, index, nomination) => ({
   nomination
 });
 
-export const submitNominations = (category) => ({
+export const submitNominations = (category, signature) => ({
   module: 'hugo-nominations',
   type: 'SUBMIT_NOMINATIONS',
-  category
+  category,
+  signature
 });
 
 export const resetNominations = (category) => ({

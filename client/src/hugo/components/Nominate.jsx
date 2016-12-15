@@ -10,6 +10,7 @@ import { setNominator, clearNominationError } from '../actions'
 import { categoryInfo } from '../constants'
 
 import NominationCategory from './NominationCategory'
+import NominationSignature from './NominationSignature'
 import SaveAllButton from './SaveAllButton'
 import './Nominate.css'
 
@@ -29,7 +30,7 @@ const Messages = connect(
   onRequestClose={ () => clearNominationError(category) }
 />);
 
-const ActiveNominations = ({ name }) => <div>
+const ActiveNominations = ({ name, signature }) => <div>
   <Row>
     <Col
       xs={10} xsOffset={1}
@@ -52,11 +53,11 @@ const ActiveNominations = ({ name }) => <div>
       lg={8} lgOffset={2}
     >{
       Object.keys(categoryInfo).map(category => (
-        <NominationCategory category={category} key={category}/>
+        <NominationCategory signature={signature} category={category} key={category}/>
       ))
     }</Col>
   </Row>
-  <SaveAllButton />
+  <SaveAllButton signature={signature} />
   <Messages />
 </div>;
 
@@ -106,6 +107,7 @@ class Nominate extends React.Component {
     super(props);
     const { id, person, setNominator } = props;
     if (person && id !== person.get('id')) setNominator(person.get('id'));
+    this.state = { signature: '' };
   }
 
   componentWillReceiveProps(nextProps) {
@@ -115,7 +117,13 @@ class Nominate extends React.Component {
 
   render() {
     const { person } = this.props;
-    return person ? <ActiveNominations name={this.name} /> : <div>Loading...</div>
+    const { signature } = this.state;
+    return person ? <div>
+      <ActiveNominations name={this.name} signature={signature} />
+      { signature ? null : <NominationSignature
+        setName={ signature => this.setState({ signature }) }
+      /> }
+    </div> : <div>Loading...</div>
   }
 
   get name() {

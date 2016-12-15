@@ -9,7 +9,7 @@ import transitions from 'material-ui/styles/transitions'
 
 import { submitNominations } from '../actions'
 
-const SaveAllButton = ({ changedCategories, submitNominations }) => (
+const SaveAllButton = ({ changedCategories, signature, submitNominations }) => (
   <Paper
     circle={true}
     className='SaveAllButton'
@@ -34,7 +34,7 @@ const SaveAllButton = ({ changedCategories, submitNominations }) => (
     >
       <IconButton
         disabled={ changedCategories.size == 0 }
-        onTouchTap={ () => changedCategories.keySeq().forEach(submitNominations) }
+        onTouchTap={ () => changedCategories.keySeq().forEach(category => submitNominations(category, signature)) }
         style={{
           transition: transitions.easeOut(),
           position: 'relative',

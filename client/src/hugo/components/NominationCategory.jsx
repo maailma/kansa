@@ -159,9 +159,9 @@ const NominationCategory = ({ category, ...props }) => {
 export default connect(
   (state, { category }) => ({
     state: state.nominations.get(category)
-  }), (dispatch, { category }) => bindActionCreators({
+  }), (dispatch, { category, signature }) => bindActionCreators({
     onChange: (idx, values) => editNomination(category, idx, values),
-    onSave: () => submitNominations(category),
+    onSave: () => submitNominations(category, signature),
     onReset: () => resetNominations(category)
   }, dispatch)
 )(NominationCategory);

@@ -18,9 +18,11 @@ function setNominator(dispatch, { person }) {
     .catch(error => dispatch({ type: 'ERROR', error}));
 }
 
-function submitNominations(dispatch, { app, nominations }, { category }) {
+function submitNominations(dispatch, { app, nominations }, { category, signature }) {
   const person = app.get('person');
-  if (!person || person < 0 || !category) throw new Error(`Required parameters: person <${person}>, category <${category}>`);
+  if (!person || person < 0 || !category || !signature) throw new Error(
+    `Required parameters: person <${person}>, category <${category}>, signature <${signature}>`
+  );
 
   const list = nominations.getIn([category, 'clientData']).filter(nom => nom);
   if (!list) throw new Error(`Nominations for category ${JSON.stringify(category)} not found!`);
@@ -31,7 +33,7 @@ function submitNominations(dispatch, { app, nominations }, { category }) {
     throw new Error(`Unknown key in nomination data: ${JSON.stringify(list.toJS())}`);
   }
 
-  api.POST(`hugo/${person}/nominate`, { category, nominations: list.toJS() })
+  api.POST(`hugo/${person}/nominate`, { category, nominations: list.toJS(), signature })
     .then(res => dispatch(getNominations(res)))
     .catch(error => dispatch({ type: 'ERROR', error}));
 }
