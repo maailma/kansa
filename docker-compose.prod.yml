@@ -25,6 +25,7 @@ services:
     environment:
       DATABASE_URL:
       SESSION_SECRET:
+      STRIPE_SECRET_APIKEY:
     restart: always
 
   kyyhky:

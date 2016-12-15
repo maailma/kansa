@@ -1,7 +1,7 @@
 const LogEntry = require('./types/logentry');
 const Person = require('./types/person');
 
-module.exports = { getPublicPeople, getPublicStats, getPeople, getPerson, addPerson, updatePerson };
+module.exports = { getPublicPeople, getPublicStats, getPeople, getPerson, addPerson, authAddPerson, updatePerson };
 
 function getPublicPeople(req, res, next) {
   req.app.locals.db.any(`SELECT country, membership,
@@ -81,26 +81,33 @@ function getPerson(req, res, next) {
     .catch(err => next(err));
 }
 
-function addPerson(req, res, next) {
+function addPerson(req, db, person) {
+  const log = new LogEntry(req, 'Add new person');
+  return db.tx(tx => tx.sequence((i, data) => { switch (i) {
+
+    case 0:
+      return tx.one(`INSERT INTO People ${person.sqlValues} RETURNING id`, person.data);
+
+    case 1:
+      log.subject = parseInt(data.id);
+      return tx.none(`INSERT INTO Log ${log.sqlValues}`, log);
+
+  }})).then(() => log.subject);
+}
+
+function authAddPerson(req, res, next) {
   if (!req.session.user.member_admin || typeof req.body.member_number !== 'undefined' && !req.session.user.admin_admin) {
     return res.status(401).json({ status: 'unauthorized' });
   }
-  let id, person;
+  let person;
   try {
     person = new Person(req.body);
-  } catch (e) {
-    return res.status(400).json({ status: 'error', message: e.message });
+  } catch (err) {
+    return next(err);
   }
-  req.app.locals.db.tx(tx => tx.sequence((i, data) => { switch (i) {
-    case 0:
-      return tx.one(`INSERT INTO People ${person.sqlValues} RETURNING id`, person.data);
-    case 1:
-      const log = new LogEntry(req, 'Add new person');
-      id = log.subject = parseInt(data.id);
-      return tx.none(`INSERT INTO Log ${log.sqlValues}`, log);
-  }}))
-  .then(() => { res.status(200).json({ status: 'success', id }); })
-  .catch(err => next(err));
+  addPerson(req, req.app.locals.db, person)
+    .then(id => res.status(200).json({ status: 'success', id }))
+    .catch(next);
 }
 
 function updatePerson(req, res, next) {

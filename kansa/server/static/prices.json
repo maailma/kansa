@@ -1,0 +1,9 @@
+{
+  "Supporter": { "amount": 3500, "description": "Supporting Membership" },
+  "KidInTow": { "amount": 0, "description": "Kid-in-tow Membership" },
+  "Child": { "amount": 6000, "description": "Child Membership" },
+  "Youth": { "amount": 9000, "description": "Youth Membership" },
+  "FirstWorldcon": { "amount": 9500, "description": "First Worldcon Membership" },
+  "Adult": { "amount": 12000, "description": "Adult Membership" },
+  "PaperPubs": { "amount": 1000, "description": "Paper publications" }
+}

@@ -27,6 +27,9 @@ some relevant data and/or a `message` field.
   * [`POST /api/kansa/people/:id`](#post-apikansapeopleid)
   * [`POST /api/kansa/people/:id/upgrade`](#post-apikansapeopleidupgrade)
   * [WebSocket: `wss://server/api/kansa/people/updates`](#websocket-wssserverapikansapeopleupdates)
+* [Purchases](#purchases)
+  * [`POST /api/kansa/purchase`](#post-apikansapurchase)
+  * [`GET /api/kansa/purchase/prices`](#get-apikansapurchaseprices)
 * [Hugo Nominations](#hugo-nominations)
   * [`GET /api/hugo/:id/nominations`](#get-apihugoidnominations)
   * [`POST /api/hugo/:id/nominate`](#post-apihugoidnominate)
@@ -290,6 +293,42 @@ events to signal `'Unauthorized'` and `'Not Found'` (respectively) to the client
 #### Response
 ```
 '{"id":#,"member_number":…,"legal_name":…,…}'
+```
+
+
+## Purchases
+
+### `POST /api/kansa/purchase`
+- Parameters: `amount`, `email`, `token`,
+  `new_members: [ { membership, email, legal_name, public_first_name, public_last_name, city, state, country, paper_pubs }, ... ]`,
+  `upgrades: [ { id, membership, paper_pubs }, ... ]`
+
+Using the `token` received from Stripe, make a charge of `amount` on the card
+(once verified against the server-side calculated sum from the items) and add
+the `new_members` to the database as well as applying the specified `upgrades`.
+For new members, generate a login key and include it in the welcome email sent
+to each address. Send the receipt of the purchase to the `email` address.
+
+#### Response
+```
+{
+  status: 'success',
+  emails: ['address@example.com', ...]
+}
+```
+
+### `GET /api/kansa/purchase/prices`
+
+Current membership and paper publications prices, with `amount` in EUR cents.
+
+#### Response
+```
+{
+  Supporter: { amount: 3500, description: 'Supporting Membership' },
+  ...,
+  Adult: { amount: 12000, description: 'Adult Membership' },
+  PaperPubs: { amount: 1000, description: 'Paper publications' }
+}
 ```
 
 
