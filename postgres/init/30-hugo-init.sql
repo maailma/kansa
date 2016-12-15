@@ -16,6 +16,7 @@ CREATE TABLE Nominations (
     client_ip text NOT NULL,
     client_ua text,
     person_id integer REFERENCES kansa.People NOT NULL,
+    signature text NOT NULL,
     category Category NOT NULL,
     nominations jsonb[] NOT NULL
 );

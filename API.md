@@ -396,13 +396,13 @@ nomination.
 
 ### `POST /api/hugo/:id/nominate`
 - Requires authentication
-- Parameters: `category`, `nominations`
+- Parameters: `signature`, `category`, `nominations`
 
 Find the Hugo nominations for the person matching `id`. If its email address
-does not match the session data, `hugo_admin` authority is required. `category`
-needs to be string matching one of the award categories included
-[here](postgres/init/30-hugo-init.sql). `nominations` must be a JSON array of
-objects.
+does not match the session data, `hugo_admin` authority is required. `signature`
+needs to be a non-empty string. `category` needs to be string matching one of
+the award categories included [here](postgres/init/30-hugo-init.sql).
+`nominations` must be a JSON array of objects.
 
 #### Response
 ```
@@ -412,6 +412,7 @@ objects.
   "client_ip": "::ffff:172.19.0.5",
   "client_ua": "curl/7.43.0",
   "person_id": 1,
+  "signature": "…",
   "category": "Novella",
   "nominations": [
     {
