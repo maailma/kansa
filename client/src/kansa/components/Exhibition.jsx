@@ -112,16 +112,16 @@ export default class ExhibitReg extends React.Component {
       }
 
     getapi(raami+'people/'+member).then((data)=>{
-      console.log(data)
       if(data.length > 0 && data[0].id > 0) {
+        ID = data[0].id
         this.setState(data[0])
-        console.log(ID)
         var workCopy = this.state.Works.slice();
-        workCopy[0].artist_id = data[0].id
-        getapi(raami+'works/'+ID).then(work => {
-          if(work.length > 0) {
-            work.forEach((item) => {
-              workCopy.push(item)
+        workCopy[0].artist_id = ID
+        getapi(raami+'works/'+ID).then(res => {
+          console.log(res.works)
+          if(res.works.length > 0) {
+            res.works.forEach((item) => {
+              workCopy.unshift(item)
               
             })
           this.setState({Works:workCopy})
@@ -261,6 +261,7 @@ export default class ExhibitReg extends React.Component {
   
 
   this.state.Works.forEach((work, i)=> {
+    console.log(this.state.Works)
     works.push(
       <Col xs={12} sm={6} key={ i }>
     <form>        
