@@ -61,8 +61,8 @@ function getArtist(req, res, next) {
 
 function createArtist(req, res, next) {
 
-  db.none('insert into Artist(person_id, name, continent, url, filename, filedata, description, transport, legal)' +
-      'values(${person_id}, ${name}, ${continent}, ${url}, ${filename}, ${filedata}, ${description}, ${transport}, ${legal})',
+  db.none('insert into Artist(person_id, name, continent, url, filename, portfolio, description, transport, legal, auction, print, digital)' +
+      'values(${person_id}, ${name}, ${continent}, ${url}, ${filename}, ${portfolio}, ${description}, ${transport}, ${legal}, ${auction}, ${print}, ${digital} )',
     req.body)
     .then(function () {
       res.status(200)
@@ -79,7 +79,7 @@ function createArtist(req, res, next) {
 
 function updateArtist(req, res, next) {
   var _id = parseInt(req.params.id);
-  db.none('update Artist set continent=$1, url=$2, filename=$3, filedata=$4, name=$6, description=$6, transport=$7, legal=$8 where id=$9',
+  db.none('update Artist set continent=$1, url=$2, filename=$3, portfolio=$4, name=$6, description=$6, transport=$7, legal=$8, auction=$9, print=$10, digital=$11 where id=$12',
     [req.body.continent, 
      req.body.url,
      req.body.filename,
@@ -88,6 +88,9 @@ function updateArtist(req, res, next) {
      req.body.description,
      req.body.transport,
      req.body.legal,
+     req.body.auction,
+     req.body.print,
+     req.body.digital,
      _id
      ])
     .then(function () {
@@ -149,8 +152,8 @@ function getWork(req, res, next) {
 
 
 function createWork(req, res, next) {
-  db.none('insert into Works(artist_id, title, width, height, type, orientation, filename, filedata, year, price )' +
-      'values(${artist_id}, ${title}, ${width}, ${height}, ${type}, ${orientation} ${filename}, ${filedata}, ${year}, ${price})',
+  db.none('insert into Works(artist_id, title, width, height, gallery, orientation, filename, image, year, price )' +
+      'values(${artist_id}, ${title}, ${width}, ${height}, ${gallery}, ${orientation} ${filename}, ${image}, ${year}, ${price})',
     req.body)
     .then(function () {
       res.status(200)
@@ -167,12 +170,12 @@ function createWork(req, res, next) {
 
 function updateWork(req, res, next) {
   var _id = parseInt(req.params.id)	
-  db.none('update Works set artist_id=$1, title=$2, width=$3, height=$4, type=$5, filename=$7, filedata=$8, price=$9, year=$10, orientation=$11 where id=$12',
+  db.none('update Works set artist_id=$1, title=$2, width=$3, height=$4, gallery=$5, filename=$7, filedata=$8, price=$9, year=$10, orientation=$11 where id=$12',
     [ req.body.artist_id,
       req.body.title, 
       req.body.width, 
       req.body.height, 
-      req.body.type, 
+      req.body.gallery, 
       req.body.filename, 
       req.body.filedata, 
       req.body.price,
