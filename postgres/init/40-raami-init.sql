@@ -20,7 +20,8 @@ CREATE TABLE IF NOT EXISTS Artist (
     transport text,
     auction integer,
     print integer,
-    digital boolean
+    digital boolean,
+    legal boolean
     );
 
 CREATE TABLE IF NOT EXISTS Works (
