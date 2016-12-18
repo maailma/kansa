@@ -15,6 +15,7 @@ const { Col, Row } = require('react-flexbox-grid');
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
+import FileInput from 'react-file-input'
 
 const raami = 'https://localhost:4430/api/raami/'
 const people = 'https://localhost:4430/api/people/'
@@ -45,7 +46,7 @@ const paper = {
             'Content-Type': 'application/json'
       },
       method: 'POST',
-      body: json
+      body: JSON.stringify(json)
     }).then((response)=>{
         return response.json(); // process it inside the `then`
     });
@@ -59,7 +60,7 @@ const paper = {
             'Content-Type': 'application/json'
       },
       method: 'PUT',
-      body: json
+      body: JSON.stringify(json)
     }).then((response)=>{
         return response.json(); // process it inside the `then`
     });
@@ -73,25 +74,40 @@ const paper = {
   } 
 
 export default class ExhibitReg extends React.Component {
-  
+
   constructor(props) {
     super(props);
     
     const member = props.params.id
+    var ID = 0
 
     this.state = {
       id: null,
-      person_id: null,
+      person_id: member,
       name: '',
       url:'',
       description:'',
       transport:'',
       continent: '',
+      filename:'',
+      portfolio: null,
       legal: false,
       auction:0,
       print:0,
       digital: false,
-      open: false
+      open: false,
+      Works: [{ id: null, 
+            artist_id: ID, 
+            title: '',
+            width: 0,
+            height: 0, 
+            technique: '', 
+            orientation: '', 
+            filename: '', 
+            image: null,
+            year: 2000, 
+            price: 0, 
+            gallery: ''}]
 
       }
 
@@ -99,55 +115,99 @@ export default class ExhibitReg extends React.Component {
       console.log(data)
       if(data.length > 0 && data[0].id > 0) {
         this.setState(data[0])
-      }
-
-      // this.state.name = data[0].name;
-      // this.state.url = data[0].url;
-      // this.state.description = data[0].description;
-      // this.state.transport = data[0].transport;
-      // this.state.continent = data[0].continent;
-      // this.state.legal = data[0].legal;
-
+        console.log(ID)
+        var workCopy = this.state.Works.slice();
+        workCopy[0].artist_id = data[0].id
+        getapi(raami+'works/'+ID).then(work => {
+          if(work.length > 0) {
+            work.forEach((item) => {
+              workCopy.push(item)
+              
+            })
+          this.setState({Works:workCopy})
+          }
       })
 
-    getapi(raami+'works/'+this.state.id).then( (data)=>{
-
-      data.works.forEach(work => {
-        this.setState({Works: this.state.Works.concat([work])})
+        console.log(this.state.Works)
+        }
       })
 
-    })
-
-    // this.setState({Works:[1]})
-
-    console.log(this.data)
-
-    }
-
+  }
 
   handleSubmit(artist) {
     // const { dispatch } = this.props;
-
-    console.log(this.state)
+    console.log(ID)
 
     if(this.state.id > 0) {
-      putapi(raami+'artist/'+this.state.id, this.state).then(data=>{
-        console.log(data)
+      putapi(raami+'artist/'+this.state.id, this.state).then(res=>{
+        console.log(res)
       })      
     } else {
-      postapi(raami+'artist', this.state).then(data=>{
-        console.log(data)
+
+      postapi(raami+'artist', this.state).then(res=>{
+        console.log(res)
       })
 
     }
+  }
+
+  submitWork(i) {
+
+    var data = this.state.Works[i]
+    var _id =  this.state.Works[i].id
 
 
-    // Do whatever you like in here.
-    // You can use actions such as:
-    // dispatch(actions.submit('user', somePromise));
-    // etc.
+    if(_id > 0) {
+      putapi(raami+'work/'+_id, data).then(res=>{
+        console.log(res)
+      })      
+    } else {
+      delete data.id
+      console.log(JSON.stringify(data))
+      postapi(raami+'work', data).then(res=>{
+        console.log(res)
+      })
 
     }
+  }
+
+  addWork() {
+    // const { dispatch } = this.props;
+    
+    var workCopy = this.state.Works.slice();
+
+      workCopy.push(
+          { id: null, 
+            artist_id: ID, 
+            title: '',
+            width: 0,
+            height: 0, 
+            technique: '', 
+            orientation: '', 
+            filename: '', 
+            image: null, 
+            price: 0,
+            year: 2000, 
+            gallery: ''}
+
+      )
+
+    this.setState({Works: workCopy})
+    }
+
+  handleWork(i, field, e) {
+    var workCopy = this.state.Works.slice();
+    workCopy[i][field] = e.target.value; 
+    this.setState({Works:workCopy});    
+    
+  }
+
+  selectWork(i, field, e, key, val) {
+      var workCopy = this.state.Works.slice();
+      workCopy[i][field] = val; 
+      this.setState({Works:workCopy});
+    }
+
 
   handleChange(field, e) {
     var newState = {}; 
@@ -156,6 +216,21 @@ export default class ExhibitReg extends React.Component {
     
   }
 
+  handleFile(e) {
+
+    var newState = {}; 
+    newState['filename'] = e.target.files[0].name; 
+    var fr = new FileReader();
+    fr.readAsArrayBuffer(e.target.files[0]);
+    fr.onloadend = (e) => {
+        var arrayBuffer = fr.result
+        var bytea = new Uint8Array(arrayBuffer);
+        newState['portfolio'] = '\\x'+bytea; 
+        this.setState(newState);    
+     }
+    // newState['portfolio'] = e.target.files[0]; 
+    
+  }
   handleCheck(e, val) {
     console.log(e.target)
     var newState = {}; 
@@ -164,7 +239,6 @@ export default class ExhibitReg extends React.Component {
   }
 
   handleSelect(e, key, val) {
-    console.log(val)
     var newState = {}; 
     newState[e.target[name]] = val; 
     this.setState(newState);  
@@ -179,8 +253,94 @@ export default class ExhibitReg extends React.Component {
     this.setState({open: false});
   };
 
+
+
   render() {
   
+  var works = []
+  
+
+  this.state.Works.forEach((work, i)=> {
+    works.push(
+      <Col xs={12} sm={6} key={ i }>
+    <form>        
+          <Paper style={paper}>
+      <Row>
+        <Col >
+          <TextField  floatingLabelText="Work title"  value={this.state.Works[i].title} onChange={this.handleWork.bind(this, i, 'title')} required={true} />
+        </Col>
+      </Row>
+      <Row>
+        <span style={grey}>Preview image (max 2 MB) <br/>
+        <FileInput name="Preview" 
+                   accept=".jpg"
+                   placeholder="Prview image" 
+                   onChange={this.handleFile.bind(this)} />
+          </span>
+              {this.state.filename}
+      </Row>
+      <Row>
+        <Col xs={12} sm={6}>
+          <TextField type="number" floatingLabelText="Width (cm)"  value={this.state.Works[i].width} onChange={this.handleWork.bind(this,  i, 'width')} required={true} />
+        </Col>
+          <Col xs={12} sm={6}>
+          <TextField type="number" floatingLabelText="Height (cm)"  required={true} value={this.state.Works[i].height} onChange={this.handleWork.bind(this,  i,  'height')}/>
+        </Col>
+      </Row>
+        <Row>
+        <Col>
+      <SelectField
+          floatingLabelText="Display"
+          onChange={this.selectWork.bind(this, i, 'orientation')}  value={this.state.Works[i].orientation}>
+              <MenuItem value={'Table'} primaryText="Table-top display" />
+              <MenuItem value={'Wall'} primaryText="Wall mounted" />
+          </SelectField>
+          </Col>
+        </Row>
+        <Row>
+        <Col>
+      <SelectField
+          floatingLabelText="Technique" value={this.state.Works[i].technique}
+          onChange={this.selectWork.bind(this, i, 'technique')} >
+              <MenuItem value={'Painting'} primaryText="Painting" />
+              <MenuItem value={'Drawing'} primaryText="Drawing" />
+              <MenuItem value={'Mixed'} primaryText="Mixed media" />
+              <MenuItem value={'Photograph'} primaryText="Photograph" />
+              <MenuItem value={'Digital'} primaryText="Digital" />
+              <MenuItem value={'3D'} primaryText="3D (ie. sculpture)" />
+          </SelectField>
+          </Col>
+        </Row>
+        <Row>
+        <Col>
+      <SelectField
+          floatingLabelText="Select Gallery"  value={this.state.Works[i].gallery}
+          onChange={this.selectWork.bind(this, i, 'gallery')}>
+              <MenuItem value={'Auction'} primaryText="Auction gallery" />
+              <MenuItem value={'Printshop'} primaryText="Printshop" />
+              <MenuItem value={'Digital'} primaryText="Digital galler" />
+          </SelectField>
+          </Col>
+        </Row>
+      <Row>
+        <Col xs={12} sm={6}>
+          <TextField  type="number" floatingLabelText="Year"  onChange={this.handleWork.bind(this,  i, 'year')} required={true} value={this.state.Works[i].year}/>
+        </Col>
+          <Col xs={12} sm={6}>
+          <TextField  type="number" floatingLabelText="Estimated value (euro)"  onChange={this.handleWork.bind(this,  i, 'price')} required={true} value={this.state.Works[i].price} />
+        </Col>
+      </Row>
+      <Row>
+       <Col>
+          <FlatButton type="submit" label="Save" onClick={this.submitWork.bind(this, i)} className="button-submit" primary={true} />
+        </Col>
+        </Row>
+        </Paper><br /> 
+        </form> 
+        </Col>
+    )
+  })
+
   // console.log(this.state.Works.length+1)
   
     return (
@@ -205,10 +365,13 @@ export default class ExhibitReg extends React.Component {
     </Col>
     </Row>
     <Row>
-    <span style={grey}>Upload your portfolio<br/>
-    <input type="file" />
+    <h3 style={grey}>[Upload your portfolio]<br/>
+    <FileInput name="myImage"
+                   accept=".pdf"
+                   placeholder="Portfolio" 
+                   onChange={this.handleFile.bind(this)} />
     {this.state.filename}
-  </span>
+  </h3>
   </Row>
   <Row>
   <SelectField
@@ -230,16 +393,18 @@ export default class ExhibitReg extends React.Component {
     </Row>
     <Row>
     <Col>
-    <h3>Reserve gallery space</h3>
+      <h3>Reserve gallery space</h3>
     </Col>
     </Row>
     <Row>
-    <Col>
-    <TextField type="number" floatingLabelText="Auction gallery (m)" min="0" onChange={this.handleChange.bind(this, 'auction')} value={this.state.auction}/>
-    </Col>
+      <Col>
+        <TextField type="number" floatingLabelText="Auction gallery (m)" min="0" onChange={this.handleChange.bind(this, 'auction')} value={this.state.auction}/>
+      </Col>
     <Col>
     <TextField type="number" floatingLabelText="Printshop gallery (m)" min="0" onChange={this.handleChange.bind(this, 'print')} value={this.state.print} />
     </Col>
+    </Row>
+    <Row>
     <Col>
     <label style={grey} >Digital gallery (Max 20 works)
     <Checkbox onChange={this.handleCheck.bind(this)} value={this.state.digital} /></label>
@@ -261,7 +426,7 @@ export default class ExhibitReg extends React.Component {
           onRequestClose={this.handleClose}
         >
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque quis tellus pulvinar, auctor justo id, eleifend augue. Nunc ultrices feugiat magna, non consectetur arcu sagittis et. Morbi sit amet facilisis neque. Mauris aliquam sollicitudin elit, eu facilisis magna sagittis at. Etiam feugiat eu urna ut lobortis. Vivamus eros libero, posuere vel fringilla nec, interdum at magna. Vestibulum placerat, velit at venenatis maximus, turpis leo rutrum nibh, in imperdiet metus diam vel nunc. Maecenas lorem risus, euismod a luctus sed, suscipit viverra massa. Vivamus nisi quam, ullamcorper et nisl ac, pulvinar consequat lorem. Praesent bibendum, est id fringilla sagittis, neque ipsum mattis turpis, a vulputate ipsum sapien ut sapien. Integer sollicitudin vulputate nisi. Nam molestie porttitor lectus vel porta.
-
+        <br/>
         Suspendisse vehicula egestas massa ut porttitor. Integer molestie elementum placerat. Phasellus vestibulum feugiat odio et mattis. Ut lacinia augue id enim suscipit, quis suscipit nibh molestie. Suspendisse congue eros mattis molestie varius. Nam commodo ante sapien, a porttitor orci blandit nec. Quisque aliquet lacus sed nunc condimentum fringilla. Proin elementum, eros vitae vulputate mattis, sapien dolor tincidunt sem, in venenatis felis nisl vel felis. Morbi eu posuere libero, sit amet viverra augue. Fusce eleifend vehicula lectus, at feugiat ex faucibus non. Vestibulum hendrerit ex at sem placerat, in suscipit augue efficitur. Cras porta dui ut mauris pellentesque, fermentum vestibulum mauris dictum. Phasellus dignissim tortor vitae mattis ornare. Curabitur dignissim volutpat scelerisque. Pellentesque tempus tempor nisl lobortis consequat. Aenean rutrum augue a euismod mollis.
 
         </Dialog>
@@ -275,94 +440,16 @@ export default class ExhibitReg extends React.Component {
           </Col>
       </Row>
       <Row>
-      < WorkForm /> 
+        { works }
 
+        <Col>
+        <br />
+        <RaisedButton type="button" label="Add" onClick={this.addWork.bind(this)} className="button-submit" />
+        </Col>
         </Row>
       </CardText>
   </Card>
-
       )
   };
 }
 
-export class WorkForm extends React.Component {
-    handleSubmit(work) {
-    
-      this.setState({Works: this.state.Works.concat([work])})
-
-
-    console.log(this.state)
-
-    // const { dispatch } = this.props;
-
-    // Do whatever you like in here.
-    // You can use actions such as:
-    // dispatch(actions.submit('user', somePromise));
-    // etc.
-  }
-  render() {
-
-    return (
-    <Col xs={12} sm={6}>
-      <Paper style={paper}>
-  <Row>
-    <Col >
-      <TextField  floatingLabelText="Work title" required={true} />
-    </Col>
-  </Row>
-  <Row>
-    <p style={grey}>Preview image (max 2 MB) <br/>
-  <input type="file" />    
-  </p>
-  </Row>
-  <Row>
-    <Col xs={12} sm={6}>
-      <TextField  floatingLabelText="Width (cm)" required={true} />
-    </Col>
-      <Col xs={12} sm={6}>
-      <TextField  floatingLabelText="Height (cm)" required={true} />
-    </Col>
-  </Row>
-    <Row>
-    <Col>
-  <SelectField
-      floatingLabelText="Display"
-      onChange={this.handleChange}>
-          <MenuItem value={'Table'} primaryText="Table-top display" />
-          <MenuItem value={'Wall'} primaryText="Wall mounted" />
-      </SelectField>
-      </Col>
-    </Row>
-    <Row>
-    <Col>
-  <SelectField
-      floatingLabelText="Technique"
-      onChange={this.handleChange}>
-          <MenuItem value={'Painting'} primaryText="Painting" />
-          <MenuItem value={'Drawing'} primaryText="Drawing" />
-          <MenuItem value={'Mixed'} primaryText="Mixed media" />
-          <MenuItem value={'Photograph'} primaryText="Photograph" />
-          <MenuItem value={'Digital'} primaryText="Digital" />
-          <MenuItem value={'3D'} primaryText="3D (ie. sculpture)" />
-      </SelectField>
-      </Col>
-    </Row>
-  <Row>
-    <Col xs={12} sm={6}>
-      <TextField  floatingLabelText="Year" required={true} />
-    </Col>
-      <Col xs={12} sm={6}>
-      <TextField  floatingLabelText="Estimated value (euro)" required={true} />
-    </Col>
-  </Row>
-  <Row>
-   <Col>
-      <FlatButton type="submit" label="Save" onClick={this.handleSubmit.bind(this)} className="button-submit" />
-      <FlatButton type="button" label="Add" onClick={this.handleSubmit.bind(this)} className="button-submit" />
-    </Col>
-    </Row>
-    </Paper>
-    </Col>
-      )
-    }
-};    
