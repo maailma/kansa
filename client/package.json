@@ -46,6 +46,6 @@
     "whatwg-fetch": "^1.0.0"
   },
   "dependencies": {
-    "react-file-input": "^0.2.5",
+    "react-file-input": "^0.2.5"
   }
 }
