@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS Works (
     image bytea,
     price decimal,
     gallery text,
-    year text
+    year integer
     );
 
 CREATE FUNCTION arists_notify() RETURNS trigger as $$
