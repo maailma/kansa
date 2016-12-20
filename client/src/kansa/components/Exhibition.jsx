@@ -20,17 +20,6 @@ import FileInput from 'react-file-input'
 const raami = 'https://localhost:4430/api/raami/'
 const people = 'https://localhost:4430/api/people/'
 
-const grey = { 
-      color: '#bbb',
-      fontSize: '17px'
-     }
-
-const paper = {
-    display: 'inline-block',
-    float: 'left',
-    padding: '20px'
-}
-
   function getapi(url) {
     // RETURN the promise
     return fetch(url).then((response)=>{
@@ -92,21 +81,21 @@ export default class ExhibitReg extends React.Component {
       filename:'',
       portfolio: null,
       legal: false,
-      auction:0,
-      print:0,
+      auction:'',
+      print:'',
       digital: false,
       open: false,
       Works: [{ id: null, 
             artist_id: ID, 
             title: '',
-            width: 0,
-            height: 0, 
+            width: '',
+            height: '', 
             technique: '', 
             orientation: '', 
             filename: '', 
             image: null,
-            year: 2000, 
-            price: 0, 
+            year: '', 
+            price: '', 
             gallery: ''}]
 
       }
@@ -115,20 +104,20 @@ export default class ExhibitReg extends React.Component {
       if(data.length > 0 && data[0].id > 0) {
         ID = data[0].id
         this.setState(data[0])
-        var workCopy = this.state.Works.slice();
-        workCopy[0].artist_id = ID
+        var _work = this.state.Works.slice();
+        _work[0].artist_id = ID
         getapi(raami+'works/'+ID).then(res => {
           console.log(res.works)
           if(res.works.length > 0) {
             res.works.forEach((item) => {
-              workCopy.unshift(item)
+              _work.unshift(item)
               
             })
-          this.setState({Works:workCopy})
+          this.setState({Works:_work})
           }
       })
 
-        console.log(this.state.Works)
+        console.log(this.state)
         }
       })
 
@@ -136,7 +125,6 @@ export default class ExhibitReg extends React.Component {
 
   handleSubmit(artist) {
     // const { dispatch } = this.props;
-    console.log(ID)
 
     if(this.state.id > 0) {
       putapi(raami+'artist/'+this.state.id, this.state).then(res=>{
@@ -156,7 +144,6 @@ export default class ExhibitReg extends React.Component {
     var data = this.state.Works[i]
     var _id =  this.state.Works[i].id
 
-
     if(_id > 0) {
       putapi(raami+'work/'+_id, data).then(res=>{
         console.log(res)
@@ -174,38 +161,38 @@ export default class ExhibitReg extends React.Component {
   addWork() {
     // const { dispatch } = this.props;
     
-    var workCopy = this.state.Works.slice();
+    var _work = this.state.Works.slice();
 
-      workCopy.push(
+      _work.push(
           { id: null, 
             artist_id: ID, 
             title: '',
-            width: 0,
-            height: 0, 
+            width: '',
+            height: '', 
             technique: '', 
             orientation: '', 
             filename: '', 
             image: null, 
-            price: 0,
-            year: 2000, 
+            price: '',
+            year: '', 
             gallery: ''}
 
       )
 
-    this.setState({Works: workCopy})
+    this.setState({Works: _work})
     }
 
   handleWork(i, field, e) {
-    var workCopy = this.state.Works.slice();
-    workCopy[i][field] = e.target.value; 
-    this.setState({Works:workCopy});    
+    var _work = this.state.Works.slice();
+    _work[i][field] = e.target.value; 
+    this.setState({Works:_work});    
     
   }
 
   selectWork(i, field, e, key, val) {
-      var workCopy = this.state.Works.slice();
-      workCopy[i][field] = val; 
-      this.setState({Works:workCopy});
+      var _work = this.state.Works.slice();
+      _work[i][field] = val; 
+      this.setState({Works:_work});
     }
 
 
@@ -216,21 +203,36 @@ export default class ExhibitReg extends React.Component {
     
   }
 
-  handleFile(e) {
+  handleImage(e) {
+     // e.preventDefault();
 
-    var newState = {}; 
-    newState['filename'] = e.target.files[0].name; 
-    var fr = new FileReader();
-    fr.readAsArrayBuffer(e.target.files[0]);
-    fr.onloadend = (e) => {
-        var arrayBuffer = fr.result
-        var bytea = new Uint8Array(arrayBuffer);
-        newState['portfolio'] = '\\x'+bytea; 
-        this.setState(newState);    
-     }
-    // newState['portfolio'] = e.target.files[0]; 
-    
+    var reader = new FileReader();
+    var file = e.target.files[0];
+    console.log(file)
+    reader.readAsDataURL(file)
+    reader.onloadend = () => {
+          var _work = this.state.Works.slice();
+          _work[i]['filename'] = file.name;
+          _work[i]['image'] = reader.result;
+          this.setState({Works:_work});   
+      }
+    }
+
+  handlePreview(e, i) {
+     // e.preventDefault();
+
+    var reader = new FileReader();
+    var file = e.target.files[0];
+    reader.readAsDataURL(file)
+    reader.onloadend = () => {
+      this.setState({
+        filename: file.name,
+        portfolio: reader.result
+      });
+    }
   }
+
+
   handleCheck(e, val) {
     console.log(e.target)
     var newState = {}; 
@@ -253,15 +255,50 @@ export default class ExhibitReg extends React.Component {
     this.setState({open: false});
   };
 
+  
+  readimg = (img) => {
+    if(img.data) {
+         var arrayBuffer = img.data;
+         var bytes = new Uint8Array(arrayBuffer);
+         var blob  = new Blob([bytes.buffer]);
+    
+         var reader = new FileReader();
+         reader.onloadend = function(e) {
+           return reader.readAsDataURL(blob);
+       };
+     } else {
+      return img
+     }
+
+  }
 
 
   render() {
-  
+
+
+  /**** inline styles ****/
+
+  const grey = { 
+      color: '#bbb',
+      fontSize: '17px',
+      zIndex: '0'
+     }
+
+  const paper = {
+      display: 'inline-block',
+      float: 'left',
+      padding: '20px'
+  }
+
+  const zindex = {
+      zIndex: '0',
+      position: 'absolute'
+  }
+
   var works = []
   
-
   this.state.Works.forEach((work, i)=> {
-    console.log(this.state.Works)
+
     works.push(
       <Col xs={12} sm={6} key={ i }>
     <form>        
@@ -272,13 +309,22 @@ export default class ExhibitReg extends React.Component {
         </Col>
       </Row>
       <Row>
-        <span style={grey}>Preview image (max 2 MB) <br/>
-        <FileInput name="Preview" 
-                   accept=".jpg"
-                   placeholder="Prview image" 
-                   onChange={this.handleFile.bind(this)} />
-          </span>
-              {this.state.filename}
+    <Col >    
+    <span style={grey}>Upload image (max 2 MB)</span>
+    <br/>
+    <span style={zindex}>
+        <FileInput name="work"
+                       accept=".jpg"
+                       placeholder="[ Work preview ]" 
+                       onChange={this.handleImage.bind(this, i)} />
+                       <br/><br/>
+        </span>
+    </Col>
+    <Col>
+      {this.state.Works[i].image &&
+        <img src={this.readimg(this.state.Works[i].image)} width="250px" />
+      }
+        </Col>
       </Row>
       <Row>
         <Col xs={12} sm={6}>
@@ -343,7 +389,7 @@ export default class ExhibitReg extends React.Component {
   })
 
   // console.log(this.state.Works.length+1)
-  
+
     return (
   <Card>
   <CardHeader>
@@ -366,23 +412,32 @@ export default class ExhibitReg extends React.Component {
     </Col>
     </Row>
     <Row>
-    <h3 style={grey}>[Upload your portfolio]<br/>
-    <FileInput name="myImage"
-                   accept=".pdf"
-                   placeholder="Portfolio" 
-                   onChange={this.handleFile.bind(this)} />
-    {this.state.filename}
-  </h3>
+    <Col>    
+    <span style={grey}>Upload image (Max 2MB)</span>
+    <br/>
+    <span style={zindex}>
+        <FileInput name="Image"
+                       accept=".jpg"
+                       placeholder="[ Preview image ]" 
+                       onChange={this.handlePreview.bind(this)} />
+        </span><br/>
+        {this.state.portfolio &&
+            <img src={this.readimg(this.state.portfolio)} width="250px" />
+          }
+    </Col>
   </Row>
   <Row>
+  <Col>
   <SelectField
       floatingLabelText="Continent for tax purposes" name="continent"
       onChange={this.handleSelect.bind(this)} value={this.state.continent}>
           <MenuItem value={'EU'} primaryText="EU" />
           <MenuItem value={'NON-EU'} primaryText="NON-EU" />
       </SelectField>
+      </Col>
     </Row>
   <Row>
+  <Col>
   <SelectField
       floatingLabelText="Select Transportation method" name="transport"
       onChange={this.handleSelect.bind(this)} value={this.state.transport}>
@@ -391,6 +446,7 @@ export default class ExhibitReg extends React.Component {
             <MenuItem value={'Self'} primaryText="Deliver self" />
       </SelectField>
       <br />
+      </Col>
     </Row>
     <Row>
     <Col>
