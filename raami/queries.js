@@ -170,7 +170,7 @@ function createWork(req, res, next) {
 
 function updateWork(req, res, next) {
   var _id = parseInt(req.params.id)	
-  db.none('update Works set artist_id=$1, title=$2, width=$3, height=$4, gallery=$5, filename=$7, filedata=$8, price=$9, year=$10, orientation=$11, technique=$12 where id=$13',
+  db.none('update Works set artist_id=$1, title=$2, width=$3, height=$4, gallery=$5, filename=$6, image=$7, price=$8, year=$9, orientation=$10, technique=$11 where id=$12',
     [ req.body.artist_id,
       req.body.title, 
       req.body.width, 
