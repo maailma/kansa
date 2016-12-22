@@ -1,11 +1,11 @@
-var promise = require('bluebird');
+var promise = require("bluebird");
 
 var options = {
   // Initialization Options
   promiseLib: promise
 };
 
-var pgp = require('pg-promise')(options);
+var pgp = require("pg-promise")(options);
 var db = pgp(process.env.DATABASE_URL)
 
 // add query functions
@@ -25,7 +25,7 @@ module.exports = {
 
 function getPeople(req, res, next) {
   var _id = parseInt(req.params.id);
-  db.any('select * from Artist where person_id = $1', _id)
+  db.any("select person_id, name, continent, url, filename, encode(portfolio::bytea,'base64') as portfolio, description, transport, legal, auction, print, digital from Artist where person_id = $1", _id)
     .then(function (data) {
       res.status(200)
         .json(data);
@@ -36,7 +36,7 @@ function getPeople(req, res, next) {
 }
 
 function getArtists(req, res, next) {
-  db.any('select id,continent from Artist')
+  db.any("select person_id, id, name from Artist")
     .then(function (data) {
       res.status(200)
         .json(data);
@@ -48,7 +48,7 @@ function getArtists(req, res, next) {
 
 function getArtist(req, res, next) {
   var _id = parseInt(req.params.id);
-  db.one('select * from Artist where id = $1', _id)
+  db.one("select person_id, name, continent, url, filename, encode(portfolio::bytea,`base64`) as portfolio, description, transport, legal, auction, print, digital from Artist where id = $1", _id)
     .then(function (data) {
       res.status(200)
         .json(data);
@@ -61,8 +61,8 @@ function getArtist(req, res, next) {
 
 function createArtist(req, res, next) {
 
-  db.none('insert into Artist(person_id, name, continent, url, filename, portfolio, description, transport, legal, auction, print, digital)' +
-      'values(${person_id}, ${name}, ${continent}, ${url}, ${filename}, ${portfolio}, ${description}, ${transport}, ${legal}, ${auction}, ${print}, ${digital} )',
+  db.none("insert into Artist(person_id, name, continent, url, filename, portfolio, description, transport, legal, auction, print, digital)" +
+      "values(${person_id}, ${name}, ${continent}, ${url}, ${filename}, ${portfolio}, ${description}, ${transport}, ${legal}, ${auction}, ${print}, ${digital} )",
     req.body)
     .then(function () {
       res.status(200)
@@ -79,7 +79,7 @@ function createArtist(req, res, next) {
 
 function updateArtist(req, res, next) {
   var _id = parseInt(req.params.id);
-  db.none('update Artist set continent=$1, url=$2, filename=$3, portfolio=$4, name=$6, description=$6, transport=$7, legal=$8, auction=$9, print=$10, digital=$11 where id=$12',
+  db.none("update Artist set continent=$1, url=$2, filename=$3, portfolio=$4, name=$6, description=$6, transport=$7, legal=$8, auction=$9, print=$10, digital=$11 where id=$12",
     [req.body.continent, 
      req.body.url,
      req.body.filename,
@@ -107,7 +107,7 @@ function updateArtist(req, res, next) {
 
 // function removeArtists(req, res, next) {
 //   var _id = parseInt(req.params.id);
-//   db.result('delete from Artist where id = $1', _id)
+//   db.result("delete from Artist where id = $1', _id)
 //     .then(function (result) {
 //       /* jshint ignore:start */
 //       res.status(200)
@@ -126,7 +126,7 @@ function updateArtist(req, res, next) {
 
 function getWorks(req, res, next) {
   var _id = parseInt(req.params.id);
-  db.any('select * from Works where artist_id = $1', _id)
+  db.any("select artist_id, title, width, height, gallery, orientation, technique, filename, encode(image::bytea, 'base64') as image, year, price from Works where artist_id = $1", _id)
     .then(function (data) {
       res.status(200)
         .json({
@@ -140,7 +140,7 @@ function getWorks(req, res, next) {
 
 function getWork(req, res, next) {
   var _id = parseInt(req.params.id);
-  db.one('select * from Works where id = $1', _id)
+  db.one("select artist_id, title, width, height, gallery, orientation, technique, filename, encode(image::bytea, 'base64') as image, year, price from Works where id = $1", _id)
     .then(function (data) {
       res.status(200)
         .json(data);
@@ -152,8 +152,8 @@ function getWork(req, res, next) {
 
 
 function createWork(req, res, next) {
-  db.none('insert into Works(artist_id, title, width, height, gallery, orientation, technique, filename, image, year, price )' +
-      'values(${artist_id}, ${title}, ${width}, ${height}, ${gallery}, ${orientation}, ${technique}, ${filename}, ${image}, ${year}, ${price})',
+  db.none("insert into Works(artist_id, title, width, height, gallery, orientation, technique, filename, image, year, price )" +
+      "values(${artist_id}, ${title}, ${width}, ${height}, ${gallery}, ${orientation}, ${technique}, ${filename}, ${image}, ${year}, ${price})",
     req.body)
     .then(function () {
       res.status(200)
@@ -170,7 +170,7 @@ function createWork(req, res, next) {
 
 function updateWork(req, res, next) {
   var _id = parseInt(req.params.id)	
-  db.none('update Works set artist_id=$1, title=$2, width=$3, height=$4, gallery=$5, filename=$6, image=$7, price=$8, year=$9, orientation=$10, technique=$11 where id=$12',
+  db.none("update Works set artist_id=$1, title=$2, width=$3, height=$4, gallery=$5, filename=$6, image=$7, price=$8, year=$9, orientation=$10, technique=$11 where id=$12",
     [ req.body.artist_id,
       req.body.title, 
       req.body.width, 
@@ -197,7 +197,7 @@ function updateWork(req, res, next) {
 
 function removeWork(req, res, next) {
   var _id = parseInt(req.params.id);
-  db.result('delete from Works where id = $1', _id)
+  db.result("delete from Works where id = $1", _id)
     .then(function (result) {
       /* jshint ignore:start */
       res.status(200)
