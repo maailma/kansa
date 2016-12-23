@@ -153,7 +153,7 @@ function getWork(req, res, next) {
 
 function createWork(req, res, next) {
   db.none("insert into Works(artist_id, title, width, height, gallery, orientation, technique, filename, image, year, price )" +
-      "values(${artist_id}, ${title}, ${width}, ${height}, ${gallery}, ${orientation}, ${technique}, ${filename}, ${fildata}, ${year}, ${price})",
+      "values(${artist_id}, ${title}, ${width}, ${height}, ${gallery}, ${orientation}, ${technique}, ${filename}, ${filedata}, ${year}, ${price})",
     req.body)
     .then(function () {
       res.status(200)
