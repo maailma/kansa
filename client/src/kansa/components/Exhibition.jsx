@@ -57,7 +57,9 @@ const people = 'https://localhost:4430/api/people/'
 
    function delapi(url) {
     // RETURN the promise
-    return fetch(url).then((response)=>{
+    return fetch(url, {
+       method: 'DELETE',
+    }).then((response)=>{
         return response.json(); // process it inside the `then`
     });
   } 
@@ -104,7 +106,6 @@ export default class ExhibitReg extends React.Component {
       if(data.length > 0 && data[0].id > 0) {
         ID = data[0].id
         this.setState(data[0])
-        console.log(data[0])
         var _work = this.state.Works.slice();
         _work[0].artist_id = ID
         getapi(raami+'works/'+ID).then(res => {
@@ -114,13 +115,14 @@ export default class ExhibitReg extends React.Component {
               
             })
           this.setState({Works:_work})
+          console.log(this.state)
           }
       })
 
         }
         
       })
-
+        
   }
 
   handleSubmit(artist) {
@@ -130,7 +132,7 @@ export default class ExhibitReg extends React.Component {
 
     console.log(artist)
 
-    if(this.state.id > 0) {
+    if(this.state.id !== null) {
       putapi(raami+'artist/'+this.state.id, artist).then(res=>{
         console.log(res)
       })      
@@ -146,17 +148,27 @@ export default class ExhibitReg extends React.Component {
   submitWork(i) {
 
     var work = this.state.Works[i]
-    var _id =  this.state.Works[i].id
+    
+    work.year = parseInt(work.year)
+    work.price = parseFloat(work.price)
+    work.width = parseFloat(work.width)
+    work.height = parseFloat(work.height)
+    
+    var _id = null
+
+    if(this.state.Works[i].id) {
+        _id =  this.state.Works[i].id
+    }
 
     console.log(work)
 
-    if(_id > 0) {
+    if(_id !== null) {
       putapi(raami+'work/'+_id, work).then(res=>{
         console.log(res)
 
       })      
     } else {
-      delete work.id
+      // delete work.id
       postapi(raami+'work', work).then(res=>{
         console.log(res)
       })
@@ -165,10 +177,16 @@ export default class ExhibitReg extends React.Component {
   }
 
   deleteWork(i) {
-    deleteapi(raami+'work'+_id).then(res=>{
-      console.log(res)
+    if(this.state.Works[i].id) {
+      console.log(raami+'work/'+this.state.Works[i].id)
 
-    })
+        delapi(raami+'work/'+this.state.Works[i].id).then(res=>{
+          console.log(res)
+    
+        })
+      } else {
+        alert('Cant delete nothing!')
+      }
   }
   addWork() {
     // const { dispatch } = this.props;
@@ -373,10 +391,11 @@ export default class ExhibitReg extends React.Component {
       <Row>
        <Col>
           <FlatButton type="submit" label="Save" onClick={this.submitWork.bind(this, i)} className="button-submit" primary={true} />
-          <FlatButton type="submit" label="Delete" onClick={this.deleteWork.bind(this, i)} className="button-submit" primary={true} />
+          <FlatButton type="submit" label="Delete" onClick={this.deleteWork.bind(this, i)} className="button-submit" secondary={true} />
+          
         </Col>
         </Row>
-        </Paper><br /> 
+        </Paper> 
         </form> 
         </Col>
     )
