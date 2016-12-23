@@ -54,6 +54,8 @@ server {
 
   location /api/raami/ {
     proxy_pass               http://raami/;
+    client_max_body_size     0;
+
   }
 
   location /api/hugo/ {
