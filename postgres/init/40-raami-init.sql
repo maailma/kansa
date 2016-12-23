@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS Artist (
     continent text,
     url text,
     filename text,
-    portfolio bytea,
+    filedata text,
     category text,
     description text,
     transport text,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS Works (
     orientation text,
     graduation text,
     filename text,
-    image bytea,
+    filedata text,
     price decimal,
     gallery text,
     year integer
@@ -54,10 +54,10 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER notify
-    AFTER INSERT OR UPDATE ON Artist
-    FOR EACH ROW EXECUTE PROCEDURE arists_notify();
+-- CREATE TRIGGER notify
+--     AFTER INSERT OR UPDATE ON Artist
+--     FOR EACH ROW EXECUTE PROCEDURE arists_notify();
 
-CREATE TRIGGER notify
-    AFTER INSERT OR UPDATE ON Works
-    FOR EACH ROW EXECUTE PROCEDURE work_notify();
+-- CREATE TRIGGER notify
+--     AFTER INSERT OR UPDATE ON Works
+--     FOR EACH ROW EXECUTE PROCEDURE work_notify();
