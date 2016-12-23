@@ -126,17 +126,17 @@ export default class ExhibitReg extends React.Component {
   handleSubmit(artist) {
     // const { dispatch } = this.props;
 
-    var data = this.state
+    var artist = this.state
 
-    console.log(data)
+    console.log(artist)
 
     if(this.state.id > 0) {
-      putapi(raami+'artist/'+this.state.id, data).then(res=>{
+      putapi(raami+'artist/'+this.state.id, artist).then(res=>{
         console.log(res)
       })      
     } else {
 
-      postapi(raami+'artist', data).then(res=>{
+      postapi(raami+'artist', artist).then(res=>{
         console.log(res)
       })
 
@@ -145,23 +145,31 @@ export default class ExhibitReg extends React.Component {
 
   submitWork(i) {
 
-    var data = this.state.Works[i]
+    var work = this.state.Works[i]
     var _id =  this.state.Works[i].id
 
+    console.log(work)
+
     if(_id > 0) {
-      putapi(raami+'work/'+_id, data).then(res=>{
+      putapi(raami+'work/'+_id, work).then(res=>{
         console.log(res)
+
       })      
     } else {
-      delete data.id
-      console.log(JSON.stringify(data))
-      postapi(raami+'work', data).then(res=>{
+      delete work.id
+      postapi(raami+'work', work).then(res=>{
         console.log(res)
       })
 
     }
   }
 
+  deleteWork(i) {
+    deleteapi(raami+'work'+_id).then(res=>{
+      console.log(res)
+
+    })
+  }
   addWork() {
     // const { dispatch } = this.props;
     
@@ -365,6 +373,7 @@ export default class ExhibitReg extends React.Component {
       <Row>
        <Col>
           <FlatButton type="submit" label="Save" onClick={this.submitWork.bind(this, i)} className="button-submit" primary={true} />
+          <FlatButton type="submit" label="Delete" onClick={this.deleteWork.bind(this, i)} className="button-submit" primary={true} />
         </Col>
         </Row>
         </Paper><br /> 
