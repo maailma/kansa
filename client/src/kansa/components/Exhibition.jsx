@@ -126,18 +126,6 @@ export default class ExhibitReg extends React.Component {
   handleSubmit(artist) {
     // const { dispatch } = this.props;
 
-    File.prototype.convertToBase64 = function(callback){
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                 callback(e.target.result)
-            };
-            reader.onerror = function(e) {
-                 callback(null);
-            };        
-            reader.readAsDataURL(this);
-    };
-
-
     var data = this.state
 
     console.log(data)
@@ -219,33 +207,36 @@ export default class ExhibitReg extends React.Component {
     
   }
 
-  handleImage(e) {
+  handleImage(i, e) {
      // e.preventDefault();
 
     var reader = new FileReader();
     var file = e.target.files[0];
-    console.log(file)
-    reader.readAsDataURL(file)
     reader.onloadend = () => {
+
           var _work = this.state.Works.slice();
           _work[i]['filename'] = file.name;
           _work[i]['filedata'] = reader.result;
           this.setState({Works:_work});   
       }
+    reader.readAsDataURL(file)
+    console.log(this.state.Works[i])
     }
 
-  handlePreview(e, i) {
+  handlePreview(e) {
      // e.preventDefault();
 
     var reader = new FileReader();
     var file = e.target.files[0];
-    reader.readAsDataURL(file)
     reader.onloadend = () => {
+
       this.setState({
         filename: file.name,
         filedata: reader.result
       });
     }
+    reader.readAsDataURL(file)
+
   }
 
 
@@ -305,20 +296,18 @@ export default class ExhibitReg extends React.Component {
         </Col>
       </Row>
       <Row>
-    <Col >    
+    <Col className="upload">    
     <span style={grey}>Upload image (max 2 MB)</span>
     <br/>
     <span style={zindex} className="upload">
-        <FileInput name="work"
+        <FileInput name="work" 
                        accept=".jpg"
                        placeholder="[ Work preview ]" 
                        onChange={this.handleImage.bind(this, i)} />
                        <br/><br/>
-        </span>
-    </Col>
-    <Col className="upload">
+        </span><br/>
       {this.state.Works[i].filedata &&
-        <img src={+this.state.Works[i].filedata} width="250px" />
+        <img src={this.state.Works[i].filedata} required={true} width="250px" />
       }
         </Col>
       </Row>
