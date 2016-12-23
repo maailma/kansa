@@ -126,7 +126,7 @@ function updateArtist(req, res, next) {
 
 function getWorks(req, res, next) {
   var _id = parseInt(req.params.id);
-  db.any("select artist_id, title, width, height, gallery, orientation, technique, filename, filedata, year, price from Works where artist_id = $1", _id)
+  db.any("select id, artist_id, title, width, height, gallery, orientation, technique, filename, filedata, year, price from Works where artist_id = $1", _id)
     .then(function (data) {
       res.status(200)
         .json({
