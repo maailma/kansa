@@ -79,7 +79,7 @@ export default class ExhibitReg extends React.Component {
       transport:'',
       continent: '',
       filename:'',
-      portfolio: null,
+      filedata: null,
       legal: false,
       auction:'',
       print:'',
@@ -93,7 +93,7 @@ export default class ExhibitReg extends React.Component {
             technique: '', 
             orientation: '', 
             filename: '', 
-            image: null,
+            filedata: null,
             year: '', 
             price: '', 
             gallery: ''}]
@@ -117,8 +117,8 @@ export default class ExhibitReg extends React.Component {
           }
       })
 
-        console.log(this.state)
         }
+        
       })
 
   }
@@ -126,13 +126,27 @@ export default class ExhibitReg extends React.Component {
   handleSubmit(artist) {
     // const { dispatch } = this.props;
 
+    File.prototype.convertToBase64 = function(callback){
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                 callback(e.target.result)
+            };
+            reader.onerror = function(e) {
+                 callback(null);
+            };        
+            reader.readAsDataURL(this);
+    };
+
+
+    var data = this.state
+
     if(this.state.id > 0) {
-      putapi(raami+'artist/'+this.state.id, this.state).then(res=>{
+      putapi(raami+'artist/'+this.state.id, data).then(res=>{
         console.log(res)
       })      
     } else {
 
-      postapi(raami+'artist', this.state).then(res=>{
+      postapi(raami+'artist', data).then(res=>{
         console.log(res)
       })
 
@@ -172,7 +186,7 @@ export default class ExhibitReg extends React.Component {
             technique: '', 
             orientation: '', 
             filename: '', 
-            image: null, 
+            filedata: null, 
             price: '',
             year: '', 
             gallery: ''}
@@ -213,7 +227,7 @@ export default class ExhibitReg extends React.Component {
     reader.onloadend = () => {
           var _work = this.state.Works.slice();
           _work[i]['filename'] = file.name;
-          _work[i]['image'] = reader.result;
+          _work[i]['filedata'] = reader.result;
           this.setState({Works:_work});   
       }
     }
@@ -227,7 +241,7 @@ export default class ExhibitReg extends React.Component {
     reader.onloadend = () => {
       this.setState({
         filename: file.name,
-        portfolio: reader.result
+        filedata: reader.result
       });
     }
   }
@@ -256,21 +270,21 @@ export default class ExhibitReg extends React.Component {
   };
 
   
-  readimg = (img) => {
-    if(img.data) {
-         var arrayBuffer = img.data;
-         var bytes = new Uint8Array(arrayBuffer);
-         var blob  = new Blob([bytes.buffer]);
+  // readimg = (img) => {
+  //   if(img.data) {
+  //        var arrayBuffer = img.data;
+  //        var bytes = new Uint8Array(arrayBuffer);
+  //        var blob  = new Blob([bytes.buffer]);
     
-         var reader = new FileReader();
-         reader.onloadend = function(e) {
-           return reader.readAsDataURL(blob);
-       };
-     } else {
-      return img
-     }
+  //        var reader = new FileReader();
+  //        reader.onloadend = function(e) {
+  //          return reader.readAsDataURL(blob);
+  //      };
+  //    } else {
+  //     return img
+  //    }
 
-  }
+  // }
 
 
   render() {
@@ -312,7 +326,7 @@ export default class ExhibitReg extends React.Component {
     <Col >    
     <span style={grey}>Upload image (max 2 MB)</span>
     <br/>
-    <span style={zindex}>
+    <span style={zindex} className="upload">
         <FileInput name="work"
                        accept=".jpg"
                        placeholder="[ Work preview ]" 
@@ -320,9 +334,9 @@ export default class ExhibitReg extends React.Component {
                        <br/><br/>
         </span>
     </Col>
-    <Col>
-      {this.state.Works[i].image &&
-        <img src={this.readimg(this.state.Works[i].image)} width="250px" />
+    <Col className="upload">
+      {this.state.Works[i].filedata &&
+        <img src={+this.state.Works[i].filedata} width="250px" />
       }
         </Col>
       </Row>
@@ -412,17 +426,17 @@ export default class ExhibitReg extends React.Component {
     </Col>
     </Row>
     <Row>
-    <Col>    
+    <Col className="upload">    
     <span style={grey}>Upload image (Max 2MB)</span>
     <br/>
-    <span style={zindex}>
+    <span style={zindex} className="upload">
         <FileInput name="Image"
                        accept=".jpg"
                        placeholder="[ Preview image ]" 
                        onChange={this.handlePreview.bind(this)} />
         </span><br/>
-        {this.state.portfolio &&
-            <img src={this.readimg(this.state.portfolio)} width="250px" />
+        {this.state.filedata &&
+            <img src={this.state.filedata} width="250px" />
           }
     </Col>
   </Row>
