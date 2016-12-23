@@ -79,7 +79,7 @@ function createArtist(req, res, next) {
 
 function updateArtist(req, res, next) {
   var _id = parseInt(req.params.id);
-  db.none("update Artist set continent=$1, url=$2, filename=$3, filedata=$4, name=$6, description=$6, transport=$7, legal=$8, auction=$9, print=$10, digital=$11 where id=$12",
+  db.none("update Artist set continent=$1, url=$2, filename=$3, filedata=$4, name=$5, description=$6, transport=$7, legal=$8, auction=$9, print=$10, digital=$11 where id=$12",
     [req.body.continent, 
      req.body.url,
      req.body.filename,
