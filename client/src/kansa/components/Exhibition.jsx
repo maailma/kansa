@@ -104,10 +104,10 @@ export default class ExhibitReg extends React.Component {
       if(data.length > 0 && data[0].id > 0) {
         ID = data[0].id
         this.setState(data[0])
+        console.log(data[0])
         var _work = this.state.Works.slice();
         _work[0].artist_id = ID
         getapi(raami+'works/'+ID).then(res => {
-          console.log(res.works)
           if(res.works.length > 0) {
             res.works.forEach((item) => {
               _work.unshift(item)
@@ -139,6 +139,8 @@ export default class ExhibitReg extends React.Component {
 
 
     var data = this.state
+
+    console.log(data)
 
     if(this.state.id > 0) {
       putapi(raami+'artist/'+this.state.id, data).then(res=>{
@@ -247,17 +249,14 @@ export default class ExhibitReg extends React.Component {
   }
 
 
-  handleCheck(e, val) {
+  handleCheck(name, e, val) {
     console.log(e.target)
-    var newState = {}; 
-    newState[e.target[name]] = e.target.value; 
-    this.setState(newState);   
+    this.setState({name:val});   
   }
 
-  handleSelect(e, key, val) {
-    var newState = {}; 
-    newState[e.target[name]] = val; 
-    this.setState(newState);  
+  handleSelect(name, e, key, val) {
+    console.log(name ,key,val)
+    this.setState({name:val});  
   }
 
   handleOpen = () => {
@@ -268,23 +267,6 @@ export default class ExhibitReg extends React.Component {
   handleClose = () => {
     this.setState({open: false});
   };
-
-  
-  // readimg = (img) => {
-  //   if(img.data) {
-  //        var arrayBuffer = img.data;
-  //        var bytes = new Uint8Array(arrayBuffer);
-  //        var blob  = new Blob([bytes.buffer]);
-    
-  //        var reader = new FileReader();
-  //        reader.onloadend = function(e) {
-  //          return reader.readAsDataURL(blob);
-  //      };
-  //    } else {
-  //     return img
-  //    }
-
-  // }
 
 
   render() {
@@ -443,8 +425,8 @@ export default class ExhibitReg extends React.Component {
   <Row>
   <Col>
   <SelectField
-      floatingLabelText="Continent for tax purposes" name="continent"
-      onChange={this.handleSelect.bind(this)} value={this.state.continent}>
+      floatingLabelText="Continent for tax purposes" 
+      onChange={this.handleSelect.bind(this, 'continent')} value={this.state.continent}>
           <MenuItem value={'EU'} primaryText="EU" />
           <MenuItem value={'NON-EU'} primaryText="NON-EU" />
       </SelectField>
@@ -453,8 +435,8 @@ export default class ExhibitReg extends React.Component {
   <Row>
   <Col>
   <SelectField
-      floatingLabelText="Select Transportation method" name="transport"
-      onChange={this.handleSelect.bind(this)} value={this.state.transport}>
+      floatingLabelText="Select Transportation method" 
+      onChange={this.handleSelect.bind(this, 'transport')} value={this.state.transport}>
             <MenuItem value={'Air mail'} primaryText="Air mail" />
             <MenuItem value={'Courier'} primaryText="Couerier" />
             <MenuItem value={'Self'} primaryText="Deliver self" />
@@ -478,7 +460,7 @@ export default class ExhibitReg extends React.Component {
     <Row>
     <Col>
     <label style={grey} >Digital gallery (Max 20 works)
-    <Checkbox onChange={this.handleCheck.bind(this)} value={this.state.digital} /></label>
+    <Checkbox onChange={this.handleCheck.bind(this,'digital')} value={this.state.digital} /></label>
     </Col>
     </Row>
       <Row>
@@ -489,7 +471,7 @@ export default class ExhibitReg extends React.Component {
       </Col>
           <Col ><br /><br />
       <a href="javascript:void(0);" onClick={ this.handleOpen } style={grey}>Accept legal note</a>
-      <Checkbox onChange={this.handleCheck.bind(this)} value={this.state.legal} />
+      <Checkbox onChange={this.handleCheck.bind(this,'legal')} value={this.state.legal} />
       <Dialog
           title="Legal note"
           modal={false}
