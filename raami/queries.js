@@ -61,14 +61,15 @@ function getArtist(req, res, next) {
 
 function createArtist(req, res, next) {
 
-  db.none("insert into Artist(person_id, name, continent, url, filename, filedata, description, transport, legal, auction, print, digital)" +
-      "values(${person_id}, ${name}, ${continent}, ${url}, ${filename}, ${filedata}, ${description}, ${transport}, ${legal}, ${auction}, ${print}, ${digital} )",
+  db.one("insert into Artist(person_id, name, continent, url, filename, filedata, description, transport, legal, auction, print, digital)" +
+      "values(${person_id}, ${name}, ${continent}, ${url}, ${filename}, ${filedata}, ${description}, ${transport}, ${legal}, ${auction}, ${print}, ${digital}) returning id",
     req.body)
-    .then(function () {
+    .then(function (data) {
+      console.log(data.id)
       res.status(200)
         .json({
           status: 'success',
-          inserted: res
+          inserted: data.id
         });
     })
     .catch(function (err) {
