@@ -153,14 +153,14 @@ function getWork(req, res, next) {
 
 
 function createWork(req, res, next) {
-  db.none("insert into Works(artist_id, title, width, height, gallery, orientation, technique, filename, filedata, year, price )" +
-      "values(${artist_id}, ${title}, ${width}, ${height}, ${gallery}, ${orientation}, ${technique}, ${filename}, ${filedata}, ${year}, ${price})",
+  db.one("insert into Works(artist_id, title, width, height, gallery, orientation, technique, filename, filedata, year, price )" +
+      "values(${artist_id}, ${title}, ${width}, ${height}, ${gallery}, ${orientation}, ${technique}, ${filename}, ${filedata}, ${year}, ${price}) returning id",
     req.body)
-    .then(function () {
+    .then(function (data) {
       res.status(200)
         .json({
           status: 'success',
-          data: res
+          insrted: data.id
         });
     })
     .catch(function (err) {
