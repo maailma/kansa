@@ -19,6 +19,7 @@ import FileInput from 'react-file-input'
 
 const raami = 'https://localhost:4430/api/raami/'
 const people = 'https://localhost:4430/api/people/'
+var ID = null
 
   function getapi(url) {
     // RETURN the promise
@@ -70,10 +71,9 @@ export default class ExhibitReg extends React.Component {
     super(props);
     
     const member = props.params.id
-    var ID = 0
 
     this.state = {
-      id: null,
+      id: ID,
       person_id: member,
       name: '',
       url:'',
@@ -104,12 +104,13 @@ export default class ExhibitReg extends React.Component {
 
     getapi(raami+'people/'+member).then((data)=>{
       if(data.length > 0 && data[0].id > 0) {
-        ID = data[0].id
         this.setState(data[0])
+        ID = data[0].id
         var _work = this.state.Works.slice();
         _work[0].artist_id = ID
         getapi(raami+'works/'+ID).then(res => {
-          if(res.works.length > 0) {
+          console.log(res)
+          if('works' in res) {
             res.works.forEach((item) => {
               _work.unshift(item)
               
@@ -140,6 +141,8 @@ export default class ExhibitReg extends React.Component {
 
       postapi(raami+'artist', artist).then(res=>{
         console.log(res)
+        ID = res.inserted
+        this.setState({id:res.inserted})
       })
 
     }
@@ -156,13 +159,14 @@ export default class ExhibitReg extends React.Component {
     
     var _id = null
 
-    if(this.state.Works[i].id) {
+    if(this.state.Works[i].id !== null) {
         _id =  this.state.Works[i].id
     }
 
     console.log(work)
 
     if(_id !== null) {
+      console.log(work)
       putapi(raami+'work/'+_id, work).then(res=>{
         console.log(res)
 
@@ -171,6 +175,9 @@ export default class ExhibitReg extends React.Component {
       // delete work.id
       postapi(raami+'work', work).then(res=>{
         console.log(res)
+        var _work = this.state.Works.slice();
+        _work[i].id = res.inserted
+        this.setState({Works:_work})
       })
 
     }
@@ -195,7 +202,7 @@ export default class ExhibitReg extends React.Component {
 
       _work.push(
           { id: null, 
-            artist_id: ID, 
+            artist_id: this.state.id, 
             title: '',
             width: '',
             height: '', 
@@ -233,6 +240,27 @@ export default class ExhibitReg extends React.Component {
     
   }
 
+  handleCheck(field, e, val) {
+    var newState = {}; 
+    newState[field] = val; 
+    this.setState(newState);   
+  }
+
+  handleSelect(field, e, key, val) {
+    var newState = {}; 
+    newState[field] = val; 
+    this.setState(newState);   
+  }
+
+  handleOpen = () => {
+    this.setState({open: true});
+    event.preventDefault()
+  };
+
+  handleClose = () => {
+    this.setState({open: false});
+  };
+
   handleImage(i, e) {
      // e.preventDefault();
 
@@ -264,27 +292,6 @@ export default class ExhibitReg extends React.Component {
     reader.readAsDataURL(file)
 
   }
-
-
-  handleCheck(name, e, val) {
-    console.log(e.target)
-    this.setState({name:val});   
-  }
-
-  handleSelect(name, e, key, val) {
-    console.log(name ,key,val)
-    this.setState({name:val});  
-  }
-
-  handleOpen = () => {
-    this.setState({open: true});
-    event.preventDefault()
-  };
-
-  handleClose = () => {
-    this.setState({open: false});
-  };
-
 
   render() {
 
