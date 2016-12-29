@@ -116,14 +116,16 @@ class Nominate extends React.Component {
   }
 
   render() {
-    const { person } = this.props;
+    const { id, person } = this.props;
     const { signature } = this.state;
-    return person ? <div>
-      <ActiveNominations name={this.name} signature={signature} />
-      { signature ? null : <NominationSignature
-        setName={ signature => this.setState({ signature }) }
-      /> }
-    </div> : <div>Loading...</div>
+    return !id ? <div>Loading...</div>
+      : !person ? <div>Nominator not found!</div>
+      : <div>
+          <ActiveNominations name={this.name} signature={signature} />
+          { signature ? null : <NominationSignature
+            setName={ signature => this.setState({ signature }) }
+          /> }
+        </div>;
   }
 
   get name() {
