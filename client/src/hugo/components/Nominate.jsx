@@ -137,14 +137,12 @@ class Nominate extends React.Component {
 }
 
 export default connect(
-  (state) => {
-    const id = Number(state.app.get('person', -1));
+  (state, { params }) => {
+    const id = params && Number(params.id);
     const people = state.user.get('people');
     return {
       id,
-      person: !people ? null
-              : id === -1 ? people.first()
-              : people.find(p => p.get('id') === id)
+      person: people && people.find(p => p.get('id') === id)
     }
   }, {
     setNominator
