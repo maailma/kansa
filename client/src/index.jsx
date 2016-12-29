@@ -40,8 +40,8 @@ const authCheck = ({ location: { pathname }}, replace, callback) => {
   }));
 }
 
-const doLogin = ({ params: { email, key } }) => {
-  store.dispatch(keyLogin(email, key));
+const doLogin = ({ params: { email, key, id } }) => {
+  store.dispatch(keyLogin(email, key, id ? `/hugo/${id}` : null));
 }
 
 ReactDOM.render(
@@ -52,6 +52,7 @@ ReactDOM.render(
           <IndexRedirect to={PATH_IN} />
           <Route path="login" onEnter={authCheck} component={Login} />
           <Route path="login/:email/:key" onEnter={doLogin} />
+          <Route path="login/:email/:key/:id" onEnter={doLogin} />
           <Route path="profile" onEnter={authCheck} component={MemberList} />
           <Route path="hugo" onEnter={authCheck} >
             <IndexRedirect to={PATH_IN} />

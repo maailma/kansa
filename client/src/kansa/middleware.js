@@ -23,13 +23,13 @@ export default ({ dispatch }) => (next) => (action) => {
     } return;
 
     case 'KEY_LOGIN': {
-      const { email, key } = action;
+      const { email, key, path } = action;
       if (!email || !key) return handleError('Missing parameters for key login');
       api.POST('kansa/login', { email, key })
         .then(() => api.GET('kansa/user'))
         .then(user => {
           dispatch(memberSet(user));
-          dispatch(push(PATH_IN));
+          dispatch(replace(path || PATH_IN));
         })
         .catch(err => {
           handleError(err);

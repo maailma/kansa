@@ -1,7 +1,8 @@
-export const keyLogin = (email, key) => ({
+export const keyLogin = (email, key, path) => ({
   type: 'KEY_LOGIN',
   email,
-  key
+  key,
+  path
 });
 
 export const keyRequest = (email) => ({
