@@ -59,7 +59,7 @@ class ButtonMenu extends React.Component {
   </div>;
 }
 
-const AppBar = ({ email, goHome, logout }) => <Paper zDepth={2} >
+const AppBar = ({ email, goToProfile, logout }) => <Paper zDepth={2} >
   <Toolbar
     style={{
       backgroundColor: 'white'
@@ -70,17 +70,17 @@ const AppBar = ({ email, goHome, logout }) => <Paper zDepth={2} >
     </ToolbarGroup>
     <ToolbarGroup>
       <ButtonMenu label={email}>
-        <MenuItem primaryText="Home" onTouchTap={goHome} />
+        <MenuItem primaryText="Profile" onTouchTap={goToProfile} />
         <MenuItem primaryText="Sign out" onTouchTap={logout} />
       </ButtonMenu>
     </ToolbarGroup>
   </Toolbar>
 </Paper>;
 
-const App = ({ children, email, goHome, hideMessage, logout, message }) => <div>
+const App = ({ children, email, goToProfile, hideMessage, logout, message }) => <div>
   { email ? <AppBar
     email={email}
-    goHome={goHome}
+    goToProfile={goToProfile}
     logout={logout}
   /> : null }
   <main>
@@ -94,11 +94,11 @@ const App = ({ children, email, goHome, hideMessage, logout, message }) => <div>
 </div>;
 
 export default connect(
-  (state) => ({
-    email: state.user.get('email'),
-    message: state.app.get('message')
+  ({ app, user }) => ({
+    email: user.get('email'),
+    message: app.get('message')
   }), {
-    goHome: () => push('/'),
+    goToProfile: () => push('/'),
     hideMessage,
     logout
   }
