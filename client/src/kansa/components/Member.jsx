@@ -83,7 +83,7 @@ export default class Member extends React.Component {
       onChange: (path, value) => this.setState({ member: this.state.member.setIn(path, value) })
     };
 
-    return <Card>
+    return <Card style={{ marginBottom: 24 }}>
       <CardHeader
         title={ membership }
         subtitle={ membership !== 'NonMember' ? '#' + member.get('member_number') : null }

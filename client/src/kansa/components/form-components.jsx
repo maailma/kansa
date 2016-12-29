@@ -50,7 +50,7 @@ export const CommonFields = (props) => (<div>
       <TextInput { ...props } path='legal_name' required={true} />
     </Col>
     <Col xs={12} sm={6}>
-      <TextInput { ...props } path='email' required={true} />
+      <TextInput { ...props } path='email' disabled={true} />
     </Col>
   </Row>
   <Row>
