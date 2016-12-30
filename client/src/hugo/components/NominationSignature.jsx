@@ -23,6 +23,7 @@ export default class NominationSignature extends React.Component {
           onTouchTap={ () => setName(name) }
         />
       }
+      autoScrollBodyContent={true}
       modal={true}
       open={true}
     >
