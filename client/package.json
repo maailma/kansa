@@ -27,6 +27,7 @@
     "html-webpack-plugin": "^2.22.0",
     "immutable": "^3.8.1",
     "material-ui": "^0.16.5",
+    "promise-polyfill": "^6.0.2",
     "react": "^15.4.1",
     "react-addons-shallow-compare": "^15.4.1",
     "react-dom": "^15.4.1",

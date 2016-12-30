@@ -8,6 +8,8 @@ import { createStore } from 'redux'
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin();
 
+import './lib/polyfills'
+
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
