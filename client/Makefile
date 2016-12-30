@@ -15,7 +15,6 @@ release-%:
 	@if ! git diff-index --quiet HEAD; then echo "$(ERR) Git working directory is not clean!\n"; exit 1; fi
 	$(eval HEAD = $(shell git rev-parse --short $*))
 	@echo "Building $(VT_HL)$*$(VT0) release from commit $(VT_HL)$(HEAD)$(VT0)"
-	npm update
 	rm -rf $(DIST_DIR)
 	npm run build:prod
 	git checkout $(REL_BRANCH)
