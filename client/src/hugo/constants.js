@@ -127,7 +127,8 @@ export const categoryInfo = {
     title: 'Best Fancast',
     description: `Any generally available non-professional audio or video periodical devoted to science fiction, fantasy, or related subjects that by the close of ${YEAR} has released four (4) or more episodes, at least one (1) of which appeared in ${YEAR}, and that does not qualify as a dramatic presentation.`,
     nominationFieldLabels: {
-      title: 'Title'
+      title: 'Title',
+      address: 'Web address'
     }
   },
 
