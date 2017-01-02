@@ -45,13 +45,13 @@ const ActiveNominations = ({ name, signature }) => <div>
       lg={6} lgOffset={3}
     >
       <p>
-        Thank you for participating in the 2016 Hugo Awards and the John W. Campbell Award! Please choose up to five
-        nominees in each category. We recommend that you nominate whatever works and creators you have personally read
-        or seen that were your favorites from 2016.
+        Thank you for participating in the 2017 Hugo Awards and the John W. Campbell Award! Please choose up to five
+        eligible candidates in each category. We recommend that you nominate whatever works and creators you have
+        personally read or seen that were your favorites from 2016.
       </p>
       <p>
-        The deadline for nominations is 17 March 2017 at 2359 Pacific Daylight Time (0259 Eastern Daylight Time, 0659
-        Greenwich Mean Time, 0859 in Finland, all on 18 March). You can make as many changes as you like up to your
+        The deadline for nominations is 17 March 2017 at 11:59pm Pacific Daylight Time (2:59pm Eastern Daylight Time,
+        0659 Greenwich Mean Time, 0859 in Finland, all on 18 March). You can make as many changes as you like up to your
         nomination ballot until then. Your current ballot will be emailed to you an hour after you stop making changes
         to it.
       </p>
@@ -63,23 +63,20 @@ const ActiveNominations = ({ name, signature }) => <div>
       </p>
       <p>
         This year we are trialling a new category, Best Series. If you make nominations for Best Series, it will help us
-        if you also list a volume in that series that was published in 2016.
+        if you also list a volume in that series that was published in 2016. Likewise, it will help us if you can give
+        examples of the work of people you nominate for Best Professional Artist, Best Fan Artist and Best fan Writer.
       </p>
       <p>
         “No Award” will appear automatically in every single category on the final ballot – there is no need to include
         that choice on the nomination form.
       </p>
       <p>
-        If your nominee is not well known, please provide a source where their 2016 work in that category may be found.
-        This information makes identifying the work you intend to nominate easier for us.
-      </p>
-      <p>
         Works published in 2016 for the first time anywhere, or for the first time in English translation, are eligible
-        for the Hugo Awards being awarded in 2017. Books are considered to have been published in the year of the
-        publication date, which usually appears with the copyright information on the back of the title page. If there
-        is no stated publication date, the copyright date will be used instead.  A dated periodical is considered to
-        have been published on the cover date, regardless of when it was placed on sale or copyrighted.  Serialized
-        stories or dramatic presentations are eligible in the year in which the last installment appears.
+        for the 2017 Hugo Awards. Books are considered to have been published in the year of the publication date, which
+        usually appears with the copyright information on the back of the title page. If there is no stated publication
+        date, the copyright date will be used instead.  A dated periodical is considered to have been published on the
+        cover date, regardless of when it was placed on sale or copyrighted.  Serialized stories or dramatic
+        presentations are eligible in the year in which the last installment appears.
       </p>
       <p>
         Nominations in the written fiction and dramatic presentation categories may be relocated to a different category
