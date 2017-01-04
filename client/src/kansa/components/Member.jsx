@@ -4,6 +4,8 @@ import { Link } from 'react-router'
 
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import RaisedButton from 'material-ui/RaisedButton'
+import DropDownMenu from 'material-ui/DropDownMenu';
+import MenuItem from 'material-ui/MenuItem';
 
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
@@ -17,6 +19,10 @@ export default class Member extends React.Component {
       paper_pubs: ImmutablePropTypes.map
     }),
     onUpdate: React.PropTypes.func.isRequired
+  }
+
+  static contextTypes = {
+    router: React.PropTypes.object
   }
 
   static defaultProps = {
@@ -74,6 +80,15 @@ export default class Member extends React.Component {
     return false;
   }
 
+
+  handleMenu(event, index, value) {
+    console.log(this.context.router)
+    if(value != '') {
+      this.context.router.push(value)
+
+      }
+    };
+
   render() {
     const { member, onUpdate } = this.props;
     if (!member) return null;
@@ -89,7 +104,9 @@ export default class Member extends React.Component {
         title={ membership }
         subtitle={ membership !== 'NonMember' ? '#' + member.get('member_number') : null }
       />
+
       <CardText>
+
         <CommonFields { ...formProps } />
         <br />
         <PaperPubsFields { ...formProps } />
@@ -109,9 +126,13 @@ export default class Member extends React.Component {
         { member.get('can_hugo_nominate') ? <Link
           to={`/hugo/${member.get('id')}/nominate`}
         >Nominate for the Hugo Awards</Link> : null }
-        <br />
-        <Link to={`/exhibition/${member.get('id')}`}>Register to Art Exhibtion</Link>
+        <DropDownMenu value={this.state.value} className="menuToRight" onChange={this.handleMenu.bind(this)}>
+          <MenuItem primaryText="Actions" />
+          <MenuItem value={`/exhibition/${member.get('id')}`} primaryText="Register to Art Exhibtion" />
+        </DropDownMenu>
+
       </CardActions>
     </Card>;
   }
 }
+
