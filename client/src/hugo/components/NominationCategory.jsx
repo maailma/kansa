@@ -50,6 +50,7 @@ class NominationActionsRow extends React.Component {
           icon={<ListCheck />}
           onTouchTap={onSave}
           style={{ float: 'right', marginLeft: 15 }}
+          title='Save this category'
         />
         <RaisedButton
           label='Reset'
@@ -58,6 +59,7 @@ class NominationActionsRow extends React.Component {
           icon={<ContentUndo />}
           onTouchTap={onReset}
           style={{ float: 'right', marginLeft: 15 }}
+          title='Reset this category'
         />
       </Col>
     </Row>;

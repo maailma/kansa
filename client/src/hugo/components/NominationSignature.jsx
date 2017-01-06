@@ -52,6 +52,12 @@ export default class NominationSignature extends React.Component {
       <TextField
         floatingLabelText='Signature'
         onChange={ (event) => this.setState({ name: event.target.value }) }
+        style={{
+          backgroundColor: 'rgba(0, 0, 0, 0.05)',
+          padding: '0 8px',
+          boxSizing: 'content-box'
+        }}
+        underlineStyle={{ width: 256 }}
         value={name}
       />
     </Dialog>
