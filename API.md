@@ -324,9 +324,11 @@ Current membership and paper publications prices, with `amount` in EUR cents.
 #### Response
 ```
 {
-  Supporter: { amount: 3500, description: 'Supporting Membership' },
-  ...,
-  Adult: { amount: 12000, description: 'Adult Membership' },
+  memberships: {
+    Supporter: { amount: 3500, description: 'Supporting' },
+    ...,
+    Adult: { amount: 12000, description: 'Adult' },
+  },
   PaperPubs: { amount: 1000, description: 'Paper publications' }
 }
 ```

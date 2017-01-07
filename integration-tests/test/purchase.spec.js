@@ -52,9 +52,12 @@ describe('Purchase', () => {
     it('should get prices', (done) => {
       agent.get('/api/kansa/purchase/prices')
         .expect(200)
-        .expect(res => {
-          if (!res.body.Adult || !res.body.Adult.amount || !res.body.Supporter) throw new Error(
-            `Bad response! ${JSON.stringify(res.body)}`
+        .expect(({ body }) => {
+          if (
+            !body || !body.memberships || !body.memberships.Adult ||
+            !body.memberships.Adult.amount || !body.memberships.Supporter
+          ) throw new Error(
+            `Bad response! ${JSON.stringify(body)}`
           );
         })
         .end(done);

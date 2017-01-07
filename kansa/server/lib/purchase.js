@@ -1,6 +1,6 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_APIKEY);
 
-const membershipPrices = require('../static/prices.json');
+const prices = require('../static/prices.json');
 const { InputError } = require('./errors');
 const LogEntry = require('./types/logentry');
 const Person = require('./types/person');
@@ -11,15 +11,15 @@ const { upgradePerson } = require('./upgrade');
 const statement_descriptor = 'Worldcon 75 membership'; // max 22 chars
 
 function calcAmount(newMembers, upgrades) {
-  const ppa = membershipPrices.PaperPubs.amount;
+  const ppa = prices.PaperPubs.amount;
   const sumNew = newMembers.reduce((sum, m) => {
-    const ms = membershipPrices[m.data.membership];
+    const ms = prices.memberships[m.data.membership];
     if (!ms) throw new InputError(`No price found for ${JSON.stringify(m.data.membership)} membership`);
     return sum + ms.amount + (m.data.paper_pubs ? ppa : 0);
   }, 0);
   const sumUpgrades = upgrades.reduce((sum, u) => {
-    const ms0 = membershipPrices[u.prev_membership];
-    const ms1 = membershipPrices[u.membership];
+    const ms0 = prices.memberships[u.prev_membership];
+    const ms1 = prices.memberships[u.membership];
     return sum + ms1.amount - (ms0 ? ms0.amount : 0) + (u.paper_pubs ? ppa : 0);
   }, 0);
   return sumNew + sumUpgrades;
@@ -59,8 +59,8 @@ class Purchase {
   }
 
   getPrices(req, res, next) {
-    if (!membershipPrices) next(new Error('Missing membership prices!?'));
-    res.status(200).json(membershipPrices);
+    if (!prices) next(new Error('Missing membership prices!?'));
+    res.status(200).json(prices);
   }
 
   checkUpgrades(reqUpgrades) {
