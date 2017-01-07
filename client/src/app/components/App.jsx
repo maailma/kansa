@@ -3,63 +3,14 @@ import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
 import FlatButton from 'material-ui/FlatButton'
-import Menu from 'material-ui/Menu'
-import MenuItem from 'material-ui/MenuItem'
 import Paper from 'material-ui/Paper'
-import Popover from 'material-ui/Popover'
 import Snackbar from 'material-ui/Snackbar'
 import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
 
 import { hideMessage } from '../actions/app'
 import { logout } from '../actions/auth'
 
-class ButtonMenu extends React.Component {
-  static propTypes = {
-    label: React.PropTypes.string
-  }
-
-  state = {
-    anchorEl: null,
-    open: false
-  }
-
-  menuItemTap = (action) => () => {
-    this.setState({ open: false });
-    if (action) action();
-  }
-
-  openMenu = (event) => {
-    event.preventDefault();
-    this.setState({
-      anchorEl: event.currentTarget,
-      open: true
-    });
-  }
-
-  render = () => !this.props.label ? null : <div>
-    <FlatButton
-      onTouchTap={this.openMenu}
-      label={this.props.label}
-      labelStyle={{ color: 'rgba(0, 0, 0, 0.4)', textTransform: 'none', verticalAlign: 'initial' }}
-      style={{ marginTop: 10 }}
-    />
-    <Popover
-      open={this.state.open}
-      anchorEl={this.state.anchorEl}
-      anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-      targetOrigin={{ horizontal: 'right', vertical: 'top' }}
-      onRequestClose={ () => this.setState({ open: false }) }
-    >
-      <Menu>
-        { React.Children.map(this.props.children, (child) => React.cloneElement(child, {
-            onTouchTap: this.menuItemTap(child.props.onTouchTap)
-        })) }
-      </Menu>
-    </Popover>
-  </div>;
-}
-
-const AppBar = ({ email, goToProfile, logout }) => <Paper zDepth={2} >
+const AppBar = ({ email, logout }) => <Paper zDepth={2} >
   <Toolbar
     style={{
       backgroundColor: 'white'
@@ -69,18 +20,21 @@ const AppBar = ({ email, goToProfile, logout }) => <Paper zDepth={2} >
       <ToolbarTitle text={TITLE} />
     </ToolbarGroup>
     <ToolbarGroup>
-      <ButtonMenu label={email}>
-        <MenuItem primaryText="Profile" onTouchTap={goToProfile} />
-        <MenuItem primaryText="Sign out" onTouchTap={logout} />
-      </ButtonMenu>
+      <FlatButton
+        className='logoutButton'
+        label={<span><span className='logoutHint'>Sign out </span>{email}</span>}
+        labelStyle={{ textTransform: 'none', verticalAlign: 'initial' }}
+        onTouchTap={logout}
+        primary={true}
+        style={{ marginTop: 10 }}
+      />
     </ToolbarGroup>
   </Toolbar>
 </Paper>;
 
-const App = ({ children, email, goToProfile, hideMessage, logout, message }) => <div>
+const App = ({ children, email, hideMessage, logout, message }) => <div>
   { email ? <AppBar
     email={email}
-    goToProfile={goToProfile}
     logout={logout}
   /> : null }
   <main>
@@ -98,7 +52,6 @@ export default connect(
     email: user.get('email'),
     message: app.get('message')
   }), {
-    goToProfile: () => push('/'),
     hideMessage,
     logout
   }
