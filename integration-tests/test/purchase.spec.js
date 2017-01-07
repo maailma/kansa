@@ -80,7 +80,7 @@ describe('Purchase', () => {
       }).then(testToken => {
         agent.post('/api/kansa/purchase')
           .send({
-            amount: prices.Supporter.amount + prices.Adult.amount + prices.PaperPubs.amount,
+            amount: prices.memberships.Supporter.amount + prices.memberships.Adult.amount + prices.PaperPubs.amount,
             email: 'test@example.com',
             token: testToken.id,
             new_members: [
@@ -130,7 +130,7 @@ describe('Purchase', () => {
       }).then(testToken => {
         agent.post('/api/kansa/purchase')
           .send({
-            amount: prices.Adult.amount - prices.Supporter.amount,
+            amount: prices.memberships.Adult.amount - prices.memberships.Supporter.amount,
             email: 'test@example.com',
             token: testToken.id,
             upgrades: [{ id: testId, membership: 'Adult' }]
