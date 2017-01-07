@@ -15,7 +15,8 @@ export default class Member extends React.Component {
     member: ImmutablePropTypes.mapContains({
       paper_pubs: ImmutablePropTypes.map
     }),
-    onUpdate: React.PropTypes.func.isRequired
+    onUpdate: React.PropTypes.func.isRequired,
+    showHugoActions: React.PropTypes.bool
   }
 
   static defaultProps = {
@@ -74,7 +75,7 @@ export default class Member extends React.Component {
   }
 
   render() {
-    const { member, onUpdate } = this.props;
+    const { member, onUpdate, showHugoActions } = this.props;
     if (!member) return null;
     const membership = member.get('membership', 'NonMember');
     const formProps = {
@@ -103,7 +104,7 @@ export default class Member extends React.Component {
             onUpdate(member.get('id'), this.changes);
           }}
         />
-        { member.get('can_hugo_nominate') ? <Link
+        { showHugoActions ? <Link
           to={`/hugo/${member.get('id')}/nominate`}
         >Nominate for the Hugo Awards</Link> : null }
       </CardActions>
