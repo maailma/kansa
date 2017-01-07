@@ -13,6 +13,14 @@ export default ({ dispatch }) => (next) => (action) => {
 
   if (!action.error) switch (action.type) {
 
+    case 'GET_PRICES': {
+      api.GET('kansa/purchase/prices')
+        .then(prices => {
+          next({ ...action, prices });
+        })
+        .catch(handleError);
+    } return;
+
     case 'KEY_REQUEST': {
       const { email } = action;
       if (!email) return next({ ...action, error: 'Email missing for key request' });
