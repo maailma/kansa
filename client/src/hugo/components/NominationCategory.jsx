@@ -79,7 +79,6 @@ const NominationBody = ({ colSpan, fields, maxNominations, onChange, onSave, onR
   const serverTime = state.get('serverTime');
   const isFetching = state.get('isFetching');
   const rows = clientData.size < maxNominations ? clientData.push(Map()) : clientData;
-  const lastRow = {};
   return <div>
     {
       rows.map((rowValues, idx) => <NominationRow
@@ -90,11 +89,10 @@ const NominationBody = ({ colSpan, fields, maxNominations, onChange, onSave, onR
         fields={fields}
         onChange={ (field, value) => onChange(idx, rowValues.set(field, value)) }
         onRemove={ () => onChange(idx, null) }
-        setLastField={ (field, ref) => lastRow[field] = ref }
         values={rowValues}
       />)
     }
-    { nominationRowLinks(maxNominations - rows.size, { colSpan, fields, lastRow }) }
+    { nominationRowLinks(maxNominations - rows.size, { colSpan, fields }) }
     <NominationActionsRow
       disabled={ isFetching || clientData.equals(serverData) }
       onSave={onSave}

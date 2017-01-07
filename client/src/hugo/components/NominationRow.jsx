@@ -7,14 +7,17 @@ import TextField from 'material-ui/TextField'
 const { Col, Row } = require('react-flexbox-grid');
 
 
-const NominationField = ({ changed, disabled, name, onChange, setRef, value }) => <TextField
+const NominationField = ({ changed, disabled, name, onChange, value }) => <TextField
   className={ 'NominationField' + (changed ? ' changed' : '') }
   disabled={disabled}
   fullWidth={true}
   multiLine={true}
   name={name}
   onChange={onChange}
-  ref={setRef}
+  underlineDisabledStyle={{
+    borderBottomStyle: 'dashed',
+    borderBottomWidth: 1
+  }}
   value={value}
 />;
 
@@ -55,15 +58,19 @@ class NominationRemoveButton extends React.Component {
 }
 
 
-export const NominationFillerRow = ({ colSpan, fields, lastRow }) => <Row>
+export const NominationFillerRow = ({ colSpan, fields }) => <Row>
   {
     fields.map(field => <Col key={field} xs={colSpan}>
       <TextField
         className="NominationField NominationLink"
+        disabled={true}
         fullWidth={true}
         name={field}
-        onFocus={ () => lastRow[field] && lastRow[field].focus() }
-        underlineFocusStyle={{ display: 'none' }}
+        style={{ cursor: 'default' }}
+        underlineDisabledStyle={{
+          borderBottomStyle: 'dashed',
+          borderBottomWidth: 1
+        }}
         value=""
       />
     </Col>)
@@ -79,7 +86,6 @@ export class NominationRow extends React.Component {
     fields: React.PropTypes.array.isRequired,
     onChange: React.PropTypes.func,
     onRemove: React.PropTypes.func,
-    setLastField: React.PropTypes.func,
     values: ImmutablePropTypes.map.isRequired
   }
 
@@ -89,7 +95,7 @@ export class NominationRow extends React.Component {
   }
 
   render() {
-    const { colSpan, defaultValues, disabled, fields, onChange, onRemove, setLastField, values } = this.props;
+    const { colSpan, defaultValues, disabled, fields, onChange, onRemove, values } = this.props;
     return <Row bottom='xs'>
       {
         fields.map(field => <Col
@@ -102,7 +108,6 @@ export class NominationRow extends React.Component {
             disabled={disabled}
             name={field}
             onChange={ ev => onChange(field, ev.target.value) }
-            setRef={ ref => { if (ref && values.isEmpty()) setLastField(field, ref); } }
             value={ values.get(field, '') }
           />
         </Col>)
