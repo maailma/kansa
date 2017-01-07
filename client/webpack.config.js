@@ -39,6 +39,7 @@ if (process.env.NODE_ENV === 'production') {
   globals['process.env'] = {
     NODE_ENV: JSON.stringify('production')
   }
+  globals.STRIPE_KEY = process.env.STRIPE_KEY || JSON.stringify('pk_live_vSEBxO9ddioYqCGvhVsog4pb');
 
 } else {
 
@@ -54,8 +55,10 @@ if (process.env.NODE_ENV === 'production') {
 
   const apiHost = process.env.API_HOST ||
     (process.env.DOCKER_HOST && url.parse(process.env.DOCKER_HOST).hostname || 'localhost') + ':4430';
-  globals.API_HOST = JSON.stringify(apiHost);
   console.log('Using API host', apiHost, '\n');
+
+  globals.API_HOST = JSON.stringify(apiHost);
+  globals.STRIPE_KEY = process.env.STRIPE_KEY || JSON.stringify('pk_test_LoOP8RB3gIlLkSYIyM9G6skn');
 
 }
 cfg.plugins.push(new webpack.DefinePlugin(globals));

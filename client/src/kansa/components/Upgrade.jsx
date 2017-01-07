@@ -1,7 +1,8 @@
-import React from 'react';
+import React from 'react'
 import { connect } from 'react-redux'
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
+import Dialog from 'material-ui/Dialog'
+import FlatButton from 'material-ui/FlatButton'
+import StripeCheckout from 'react-stripe-checkout'
 
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
@@ -45,6 +46,11 @@ class Upgrade extends React.Component {
 
   handleClose = () => { this.setState({ open: false }) }
 
+  onPurchase = (token) => {
+    console.log('TODO: handle purchase', token);
+    this.handleClose();
+  }
+
   setStateIn = (path, value) => {
     const key = path[0];
     if (path.length > 1) value = this.state[key].setIn(path.slice(1), value);
@@ -69,6 +75,9 @@ class Upgrade extends React.Component {
     const button = React.Children.only(this.props.children);
     const amount = this.upgradeAmount(prevMembership, membership, paper_pubs);
     const disabled = sent || amount <= 0 || !Member.paperPubsIsValid(paper_pubs);
+    const descriptions = [];
+    if (membership !== prevMembership) descriptions.push(`${membership} upgrade`);
+    if (paper_pubs) descriptions.push(prices.getIn(['PaperPubs', 'description']));
 
     return <div style={style}>
       { React.cloneElement(button, { onTouchTap: this.handleOpen }) }
@@ -82,17 +91,25 @@ class Upgrade extends React.Component {
             Total: €{ amount / 100 }
           </div>,
           <FlatButton key='cancel' label='Cancel' onTouchTap={this.handleClose} />,
-          <FlatButton
-            key='ok'
-            label={ sent ? 'Working...' : 'Pay by card' }
-            disabled={disabled}
-            onTouchTap={ () => {
-              this.setState({ sent: true });
-              console.log('TODO: apply upgrade', prevMembership, membership, !!paper_pubs, amount);
-              this.handleClose();
-            }}
-            style={{ flexShrink: 0 }}
-          />
+          <StripeCheckout
+            key='pay'
+            amount={amount}
+            currency='EUR'
+            description={ descriptions.join(' + ') || 'Member upgrade' }
+            email={member.get('email')}
+            name={TITLE}
+            stripeKey={STRIPE_KEY}
+            token={this.onPurchase}
+            triggerEvent='onTouchTap'
+            zipCode={true}
+          >
+            <FlatButton
+              label={ sent ? 'Working...' : 'Pay by card' }
+              disabled={disabled}
+              onTouchTap={ () => this.setState({ sent: true }) }
+              style={{ flexShrink: 0 }}
+            />
+          </StripeCheckout>
         ]}
         actionsContainerStyle={{ alignItems: 'center', display: 'flex', textAlign: 'left' }}
       >
