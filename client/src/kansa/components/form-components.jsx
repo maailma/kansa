@@ -110,7 +110,7 @@ const MembershipSelect = ({ getDefaultValue, getValue, onChange }) => {
   const path = ['membership'];
   const prevIdx = Member.membershipTypes.indexOf(getDefaultValue(path));
   return <SelectField
-    style={{ marginLeft: '24px' }}
+    style={{ marginRight: 24 }}
     floatingLabelText='Membership type'
     floatingLabelFixed={true}
     value={ getValue(path) || 'NonMember' }
@@ -128,7 +128,7 @@ const MembershipSelect = ({ getDefaultValue, getValue, onChange }) => {
 const PaperPubsCheckbox = ({ getDefaultValue, getValue, onChange }) => {
   const path = ['paper_pubs'];
   return <Checkbox
-    style={{ display: 'inline-block', width: '256px', marginLeft: '24px', marginTop: '37px', verticalAlign: 'top' }}
+    style={{ display: 'inline-block', width: 256, marginTop: 37, verticalAlign: 'top' }}
     label='Add paper publications'
     checked={!!getValue(path)}
     disabled={!!getDefaultValue(path)}
