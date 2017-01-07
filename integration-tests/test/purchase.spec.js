@@ -38,7 +38,7 @@ describe('Purchase', () => {
       agent.post('/api/kansa/purchase')
         .send({ amount: 1, email: '@', token: 'x', new_members: [{ membership: 'Adult', email: '@', legal_name: 'x' }] })
         .expect((res) => {
-          const exp = { status: 400, message: `Amount mismatch: in request 1, calculated ${prices.Adult.amount}` };
+          const exp = { status: 400, message: `Amount mismatch: in request 1, calculated ${prices.memberships.Adult.amount}` };
           if (res.status !== exp.status) throw new Error(`Bad status: got ${res.status}, expected ${exp.status}: ${JSON.stringify(res.body)}`);
           if (res.body.message !== exp.message) throw new Error(`Bad reply: ${JSON.stringify(res.body)}`);
         })
