@@ -50,6 +50,7 @@ function sendNominationEmail(db, id) {
           data: {
             email: person.email,
             key: person.key,
+            memberId: id,
             name: [person.pfn, person.pln].filter(n => n).join(' ').trim() || person.legal_name,
             nominations
           },
