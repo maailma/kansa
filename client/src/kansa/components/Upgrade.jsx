@@ -6,7 +6,7 @@ import StripeCheckout from 'react-stripe-checkout'
 
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
-import { getPrices } from '../actions'
+import { buyUpgrade, getPrices } from '../actions'
 import { UpgradeFields } from './form-components';
 import Member from './Member';
 
@@ -18,6 +18,7 @@ function getIn(obj, path, unset) {
 
 class Upgrade extends React.Component {
   static propTypes = {
+    buyUpgrade: React.PropTypes.func.isRequired,
     getPrices: React.PropTypes.func.isRequired,
     member: ImmutablePropTypes.mapContains({
       paper_pubs: ImmutablePropTypes.map
@@ -46,9 +47,11 @@ class Upgrade extends React.Component {
 
   handleClose = () => { this.setState({ open: false }) }
 
-  onPurchase = (token) => {
-    console.log('TODO: handle purchase', token);
-    this.handleClose();
+  onPurchase = (amount, token) => {
+    const { buyUpgrade, member } = this.props;
+    const { membership, paper_pubs } = this.state;
+    console.log('Charging', member.toJS(), 'EUR', amount/100, 'for upgrade:', membership, paper_pubs && paper_pubs.toJS(), '...');
+    buyUpgrade(member.get('id'), membership, paper_pubs, amount, token, this.handleClose);
   }
 
   setStateIn = (path, value) => {
@@ -99,7 +102,7 @@ class Upgrade extends React.Component {
             email={member.get('email')}
             name={TITLE}
             stripeKey={STRIPE_KEY}
-            token={this.onPurchase}
+            token={ (token) => this.onPurchase(amount, token) }
             triggerEvent='onTouchTap'
             zipCode={true}
           >
@@ -128,6 +131,7 @@ export default connect(
   ({ purchase }) => ({
     prices: purchase.get('prices')
   }), {
+    buyUpgrade,
     getPrices
   }
 )(Upgrade);
