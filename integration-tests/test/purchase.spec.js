@@ -143,5 +143,29 @@ describe('Purchase', () => {
       });
     });
 
+    it('should add paper publications', (done) => {
+      stripe.tokens.create({
+        card: {
+          number: '4242424242424242',
+          exp_month: 12,
+          exp_year: 2020,
+          cvc: '123'
+        }
+      }).then(testToken => {
+        agent.post('/api/kansa/purchase')
+          .send({
+            amount: prices.PaperPubs.amount,
+            email: 'test@example.com',
+            token: testToken.id,
+            upgrades: [{ id: testId, paper_pubs: { name: 'name', address: 'address', country: 'land'} }]
+          })
+          .expect((res) => {
+            if (res.status !== 200) throw new Error(`Paper pubs purchase failed! ${JSON.stringify(res.body)}`);
+            // HERE
+          })
+          .end(done);
+      });
+    });
+
   });
 });
