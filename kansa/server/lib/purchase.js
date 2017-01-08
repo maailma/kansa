@@ -18,6 +18,7 @@ function calcAmount(newMembers, upgrades) {
     return sum + ms.amount + (m.data.paper_pubs ? ppa : 0);
   }, 0);
   const sumUpgrades = upgrades.reduce((sum, u) => {
+    if (!u.membership) return sum + (u.paper_pubs ? ppa : 0);
     const ms0 = prices.memberships[u.prev_membership];
     const ms1 = prices.memberships[u.membership];
     return sum + ms1.amount - (ms0 ? ms0.amount : 0) + (u.paper_pubs ? ppa : 0);
@@ -75,15 +76,23 @@ class Purchase {
       );
       return reqUpgrades.map(upgrade => {
         const prev = prevData.find(m => m.id === upgrade.id);
-        if (!prev) throw new InputError(`Previous membership not found for ${JSON.stringify(upgrade)}`);
-        const ti0 = Person.membershipTypes.indexOf(prev.membership);
-        const ti1 = Person.membershipTypes.indexOf(upgrade.membership);
-        if (ti1 <= ti0) throw new InputError(
-          `Can't "upgrade" from ${JSON.stringify(prev.membership)} to ${JSON.stringify(upgrade.membership)}`
-        );
-        if (upgrade.paper_pubs && prev.paper_pubs) throw new InputError(
-          `Error in upgrades: ${JSON.stringify(upgrade)} already has paper pubs!`
-        );
+        if (!prev || !prev.membership) throw new InputError(`Previous membership not found for ${JSON.stringify(upgrade)}`);
+        if (!upgrade.membership || upgrade.membership === prev.membership) {
+          delete upgrade.membership;
+        } else {
+          const ti0 = Person.membershipTypes.indexOf(prev.membership);
+          const ti1 = Person.membershipTypes.indexOf(upgrade.membership);
+          if (ti1 <= ti0) throw new InputError(
+            `Can't "upgrade" from ${JSON.stringify(prev.membership)} to ${JSON.stringify(upgrade.membership)}`
+          );
+        }
+
+        if (upgrade.paper_pubs) {
+          if (prev.paper_pubs) throw new InputError(`${JSON.stringify(upgrade)} already has paper pubs!`);
+        } else if (!upgrade.membership) {
+          throw new InputError('Change in at least one of membership and/or paper_pubs is required for upgrade');
+        }
+
         return Object.assign({}, upgrade, {
           email: prev.email,
           paper_pubs: Person.cleanPaperPubs(upgrade.paper_pubs),

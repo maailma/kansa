@@ -19,17 +19,16 @@ function verifyUpgrade(data) {
   if (data.membership === 'NonMember') throw new Error(`Can't "upgrade" to NonMember`);
 }
 
-function upgradePaperPubs(req, db, paper_pubs) {
-  if (!paper_pubs) throw new InputError('No valid parameters');
+function upgradePaperPubs(req, db, data) {
+  if (!data.paper_pubs) throw new InputError('No valid parameters');
   const log = new LogEntry(req, 'Add paper pubs');
-  const id = log.subject = parseInt(req.params.id);
   return db.tx(tx => tx.batch([
     tx.one(`
          UPDATE People
             SET paper_pubs=$(paper_pubs)
           WHERE id=$(id) AND membership != 'NonMember'
       RETURNING true`,
-      { id, paper_pubs }),
+      data),
     tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
   ]))
     .catch(err => {
@@ -85,7 +84,7 @@ function upgradePerson(req, db, data) {
   }
   return data.membership
     ? upgradeMembership(req, db, data)
-    : upgradePaperPubs(req, db, data.paper_pubs).then(() => ['paper_pubs']);
+    : upgradePaperPubs(req, db, data).then(() => ['paper_pubs']);
 }
 
 function authUpgradePerson(req, res, next) {
