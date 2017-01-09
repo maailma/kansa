@@ -75,10 +75,15 @@ export const CommonFields = (props) => (<div>
 </div>);
 CommonFields.propTypes = basePropTypes;
 
-export const PaperPubsFields = ({ ...props }) => {
-  if (!props.getValue(['paper_pubs'])) return null;
-  props.required = true;
-  props.style = styles.paperPubs;
+export const PaperPubsFields = ({ getDefaultValue, getValue, onChange }) => {
+  if (!getValue(['paper_pubs'])) return null;
+  const props = {
+    getDefaultValue,
+    getValue,
+    onChange,
+    required: true,
+    style: styles.paperPubs
+  }
   return <Row>
     <Col xs={12} sm={4}>
       <TextInput { ...props } path={['paper_pubs', 'name']} />
@@ -106,30 +111,39 @@ CommentField.propTypes = {
   onChange: React.PropTypes.func.isRequired
 };
 
-const MembershipSelect = ({ getDefaultValue, getValue, onChange }) => {
+const MembershipSelect = ({ getDefaultValue, getValue, onChange, prices }) => {
   const path = ['membership'];
-  const prevIdx = Member.membershipTypes.indexOf(getDefaultValue(path));
+  const prevMembership = getDefaultValue(path);
+  const prevIdx = Member.membershipTypes.indexOf(prevMembership);
+  const prevAmount = prices && prevMembership && prices.getIn(['memberships', prevMembership, 'amount']) || 0;
   return <SelectField
-    style={{ marginLeft: '24px' }}
+    style={{ marginRight: 24, width: 224 }}
     floatingLabelText='Membership type'
     floatingLabelFixed={true}
     value={ getValue(path) || 'NonMember' }
     onChange={ (ev, idx, value) => onChange(path, value) }
   >
-    { Member.membershipTypes.map((type, idx) => (
-      <MenuItem
-        key={type} value={type} primaryText={type}
-        disabled={ idx < prevIdx }
+    { Member.membershipTypes.map((type, idx) => {
+      if (type === 'NonMember' && prevMembership !== 'NonMember') return null;
+      const amount = prices ? prices.getIn(['memberships', type, 'amount'], -100) : -100;
+      const eurAmount = (amount - prevAmount) / 100;
+      const label = prices && prices.getIn(['memberships', type, 'description']) || type;
+      return <MenuItem
+        key={type}
+        disabled={ eurAmount < 0 || idx < prevIdx }
+        value={type}
+        primaryText={ eurAmount <= 0 ? label : `${label} (€${eurAmount})` }
       />
-    )) }
+    }) }
   </SelectField>;
 }
 
-const PaperPubsCheckbox = ({ getDefaultValue, getValue, onChange }) => {
+const PaperPubsCheckbox = ({ getDefaultValue, getValue, onChange, prices }) => {
   const path = ['paper_pubs'];
+  const eurAmount = prices ? prices.getIn(['PaperPubs', 'amount'], 0) / 100 : -1;
   return <Checkbox
-    style={{ display: 'inline-block', width: '256px', marginLeft: '24px', marginTop: '37px', verticalAlign: 'top' }}
-    label='Add paper publications'
+    style={{ display: 'inline-block', width: 288, marginTop: 37, verticalAlign: 'top' }}
+    label={`Add paper publications (€${eurAmount})`}
     checked={!!getValue(path)}
     disabled={!!getDefaultValue(path)}
     onCheck={ (ev, checked) => onChange(path, checked ? Member.emptyPaperPubsMap : null) }

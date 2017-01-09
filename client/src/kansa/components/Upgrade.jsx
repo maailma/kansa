@@ -1,14 +1,13 @@
-import React from 'react';
-import Checkbox from 'material-ui/Checkbox';
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
-import MenuItem from 'material-ui/MenuItem';
-import SelectField from 'material-ui/SelectField';
-import TextField from 'material-ui/TextField';
+import React from 'react'
+import { connect } from 'react-redux'
+import Dialog from 'material-ui/Dialog'
+import FlatButton from 'material-ui/FlatButton'
+import StripeCheckout from 'react-stripe-checkout'
 
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
-import { UpgradeFields, CommentField } from './form-components';
+import { buyUpgrade, getPrices } from '../actions'
+import { UpgradeFields } from './form-components';
 import Member from './Member';
 
 function getIn(obj, path, unset) {
@@ -17,34 +16,43 @@ function getIn(obj, path, unset) {
   return path.length <= 1 ? val : val.getIn(path.slice(1), unset);
 }
 
-export default class Upgrade extends React.Component {
+class Upgrade extends React.Component {
   static propTypes = {
-    membership: React.PropTypes.string.isRequired,
-    paper_pubs: ImmutablePropTypes.mapContains({
-      name: React.PropTypes.string.isRequired,
-      address: React.PropTypes.string.isRequired,
-      country: React.PropTypes.string.isRequired
+    buyUpgrade: React.PropTypes.func.isRequired,
+    getPrices: React.PropTypes.func.isRequired,
+    member: ImmutablePropTypes.mapContains({
+      paper_pubs: ImmutablePropTypes.map
     }),
-    name: React.PropTypes.string.isRequired,
-    upgrade: React.PropTypes.func.isRequired
+    prices: ImmutablePropTypes.map,
+    style: React.PropTypes.object
   }
 
   state = {
     membership: null,
     paper_pubs: null,
-    comment: '',
     open: false,
     sent: false
   }
 
-  handleOpen = () => { this.setState({
-    membership: this.props.membership,
-    paper_pubs: null,
-    open: true,
-    sent: false
-  }) }
+  handleOpen = () => {
+    const { getPrices, prices } = this.props;
+    this.setState({
+      membership: this.props.member.get('membership'),
+      paper_pubs: null,
+      open: true,
+      sent: false
+    });
+    if (!prices) getPrices();
+  }
 
   handleClose = () => { this.setState({ open: false }) }
+
+  onPurchase = (amount, token) => {
+    const { buyUpgrade, member } = this.props;
+    const { membership, paper_pubs } = this.state;
+    console.log('Charging', member.toJS(), 'EUR', amount/100, 'for upgrade:', membership, paper_pubs && paper_pubs.toJS(), '...');
+    buyUpgrade(member.get('id'), membership, paper_pubs, amount, token, this.handleClose);
+  }
 
   setStateIn = (path, value) => {
     const key = path[0];
@@ -52,49 +60,78 @@ export default class Upgrade extends React.Component {
     return this.setState({ [key]: value });
   }
 
+  upgradeAmount(prev, next, paperPubs) {
+    const { prices } = this.props;
+    if (!prices) return 0;
+    const prevAmount = prices.getIn(['memberships', prev, 'amount']) || 0;
+    const nextAmount = prices.getIn(['memberships', next, 'amount']) || 0;
+    const ppAmount = paperPubs && prices.getIn(['PaperPubs', 'amount']) || 0;
+    return nextAmount - prevAmount + ppAmount;
+  }
+
   render() {
-    const { comment, membership, paper_pubs, sent, open } = this.state;
+    const { member, prices, style } = this.props;
+    const prevMembership = member.get('membership');
+    if (prevMembership === 'Adult' && member.get('paper_pubs')) return null;
+
+    const { membership, paper_pubs, sent, open } = this.state;
     const button = React.Children.only(this.props.children);
-    const msChanged = membership !== this.props.membership;
-    const disabled = sent || !comment || (!msChanged && !paper_pubs)
-        || !Member.paperPubsIsValid(paper_pubs);
-    const formProps = {
-      getDefaultValue: path => getIn(this.props, path, null),
-      getValue: path => getIn(this.state, path, ''),
-      onChange: this.setStateIn
-    }
-    return <div>
+    const amount = this.upgradeAmount(prevMembership, membership, paper_pubs);
+    const disabled = sent || amount <= 0 || !Member.paperPubsIsValid(paper_pubs);
+    const descriptions = [];
+    if (membership !== prevMembership) descriptions.push(`${membership} upgrade`);
+    if (paper_pubs) descriptions.push(prices.getIn(['PaperPubs', 'description']));
+
+    return <div style={style}>
       { React.cloneElement(button, { onTouchTap: this.handleOpen }) }
       <Dialog
-        bodyStyle={{ paddingLeft: 0 }}
-        title={ 'Upgrade ' + this.props.name }
+        title={ 'Upgrade ' + member.get('legal_name') }
         open={open}
         autoScrollBodyContent={true}
         onRequestClose={this.handleClose}
         actions={[
+          <div key='total' style={{ color: 'rgba(0, 0, 0, 0.3)', flexGrow: 1, paddingLeft: 16 }}>
+            Total: €{ amount / 100 }
+          </div>,
           <FlatButton key='cancel' label='Cancel' onTouchTap={this.handleClose} />,
-          <FlatButton key='ok'
-            label={ sent ? 'Working...' : 'Apply' }
-            disabled={disabled}
-            onTouchTap={ () => {
-              this.setState({ sent: true });
-              const res = { comment };
-              if (msChanged) res.membership = membership;
-              if (paper_pubs) res.paper_pubs = paper_pubs.toJS();
-              (this.props.upgrade(res) || Promise.reject('Upgrade expected a Promise from upgrade()'))
-                .then(res => {
-                  console.log('Member upgraded', res);
-                  this.handleClose();
-                })
-                .catch(e => console.error(e));  // TODO: report errors better
-            }}
-          />
+          <StripeCheckout
+            key='pay'
+            amount={amount}
+            currency='EUR'
+            description={ descriptions.join(' + ') || 'Member upgrade' }
+            email={member.get('email')}
+            name={TITLE}
+            stripeKey={STRIPE_KEY}
+            token={ (token) => this.onPurchase(amount, token) }
+            triggerEvent='onTouchTap'
+            zipCode={true}
+          >
+            <FlatButton
+              label={ sent ? 'Working...' : 'Pay by card' }
+              disabled={disabled}
+              onTouchTap={ () => this.setState({ sent: true }) }
+              style={{ flexShrink: 0 }}
+            />
+          </StripeCheckout>
         ]}
+        actionsContainerStyle={{ alignItems: 'center', display: 'flex', textAlign: 'left' }}
       >
-        <UpgradeFields { ...formProps } />
-        <br />
-        <CommentField { ...formProps } />
+        <UpgradeFields
+          getDefaultValue={ path => member.getIn(path, null) }
+          getValue={ path => getIn(this.state, path, '') }
+          onChange={this.setStateIn}
+          prices={prices}
+        />
       </Dialog>
     </div>;
   }
 }
+
+export default connect(
+  ({ purchase }) => ({
+    prices: purchase.get('prices')
+  }), {
+    buyUpgrade,
+    getPrices
+  }
+)(Upgrade);
