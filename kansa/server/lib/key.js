@@ -3,7 +3,7 @@ const randomstring = require('randomstring');
 
 const LogEntry = require('./types/logentry');
 
-module.exports = { setKey };
+module.exports = { setKey, setAllKeys };
 
 function setKeyChecked(req, res, next, email) {
   const key = randomstring.generate(12);
@@ -46,4 +46,23 @@ function setKey(req, res, next) {
       })
       .catch(err => next(err));
   }
+}
+
+function setAllKeys(req, res, next) {
+  req.app.locals.db.many(`
+       SELECT DISTINCT p.email
+         FROM People p
+    LEFT JOIN Keys k
+           ON p.email = k.email
+        WHERE k.email IS NULL`
+  )
+    .then(data => req.app.locals.db.tx(tx => tx.sequence((i) => data[i]
+      ? tx.any('INSERT INTO Keys (email, key) VALUES ($(email), $(key))', {
+          email: data[i].email,
+          key: randomstring.generate(12)
+        })
+      : undefined
+    )))
+    .then(() => res.status(200).json({ status: 'success' }))
+    .catch(err => next(err));
 }

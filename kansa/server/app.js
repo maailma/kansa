@@ -60,6 +60,7 @@ router.get('/user/log', log.getUserLog);
 router.all('/admin*', admin.isAdminAdmin);
 router.get('/admin', admin.getAdmins);
 router.post('/admin', admin.setAdmin);
+router.post('/admin/set-keys', key.setAllKeys);
 
 app.locals.db = db;
 app.use(logger('dev'));
