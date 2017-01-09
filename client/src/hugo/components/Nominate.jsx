@@ -71,12 +71,12 @@ const ActiveNominations = ({ name, signature }) => <div>
         that choice on the nomination form.
       </p>
       <p>
-        Works published in 2016 for the first time anywhere, or for the first time in English translation, are eligible
-        for the 2017 Hugo Awards. Books are considered to have been published in the year of the publication date, which
-        usually appears with the copyright information on the back of the title page. If there is no stated publication
-        date, the copyright date will be used instead.  A dated periodical is considered to have been published on the
-        cover date, regardless of when it was placed on sale or copyrighted.  Serialized stories or dramatic
-        presentations are eligible in the year in which the last installment appears.
+        Works published in 2016 for the first time anywhere, or for the first time in English translation or in the
+        United States, are eligible for the 2017 Hugo Awards. Books are considered to have been published in the year of
+        the publication date, which usually appears with the copyright information on the back of the title page. If
+        there is no stated publication date, the copyright date will be used instead. A dated periodical is considered
+        to have been published on the cover date, regardless of when it was placed on sale or copyrighted. Serialized
+        stories or dramatic presentations are eligible in the year in which the last installment appears.
       </p>
       <p>
         Nominations in the written fiction and dramatic presentation categories may be relocated to a different category
