@@ -25,7 +25,7 @@ export default class FinalistResults extends React.Component {
       dataKey='points'
       key='points'
       label='Pts'
-      width={30}
+      width={40}
     />;
     const nominations = <Column
       dataKey='nominations'
