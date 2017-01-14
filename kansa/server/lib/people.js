@@ -1,3 +1,5 @@
+const { _setKeyChecked } = require('./key');
+const sendEmail = require('./kyyhky-send-email');
 const LogEntry = require('./types/logentry');
 const Person = require('./types/person');
 
@@ -130,11 +132,29 @@ function updatePerson(req, res, next) {
   const log = new LogEntry(req, 'Update fields: ' + fields.join(', '));
   data.id = log.subject = parseInt(req.params.id);
   req.app.locals.db.tx(tx => tx.batch([
-    tx.one(`UPDATE People SET ${sqlFields} WHERE id=$(id) ${ppCond} RETURNING true`, data),
+    tx.one(`
+           WITH prev AS (SELECT email FROM People WHERE id=$(id))
+         UPDATE People
+            SET ${sqlFields}
+          WHERE id=$(id) ${ppCond}
+      RETURNING (SELECT email AS prev_email FROM prev), legal_name, public_first_name, public_last_name`,
+      data),
+    data.email ? tx.oneOrNone(`SELECT key FROM Keys WHERE email=$(email)`, data) : {},
     tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
   ]))
-    .then(() => res.status(200).json({ status: 'success', updated: fields }))
-    .catch(err => (ppCond && !err[0].success && err[1].success && err[0].result.message == 'No data returned from the query.')
+    .then(([{ prev_email, legal_name, public_first_name, public_last_name }, key]) => {
+      if (!data.email || data.email === prev_email) return {};
+      const name = [public_first_name, public_last_name].filter(n => n).join(' ').trim() || legal_name;
+      return key ? { key: key.key, name } : _setKeyChecked(req, data.email).then(({ key }) => ({ key, name }));
+    })
+    .then(({ key, name }) => !!(key && sendEmail('hugo-update-email', {
+      email: data.email,
+      key,
+      memberId: data.id,
+      name
+    })))
+    .then(key_sent => res.status(200).json({ status: 'success', updated: fields, key_sent }))
+    .catch(err => (ppCond && !err[0].success && err[0].result.message == 'No data returned from the query.')
       ? res.status(402).json({ status: 'error', message: 'Paper publications have not been enabled for this person' })
       : next(err));
 }
