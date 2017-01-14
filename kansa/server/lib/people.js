@@ -137,13 +137,13 @@ function updatePerson(req, res, next) {
          UPDATE People
             SET ${sqlFields}
           WHERE id=$(id) ${ppCond}
-      RETURNING (SELECT email AS prev_email FROM prev), legal_name, public_first_name, public_last_name`,
+      RETURNING (SELECT email AS prev_email FROM prev), can_hugo_nominate, legal_name, public_first_name, public_last_name`,
       data),
     data.email ? tx.oneOrNone(`SELECT key FROM Keys WHERE email=$(email)`, data) : {},
     tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
   ]))
-    .then(([{ prev_email, legal_name, public_first_name, public_last_name }, key]) => {
-      if (!data.email || data.email === prev_email) return {};
+    .then(([{ can_hugo_nominate, prev_email, legal_name, public_first_name, public_last_name }, key]) => {
+      if (!data.email || data.email === prev_email || !can_hugo_nominate) return {};
       const name = [public_first_name, public_last_name].filter(n => n).join(' ').trim() || legal_name;
       return key ? { key: key.key, name } : _setKeyChecked(req, data.email).then(({ key }) => ({ key, name }));
     })
