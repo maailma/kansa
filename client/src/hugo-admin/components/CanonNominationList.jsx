@@ -187,7 +187,9 @@ class CanonNominationList extends React.Component {
 
 export default connect(
   ({ hugoAdmin }, { categories }) => ({
-    ballots: hugoAdmin.get('ballots').valueSeq().flatten(true),
+    ballots: hugoAdmin.get('ballots')
+      .filter((_, cat) => categories.indexOf(cat) !== -1)
+      .valueSeq().flatten(true),
     canon: hugoAdmin.get('canon'),
     nominations: hugoAdmin.get('nominations')
       .filter((_, cat) => categories.indexOf(cat) !== -1)
