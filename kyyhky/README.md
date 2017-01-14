@@ -10,7 +10,7 @@ Host: kyyhky:3000
 Content-Type: application/json
 
 {
-  "type": "kansa-set-key" || "hugo-update-nominations",
+  "type": "kansa-set-key" || "hugo-update-email" || "hugo-update-nominations",
   "data": {
     "email": <string>,
     ...
