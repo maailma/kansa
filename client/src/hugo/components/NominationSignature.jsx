@@ -49,17 +49,22 @@ export default class NominationSignature extends React.Component {
         Thank you for participating! To start nominating, please enter your name here:
       </p>
 
-      <TextField
-        floatingLabelText='Signature'
-        onChange={ (event) => this.setState({ name: event.target.value }) }
-        style={{
-          backgroundColor: 'rgba(0, 0, 0, 0.05)',
-          padding: '0 8px',
-          boxSizing: 'content-box'
-        }}
-        underlineStyle={{ width: 256 }}
-        value={name}
-      />
+      <form onSubmit={ev => {
+        ev.preventDefault();
+        setName(name);
+      }}>
+        <TextField
+          floatingLabelText='Signature'
+          onChange={ (event) => this.setState({ name: event.target.value }) }
+          style={{
+            backgroundColor: 'rgba(0, 0, 0, 0.05)',
+            padding: '0 8px',
+            boxSizing: 'content-box'
+          }}
+          underlineStyle={{ width: 256 }}
+          value={name}
+        />
+      </form>
     </Dialog>
   }
 
