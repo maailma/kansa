@@ -1,9 +1,9 @@
 [![DockerPulls](https://img.shields.io/docker/stars/worldcon75/api.svg)](https://hub.docker.com/r/worldcon75/api/)
 [![Build Status](https://travis-ci.org/worldcon75/api.svg?branch=master)](https://travis-ci.org/worldcon75/api)
-# Worldcon 75 Member Services 
-This project is under active development, so not everything is ready yet. The main components are:
+# Worldcon 75 Member Services API
 
-- **`client`** - The client front-end for our membership; a react + redux single-page app
+These are the back-end services used by [members.worldcon.fi](https://members.worldcon.fi/):
+
 - **`docker-compose*.yml`** - Service configuration
 - **`hakkapeliitta`** - A deprecated Scala webshop implementation, due to be ported to node.js
 - **`hugo/server`** - An express.js app providing the `/api/hugo/` parts of [this API](API.md)
@@ -17,6 +17,8 @@ This project is under active development, so not everything is ready yet. The ma
 [Kansa](https://en.wiktionary.org/wiki/kansa#Finnish) is Finnish for "people" or "tribe", and it's
 the name for our member registry. The [Hugo Awards](http://www.thehugoawards.org/) are awards that
 are nominated and selected by the members of each year's Worldcon. Kyyhky is Finnish for "pigeon".
+
+For the front-end code, please see [worldcon75/client](https://github.com/worldcon75/client).
 
 
 ### Getting Started
@@ -33,25 +35,25 @@ provided that `git`, `docker-compose` and `npm` are already installed:
 git clone --recursive https://github.com/worldcon75/api.git w75-api
 cd w75-api
 docker-compose up --build -d  # leave out the -d to not detach
-cd client
-npm install && npm start
 ```
 
-Once you have all the services up and running, first visit `https://localhost:4430/` in your
-browser to trigger its complaint about the server's self-singed certificate, and bypass it:
+Once you have all the services up and running, your development server should be available at
+`https://localhost:4430/`, including a latest-release front-end client (with code hosted under
+GitHub Pages). You'll need to bypass your browser's complaint about the server's self-singed
+certificate:
   - **Chrome**: Click on _Advanced_, then _Proceed to example.com_
   - **Firefox**: Click on _I Understand the Risks_, then _Add Exception...._, then _Get
     Certificate_, and finally _Confirm Security Exception_
   - **IE**: Click on _Continue to this website (not recommended)_
   - **Safari**: Click on _Show Certificate_, _Always Trust "example.com" when connecting to
     "example.com"_, then _Continue_
+  - **`curl`**: Use the `-k` or `--insecure` flag to perform "insecure" SSL connections
 
-Once that's done, visiting `http://localhost:8080/` should redirect you to the login page, where
-the bootstrapped admin account is available as email `admin@example.com`, and key `key`. Visiting
-the address `http://localhost:8080/#/login/admin@example.com/key` should also automatically log
-you in.
+The development server is bootstrapped with an admin account `admin@example.com` using the key
+`key`, which you may login as by visiting the address
+[`https://localhost:4430/login/admin@example.com/key`](https://localhost:4430/login/admin@example.com/key).
 
-Currently, `kansa/admin` is set up to run completely separately from `client`, but using the same
+Currently, `kansa/admin` is set up to run completely separately from the client, but using the same
 server address `http://localhost:8080/`. To use it, it may be easier to login first using `client`,
 or by visiting the API endpoint `https://localhost:4430/api/kansa/login?email=admin@example.com&key=key`
 to set the proper auth cookie.
@@ -71,9 +73,6 @@ across services:
   - `SESSION_SECRET` allows hugo/server and kansa/server to share authenticated sessions
   - `DATABASE_URL` and `*_PG_PASSWORD` are required for the services' database connections
 
-The [production config](docker-compose.prod.yml) includes the `client-build` service, which is used
-to build the client's JS assets, which are then served by `nginx`.
-
 
 ### Common Issues
 
@@ -88,15 +87,14 @@ The particular places that may need manual adjustment are:
   [docker-compose.prod.yml](docker-compose.prod.yml).
 
 - The `CORS_ORIGIN` variables in [hugo/server/dev.env](hugo/server/dev.env) and
-  [kansa/server/dev.env](kansa/server/dev.env) need to be space- or comma-separated lists of
+  [kansa/server/dev.env](kansa/server/dev.env) need to be space-separated lists of
   addresses at which client apps may be hosted, to allow for Cross-Origin Resource Sharing. By
-  default, the value should match the `http://localhost:8080` address of the `client` and
-  `kansa/admin` Webpack dev servers started by `npm start` in each directory.
+  default, the value should match the `http://localhost:8080` address of the client and
+  `kansa/admin` Webpack dev servers.
 
 - If you're running the server on a separate machine or if you've changed the `nginx` port
   configuration, you may need to tell clients where to find the server, using something like
-  `export API_HOST='remote.example.com'` before running `npm start`. The default is set
-  [here](client/webpack.config.js) to `localhost:4430'` or the address of your Docker VM.
+  `export API_HOST='remote.example.com'` before running `npm start`.
 
 
 ----
