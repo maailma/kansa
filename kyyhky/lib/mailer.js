@@ -4,9 +4,11 @@ const SendGrid  = require('sendgrid');
 const tfm = require('tiny-frontmatter');
 const wrap = require('wordwrap');
 
-function loginUri(email, key) {
+function loginUri(email, key, id) {
   const root = process.env.LOGIN_URI_ROOT;
-  return encodeURI(`${root}/${email}/${key}`);
+  const parts = [root, email, key];
+  if (id) parts.push(id);
+  return encodeURI(parts.join('/'));
 }
 
 function nominationsString(data) {
@@ -54,7 +56,7 @@ class Mailer {
 
   sendEmail(tmplName, data, done) {
     let tmplData = Object.assign({
-      login_uri: loginUri(data.email, data.key)
+      login_uri: loginUri(data.email, data.key, data.memberId)
     }, data);
     switch (tmplName) {
 

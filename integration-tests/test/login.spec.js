@@ -5,7 +5,6 @@ var fs = require('fs');
 var cert = fs.readFileSync('../nginx/ssl/localhost.cert','utf8');
 // For now test data is empty.
 var memberlist = [];
-var memberstats = {"":{"total":0}};
 // Create agent for unlogged and admin sessions
 var unlogged=request.agent(host,{ca:cert});
 var admin=request.agent(host,{ca:cert});
@@ -43,7 +42,15 @@ describe("Member list",function () {
 
 describe("Country statistics", function () {
     it("Returns country statistics", function (done) {
-        unlogged.get("/api/kansa/public/stats").expect(200,{status:'success', members: memberstats}).end(done)
+        unlogged.get("/api/kansa/public/stats")
+            .expect((res) => {
+                if (res.status !== 200 || res.body.status !== 'success' ||
+                    !res.body.members || !res.body.members[''].hasOwnProperty('total')
+                ) {
+                    throw new Error(`Fail! ${JSON.stringify(res.body)}`);
+                }
+            })
+            .end(done)
     })
 })
 

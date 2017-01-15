@@ -13,11 +13,6 @@ services:
     volumes:
       - ./nginx/ssl:/ssl:ro
 
-  client-build:
-    environment:
-      API_HOST: localhost:4430
-      TITLE: Production Test
-
   hugo:
     environment:
       CORS_ORIGIN: http://localhost:8080
@@ -29,6 +24,7 @@ services:
       CORS_ORIGIN: http://localhost:8080
       DATABASE_URL: postgres://kansa:pwd@postgres:5432/api
       SESSION_SECRET: dev secret
+      STRIPE_SECRET_APIKEY: sk_test_zq022Drx7npYPVEtXAVMaOJT
 
   kyyhky:
     environment:
@@ -41,13 +37,6 @@ services:
       DATABASE_URL: postgres://raami:pwd@postgres:5432/api
 
   postgres:
-    environment:
-      POSTGRES_PASSWORD: adminpwd
-      KANSA_PG_PASSWORD: pwd
-      HUGO_PG_PASSWORD: pwd
-      RAAMI_PG_PASSWORD: pwd
-
-  postgres-replica:
     environment:
       POSTGRES_PASSWORD: adminpwd
       KANSA_PG_PASSWORD: pwd

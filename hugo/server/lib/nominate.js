@@ -50,6 +50,7 @@ function sendNominationEmail(db, id) {
           data: {
             email: person.email,
             key: person.key,
+            memberId: id,
             name: [person.pfn, person.pln].filter(n => n).join(' ').trim() || person.legal_name,
             nominations
           },
@@ -67,11 +68,14 @@ function nominate(req, res, next) {
     client_ip: req.ip,
     client_ua: req.headers['user-agent'] || null,
     person_id: null,
+    signature: req.body && req.body.signature,
     category: req.body && req.body.category,
     nominations: req.body && req.body.nominations
   };
   if (!data.client_ip) return next(new Error('No client IP address!?'));
-  if (!data.category || !data.nominations) return next(new InputError('Required parameters: category, nominations'));
+  if (!data.signature || !data.category || !data.nominations) return next(
+    new InputError('Required parameters: signature, category, nominations')
+  );
   if (typeof data.nominations === 'string') try {
     data.nominations = JSON.parse(data.nominations);
   } catch (e) {

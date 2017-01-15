@@ -1,4 +1,4 @@
-FROM danieldent/postgres-replication:9.5
+FROM postgres:9.5
 
 COPY damm /damm
 

@@ -16,6 +16,7 @@ CREATE TABLE Nominations (
     client_ip text NOT NULL,
     client_ua text,
     person_id integer REFERENCES kansa.People NOT NULL,
+    signature text NOT NULL,
     category Category NOT NULL,
     nominations jsonb[] NOT NULL
 );
@@ -64,3 +65,21 @@ CREATE TRIGGER notify
 CREATE TRIGGER notify
     AFTER INSERT OR UPDATE ON Classification
     FOR EACH ROW EXECUTE PROCEDURE canon_notify();
+
+
+-- remove empty canonicalisations
+CREATE OR REPLACE FUNCTION canon_cleanup() RETURNS trigger as $$
+BEGIN
+    PERFORM FROM Classification WHERE canon_id = OLD.canon_id;
+    IF NOT FOUND THEN
+        DELETE FROM Canon WHERE id = OLD.canon_id;
+    END IF;
+    RETURN null;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER cleanup
+    AFTER UPDATE ON Classification
+    FOR EACH ROW
+    WHEN (OLD.canon_id IS DISTINCT FROM NEW.canon_id)
+    EXECUTE PROCEDURE canon_cleanup();

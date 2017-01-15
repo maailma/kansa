@@ -40,7 +40,7 @@ fetch(loginUrl)
             clearInterval(loop);
             loop = null;
           }
-        }, 10);  // delay required to not saturate server
+        }, 50);  // delay required to not saturate server
       })
       .on('end', () => {
         let i = -1;
@@ -58,7 +58,7 @@ fetch(loginUrl)
               console.error(`${paperPubs.remaining().length}/${paperPubs.data.length} paper pubs left unhandled.`);
             }, 30*1000);
           }
-        }, 10);  // delay required to not saturate server
+        }, 50);  // delay required to not saturate server
       });
   })
   .catch(err => console.error(err));

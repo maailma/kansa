@@ -15,11 +15,6 @@ services:
       - "443:443"
     restart: always
 
-  client-build:
-    environment:
-      API_HOST:
-      TITLE:
-
   hugo:
     environment:
       DATABASE_URL:
@@ -30,6 +25,7 @@ services:
     environment:
       DATABASE_URL:
       SESSION_SECRET:
+      STRIPE_SECRET_APIKEY:
     restart: always
 
   kyyhky:
@@ -39,13 +35,6 @@ services:
     restart: always
 
   postgres:
-    environment:
-      POSTGRES_PASSWORD:
-      KANSA_PG_PASSWORD:
-      HUGO_PG_PASSWORD:
-    restart: always
-
-  postgres-replica:
     environment:
       POSTGRES_PASSWORD:
       KANSA_PG_PASSWORD:

@@ -35,6 +35,10 @@ queue.process('kansa-set-key', (job, done) => {
   mailer.sendEmail(job.type, job.data, done);
 });
 
+queue.process('hugo-update-email', (job, done) => {
+  mailer.sendEmail(job.type, job.data, done);
+});
+
 queue.process('hugo-update-nominations', (job, done) => {
   const email = job.data.email;
   search.query(email).end((err, ids) => {

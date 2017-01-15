@@ -27,17 +27,22 @@ some relevant data and/or a `message` field.
   * [`POST /api/kansa/people/:id`](#post-apikansapeopleid)
   * [`POST /api/kansa/people/:id/upgrade`](#post-apikansapeopleidupgrade)
   * [WebSocket: `wss://server/api/kansa/people/updates`](#websocket-wssserverapikansapeopleupdates)
+* [Purchases](#purchases)
+  * [`POST /api/kansa/purchase`](#post-apikansapurchase)
+  * [`GET /api/kansa/purchase/prices`](#get-apikansapurchaseprices)
 * [Hugo Nominations](#hugo-nominations)
   * [`GET /api/hugo/:id/nominations`](#get-apihugoidnominations)
   * [`POST /api/hugo/:id/nominate`](#post-apihugoidnominate)
 * [Hugo Admin](#hugo-admin)
+  * [`GET /api/hugo/admin/ballots`](#get-apihugoadminballots)
   * [`GET /api/hugo/admin/ballots/:category`](#get-apihugoadminballotscategory)
   * [`GET /api/hugo/admin/canon`](#get-apihugoadmincanon)
-  * [`GET /api/hugo/admin/nominations`](#get-apihugoadminnominations)
-  * [`POST /api/hugo/admin/classify`](#post-apihugoadminclassify)
   * [`POST /api/hugo/admin/canon/:id`](#post-apihugoadmincanonid)
   * [WebSocket: `wss://server/api/hugo/admin/canon-updates`](#websocket-wssserverapihugoadmincanonupdates)
 * [Raami exhibitions](#raami)
+  * [`POST /api/hugo/admin/classify`](#post-apihugoadminclassify)
+  * [`GET /api/hugo/admin/nominations`](#get-apihugoadminnominations)
+  * [WebSocket: `wss://server/api/hugo/admin/canon-updates`](#websocket-wssserverapihugoadmincanon-updates)
 
 ----
 
@@ -72,7 +77,7 @@ Membership statistics by country
 ### `POST /api/kansa/key`
 - Parameters: `email`
 
-If `email` matches at least one known person:
+If `email` matches at least one known person (case-insensitively):
 1. Generate and store a `key`
 2. Send a message to the given `email` address with a login link
 
@@ -293,6 +298,44 @@ events to signal `'Unauthorized'` and `'Not Found'` (respectively) to the client
 ```
 
 
+## Purchases
+
+### `POST /api/kansa/purchase`
+- Parameters: `amount`, `email`, `token`,
+  `new_members: [ { membership, email, legal_name, public_first_name, public_last_name, city, state, country, paper_pubs }, ... ]`,
+  `upgrades: [ { id, membership, paper_pubs }, ... ]`
+
+Using the `token` received from Stripe, make a charge of `amount` on the card
+(once verified against the server-side calculated sum from the items) and add
+the `new_members` to the database as well as applying the specified `upgrades`.
+For new members, generate a login key and include it in the welcome email sent
+to each address. Send the receipt of the purchase to the `email` address.
+
+#### Response
+```
+{
+  status: 'success',
+  emails: ['address@example.com', ...]
+}
+```
+
+### `GET /api/kansa/purchase/prices`
+
+Current membership and paper publications prices, with `amount` in EUR cents.
+
+#### Response
+```
+{
+  memberships: {
+    Supporter: { amount: 3500, description: 'Supporting' },
+    ...,
+    Adult: { amount: 12000, description: 'Adult' },
+  },
+  PaperPubs: { amount: 1000, description: 'Paper publications' }
+}
+```
+
+
 ## Hugo Nominations
 
 ### `GET /api/hugo/:id/nominations`
@@ -357,13 +400,13 @@ nomination.
 
 ### `POST /api/hugo/:id/nominate`
 - Requires authentication
-- Parameters: `category`, `nominations`
+- Parameters: `signature`, `category`, `nominations`
 
 Find the Hugo nominations for the person matching `id`. If its email address
-does not match the session data, `hugo_admin` authority is required. `category`
-needs to be string matching one of the award categories included
-[here](postgres/init/30-hugo-init.sql). `nominations` must be a JSON array of
-objects.
+does not match the session data, `hugo_admin` authority is required. `signature`
+needs to be a non-empty string. `category` needs to be string matching one of
+the award categories included [here](postgres/init/30-hugo-init.sql).
+`nominations` must be a JSON array of objects.
 
 #### Response
 ```
@@ -373,6 +416,7 @@ objects.
   "client_ip": "::ffff:172.19.0.5",
   "client_ua": "curl/7.43.0",
   "person_id": 1,
+  "signature": "…",
   "category": "Novella",
   "nominations": [
     {
@@ -393,22 +437,42 @@ objects.
 
 ## Hugo Admin
 
+### `GET /api/hugo/admin/ballots`
+- Requires authentication and `hugo_admin` authority
+
+Fetch all current uncanonicalised ballots. Results are sorted by category, and
+expressed as `[ id, array ]` tuples where ballots with the same `id` in
+different categories are from the same nominator.
+
+#### Response
+```
+{
+  Fancast: [
+    [ 24, [ { title: 'Three Little Piggies' }, … ] ],
+    [ 42, [ { title: 'The Really Good One' }, { title: '3 pigs' }, … ] ],
+    …
+  ],
+  Novel: {
+    [ 42, [ { author: 'Asimov', title: '1984' }, … ] ],
+    …
+  },
+  …
+}
+```
+
+
 ### `GET /api/hugo/admin/ballots/:category`
 - Requires authentication and `hugo_admin` authority
 
-Fetch the current uncanonicalised ballots for `category`.
+Fetch the current uncanonicalised ballots for `category`. Results are expressed
+as `[ id, array ]` tuples where ballots with the same `id` in different
+categories are from the same nominator.
 
 #### Response
 ```
 [
-  {
-    id: 24,
-    nominations: [ { title: 'Three Little Piggies' }, … ]
-  },
-  {
-    id: 42,
-    nominations: [ { title: 'The Really Good One' }, { title: '3 pigs' }, … ]
-  },
+  [ 24, [ { title: 'Three Little Piggies' }, … ] ],
+  [ 42, [ { title: 'The Really Good One' }, { title: '3 pigs' }, … ] ],
   …
 ]
 ```
@@ -513,6 +577,7 @@ events to signal `'Unauthorized'` and `'Not Found'` (respectively) to the client
 '{"classification":{"nomination":{"author": "A friend"},"category":"Novel","canon_id":13}}'
 …
 ```
+
 
 ## Raami exhibition
 
@@ -653,4 +718,3 @@ Update works's details.
   deleted: [ `id`]
 }
 ```
-
