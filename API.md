@@ -582,6 +582,7 @@ events to signal `'Unauthorized'` and `'Not Found'` (respectively) to the client
 ## Raami exhibition
 
 ### `GET /api/raami/artists`
+
 List of members who have opted to participate in the art exhibition
 
 #### Response
@@ -594,7 +595,7 @@ List of members who have opted to participate in the art exhibition
 ]
 ```
 
-### `GET /api/raami/artists/id`
+### `GET /api/raami/artists/:id`
 
 - Parameters: `id` (required)
 
@@ -624,11 +625,11 @@ Insert new artist's details.
 ```
 {
   status: 'success',
-  inserted: [ `id`, `continent`, `url`,`filename`, `portfolio`, `category`, `orientation`, `description`, `transport`]
+  inserted: [ 'id', 'continent', 'url','filename', 'portfolio', 'category', 'orientation', 'description', 'transport' ]
 }
 ```
 
-### `PUT /api/raami/artist/id`
+### `PUT /api/raami/artist/:id`
 
 - Parameters: `id` (required), `continent`, `url`, `filename`, `portfolio`, `category`, `orientation`, `description`, `transport`
 
@@ -638,28 +639,28 @@ Update new artist's details.
 ```
 {
   status: 'success',
-  updated: [ `id`, `continent`, `url`, `filename`, `portfolio`, `category`, `orientation`, `description`, `transport`]
+  updated: [ 'id', 'continent', 'url', 'filename', 'portfolio', 'category', 'orientation', 'description', 'transport' ]
 }
 ```
 
-### `GET /api/raami/works/id`
+### `GET /api/raami/works/:id`
 
-- Parameters: ìd`(required) artists id
+- Parameters: `id` (required) artists id
 
 Ids of works for particular artists
 
 #### Response
 ```
 [
-  { id: 1 }
+  { id: 1 },
   …
 ]
 ```
 
 
-### `GET /api/raami/work/id`
+### `GET /api/raami/work/:id`
 
-- Parameters: `id` ( required ) work id
+- Parameters: `id` (required) work id
 
 Full details for singular work.
 
@@ -669,7 +670,7 @@ Full details for singular work.
   { artist_id: 1,
     title: 'Book cover',
     width: 10.0,
-    height: 10.0 ,
+    height: 10.0,
     technique: 'Oil on canvas',
     graduation: 0,
     filename: 'file.jpg',
@@ -682,7 +683,7 @@ Full details for singular work.
 
 ### `POST /api/raami/work`
 
-- Parameters: `artist_id`, `title` , `width` , `height` , `technique` , `graduation` , `filename` , `image` , `price` 
+- Parameters: `artist_id`, `title`, `width`, `height`, `technique`, `graduation`, `filename`, `image`, `price`
 
 Insert new works's details.
 
@@ -690,31 +691,32 @@ Insert new works's details.
 ```
 {
   status: 'success',
-  inserted: [ `artist_id`, `title` , `width` , `height` , `technique` , `graduation` , `filename` , `image` , `price` ]
+  inserted: [ 'artist_id', 'title', 'width', 'height', 'technique', 'graduation', 'filename', 'image', 'price' ]
 }
 ```
 
-### `PUT /api/raami/work/id`
+### `PUT /api/raami/work/:id`
 
-- Parameters: `id`,`artist_id`, `title` , `width` , `height` , `technique` , `graduation` , `filename` , `image` , `price` 
+- Parameters: `id`, `artist_id`, `title`, `width`, `height`, `technique`, `graduation`, `filename`, `image`, `price`
+
 Update works's details.
 
 #### Response
 ```
 {
   status: 'success',
-  updated: [ `id`,`artist_id`, `title` , `width` , `height` , `technique` , `graduation` , `filename` , `image` , `price` ]
+  updated: [ 'id', 'artist_id', 'title', 'width', 'height', 'technique', 'graduation', 'filename', 'image', 'price' ]
 }
 ```
 
-### `DELETE /api/raami/work/id`
+### `DELETE /api/raami/work/:id`
 
-- Patameters: id (required)
+- Patameters: `id` (required)
 
 #### Response
 ```
 {
   status: 'success',
-  deleted: [ `id`]
+  deleted: [ `id` ]
 }
 ```
