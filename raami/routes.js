@@ -14,7 +14,7 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-var db = require('../queries');
+var db = require('./queries');
 
 router.get('/people/:id', db.getPeople);
 router.get('/artists', db.getArtists);
