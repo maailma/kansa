@@ -6,6 +6,10 @@ upstream kansa {
   server                     kansa:3000;
 }
 
+upstream raami {
+  server                     raami:3000;
+}
+
 server {
   listen                     80;
   server_name                ${API_SERVER_NAME};
@@ -47,6 +51,12 @@ server {
   proxy_set_header           Host $http_host;
 
   charset                    utf-8;
+
+  location /api/raami/ {
+    proxy_pass               http://raami/;
+    client_max_body_size     0;
+
+  }
 
   location /api/hugo/ {
     proxy_pass               http://hugo/;
