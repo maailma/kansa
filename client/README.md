@@ -1,8 +1,9 @@
 # Worldcon 75 Member Services Client
 
-This is the main front-end client for [members.worldcon.fi](https://members.worldcon.fi/),
-implemented as a single-page react + redux app. For the back-end code, please see
+These are the front-end clients for [members.worldcon.fi](https://members.worldcon.fi/),
+implemented as single-page react + redux apps. For the back-end code, please see
 [worldcon75/api](https://github.com/worldcon75/api).
+
 
 ### Getting Started
 
@@ -39,3 +40,13 @@ will silently block the client's API calls:
 Also important: the API server by default self-hosts a client that uses the latest-release
 production code hosted on GitHub Pages, so you should make sure that after bypassing the certificate
 warning you navigate to your actual client development version, at `http://localhost:8080/`.
+
+
+### kansa-admin
+
+ Currently, `kansa-admin` is set up to run completely separately from the main `client` interface.
+ For development, both use the same server address `http://localhost:8080/` so the back-end CORS
+ settings should not need to be updated and authentication cookies can be shared. To use it, it may
+ be easier to login first using `client`, or by visiting the API endpoint
+ `https://localhost:4430/api/kansa/login?email=admin@example.com&key=key` to set the proper auth
+ cookie.
