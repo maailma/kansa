@@ -18,13 +18,13 @@ import people from './reducers/people';
 import user from './reducers/user';
 
 const store = createStore(combineReducers({ people, user }));
-const api = new API(`https://${process.env.API_HOST}/api/kansa/`);
+const api = new API(API_HOST ? `https://${API_HOST}/api/kansa/` : '/api/kansa/');
 api.GET('user')
   .then(data => store.dispatch({ type: 'LOGIN', data }))
   .then(() => api.GET('people'))
   .then(data => store.dispatch({ type: 'INIT PEOPLE', data }))
   .then(() => {
-    const ws = new WebSocket(`wss://${process.env.API_HOST}/api/kansa/people/updates`);
+    const ws = new WebSocket(`wss://${API_HOST || location.host}/api/kansa/people/updates`);
     ws.onmessage = msg => {
       const data = JSON.parse(msg.data);
       store.dispatch({ type: 'SET PERSON', data });
@@ -37,7 +37,7 @@ api.GET('user')
 render(
   <Provider store={store}>
     <MuiThemeProvider muiTheme={getMuiTheme()}>
-      <App api={api} title={process.env.TITLE} />
+      <App api={api} title={TITLE} />
     </MuiThemeProvider>
   </Provider>,
   document.getElementById('app')

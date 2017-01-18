@@ -1,8 +1,11 @@
 const url = require('url');
 const webpack = require('webpack');
 
-const apiHost = process.env.API_HOST || (process.env.DOCKER_HOST && url.parse(process.env.DOCKER_HOST).hostname || 'localhost') + ':4430';
-console.log('Using API host', apiHost);
+const apiHost = process.env.NODE_ENV === 'production' ? '' : (
+  process.env.API_HOST ||
+  (process.env.DOCKER_HOST && url.parse(process.env.DOCKER_HOST).hostname || 'localhost') + ':4430'
+);
+if (apiHost) console.log('Using API host', apiHost);
 
 module.exports = {
   entry: './src/index.jsx',
@@ -24,10 +27,10 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
+      API_HOST: JSON.stringify(apiHost),
+      TITLE: JSON.stringify(process.env.TITLE || 'Worldcon 75 Kansa Admin'),
       'process.env': {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV || ''),
-        API_HOST: JSON.stringify(apiHost),
-        TITLE: JSON.stringify(process.env.TITLE || 'Kansa')
       }
     })
   ],
