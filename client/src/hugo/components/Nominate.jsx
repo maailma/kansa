@@ -39,6 +39,7 @@ const ActiveNominations = ({ name, signature }) => <div>
       style={{ paddingTop: 20 }}
     >
       <h1>{ 'Hugo nominations for ' + name }</h1>
+      <h3 style={{ marginTop: -20 }}>Signing as "{signature}"</h3>
     </Col>
     <Col
       xs={10} xsOffset={1}
