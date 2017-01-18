@@ -91,7 +91,7 @@ export default class MemberTable extends React.Component {
                 width={width}
                 onRowClick={ ({ index }) => this.props.onMemberSelect(list.get(index)) }
               >
-                <FlexColumn dataKey='member_number' label='#' width={40} />
+                <FlexColumn dataKey='member_number' label='#' width={50} />
                 <FlexColumn dataKey='membership' label='Type' width={80} />
                 <FlexColumn dataKey='legal_name' label='Name' width={120} flexGrow={1} />
                 <FlexColumn dataKey='email' label='Email' width={210} />
@@ -100,6 +100,9 @@ export default class MemberTable extends React.Component {
                 />
                 <FlexColumn dataKey='loc' label='Location' width={120} flexGrow={1}
                   cellDataGetter = { ({ rowData }) => fullLocation(rowData) }
+                />
+                <FlexColumn dataKey='last_modified' label='Mod' width={90}
+                  cellDataGetter = { ({ dataKey, rowData }) => rowData.get(dataKey).substr(0,10) }
                 />
               </FlexTable>
             ) }
