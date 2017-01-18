@@ -133,7 +133,20 @@ export default class Member extends React.Component {
               .catch(e => console.error(e));  // TODO: report errors better
           }} />
       ]}
-      title={ membership == 'NonMember' ? 'Non-member' : `Member #${member.get('member_number')} (${membership})` }
+      title={<div>
+        <div style={{
+          color: 'rgba(0, 0, 0, 0.3)',
+          float: 'right',
+          fontSize: 11,
+          fontStyle: 'italic',
+          lineHeight: 'normal',
+          textAlign: 'right'
+        }}>
+          Last modified<br />
+          { member.get('last_modified') }
+        </div>
+        { membership == 'NonMember' ? 'Non-member' : `Member #${member.get('member_number')} (${membership})` }
+      </div>}
       open={true}
       autoScrollBodyContent={true}
       bodyClassName='memberDialog'
