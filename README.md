@@ -9,7 +9,6 @@ These are the back-end services used by [members.worldcon.fi](https://members.wo
 - **`hugo/server`** - An express.js app providing the `/api/hugo/` parts of [this API](API.md)
 - **`kansa/server`** - An express.js app providing the `/api/kansa/` parts of [this API](API.md)
 - **`kansa/importer`** - A tool for importing CSV & JSON data from our prior registry format
-- **`kansa/admin`** - An internal front-end for the registry data; a react + redux single-page app
 - **`kyyhky`** - Internal mailing service for hugo & kansa, using [Kue](http://automattic.github.io/kue/)
 - **`nginx`** - An SSL-terminating reverse proxy for Kansa
 - **`postgres`** - Configuration & schemas for our database
@@ -50,13 +49,11 @@ certificate:
   - **`curl`**: Use the `-k` or `--insecure` flag to perform "insecure" SSL connections
 
 The development server is bootstrapped with an admin account `admin@example.com` using the key
-`key`, which you may login as by visiting the address
-[`https://localhost:4430/login/admin@example.com/key`](https://localhost:4430/login/admin@example.com/key).
-
-Currently, `kansa/admin` is set up to run completely separately from the client, but using the same
-server address `http://localhost:8080/`. To use it, it may be easier to login first using `client`,
-or by visiting the API endpoint `https://localhost:4430/api/kansa/login?email=admin@example.com&key=key`
-to set the proper auth cookie.
+`key`, which you may login as by visiting either of the addresses
+[`https://localhost:4430/login/admin@example.com/key`](https://localhost:4430/login/admin@example.com/key)
+(for smooth browser redicretion) or
+[`https://localhost:4430/api/kansa/login?email=admin@example.com&key=key`](`https://localhost:4430/api/kansa/login?email=admin@example.com&key=key`)
+(direct login, with JSON response).
 
 
 ### Configuration
@@ -86,11 +83,10 @@ The particular places that may need manual adjustment are:
   [docker-compose.override.yml](docker-compose.override.yml) and/or
   [docker-compose.prod.yml](docker-compose.prod.yml).
 
-- The `CORS_ORIGIN` variables in [hugo/server/dev.env](hugo/server/dev.env) and
-  [kansa/server/dev.env](kansa/server/dev.env) need to be space-separated lists of
+- The `CORS_ORIGIN` variables in the docker-compose config files need to be space-separated lists of
   addresses at which client apps may be hosted, to allow for Cross-Origin Resource Sharing. By
-  default, the value should match the `http://localhost:8080` address of the client and
-  `kansa/admin` Webpack dev servers.
+  default, the value should match the `http://localhost:8080` address of the client Webpack dev
+  servers.
 
 - If you're running the server on a separate machine or if you've changed the `nginx` port
   configuration, you may need to tell clients where to find the server, using something like
