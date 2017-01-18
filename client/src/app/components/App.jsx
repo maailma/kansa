@@ -10,14 +10,14 @@ import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
 import { hideMessage } from '../actions/app'
 import { logout } from '../actions/auth'
 
-const AppBar = ({ email, logout }) => <Paper zDepth={2} >
+const AppBar = ({ email, logout, title }) => <Paper zDepth={2} >
   <Toolbar
     style={{
       backgroundColor: 'white'
     }}
   >
     <ToolbarGroup>
-      <ToolbarTitle text={TITLE} />
+      <ToolbarTitle text={title} />
     </ToolbarGroup>
     <ToolbarGroup>
       <FlatButton
@@ -32,10 +32,11 @@ const AppBar = ({ email, logout }) => <Paper zDepth={2} >
   </Toolbar>
 </Paper>;
 
-const App = ({ children, email, hideMessage, logout, message }) => <div>
+const App = ({ children, email, hideMessage, logout, message, title }) => <div>
   { email ? <AppBar
     email={email}
     logout={logout}
+    title={title}
   /> : null }
   <main>
     {children}
@@ -50,7 +51,8 @@ const App = ({ children, email, hideMessage, logout, message }) => <div>
 export default connect(
   ({ app, user }) => ({
     email: user.get('email'),
-    message: app.get('message')
+    message: app.get('message'),
+    title: app.get('title')
   }), {
     hideMessage,
     logout

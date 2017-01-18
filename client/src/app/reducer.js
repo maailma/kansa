@@ -2,7 +2,8 @@ import { Map } from 'immutable'
 
 const defaultState = Map({
   message: '',
-  person: -1
+  person: -1,
+  title: TITLE
 });
 
 export default function(state = defaultState, action) {
@@ -14,6 +15,9 @@ export default function(state = defaultState, action) {
 
     case 'SET_PERSON':
       return state.set('person', action.person);
+
+    case 'SET_TITLE':
+      return state.set('title', action.title);
 
     case 'SHOW_MESSAGE':
       return state.set('message', action.message);

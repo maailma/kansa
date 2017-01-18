@@ -8,6 +8,11 @@ export default ({ dispatch }) => (next) => (action) => {
 
   } else switch (action.type) {
 
+    case 'SET_TITLE':
+      action.title = action.title ? `${TITLE} ${action.title}` : TITLE;
+      document.title = action.title;
+      return next(action);
+
     case 'SHOW_MESSAGE':
       console.log(action.message);
       break;

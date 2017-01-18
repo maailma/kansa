@@ -3,6 +3,11 @@ export const setPerson = (person) => ({
   person
 });
 
+export const setTitle = (title) => ({
+  type: 'SET_TITLE',
+  title
+});
+
 export const showMessage = (message) => ({
   type: 'SHOW_MESSAGE',
   message
