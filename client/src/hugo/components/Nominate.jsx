@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 const { Col, Row } = require('react-flexbox-grid');
 import Snackbar from 'material-ui/Snackbar'
 
+import { setTitle } from '../../app/actions/app'
 import { setNominator, clearNominationError } from '../actions'
 import { categoryInfo } from '../constants'
 
@@ -151,7 +152,8 @@ class Nominate extends React.Component {
   static propTypes = {
     id: React.PropTypes.number.isRequired,
     person: ImmutablePropTypes.map,
-    setNominator: React.PropTypes.func.isRequired
+    setNominator: React.PropTypes.func.isRequired,
+    setTitle: React.PropTypes.func.isRequired
   }
 
   constructor(props) {
@@ -164,6 +166,14 @@ class Nominate extends React.Component {
   componentWillReceiveProps(nextProps) {
     const { id, person, setNominator } = nextProps;
     if (person && id !== person.get('id')) setNominator(person.get('id'));
+  }
+
+  componentDidMount() {
+    this.props.setTitle('Hugo Nominations')
+  }
+
+  componentWillUnmount() {
+    this.props.setTitle('');
   }
 
   render() {
@@ -198,6 +208,7 @@ export default connect(
       person: people && people.find(p => p.get('id') === id)
     }
   }, {
-    setNominator
+    setNominator,
+    setTitle
   }
 )(Nominate);

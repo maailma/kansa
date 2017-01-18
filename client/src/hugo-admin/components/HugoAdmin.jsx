@@ -3,6 +3,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { locationShape } from 'react-router'
 
+import { setTitle } from '../../app/actions/app'
 import { initHugoAdmin } from '../actions'
 import NominationToolbar from './NominationToolbar'
 
@@ -32,6 +33,14 @@ class HugoAdmin extends React.Component {
     if (!nominations && isAdmin) initHugoAdmin();
   }
 
+  componentDidMount() {
+    this.props.setTitle('Hugo Admin')
+  }
+
+  componentWillUnmount() {
+    this.props.setTitle('');
+  }
+
   render() {
     const { children, isAdmin, location: { pathname }, params: { category } } = this.props;
     const { query } = this.state;
@@ -55,6 +64,7 @@ export default connect(
     isAdmin: user.get('hugoAdmin', false),
     nominations: hugoAdmin.getIn(['nominations', category])
   }), {
-    initHugoAdmin
+    initHugoAdmin,
+    setTitle
   }
 )(HugoAdmin);
