@@ -21,7 +21,11 @@ CREATE TABLE IF NOT EXISTS Artist (
     auction integer,
     print integer,
     digital boolean,
-    legal boolean
+    legal boolean,
+    agent text,
+    contact text,
+    waitlist boolean,
+    postage integer
     );
 
 CREATE TABLE IF NOT EXISTS Works (
