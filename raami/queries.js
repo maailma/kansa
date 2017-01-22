@@ -26,7 +26,7 @@ function getPeople(req, res, next) {
   var _id = parseInt(req.params.id);                             
   db.any(`
     SELECT id, person_id, name, continent, url, filename, filedata, description,
-           transport, legal, auction, print, digital
+           transport, legal, auction, print, digital, agent, contact, waitlist, postage
       FROM Artist
      WHERE person_id = $1`, _id
   )
@@ -53,8 +53,7 @@ function getArtists(req, res, next) {
 function getArtist(req, res, next) {
   var _id = parseInt(req.params.id);
   db.one(`
-    SELECT person_id, name, continent, url, filename, filedata, description,
-           transport, legal, auction, print, digital
+    SELECT *
       FROM Artist
      WHERE id = $1`, _id
   )
@@ -69,16 +68,17 @@ function getArtist(req, res, next) {
 
 
 function createArtist(req, res, next) {
+
   db.one(`
      INSERT INTO Artist
                  (
                    person_id, name, continent, url, filename, filedata,
-                   description, transport, legal, auction, print, digital
+                   description, transport, legal, auction, print, digital, agent, contact, waitlist, postage
                  )
           VALUES (
                    $(person_id), $(name), $(continent), $(url), $(filename),
                    $(filedata), $(description), $(transport), $(legal),
-                   $(auction), $(print), $(digital)
+                   parseInt($(auction)), parseInt($(print)), $(digital), $(agent), $(contact), $(waitlist), $(postage)
                  )
        RETURNING id`, req.body
   )
@@ -102,8 +102,8 @@ function updateArtist(req, res, next) {
     UPDATE Artist
        SET continent=$1, url=$2, filename=$3, filedata=$4, name=$5,
            description=$6, transport=$7, legal=$8, auction=$9, print=$10,
-           digital=$11
-     WHERE id=$12`, [
+           digital=$11,agent=$12,contact=$13,$waitlist=$14,$postage=$15
+     WHERE id=$15`, [
       req.body.continent,
       req.body.url,
       req.body.filename,
@@ -112,9 +112,13 @@ function updateArtist(req, res, next) {
       req.body.description,
       req.body.transport,
       req.body.legal,
-      req.body.auction,
-      req.body.print,
+      parseInt(req.body.auction),
+      parseInt(req.body.print),
       req.body.digital,
+      req.body.agent,
+      req.body.contact,
+      req.body.waitlist,
+      req.body.postage,
       _id
     ]
   )

@@ -10,6 +10,13 @@ router.use(function(req, res, next) {
   next();
  });
 
+function authenticate(req, res, next) {
+  if (req.session && req.session.user && req.session.user.email) next();
+  else res.status(401).json({ status: 'unauthorized' });
+}
+
+router.use(authenticate);
+
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
