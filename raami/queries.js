@@ -78,7 +78,7 @@ function createArtist(req, res, next) {
           VALUES (
                    $(person_id), $(name), $(continent), $(url), $(filename),
                    $(filedata), $(description), $(transport), $(legal),
-                   parseInt($(auction)), parseInt($(print)), $(digital), $(agent), $(contact), $(waitlist), $(postage)
+                   parseInt($(auction)), parseInt($(print)), $(digital), $(agent), $(contact), $(waitlist), parseInt($(postage))
                  )
        RETURNING id`, req.body
   )
@@ -118,7 +118,7 @@ function updateArtist(req, res, next) {
       req.body.agent,
       req.body.contact,
       req.body.waitlist,
-      req.body.postage,
+      parseInt(req.body.postage),
       _id
     ]
   )
