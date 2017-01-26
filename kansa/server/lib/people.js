@@ -3,7 +3,7 @@ const sendEmail = require('./kyyhky-send-email');
 const LogEntry = require('./types/logentry');
 const Person = require('./types/person');
 
-module.exports = { getPublicPeople, getPublicStats, getPeople, getPerson, addPerson, authAddPerson, updatePerson };
+module.exports = { getPublicPeople, getPublicStats, getMemberEmails, getPeople, getPerson, addPerson, authAddPerson, updatePerson };
 
 function getPublicPeople(req, res, next) {
   req.app.locals.db.any(`SELECT country, membership,
@@ -51,6 +51,40 @@ function getPeopleQuery(req, res, next) {
   req.app.locals.db.any(`SELECT * FROM People WHERE ${cond.join(' AND ')}`, req.query)
     .then(data => res.status(200).json(data))
     .catch(err => next(err));
+}
+
+function getMemberEmails(req, res, next) {
+  if (!req.session.user.member_admin) return res.status(401).json({ status: 'unauthorized' });
+  req.app.locals.db.any(`
+      SELECT email, legal_name AS ln, public_first_name AS pfn, public_last_name AS pln
+        FROM People
+       WHERE email != '' AND membership != 'NonMember'
+    ORDER BY public_last_name, public_first_name, legal_name`
+  )
+    .then(raw => {
+      const namesByEmail = raw.reduce((map, {email, ln, pfn, pln}) => {
+        const name = [pfn, pln].filter(n => n).join(' ').replace(/  +/g, ' ').trim() || ln.trim();
+        if (map[email]) map[email].push(name);
+        else map[email] = [name];
+        return map;
+      }, {});
+      const getCombinedName = (names) => {
+        switch (names.length) {
+          case 0: return '';
+          case 1: return names[0];
+          case 2: return `${names[0]} and ${names[1]}`;
+          default:
+            names[names.length - 1] = `and ${names[names.length - 1]}`;
+            return names.join(', ');
+        }
+      };
+      const data = Object.keys(namesByEmail).map(email => {
+        const name = getCombinedName(namesByEmail[email]);
+        return { email, name };
+      });
+      res.status(200).json(data);
+    })
+    .catch(next);
 }
 
 function getPeople(req, res, next) {

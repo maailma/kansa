@@ -45,6 +45,8 @@ router.get('/purchase/prices', purchase.getPrices);
 router.use(user.authenticate);
 router.all('/logout', user.logout);
 
+router.get('/members/emails', people.getMemberEmails);
+
 router.get('/people', people.getPeople);
 router.post('/people', people.authAddPerson);
 
