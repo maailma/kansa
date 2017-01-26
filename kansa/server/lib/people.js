@@ -3,7 +3,11 @@ const sendEmail = require('./kyyhky-send-email');
 const LogEntry = require('./types/logentry');
 const Person = require('./types/person');
 
-module.exports = { getPublicPeople, getPublicStats, getMemberEmails, getPeople, getPerson, addPerson, authAddPerson, updatePerson };
+module.exports = {
+  getPublicPeople, getPublicStats,
+  getMemberEmails, getMemberPaperPubs, getPeople,
+  getPerson, addPerson, authAddPerson, updatePerson
+};
 
 function getPublicPeople(req, res, next) {
   req.app.locals.db.any(`SELECT country, membership,
@@ -82,6 +86,21 @@ function getMemberEmails(req, res, next) {
         const name = getCombinedName(namesByEmail[email]);
         return { email, name };
       });
+      res.status(200).csv(data, true);
+    })
+    .catch(next);
+}
+
+function getMemberPaperPubs(req, res, next) {
+  if (!req.session.user.member_admin) return res.status(401).json({ status: 'unauthorized' });
+  req.app.locals.db.any(`
+        SELECT paper_pubs->>'name' AS name,
+               paper_pubs->>'address' AS address,
+               paper_pubs->>'country' AS country
+          FROM People
+         WHERE paper_pubs IS NOT NULL AND membership != 'NonMember'`
+  )
+    .then(data => {
       res.status(200).csv(data, true);
     })
     .catch(next);

@@ -47,6 +47,7 @@ router.use(user.authenticate);
 router.all('/logout', user.logout);
 
 router.get('/members/emails', people.getMemberEmails);
+router.get('/members/paperpubs', people.getMemberPaperPubs);
 
 router.get('/people', people.getPeople);
 router.post('/people', people.authAddPerson);
