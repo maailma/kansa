@@ -56,7 +56,7 @@ function getPeopleQuery(req, res, next) {
 function getMemberEmails(req, res, next) {
   if (!req.session.user.member_admin) return res.status(401).json({ status: 'unauthorized' });
   req.app.locals.db.any(`
-      SELECT email, legal_name AS ln, public_first_name AS pfn, public_last_name AS pln
+      SELECT lower(email) AS email, legal_name AS ln, public_first_name AS pfn, public_last_name AS pln
         FROM People
        WHERE email != '' AND membership != 'NonMember'
     ORDER BY public_last_name, public_first_name, legal_name`
@@ -82,7 +82,7 @@ function getMemberEmails(req, res, next) {
         const name = getCombinedName(namesByEmail[email]);
         return { email, name };
       });
-      res.status(200).json(data);
+      res.status(200).csv(data, true);
     })
     .catch(next);
 }
