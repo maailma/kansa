@@ -15,6 +15,7 @@ var options = {
 };
 
 var pgp = require("pg-promise")(options);
+var db = pgp(process.env.DATABASE_URL)
 
 var routes = require('./routes');
 
@@ -27,7 +28,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
 
 app.use(session({
   cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 },  // 30 days
