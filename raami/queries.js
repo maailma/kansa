@@ -1,12 +1,12 @@
-var promise = require("bluebird");
+// var promise = require("bluebird");
 
-var options = {
-  // Initialization Options
-  promiseLib: promise
-};
+// var options = {
+//   // Initialization Options
+//   promiseLib: promise
+// };
 
-var pgp = require("pg-promise")(options);
-var db = pgp(process.env.DATABASE_URL)
+// var pgp = require("pg-promise")(options);
+// var db = pgp(process.env.DATABASE_URL)
 
 
 module.exports = {

@@ -4,6 +4,18 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+const session = require('express-session');
+const pgSession = require('connect-pg-simple')(session);
+
+var promise = require("bluebird");
+
+var options = {
+  // Initialization Options
+  promiseLib: promise
+};
+
+var pgp = require("pg-promise")(options);
+
 var routes = require('./routes');
 
 var app = express();
@@ -15,6 +27,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+
+app.use(session({
+  cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 },  // 30 days
+  name: 'w75',
+  resave: false,
+  saveUninitialized: false,
+  secret: process.env.SESSION_SECRET,
+  store: new pgSession({
+    pg: pgp.PG,
+    pruneSessionInterval: 24 * 60 * 60  // 1 day
+  })
+}));
 
 app.use('/', routes);
 
