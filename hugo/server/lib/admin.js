@@ -60,9 +60,13 @@ class Admin {
   }
 
   getCanon(req, res, next) {
-    this.db.any(`SELECT id, category, nomination FROM Canon`)
-      .then(data => res.status(200).json(data.reduce((canon, { id, category, nomination }) => {
-        const entry = [ id, nomination ];
+    this.db.any(`
+      SELECT id, category, nomination, disqualified, relocated
+        FROM Canon`
+    )
+      .then(data => res.status(200).json(data.reduce((canon, entry) => {
+        const category = entry.category;
+        delete entry.category;
         if (canon.hasOwnProperty(category)) {
           canon[category].push(entry);
         } else {
@@ -148,17 +152,22 @@ class Admin {
     const data = {
       id: parseInt(req.params.id),
       category: req.body.category,
-      nomination: req.body.nomination
+      nomination: req.body.nomination,
+      disqualified: req.body.disqualified || false,
+      relocated: req.body.relocated || null
     };
     if (!data.category || !data.nomination) {
       return next(new InputError('Required fields: category, nomination'));
     }
     this.db.one(`
-      UPDATE Canon
-      SET category = $(category), nomination = $(nomination)::jsonb
-      WHERE id = $(id)
-      RETURNING id
-    `, data)
+         UPDATE Canon
+            SET category = $(category),
+                nomination = $(nomination)::jsonb,
+                disqualified = $(disqualified),
+                relocated = $(relocated)
+          WHERE id = $(id)
+      RETURNING id`, data
+    )
       .then(() => res.status(200).json({ status: 'success' }))
       .catch(next);
   }

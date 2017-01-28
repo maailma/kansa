@@ -480,17 +480,18 @@ categories are from the same nominator.
 - Requires authentication and `hugo_admin` authority
 
 Fetch the set of canonical nominations. Results are sorted by category, and
-expressed as `[ id, object ]` tuples.
+expressed as `{ id, data, disqualified, relocated }` objects.
 
 #### Response
 ```
 {
   Fancast: [
-    [ 2, { title: 'The Really Good One' } ],
-    [ 3, { title: 'Three Little Piggies' } ]
+    { id: 2, data: { title: 'The Really Good One' }, disqualified: false },
+    { id: 3, data: { title: 'Three Little Piggies' }, disqualified: true  }
   ],
-  Novel: [
-    [ 6, { author: 'Asimov', title: '1984' } ]
+  Novella: [
+    { id: 6, data: { author: 'Asimov', title: '1984' },
+      disqualified: false, relocated: 'Novel' }
   ],
   …
 }
@@ -499,9 +500,9 @@ expressed as `[ id, object ]` tuples.
 
 ### `POST /api/hugo/admin/canon/:id`
 - Requires authentication and `hugo_admin` authority
-- Parameters: `category` (required), `nomination` (required)
+- Parameters: `category` (required), `nomination` (required), `disqualified`, `relocated`
 
-Sets the `category` and `nomination` for the canonical nomination `id`.
+Sets all the fields for the canonical nomination `id`.
 
 #### Response
 ```
@@ -571,7 +572,7 @@ events to signal `'Unauthorized'` and `'Not Found'` (respectively) to the client
 
 #### Response
 ```
-'{"canon":{"id":13,"category":"Novel","nomination":{"author":"That Guy","title":"That Book"}}}'
+'{"canon":{"id":13,"category":"Novel","nomination":{"author":"That Guy","title":"That Book"},"disqualified":false}}'
 '{"classification":{"nomination":{"author": "A friend"},"category":"Novel","canon_id":13}}'
 …
 ```
