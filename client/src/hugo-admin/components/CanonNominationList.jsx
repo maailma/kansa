@@ -151,7 +151,7 @@ class CanonNominationList extends React.Component {
     const { sortBy, sortDirection } = this.state;
     let list = this.list.sortBy(n => sortBy === 'ballotCount'
       ? this.ballotCount(n)
-      : n.getIn(['data', sortBy], '').toLowerCase().trim()
+      : n.getIn(['data', sortBy], '').toLowerCase().trim().replace(/^(?:a|an|the) +/, '')
     );
     if (sortDirection === SortDirection.DESC) list = list.reverse();
     return (
