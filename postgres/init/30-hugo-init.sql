@@ -25,6 +25,8 @@ CREATE TABLE Canon (
     id SERIAL PRIMARY KEY,
     category Category NOT NULL,
     nomination jsonb NOT NULL,
+    disqualified bool NOT NULL DEFAULT false,
+    relocated Category,
     UNIQUE (category, nomination)
 );
 
