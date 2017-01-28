@@ -24,7 +24,7 @@ module.exports = {
 
 function getPeople(req, res, next) {
   var _id = parseInt(req.params.id);                             
-  db.any(`
+  req.app.locals.db.any(`
     SELECT id, person_id, name, continent, url, filename, filedata, description,
            transport, legal, auction, print, digital, agent, contact, waitlist, postage
       FROM Artist
@@ -40,7 +40,7 @@ function getPeople(req, res, next) {
 }
 
 function getArtists(req, res, next) {
-  db.any('SELECT person_id, id, name FROM Artist')
+  req.app.locals.db.any('SELECT person_id, id, name FROM Artist')
     .then(function (data) {
       res.status(200)
         .json(data);
@@ -52,7 +52,7 @@ function getArtists(req, res, next) {
 
 function getArtist(req, res, next) {
   var _id = parseInt(req.params.id);
-  db.one(`
+  req.app.locals.db.one(`
     SELECT *
       FROM Artist
      WHERE id = $1`, _id
@@ -69,7 +69,7 @@ function getArtist(req, res, next) {
 
 function createArtist(req, res, next) {
 
-  db.one(`
+  req.app.locals.db.one(`
      INSERT INTO Artist
                  (
                    person_id, name, continent, url, filename, filedata,
@@ -98,7 +98,7 @@ function createArtist(req, res, next) {
 
 function updateArtist(req, res, next) {
   var _id = parseInt(req.params.id);
-  db.none(`
+  req.app.locals.db.none(`
     UPDATE Artist
        SET continent=$1, url=$2, filename=$3, filedata=$4, name=$5,
            description=$6, transport=$7, legal=$8, auction=$9, print=$10,
@@ -155,7 +155,7 @@ function updateArtist(req, res, next) {
 
 function getWorks(req, res, next) {
   var _id = parseInt(req.params.id);
-  db.any(`
+  req.app.locals.db.any(`
     SELECT id, artist_id, title, width, height, gallery, orientation, technique,
            filename, filedata, year, price
       FROM Works
@@ -174,7 +174,7 @@ function getWorks(req, res, next) {
 
 function getWork(req, res, next) {
   var _id = parseInt(req.params.id);
-  db.one(`
+  req.app.locals.db.one(`
     SELECT artist_id, title, width, height, gallery, orientation, technique,
            filename, filedata, year, price
       FROM Works
@@ -191,7 +191,7 @@ function getWork(req, res, next) {
 
 
 function createWork(req, res, next) {
-  db.one(`
+  req.app.locals.db.one(`
     INSERT INTO Works
                 (
                   artist_id, title, width, height, gallery, orientation,
@@ -219,7 +219,7 @@ function createWork(req, res, next) {
 
 function updateWork(req, res, next) {
   var _id = parseInt(req.params.id)	
-  db.none(`
+  req.app.locals.db.none(`
     UPDATE Works
        SET artist_id=$1, title=$2, width=$3, height=$4, gallery=$5, filename=$6,
            filedata=$7, price=$8, year=$9, orientation=$10, technique=$11

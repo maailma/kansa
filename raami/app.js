@@ -21,6 +21,8 @@ var routes = require('./routes');
 
 var app = express();
 
+app.locals.db = db;
+
 app.use(bodyParser.json({limit: '2mb'}));
 app.use(bodyParser.urlencoded({limit: '2mb',extended: true, parameterLimit:2000}));
 app.use(logger('dev'));
