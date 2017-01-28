@@ -69,7 +69,13 @@ export default ({ dispatch, getState }) => (next) => (action) => {
 
     case 'UPDATE_CANON_ENTRY': {
       const { canon_id, category, nomination } = action;
-      return api.POST(`hugo/admin/canon/${canon_id}`, { category, nomination })
+      const { data, disqualified, relocated } = nomination.toJS();
+      return api.POST(`hugo/admin/canon/${canon_id}`, {
+        category,
+        nomination: data,
+        disqualified,
+        relocated
+      })
         .catch(handleError(action));
     }
 

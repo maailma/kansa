@@ -132,7 +132,7 @@ class NominationDetails extends React.Component {
     const category = nomination.get('category');
     const data = nomination.get('data');
     classify(category, [data], null);
-    if (category === this.category && canon.equals(data)) {
+    if (category === this.category && canon.get('data').equals(data)) {
       let index = nominations.findIndex(nom => !nom.equals(nomination) && nom.get('category') === category);
       if (index === -1) index = nominations.findIndex(nom => !nom.equals(nomination));
       if (index !== -1) this.setCanonicalEntry({ index });
@@ -190,7 +190,7 @@ class NominationDetails extends React.Component {
     const nomination = nominations.get(index);
     const isCanon = nomination &&
       this.category === nomination.get('category') &&
-      canon.delete('disqualified').equals(nomination.get('data'));
+      canon.get('data').equals(nomination.get('data'));
     return isCanon ? 'canon-entry' : '';
   }
 
@@ -198,8 +198,7 @@ class NominationDetails extends React.Component {
     const { canon, nominations, setSelected, updateCanonEntry } = this.props;
     const nomination = nominations.get(index);
     const category = nomination.get('category');
-    const data = nomination.get('data').set('disqualified', canon.get('disqualified', false));
-    updateCanonEntry(this.canonId, category, data);
+    updateCanonEntry(this.canonId, category, canon.set('data', nomination.get('data')));
     setSelected(nomination);
   }
 

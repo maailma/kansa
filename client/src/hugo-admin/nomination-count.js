@@ -41,7 +41,7 @@ export function countRawBallots(rawBallots, nomination) {
  * @param {string} category
  * @param {Map<string, Map<number, List<Nomination>>>} allBallots
  * @param {Map<string, List<Map<{ canon_id: number, data: Nomination }>>>} allNominations
- * @param {Map<canon_id, Nomination>} canon
+ * @param {Map<canon_id, Map<{ data: Nomination, disqualified: bool, relocated: string }>>} canon
  * @returns {List<Set<Nomination>>}
  */
 export function cleanBallots(category, allBallots, allNominations, canon) {
@@ -64,7 +64,7 @@ export function cleanBallots(category, allBallots, allNominations, canon) {
               // canonicalise nomination within category
               ballots.forEach((ballot, id) => {
                 if (ballot.includes(nd)) {
-                  ballots.set(id, ballot.map(nom => nd.equals(nom) ? cd : nom));
+                  ballots.set(id, ballot.map(nom => nd.equals(nom) ? cd.get('data') : nom));
                 }
               });
             }
@@ -83,12 +83,12 @@ export function cleanBallots(category, allBallots, allNominations, canon) {
             if (srcBallot.includes(nd)) {
               const tgtBallot = ballots.get(id);
               if (!tgtBallot) {
-                ballots.set(id, List.of(cd));
+                ballots.set(id, List.of(cd.get('data')));
               } else if (tgtBallot.size < maxNominationsPerCategory) {
-                ballots.set(id, tgtBallot.push(cd));
+                ballots.set(id, tgtBallot.push(cd.get('data')));
               } else {
                 console.log(
-                  `Dropping mis-nomination by #${id} due to full ballot`,
+                  `Dropping mis-categorisation by #${id} due to full ballot of`,
                   cd.toJS(), `from ${cat}`, srcBallot.toJS(),
                   `to ${category}`, tgtBallot.toJS()
                 );

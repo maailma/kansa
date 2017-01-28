@@ -1,9 +1,11 @@
-export const addCanon = ({ category, id, nomination }) => ({
+export const addCanon = ({ category, id, nomination, disqualified, relocated }) => ({
   module: 'hugo-admin',
   type: 'ADD_CANON',
   category,
+  disqualified,
   id,
-  nomination
+  nomination,
+  relocated
 });
 
 export const addClassification = ({ canon_id, category, nomination }) => ({

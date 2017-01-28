@@ -13,12 +13,18 @@ export default (state = defaultState, action) => {
   if (error || module !== 'hugo-admin') return state;
   switch (type) {
 
-    case 'ADD_CANON':
-      const prevCategory = state.get('canon').findKey(canon => canon.has(action.id));
+    case 'ADD_CANON': {
+      const { id, nomination, disqualified, relocated } = action;
+      const prevCategory = state.get('canon').findKey(canon => canon.has(id));
       if (prevCategory && prevCategory !== category) {
-        state = state.deleteIn(['canon', prevCategory, action.id]);
+        state = state.deleteIn(['canon', prevCategory, id]);
       }
-      return state.setIn(['canon', category, action.id], fromJS(action.nomination));
+      return state.setIn(['canon', category, id], fromJS({
+        data: nomination,
+        disqualified,
+        relocated
+      }));
+    }
 
     case 'ADD_CLASSIFICATION':
       return state.updateIn(['nominations', category], (nominations) => {
@@ -46,7 +52,7 @@ export default (state = defaultState, action) => {
     case 'SET_CANON':
       return state.set('canon', Map(Object.keys(action.canon).map(
         category => [ category, Map(action.canon[category].map(
-          ([ id, nomination ]) => ([ id, fromJS(nomination) ])
+          ({ id, nomination, disqualified, relocated }) => ([ id, fromJS({ data: nomination, disqualified, relocated }) ])
         )) ]
       )));
 
