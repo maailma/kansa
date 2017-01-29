@@ -76,7 +76,7 @@ function createArtist(req, res, next) {
                    description, transport, legal, auction, print, digital, agent, contact, waitlist, postage
                  )
           VALUES (
-                   $(person_id), $(name), $(continent), $(url), $(filename),
+                   parseInt($(person_id)), $(name), $(continent), $(url), $(filename),
                    $(filedata), $(description), $(transport), $(legal),
                    parseInt($(auction)), parseInt($(print)), $(digital), $(agent), $(contact), $(waitlist), parseInt($(postage))
                  )
