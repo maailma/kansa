@@ -97,13 +97,13 @@ function createArtist(req, res, next) {
 
 
 function updateArtist(req, res, next) {
-  var _id = parseInt(req.params.id);
+  var _id = (req.params.id);
   req.app.locals.db.none(`
     UPDATE Artist
        SET continent=$1, url=$2, filename=$3, filedata=$4, name=$5,
            description=$6, transport=$7, legal=$8, auction=$9, print=$10,
            digital=$11, agent=$12, contact=$13, waitlist=$14, postage=$15
-     WHERE id=$15`, [
+     WHERE id=$16`, [
       req.body.continent,
       req.body.url,
       req.body.filename,
