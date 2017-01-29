@@ -23,7 +23,7 @@ module.exports = {
 };
 
 function getPeople(req, res, next) {
-  var _id = parseInt(req.params.id);                             
+  var _id = (req.params.id);                             
   req.app.locals.db.any(`
     SELECT id, person_id, name, continent, url, filename, filedata, description,
            transport, legal, auction, print, digital, agent, contact, waitlist, postage
@@ -51,7 +51,7 @@ function getArtists(req, res, next) {
 }
 
 function getArtist(req, res, next) {
-  var _id = parseInt(req.params.id);
+  var _id = (req.params.id);
   req.app.locals.db.one(`
     SELECT *
       FROM Artist
@@ -76,9 +76,9 @@ function createArtist(req, res, next) {
                    description, transport, legal, auction, print, digital, agent, contact, waitlist, postage
                  )
           VALUES (
-                   parseInt($(person_id)), $(name), $(continent), $(url), $(filename),
+                   $(person_id), $(name), $(continent), $(url), $(filename),
                    $(filedata), $(description), $(transport), $(legal),
-                   parseInt($(auction)), parseInt($(print)), $(digital), $(agent), $(contact), $(waitlist), parseInt($(postage))
+                   ($(auction)), ($(print)), $(digital), $(agent), $(contact), $(waitlist), ($(postage))
                  )
        RETURNING id`, req.body
   )
@@ -112,13 +112,13 @@ function updateArtist(req, res, next) {
       req.body.description,
       req.body.transport,
       req.body.legal,
-      parseInt(req.body.auction),
-      parseInt(req.body.print),
+      (req.body.auction),
+      (req.body.print),
       req.body.digital,
       req.body.agent,
       req.body.contact,
       req.body.waitlist,
-      parseInt(req.body.postage),
+      fparse(req.body.postage),
       _id
     ]
   )
@@ -154,7 +154,7 @@ function updateArtist(req, res, next) {
 /**** WORKS ***/
 
 function getWorks(req, res, next) {
-  var _id = parseInt(req.params.id);
+  var _id = (req.params.id);
   req.app.locals.db.any(`
     SELECT id, artist_id, title, width, height, gallery, orientation, technique,
            filename, filedata, year, price
@@ -173,7 +173,7 @@ function getWorks(req, res, next) {
 }
 
 function getWork(req, res, next) {
-  var _id = parseInt(req.params.id);
+  var _id = (req.params.id);
   req.app.locals.db.one(`
     SELECT artist_id, title, width, height, gallery, orientation, technique,
            filename, filedata, year, price
@@ -218,7 +218,7 @@ function createWork(req, res, next) {
 
 
 function updateWork(req, res, next) {
-  var _id = parseInt(req.params.id)	
+  var _id = (req.params.id)	
   req.app.locals.db.none(`
     UPDATE Works
        SET artist_id=$1, title=$2, width=$3, height=$4, gallery=$5, filename=$6,
@@ -251,7 +251,7 @@ function updateWork(req, res, next) {
 }
 
 function removeWork(req, res, next) {
-  var _id = parseInt(req.params.id);
+  var _id = (req.params.id);
   db.result('DELETE FROM Works WHERE id = $1', _id)
     .then(function (result) {
       /* jshint ignore:start */
