@@ -118,7 +118,7 @@ function updateArtist(req, res, next) {
       req.body.agent,
       req.body.contact,
       req.body.waitlist,
-      fparse(req.body.postage),
+      (req.body.postage),
       _id
     ]
   )
