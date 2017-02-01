@@ -9,11 +9,11 @@
       "description": "Kid-in-tow"
     },
     "Child": {
-      "amount": 6000,
+      "amount": 7000,
       "description": "Child"
     },
     "Youth": {
-      "amount": 9000,
+      "amount": 10000,
       "description": "Youth"
     },
     "FirstWorldcon": {
@@ -21,7 +21,7 @@
       "description": "First Worldcon"
     },
     "Adult": {
-      "amount": 14500,
+      "amount": 17000,
       "description": "Adult"
     }
   },
