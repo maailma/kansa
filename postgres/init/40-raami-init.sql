@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS Works (
     title text,
     width decimal,
     height decimal,
+    depth decimal,
     technique text,
     orientation text,
     graduation text,

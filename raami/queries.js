@@ -156,7 +156,7 @@ function updateArtist(req, res, next) {
 function getWorks(req, res, next) {
   var _id = (req.params.id);
   req.app.locals.db.any(`
-    SELECT id, artist_id, title, width, height, gallery, orientation, technique,
+    SELECT id, artist_id, title, width, height, depth, gallery, orientation, technique,
            filename, filedata, year, price
       FROM Works
      WHERE artist_id = $1`, _id
@@ -175,7 +175,7 @@ function getWorks(req, res, next) {
 function getWork(req, res, next) {
   var _id = (req.params.id);
   req.app.locals.db.one(`
-    SELECT artist_id, title, width, height, gallery, orientation, technique,
+    SELECT artist_id, title, width, height, depth, gallery, orientation, technique,
            filename, filedata, year, price
       FROM Works
      WHERE id = $1`, _id
@@ -194,11 +194,11 @@ function createWork(req, res, next) {
   req.app.locals.db.one(`
     INSERT INTO Works
                 (
-                  artist_id, title, width, height, gallery, orientation,
+                  artist_id, title, width, height, depth, gallery, orientation,
                   technique, filename, filedata, year, price
                 )
          VALUES (
-                  $(artist_id), $(title), $(width), $(height), $(gallery),
+                  $(artist_id), $(title), $(width), $(height), $(depth), $(gallery),
                   $(orientation), $(technique), $(filename), $(filedata),
                   $(year), $(price)
                 )
@@ -221,13 +221,14 @@ function updateWork(req, res, next) {
   var _id = (req.params.id)	
   req.app.locals.db.none(`
     UPDATE Works
-       SET artist_id=$1, title=$2, width=$3, height=$4, gallery=$5, filename=$6,
-           filedata=$7, price=$8, year=$9, orientation=$10, technique=$11
+       SET artist_id=$1, title=$2, width=$3, height=$4, depth=$5, gallery=$6, filename=$7,
+           filedata=$8, price=$9, year=$10, orientation=$11, technique=$12
      WHERE id=$12`, [
       req.body.artist_id,
       req.body.title,
       req.body.width,
       req.body.height,
+      req.body.depth,
       req.body.gallery,
       req.body.filename,
       req.body.filedata,
