@@ -223,7 +223,7 @@ function updateWork(req, res, next) {
     UPDATE Works
        SET artist_id=$1, title=$2, width=$3, height=$4, depth=$5, gallery=$6, filename=$7,
            filedata=$8, price=$9, year=$10, orientation=$11, technique=$12
-     WHERE id=$12`, [
+     WHERE id=$13`, [
       req.body.artist_id,
       req.body.title,
       req.body.width,
