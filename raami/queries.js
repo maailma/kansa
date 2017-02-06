@@ -253,7 +253,7 @@ function updateWork(req, res, next) {
 
 function removeWork(req, res, next) {
   var _id = (req.params.id);
-  db.result('DELETE FROM Works WHERE id = $1', _id)
+  req.app.locals.db.result('DELETE FROM Works WHERE id = $1', _id)
     .then(function (result) {
       /* jshint ignore:start */
       res.status(200)
