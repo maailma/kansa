@@ -15,6 +15,7 @@ module.exports = {
 };
 
 function access(req) {
+  const id = parseInt(req.params.id);
   if (!req.session || !req.session.user || !req.session.user.email) return Promise.reject(new AuthError());
   return req.app.locals.db.oneOrNone('SELECT email FROM kansa.People WHERE id = $1', id)
     .then(data => {
