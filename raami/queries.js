@@ -1,4 +1,5 @@
-
+const AuthError = require('./errors').AuthError;
+const InputError = require('./errors').InputError;
 
 module.exports = {
   getPeople,
