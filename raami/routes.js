@@ -24,15 +24,28 @@ router.get('/', function(req, res, next) {
 
 var db = require('./queries');
 
-router.get('/people/:id', db.getPeople);
-router.get('/artists', db.getArtists);
-router.get('/artist/:id', db.getArtist);
-router.post('/artist', db.createArtist);
-router.put('/artist/:id', db.updateArtist);
-router.get('/works/:id', db.getWorks);
-router.get('/work/:id', db.getWork);
-router.post('/work', db.createWork);
-router.put('/work/:id', db.updateWork);
-router.delete('/work/:id', db.removeWork);
+//router.get('/people/:id', db.getPeople);
+//router.get('/artists', db.getArtists);
+//router.post('/:id/artist', db.createArtist);
+
+router.get('/:id/artist', db.getArtist);
+router.post('/:id/artist', db.updateArtist);
+
+router.get('/:id/works', db.getWorks);
+//router.get('/work/:id', db.getWork);
+router.post('/:id/works', db.createWork);
+router.put('/:id/works/:work', db.updateWork);
+router.delete('/:id/works/:work', db.removeWork);
+
+// router.get('/people/:pid', db.getPeople);
+// router.get('/artists', db.getArtists);
+// router.get('/artist/:id', db.getArtist);
+// router.post('/artist', db.createArtist);
+// router.put('/artist/:id', db.updateArtist);
+// router.get('/works/:id', db.getWorks);
+// router.get('/work/:id', db.getWork);
+// router.post('/work', db.createWork);
+// router.put('/work/:id', db.updateWork);
+// router.delete('/work/:id', db.removeWork);
 
 module.exports = router;
