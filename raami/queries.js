@@ -17,7 +17,7 @@ function access(req) {
   const id = parseInt(req.params.id);
   if (isNaN(id) || id < 0) return Promise.reject(new InputError('Bad id number'));
   if (!req.session || !req.session.user || !req.session.user.email) return Promise.reject(new AuthError());
-  return req.app.locals.db.oneOrNone('SELECT email, raami_admin FROM kansa.People WHERE id = $1', id)
+  return req.app.locals.db.oneOrNone('SELECT email FROM kansa.People WHERE id = $1', id)
     .then(data => {
       if (!data || !req.session.user.raami_admin || req.session.user.email !== data.email) throw new AuthError();
       return {
