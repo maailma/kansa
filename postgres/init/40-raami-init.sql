@@ -45,24 +45,4 @@ CREATE TABLE IF NOT EXISTS Works (
     year integer
     );
 
-CREATE FUNCTION arists_notify() RETURNS trigger as $$
-BEGIN
-    PERFORM pg_notify('artist', row_to_json(NEW)::text);
-    RETURN null;
-END;
-$$ LANGUAGE plpgsql;
 
-CREATE FUNCTION work_notify() RETURNS trigger as $$
-BEGIN
-    PERFORM pg_notify('work', row_to_json(NEW)::text);
-    RETURN null;
-END;
-$$ LANGUAGE plpgsql;
-
--- CREATE TRIGGER notify
---     AFTER INSERT OR UPDATE ON Artist
---     FOR EACH ROW EXECUTE PROCEDURE arists_notify();
-
--- CREATE TRIGGER notify
---     AFTER INSERT OR UPDATE ON Works
---     FOR EACH ROW EXECUTE PROCEDURE work_notify();
