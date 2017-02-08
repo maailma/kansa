@@ -20,11 +20,9 @@ function access(req) {
   if (!req.session || !req.session.user || !req.session.user.email) return Promise.reject(new AuthError());
   return req.app.locals.db.oneOrNone('SELECT email FROM kansa.People WHERE id = $1', id)
     .then(data => {
-      if (!data || !req.session.user.raami_admin || req.session.user.email !== data.email) throw new AuthError();
+      if (!data || req.session.user.email !== data.email) throw new AuthError();
       return {
         id,
-        raami_admin: !!data.raami_admin,
-
       };
     });
 }
