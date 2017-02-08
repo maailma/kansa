@@ -8,8 +8,8 @@ GRANT SELECT, REFERENCES ON ALL TABLES IN SCHEMA kansa TO raami;
 SET ROLE raami;
 
 CREATE TABLE IF NOT EXISTS Artist (
-    id SERIAL PRIMARY KEY,
-    person_id integer REFERENCES kansa.People NOT NULL,
+    -- id SERIAL PRIMARY KEY,
+    people_id integer REFERENCES kansa.People PRIMARY KEY NOT NULL,
     name text,
     continent text,
     url text,
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS Artist (
 
 CREATE TABLE IF NOT EXISTS Works (
     id SERIAL PRIMARY KEY,
-    artist_id integer REFERENCES Artist NOT NULL,
+    people_id integer REFERENCES Artist NOT NULL,
     title text,
     width decimal,
     height decimal,
