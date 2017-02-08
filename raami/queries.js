@@ -1,12 +1,3 @@
-// var promise = require("bluebird");
-
-// var options = {
-//   // Initialization Options
-//   promiseLib: promise
-// };
-
-// var pgp = require("pg-promise")(options);
-// var db = pgp(process.env.DATABASE_URL)
 
 
 module.exports = {
@@ -22,54 +13,67 @@ module.exports = {
 	removeWork,
 };
 
+function access(req) {
+  const id = parseInt(req.params.id);
+  if (isNaN(id) || id < 0) return Promise.reject(new InputError('Bad id number'));
+  if (!req.session || !req.session.user || !req.session.user.email) return Promise.reject(new AuthError());
+  return req.app.locals.db.oneOrNone('SELECT email, raami_admin FROM kansa.People WHERE id = $1', id)
+    .then(data => {
+      if (!data || !req.session.user.raami_admin || req.session.user.email !== data.email) throw new AuthError();
+      return {
+        id,
+        raami_admin: !!data.raami_admin,
+
+      };
+    });
+}
+
+
 function getPeople(req, res, next) {
   var _id = (req.params.id);                             
-  req.app.locals.db.any(`
+  access(req)
+  .then(req.app.locals.db.any(`
     SELECT id, person_id, name, continent, url, filename, filedata, description,
            transport, legal, auction, print, digital, agent, contact, waitlist, postage
       FROM Artist
      WHERE person_id = $1`, _id
-  )
+  ))
     .then(function (data) {
       res.status(200)
         .json(data);
     })
-    .catch(function (err) {
-      return next(err);
-    });
+    .catch(next);
 }
 
 function getArtists(req, res, next) {
-  req.app.locals.db.any('SELECT person_id, id, name FROM Artist')
+  access(req)
+  .then(req.app.locals.db.any('SELECT person_id, id, name FROM Artist'))
     .then(function (data) {
       res.status(200)
         .json(data);
     })
-    .catch(function (err) {
-      return next(err);
-    });
+    .catch(next);
 }
 
 function getArtist(req, res, next) {
   var _id = (req.params.id);
-  req.app.locals.db.one(`
+    access(req)
+  .then(req.app.locals.db.one(`
     SELECT *
       FROM Artist
      WHERE id = $1`, _id
-  )
+  ))
     .then(function (data) {
       res.status(200)
         .json(data);
     })
-    .catch(function (err) {
-      return next(err);
-    });
+    .catch(next);
 }
 
 
 function createArtist(req, res, next) {
-
-  req.app.locals.db.one(`
+  access(req)
+  .then(req.app.locals.db.one(`
      INSERT INTO Artist
                  (
                    person_id, name, continent, url, filename, filedata,
@@ -78,27 +82,25 @@ function createArtist(req, res, next) {
           VALUES (
                    $(person_id), $(name), $(continent), $(url), $(filename),
                    $(filedata), $(description), $(transport), $(legal),
-                   ($(auction)), ($(print)), $(digital), $(agent), $(contact), $(waitlist), ($(postage))
+                   $(auction), $(print), $(digital), $(agent), $(contact), $(waitlist), $(postage)
                  )
        RETURNING id`, req.body
-  )
+  ))
     .then(function (data) {
-      console.log(data.id)
       res.status(200)
         .json({
           status: 'success',
           inserted: data.id
         });
     })
-    .catch(function (err) {
-      return next(err);
-    });
+    .catch(next);
 }
 
 
 function updateArtist(req, res, next) {
   var _id = (req.params.id);
-  req.app.locals.db.none(`
+  access(req)
+  .then(req.app.locals.db.none(`
     UPDATE Artist
        SET continent=$1, url=$2, filename=$3, filedata=$4, name=$5,
            description=$6, transport=$7, legal=$8, auction=$9, print=$10,
@@ -121,7 +123,7 @@ function updateArtist(req, res, next) {
       (req.body.postage),
       _id
     ]
-  )
+  ))
     .then(function () {
       res.status(200)
         .json({
@@ -129,9 +131,7 @@ function updateArtist(req, res, next) {
           updated: req.body
         });
     })
-    .catch(function (err) {
-      return next(err);
-    });
+    .catch(next);
 }
 
 // function removeArtists(req, res, next) {
@@ -155,43 +155,42 @@ function updateArtist(req, res, next) {
 
 function getWorks(req, res, next) {
   var _id = (req.params.id);
-  req.app.locals.db.any(`
+  access(req)
+  .then(req.app.locals.db.any(`
     SELECT id, artist_id, title, width, height, depth, gallery, orientation, technique,
            filename, filedata, year, price
       FROM Works
      WHERE artist_id = $1`, _id
-  )
+  ))
     .then(function (data) {
       res.status(200)
         .json({
           works: data,
         });
     })
-    .catch(function (err) {
-      return next(err);
-    });
+    .catch(next);
 }
 
 function getWork(req, res, next) {
   var _id = (req.params.id);
-  req.app.locals.db.one(`
+    access(req)
+  .then(req.app.locals.db.one(`
     SELECT artist_id, title, width, height, depth, gallery, orientation, technique,
            filename, filedata, year, price
       FROM Works
      WHERE id = $1`, _id
-  )
+  ))
     .then(function (data) {
       res.status(200)
         .json(data);
     })
-    .catch(function (err) {
-      return next(err);
-    });
+    .catch(next);
 }
 
 
 function createWork(req, res, next) {
-  req.app.locals.db.one(`
+    access(req)
+  .then(req.app.locals.db.one(`
     INSERT INTO Works
                 (
                   artist_id, title, width, height, depth, gallery, orientation,
@@ -203,7 +202,7 @@ function createWork(req, res, next) {
                   $(year), $(price)
                 )
         RETURNING id`, req.body
-  )
+  ))
     .then(function (data) {
       res.status(200)
         .json({
@@ -211,15 +210,14 @@ function createWork(req, res, next) {
           insrted: data.id
         });
     })
-    .catch(function (err) {
-      return next(err);
-    });
+    .catch(next);
 }
 
 
 function updateWork(req, res, next) {
-  var _id = (req.params.id)	
-  req.app.locals.db.none(`
+  var _id = (req.params.id)
+  access(req)
+  .then(req.app.locals.db.none(`
     UPDATE Works
        SET artist_id=$1, title=$2, width=$3, height=$4, depth=$5, gallery=$6, filename=$7,
            filedata=$8, price=$9, year=$10, orientation=$11, technique=$12
@@ -238,7 +236,7 @@ function updateWork(req, res, next) {
       req.body.technique,
       _id
     ]
-  )
+  ))
     .then(function () {
       res.status(200)
         .json({
@@ -246,14 +244,13 @@ function updateWork(req, res, next) {
           updated: req.body
         });
     })
-    .catch(function (err) {
-      return next(err);
-    });
+    .catch(next);
 }
 
 function removeWork(req, res, next) {
   var _id = (req.params.id);
-  req.app.locals.db.result('DELETE FROM Works WHERE id = $1', _id)
+    access(req)
+  .then(req.app.locals.db.result('DELETE FROM Works WHERE id = $1', _id))
     .then(function (result) {
       /* jshint ignore:start */
       res.status(200)
@@ -263,7 +260,5 @@ function removeWork(req, res, next) {
         });
       /* jshint ignore:end */
     })
-    .catch(function (err) {
-      return next(err);
-    });
+    .catch(next);
 }
