@@ -3,7 +3,9 @@ CREATE SCHEMA AUTHORIZATION admin
         email text PRIMARY KEY,
         member_admin bool NOT NULL DEFAULT false,
         hugo_admin bool NOT NULL DEFAULT false,
-        admin_admin bool NOT NULL DEFAULT false
+        admin_admin bool NOT NULL DEFAULT false,
+        raami_admin bool NOT NULL DEFAULT false
+
     );
 
 
