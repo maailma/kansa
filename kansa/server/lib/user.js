@@ -40,7 +40,8 @@ function login(req, res, next) {
           email,
           member_admin: !!(data[1] && data[1].member_admin),
           hugo_admin: !!(data[1] && data[1].hugo_admin),
-          admin_admin: !!(data[1] && data[1].admin_admin)
+          admin_admin: !!(data[1] && data[1].admin_admin),
+          raami_admin: !!(data[1] && data[1].raami_admin)
         };
         res.status(200).json({ status: 'success', email });
         const log = new LogEntry(req, 'Login');
