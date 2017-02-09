@@ -16,12 +16,11 @@ module.exports = {
 
 function access(req) {
   const id = parseInt(req.params.id);
-  if (isNaN(id) || id < 0) return Promise.reject(new InputError('Bad id number'));
-  if (!req.session || !req.session.user || !req.session.user.email) return Promise.reject(new AuthError());
+  // if (isNaN(id) || id < 0) return Promise.reject(new InputError('Bad id number'));
+  // if (!req.session || !req.session.user || !req.session.user.email) return Promise.reject(new AuthError());
   return req.app.locals.db.oneOrNone('SELECT email FROM kansa.People WHERE id = $1', id)
     .then(data => {
-      if (!data || !req.session.user.raami_admin && req.session.user.email !== data.email) throw new AuthError();
-
+      // if (!data || !req.session.user.raami_admin && req.session.user.email !== data.email) throw new AuthError();
       return {
         id,
       };
@@ -57,13 +56,13 @@ function access(req) {
 function getArtist(req, res, next) {
 
   var _id = req.params.id;
-    access(req)
-  .then(req.app.locals.db.one(`
+  access(req)
+  .then(req.app.locals.db.oneOrNone(`
     SELECT *
       FROM Artist
      WHERE people_id = $1`, _id
   ))
-    .then(function (data) {
+  .then(function (data) {
       res.status(200)
         .json(data);
     })
@@ -72,27 +71,26 @@ function getArtist(req, res, next) {
 
 
 function createArtist(req, res, next) {
-  console.log(req.body);
   access(req)
   .then(req.app.locals.db.one(`
      INSERT INTO Artist
                  (
-                   person_id, name, continent, url, filename, filedata,
+                   people_id, name, continent, url, filename, filedata,
                    description, transport, legal, auction, print, digital, agent, contact, waitlist, postage
                  )
           VALUES (
-                   $(person_id), $(name), $(continent), $(url), $(filename),
+                   $(people_id), $(name), $(continent), $(url), $(filename),
                    $(filedata), $(description), $(transport), $(legal),
                    $(auction), $(print), $(digital), $(agent), $(contact), $(waitlist), $(postage)
                  )
 
-       RETURNING id`, req.body
+       RETURNING people_id`, req.body
   ))
     .then(function (data) {
       res.status(200)
         .json({
           status: 'success',
-          inserted: data.id
+          inserted: data.people_id
         });
     })
     .catch(next);
@@ -190,7 +188,7 @@ function getWork(req, res, next) {
 
 
 function createWork(req, res, next) {
-    access(req)
+  access(req)
   .then(req.app.locals.db.one(`
     INSERT INTO Works
                 (
