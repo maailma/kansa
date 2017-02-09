@@ -4,9 +4,9 @@ const InputError = require('./errors').InputError;
 module.exports = {
   // getPeople,
 	// getArtists,
-	// createArtist,
+	createArtist,
 	getArtist,
-	updateArtist,
+	// updateArtist,
 	getWork,
 	getWorks,
 	createWork,
@@ -15,19 +15,18 @@ module.exports = {
 };
 
 function access(req) {
-  console.log(req.params.id)
-  const ID = parseInt(req.params.id);
-  if (isNaN(ID) || ID < 0) return Promise.reject(new InputError('Bad id number'));
+  const id = parseInt(req.params.id);
+  if (isNaN(id) || id < 0) return Promise.reject(new InputError('Bad id number'));
   if (!req.session || !req.session.user || !req.session.user.email) return Promise.reject(new AuthError());
-  return req.app.locals.db.oneOrNone('SELECT email FROM kansa.People WHERE id = $1', ID)
+  return req.app.locals.db.oneOrNone('SELECT email FROM kansa.People WHERE id = $1', id)
     .then(data => {
-      if (!data || req.session.user.email !== data.email) throw new AuthError();
+      if (!data || !req.session.user.raami_admin && req.session.user.email !== data.email) throw new AuthError();
+
       return {
-        ID,
+        id,
       };
     });
 }
-
 
 // function getPeople(req, res, next) {
 //   var _id = (req.params.id);                             
@@ -56,7 +55,6 @@ function access(req) {
 // }
 
 function getArtist(req, res, next) {
-    console.log(req.params)
 
   var _id = req.params.id;
     access(req)
@@ -73,68 +71,71 @@ function getArtist(req, res, next) {
 }
 
 
-// function createArtist(req, res, next) {
-//   access(req)
-//   .then(req.app.locals.db.one(`
-//      INSERT INTO Artist
-//                  (
-//                    person_id, name, continent, url, filename, filedata,
-//                    description, transport, legal, auction, print, digital, agent, contact, waitlist, postage
-//                  )
-//           VALUES (
-//                    $(person_id), $(name), $(continent), $(url), $(filename),
-//                    $(filedata), $(description), $(transport), $(legal),
-//                    $(auction), $(print), $(digital), $(agent), $(contact), $(waitlist), $(postage)
-//                  )
-//        RETURNING id`, req.body
-//   ))
-//     .then(function (data) {
-//       res.status(200)
-//         .json({
-//           status: 'success',
-//           inserted: data.id
-//         });
-//     })
-//     .catch(next);
-// }
-
-
-function updateArtist(req, res, next) {
-  var _id = (req.params.id);
+function createArtist(req, res, next) {
+  console.log(req.body);
   access(req)
-  .then(req.app.locals.db.none(`
-    UPDATE Artist
-       SET continent=$1, url=$2, filename=$3, filedata=$4, name=$5,
-           description=$6, transport=$7, legal=$8, auction=$9, print=$10,
-           digital=$11, agent=$12, contact=$13, waitlist=$14, postage=$15
-     WHERE people_id=$16`, [
-      req.body.continent,
-      req.body.url,
-      req.body.filename,
-      req.body.filedata,
-      req.body.name,
-      req.body.description,
-      req.body.transport,
-      req.body.legal,
-      (req.body.auction),
-      (req.body.print),
-      req.body.digital,
-      req.body.agent,
-      req.body.contact,
-      req.body.waitlist,
-      req.body.postage,
-      _id
-    ]
+  .then(req.app.locals.db.one(`
+     INSERT INTO Artist
+                 (
+                   person_id, name, continent, url, filename, filedata,
+                   description, transport, legal, auction, print, digital, agent, contact, waitlist, postage
+                 )
+          VALUES (
+                   $(person_id), $(name), $(continent), $(url), $(filename),
+                   $(filedata), $(description), $(transport), $(legal),
+                   $(auction), $(print), $(digital), $(agent), $(contact), $(waitlist), $(postage)
+                 )
+
+       RETURNING id`, req.body
   ))
-    .then(function () {
+    .then(function (data) {
       res.status(200)
         .json({
           status: 'success',
-          updated: req.body
+          inserted: data.id
         });
     })
     .catch(next);
 }
+
+
+// function updateArtist(req, res, next) {
+
+//   var _id = (req.params.id);
+//   access(req)
+//   .then(req.app.locals.db.none(`
+//     UPDATE Artist
+//        SET continent=$1, url=$2, filename=$3, filedata=$4, name=$5,
+//            description=$6, transport=$7, legal=$8, auction=$9, print=$10,
+//            digital=$11, agent=$12, contact=$13, waitlist=$14, postage=$15
+//      WHERE people_id=$16`, [
+//       req.body.continent,
+//       req.body.url,
+//       req.body.filename,
+//       req.body.filedata,
+//       req.body.name,
+//       req.body.description,
+//       req.body.transport,
+//       req.body.legal,
+//       (req.body.auction),
+//       (req.body.print),
+//       req.body.digital,
+//       req.body.agent,
+//       req.body.contact,
+//       req.body.waitlist,
+//       req.body.postage,
+//       _id
+//     ]
+//   ))
+//     .then(function () {
+//       res.status(200)
+//         .json({
+//           status: 'success',
+//           updated: req.body
+//         });
+//     })
+//     .catch(next);
+// }
 
 // function removeArtists(req, res, next) {
 //   var _id = parseInt(req.params.id);

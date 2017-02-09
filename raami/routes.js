@@ -29,7 +29,7 @@ var db = require('./queries');
 //router.post('/:id/artist', db.createArtist);
 
 router.get('/:id/artist', db.getArtist);
-router.post('/:id/artist', db.updateArtist);
+router.post('/:id/artist', db.createArtist);
 
 router.get('/:id/works', db.getWorks);
 //router.get('/work/:id', db.getWork);
