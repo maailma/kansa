@@ -1,3 +1,4 @@
+const cors = require('cors');
 var express = require('express');
 var router = express.Router();
 
@@ -16,13 +17,13 @@ function authenticate(req, res, next) {
   else res.status(401).json({ status: 'unauthorized' });
 }
 
-router.use(authenticate);
-
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
 var db = require('./queries');
+
+router.use(authenticate);
 
 //router.get('/people/:id', db.getPeople);
 //router.get('/artists', db.getArtists);
