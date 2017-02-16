@@ -16,7 +16,6 @@ module.exports = {
 
 function access(req) {
   const id = parseInt(req.params.id);
-  console.log(id)
   if (isNaN(id) || id < 0) return Promise.reject(new InputError('Bad id number'));
   if (!req.session || !req.session.user || !req.session.user.email) return Promise.reject(new AuthError());
   return req.app.locals.db.oneOrNone('SELECT email FROM kansa.People WHERE id = $1', id)
@@ -79,19 +78,24 @@ function createArtist(req, res, next) {
     // const id = (req.params.id);
     console.log(id)
     return req.app.locals.db.one(`
+      UPDATE Artist SET continent=$(continent), url=$(url), filename=$(filename), filedata=$(filedata), name=$(name),
+                  description=$(description), transport=$(tarnsport), legal=$(legal), auction=$(acution), print=$(print),
+                  digital=$(dgital), agent=$(agent), contact=$(contact), waitlist=$(waitlist), postage=$(postage)
+      WHERE people_id = $(people_id);
       INSERT INTO Artist
                    (
                      people_id, name, continent, url, filename, filedata,
                      description, transport, legal, auction, print, digital, agent, contact, waitlist, postage
                    )
-      VALUES (
+      SELECT 
                      $(people_id), $(name), $(continent), $(url), $(filename),
                      $(filedata), $(description), $(transport), $(legal),
                      $(auction), $(print), $(digital), $(agent), $(contact), $(waitlist), $(postage)
                    )
-      RETURNING people_id`, req.body
-      )
-    })
+      WHERE NOT EXISTS (SELECT 1 FROM Artist WHERE id=$(people_id))
+      RETURNING people_id`, req.body)
+      }
+    )
     .then((data)=> {
           console.log(data)
 
