@@ -91,8 +91,7 @@ function createArtist(req, res, next) {
                      $(people_id), $(name), $(continent), $(url), $(filename),
                      $(filedata), $(description), $(transport), $(legal),
                      $(auction), $(print), $(digital), $(agent), $(contact), $(waitlist), $(postage)
-                   )
-      WHERE NOT EXISTS (SELECT 1 FROM Artist WHERE id=$(people_id))
+      WHERE NOT EXISTS (SELECT 1 FROM Artist WHERE people_id=$(people_id))
       RETURNING people_id`, req.body)
       }
     )
