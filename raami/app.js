@@ -1,4 +1,5 @@
 var express = require('express');
+const cors = require('cors');
 var path = require('path');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
@@ -31,6 +32,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+const corsOrigins = process.env.CORS_ORIGIN;
+if (corsOrigins) app.use(cors({
+  credentials: true,
+  methods: [ 'GET', 'POST' ],
+  origin: corsOrigins.split(/[ ,]+/)
+}));
 app.use(session({
   cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 },  // 30 days
   name: 'w75',
