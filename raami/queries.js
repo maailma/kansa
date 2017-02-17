@@ -78,10 +78,12 @@ function createArtist(req, res, next) {
     // const id = (req.params.id);
     console.log(id)
     return req.app.locals.db.one(`
+      WITH upsert AS (
       UPDATE Artist SET continent=$(continent), url=$(url), filename=$(filename), filedata=$(filedata), name=$(name),
                   description=$(description), transport=$(transport), legal=$(legal), auction=$(auction), print=$(print),
                   digital=$(digital), agent=$(agent), contact=$(contact), waitlist=$(waitlist), postage=$(postage)
-      WHERE people_id = $(people_id);
+      WHERE people_id = $(people_id)
+      RETURNING *)
       INSERT INTO Artist
                    (
                      people_id, name, continent, url, filename, filedata,
@@ -91,7 +93,7 @@ function createArtist(req, res, next) {
                      $(people_id), $(name), $(continent), $(url), $(filename),
                      $(filedata), $(description), $(transport), $(legal),
                      $(auction), $(print), $(digital), $(agent), $(contact), $(waitlist), $(postage)
-      WHERE NOT EXISTS (SELECT 1 FROM Artist WHERE people_id=$(people_id))
+      WHERE NOT EXISTS (SELECT * FROM upsert)
       RETURNING people_id`, req.body)
       }
     )
