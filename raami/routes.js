@@ -1,4 +1,3 @@
-const cors = require('cors');
 var express = require('express');
 var router = express.Router();
 
@@ -30,7 +29,7 @@ router.use(authenticate);
 //router.post('/:id/artist', db.createArtist);
 
 router.get('/:id/artist', db.getArtist);
-router.post('/:id/artist', db.createArtist);
+router.post('/:id/artist', db.upsertArtist);
 
 router.get('/:id/works', db.getWorks);
 //router.get('/work/:id', db.getWork);

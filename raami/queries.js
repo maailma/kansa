@@ -4,7 +4,7 @@ const InputError = require('./errors').InputError;
 module.exports = {
   // getPeople,
 	// getArtists,
-	createArtist,
+	upsertArtist,
 	getArtist,
 	// updateArtist,
 	getWork,
@@ -72,12 +72,11 @@ function getArtist(req, res, next) {
 }
 
 
-function createArtist(req, res, next) {
+function upsertArtist(req, res, next) {
   access(req)
   .then(({id}) => {
     // const id = (req.params.id);
-    console.log(id)
-    return req.app.locals.db.one(`
+    req.app.locals.db.one(`
       WITH upsert AS (
       UPDATE Artist SET continent=$(continent), url=$(url), filename=$(filename), filedata=$(filedata), name=$(name),
                   description=$(description), transport=$(transport), legal=$(legal), auction=$(auction), print=$(print),
@@ -95,15 +94,14 @@ function createArtist(req, res, next) {
                      $(auction), $(print), $(digital), $(agent), $(contact), $(waitlist), $(postage)
       WHERE NOT EXISTS (SELECT * FROM upsert)
       RETURNING people_id`, req.body)
+    return id
       }
     )
-    .then((data)=> {
-          console.log(data)
-
+    .then((people_id)=> {
       res.status(200)
         .json({
           status: 'success',
-          inserted: data.people_id
+          upserted: people_id
         });
     })
     .catch(next);
