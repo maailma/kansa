@@ -2,11 +2,8 @@ const AuthError = require('./errors').AuthError;
 const InputError = require('./errors').InputError;
 
 module.exports = {
-  // getPeople,
-	// getArtists,
 	upsertArtist,
 	getArtist,
-	// updateArtist,
 	getWork,
 	getWorks,
 	createWork,
@@ -27,36 +24,9 @@ function access(req) {
     });
 }
 
-// function getPeople(req, res, next) {
-//   var _id = (req.params.id);                             
-//   access(req)
-//   .then(req.app.locals.db.any(`
-//     SELECT id, person_id, name, continent, url, filename, filedata, description,
-//            transport, legal, auction, print, digital, agent, contact, waitlist, postage
-//       FROM Artist
-//      WHERE person_id = $1`, _id
-//   ))
-//     .then(function (data) {
-//       res.status(200)
-//         .json(data);
-//     })
-//     .catch(next);
-// }
-
-// function getArtists(req, res, next) {
-//   access(req)
-//   .then(req.app.locals.db.any('SELECT person_id, id, name FROM Artist'))
-//     .then(function (data) {
-//       res.status(200)
-//         .json(data);
-//     })
-//     .catch(next);
-// }
-
 function getArtist(req, res, next) {
   access(req)
   .then(({id}) => {
-    // const id = req.params.id;
     return req.app.locals.db.oneOrNone(`
       SELECT *
         FROM Artist
@@ -108,73 +78,16 @@ function upsertArtist(req, res, next) {
   }
 
 
-// function updateArtist(req, res, next) {
-
-//   var _id = (req.params.id);
-//   access(req)
-//   .then(req.app.locals.db.none(`
-//     UPDATE Artist
-//        SET continent=$1, url=$2, filename=$3, filedata=$4, name=$5,
-//            description=$6, transport=$7, legal=$8, auction=$9, print=$10,
-//            digital=$11, agent=$12, contact=$13, waitlist=$14, postage=$15
-//      WHERE people_id=$16`, [
-//       req.body.continent,
-//       req.body.url,
-//       req.body.filename,
-//       req.body.filedata,
-//       req.body.name,
-//       req.body.description,
-//       req.body.transport,
-//       req.body.legal,
-//       (req.body.auction),
-//       (req.body.print),
-//       req.body.digital,
-//       req.body.agent,
-//       req.body.contact,
-//       req.body.waitlist,
-//       req.body.postage,
-//       _id
-//     ]
-//   ))
-//     .then(function () {
-//       res.status(200)
-//         .json({
-//           status: 'success',
-//           updated: req.body
-//         });
-//     })
-//     .catch(next);
-// }
-
-// function removeArtists(req, res, next) {
-//   var _id = parseInt(req.params.id);
-//   db.result('DELETE FROM Artist WHERE id = $1', _id)
-//     .then(function (result) {
-//       /* jshint ignore:start */
-//       res.status(200)
-//         .json({
-//           status: 'success',
-//           message: `Removed ${result.rowCount} puppy`
-//         });
-//       /* jshint ignore:end */
-//     })
-//     .catch(function (err) {
-//       return next(err);
-//     });
-// }
-
 /**** WORKS ***/
 
 function getWorks(req, res, next) {
   access(req)
-  .then(() => {
-  const id = (req.params.id);
-
-    req.app.locals.db.any(`
+  .then(({id}) => {
+    return req.app.locals.db.any(`
       SELECT *
         FROM Works
-       WHERE people_id = $1`, id
-    )}
+       WHERE people_id = $1`, id)
+    }
   )
     .then(function (data) {
       res.status(200)
@@ -186,13 +99,14 @@ function getWorks(req, res, next) {
 }
 
 function getWork(req, res, next) {
-  var _id = (req.params.work);
     access(req)
-  .then(req.app.locals.db.one(`
-    SELECT *
-      FROM Works
-     WHERE id = $1`, _id
-  ))
+  .then(({id}) => {
+    const work = req.params.work
+    return req.app.locals.db.one(`
+      SELECT *
+        FROM Works
+       WHERE id = $1`, work)}
+  )
     .then(function (data) {
       res.status(200)
         .json(data);
@@ -203,19 +117,20 @@ function getWork(req, res, next) {
 
 function createWork(req, res, next) {
   access(req)
-  .then(req.app.locals.db.one(`
-    INSERT INTO Works
-                (
-                  people_id, title, width, height, depth, gallery, orientation,
-                  technique, filename, filedata, year, price
-                )
-         VALUES (
-                  $(people_id), $(title), $(width), $(height), $(depth), $(gallery),
-                  $(orientation), $(technique), $(filename), $(filedata),
-                  $(year), $(price)
-                )
-        RETURNING id`, req.body
-  ))
+  .then(({id}) => {
+    return req.app.locals.db.one(`
+      INSERT INTO Works
+                  (
+                    people_id, title, width, height, depth, gallery, orientation,
+                    technique, filename, filedata, year, price
+                  )
+           VALUES (
+                    $(people_id), $(title), $(width), $(height), $(depth), $(gallery),
+                    $(orientation), $(technique), $(filename), $(filedata),
+                    $(year), $(price)
+                  )
+          RETURNING id`, req.body)
+    })
     .then(function (data) {
       res.status(200)
         .json({
@@ -228,9 +143,10 @@ function createWork(req, res, next) {
 
 
 function updateWork(req, res, next) {
-  var _id = (req.params.work)
   access(req)
-  .then(req.app.locals.db.none(`
+  .then(({id}) => {
+    const work = req.params.work
+    return req.app.locals.db.none(`
     UPDATE Works
        SET people_id=$1, title=$2, width=$3, height=$4, depth=$5, gallery=$6, filename=$7,
            filedata=$8, price=$9, year=$10, orientation=$11, technique=$12
@@ -247,9 +163,8 @@ function updateWork(req, res, next) {
       req.body.year,
       req.body.orientation,
       req.body.technique,
-      _id
-    ]
-  ))
+      work])
+  })
     .then(function () {
       res.status(200)
         .json({
@@ -261,15 +176,15 @@ function updateWork(req, res, next) {
 }
 
 function removeWork(req, res, next) {
-  var _id = (req.params.work);
+  const work = (req.params.work);
     access(req)
-  .then(req.app.locals.db.result('DELETE FROM Works WHERE id = $1', _id))
+  .then(req.app.locals.db.result('DELETE FROM Works WHERE id = $1', work))
     .then(function (result) {
       /* jshint ignore:start */
       res.status(200)
         .json({
           status: 'success',
-          deleted: _id
+          deleted: work
         });
       /* jshint ignore:end */
     })
