@@ -79,7 +79,7 @@ function createArtist(req, res, next) {
     console.log(id)
     return req.app.locals.db.one(`
       WITH upsert AS (
-      UPDATE Artist SET continent=$(continent), url=$(url), filename=$(filename), filedata=$(filedata), name=$(name),
+      UPDATE Artist SET continent=$(continent), url=$(url), filename=$(filename), filedata=$(filedata), name=$(name),
                   description=$(description), transport=$(transport), legal=$(legal), auction=$(auction), print=$(print),
                   digital=$(digital), agent=$(agent), contact=$(contact), waitlist=$(waitlist), postage=$(postage)
       WHERE people_id = $(people_id)
