@@ -58,111 +58,68 @@ function upsertArtist(req, res, next) {
 
 function getWorks(req, res, next) {
   access(req)
-  .then(({id}) => {
-    return req.app.locals.db.any(`
-      SELECT *
-        FROM Works
-       WHERE people_id = $1`, id)
-    }
-  )
-    .then(function (data) {
-      res.status(200)
-        .json({
-          works: data,
-        });
-    })
+    .then(({ id }) => req.app.locals.db.any(`SELECT * FROM Works WHERE people_id=$1`, id))
+    .then(data => res.status(200).json(data))
     .catch(next);
 }
 
 function getWork(req, res, next) {
-    access(req)
-  .then(({id}) => {
-    const work = req.params.work
-    return req.app.locals.db.one(`
-      SELECT *
-        FROM Works
-       WHERE id = $1`, work)}
-  )
-    .then(function (data) {
-      res.status(200)
-        .json(data);
+  access(req)
+    .then(({ id }) => {
+      const params = Object.assign({}, req.params, { people_id: id });
+      req.app.locals.db.one(`SELECT * FROM Works WHERE id=$(work) AND people_id=$(people_id)`, params)
     })
+    .then(data => res.status(200).json(data))
     .catch(next);
 }
-
 
 function createWork(req, res, next) {
   access(req)
-  .then(({id}) => {
-    return req.app.locals.db.one(`
-      INSERT INTO Works
-                  (
-                    people_id, title, width, height, depth, gallery, orientation,
-                    technique, filename, filedata, year, price
-                  )
-           VALUES (
-                    $(people_id), $(title), $(width), $(height), $(depth), $(gallery),
-                    $(orientation), $(technique), $(filename), $(filedata),
-                    $(year), $(price)
-                  )
-          RETURNING id`, req.body)
+    .then(({ id }) => {
+      const work = Object.assign({}, req.body, { people_id: id });
+      const keys = [
+        'people_id', 'title', 'width', 'height', 'depth', 'gallery',
+        'orientation', 'technique', 'filename', 'filedata', 'year', 'price'
+      ].filter(key => work.hasOwnProperty(key));
+      const insertValues = keys.map(key => `$(${key})`).join(', ');
+      return req.app.locals.db.one(`
+        INSERT INTO Works
+                    (${keys.join(', ')})
+             VALUES (${insertValues})
+          RETURNING id`, work);
     })
-    .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          insrted: data.id
-        });
-    })
+    .then(({ id }) => res.status(200).json({ status: 'success', inserted: id }))
     .catch(next);
 }
 
-
 function updateWork(req, res, next) {
   access(req)
-  .then(({id}) => {
-    const work = req.params.work
-    return req.app.locals.db.none(`
-    UPDATE Works
-       SET people_id=$1, title=$2, width=$3, height=$4, depth=$5, gallery=$6, filename=$7,
-           filedata=$8, price=$9, year=$10, orientation=$11, technique=$12
-     WHERE id=$13`, [
-      req.body.people_id,
-      req.body.title,
-      req.body.width,
-      req.body.height,
-      req.body.depth,
-      req.body.gallery,
-      req.body.filename,
-      req.body.filedata,
-      req.body.price,
-      req.body.year,
-      req.body.orientation,
-      req.body.technique,
-      work])
-  })
-    .then(function () {
-      res.status(200)
-        .json({
-          status: 'success',
-          updated: req.body
-        });
+    .then(({ id }) => {
+      const work = Object.assign({}, req.body, {
+        people_id: id,
+        work: req.params.work
+      });
+      const keys = [
+        'title', 'width', 'height', 'depth', 'gallery', 'orientation',
+        'technique', 'filename', 'filedata', 'year', 'price'
+      ].filter(key => work.hasOwnProperty(key));
+      const updateWork = keys.map(key => `${key}=$(${key})`).join(', ');
+      return req.app.locals.db.none(`
+        UPDATE Works
+           SET ${updateWork}
+         WHERE id=$(work) AND people_id=$(people_id)`, work);
     })
+    .then(() => res.status(200).json({ status: 'success' }))
     .catch(next);
 }
 
 function removeWork(req, res, next) {
-  const work = (req.params.work);
-    access(req)
-  .then(req.app.locals.db.result('DELETE FROM Works WHERE id = $1', work))
-    .then(function (result) {
-      /* jshint ignore:start */
-      res.status(200)
-        .json({
-          status: 'success',
-          deleted: work
-        });
-      /* jshint ignore:end */
-    })
+  access(req)
+    .then(({ id }) => req.app.locals.db.result(`
+      DELETE FROM Works
+       WHERE id=$(work) AND people_id=$(people_id)`,
+      { people_id: id, work: req.params.work }
+    ))
+    .then(() => res.status(200).json({ status: 'success' }))
     .catch(next);
 }

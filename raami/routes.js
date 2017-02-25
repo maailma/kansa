@@ -33,8 +33,8 @@ router.post('/:id/artist', db.upsertArtist);
 
 router.get('/:id/works', db.getWorks);
 //router.get('/work/:id', db.getWork);
-router.post('/:id/works', db.createWork);
-router.put('/:id/works/:work', db.updateWork);
+router.put('/:id/works', db.createWork);
+router.post('/:id/works/:work', db.updateWork);
 router.delete('/:id/works/:work', db.removeWork);
 
 // router.get('/people/:pid', db.getPeople);
