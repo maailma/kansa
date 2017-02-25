@@ -26,56 +26,32 @@ function access(req) {
 
 function getArtist(req, res, next) {
   access(req)
-  .then(({id}) => {
-    return req.app.locals.db.oneOrNone(`
-      SELECT *
-        FROM Artist
-       WHERE people_id = $1`, id
-    )
-    })
-  .then((data)=> {
-
-      res.status(200)
-        .json(data);
-    })
-  .catch(next);
+    .then(({ id }) => req.app.locals.db.oneOrNone(`SELECT * FROM Artist WHERE people_id = $1`, id))
+    .then(data => res.status(200).json(data || {}))
+    .catch(next);
 }
-
 
 function upsertArtist(req, res, next) {
   access(req)
-  .then(({id}) => {
-    // const id = (req.params.id);
-    req.app.locals.db.one(`
-      WITH upsert AS (
-      UPDATE Artist SET continent=$(continent), url=$(url), filename=$(filename), filedata=$(filedata), name=$(name),
-                  description=$(description), transport=$(transport), legal=$(legal), auction=$(auction), print=$(print),
-                  digital=$(digital), agent=$(agent), contact=$(contact), waitlist=$(waitlist), postage=$(postage)
-      WHERE people_id = $(people_id)
-      RETURNING *)
-      INSERT INTO Artist
-                   (
-                     people_id, name, continent, url, filename, filedata,
-                     description, transport, legal, auction, print, digital, agent, contact, waitlist, postage
-                   )
-      SELECT 
-                     $(people_id), $(name), $(continent), $(url), $(filename),
-                     $(filedata), $(description), $(transport), $(legal),
-                     $(auction), $(print), $(digital), $(agent), $(contact), $(waitlist), $(postage)
-      WHERE NOT EXISTS (SELECT * FROM upsert)
-      RETURNING people_id`, req.body)
-    return id
-      }
-    )
-    .then((people_id)=> {
-      res.status(200)
-        .json({
-          status: 'success',
-          upserted: people_id
-        });
+    .then(({ id }) => {
+      const artist = Object.assign({}, req.body, { people_id: id });
+      const keys = [
+        'people_id', 'name', 'continent', 'url', 'filename', 'filedata',
+        'category', 'description', 'transport', 'auction', 'print', 'digital',
+        'legal', 'agent', 'contact', 'waitlist', 'postage'
+      ].filter(key => artist.hasOwnProperty(key));
+      const insertValues = keys.map(key => `$(${key})`).join(', ');
+      const insertArtist = `(${keys.join(', ')}) VALUES(${insertValues})`;
+      const updateArtist = keys.map(key => `${key}=$(${key})`).join(', ');
+      return req.app.locals.db.one(`
+        INSERT INTO Artist ${insertArtist}
+        ON CONFLICT (people_id)
+          DO UPDATE SET ${updateArtist}
+          RETURNING people_id`, artist)
     })
+    .then(people_id => res.status(200).json({ status: 'success', people_id }))
     .catch(next);
-  }
+}
 
 
 /**** WORKS ***/

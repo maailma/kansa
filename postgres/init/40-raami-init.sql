@@ -9,7 +9,7 @@ SET ROLE raami;
 
 CREATE TABLE IF NOT EXISTS Artist (
     -- id SERIAL PRIMARY KEY,
-    people_id integer REFERENCES kansa.People PRIMARY KEY NOT NULL,
+    people_id integer REFERENCES kansa.People PRIMARY KEY,
     name text,
     continent text,
     url text,
