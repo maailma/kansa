@@ -162,6 +162,7 @@ function personData(rec) {
 
 function attendingType(type) {
   return {
+    'adult': 'Adult',
     'bid friend': 'Adult',
     'bid subscriber': 'Adult',
     'child': 'Child',

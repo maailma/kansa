@@ -1,3 +1,5 @@
+proxy_cache_path /tmp/nginx keys_zone=public:1m max_size=10m inactive=10m use_temp_path=off;
+
 upstream hugo {
   server                     hugo:3000;
 }
@@ -78,6 +80,14 @@ server {
     proxy_set_header         Upgrade $http_upgrade;
     proxy_set_header         Connection "upgrade";
     proxy_read_timeout       86400s;  # 24h
+  }
+
+  location /api/kansa/public {
+    proxy_cache              public;
+    proxy_cache_lock         on;
+    proxy_cache_use_stale    error timeout http_500 http_502 http_503 http_504;
+    proxy_cache_valid        1h;
+    proxy_pass               http://kansa/public;
   }
 
   location / {

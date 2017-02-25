@@ -17,6 +17,7 @@
     "body-parser": "~1.13.2",
     "connect-pg-simple": "^3.1.0",
     "cors": "^2.7.1",
+    "csv-express": "^1.1.0",
     "debug": "~2.2.0",
     "express": "~4.14.0",
     "express-session": "^1.13.0",
