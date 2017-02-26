@@ -3,6 +3,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_APIKEY);
 const prices = require('../static/prices.json');
 const { InputError } = require('./errors');
 const LogEntry = require('./types/logentry');
+const Payment = require('./types/payment');
 const Person = require('./types/person');
 const { addPerson } = require('./people');
 const { upgradePerson } = require('./upgrade');
@@ -56,7 +57,8 @@ class Purchase {
     this.pgp = pgp;
     this.db = db;
     this.getPrices = this.getPrices.bind(this);
-    this.makePurchase = this.makePurchase.bind(this);
+    this.makeMembershipPurchase = this.makeMembershipPurchase.bind(this);
+    this.makeOtherPurchase = this.makeOtherPurchase.bind(this);
   }
 
   getPrices(req, res, next) {
@@ -102,12 +104,12 @@ class Purchase {
     });
   }
 
-  stripeCharge({ req, token, amount, email, msg }) {
+  stripeCharge(req, { token, amount, email }, msg) {
+    let charge_id = null;
     const description = `Charge of €${amount/100} by ${email} for ${msg}`;
     const preLogEntry = new LogEntry(req, description);
-    return this.db.none(
-      `INSERT INTO Log ${preLogEntry.sqlValues}`, preLogEntry
-    ).then(() => stripe.charges.create({
+    return this.db.none(`INSERT INTO Log ${preLogEntry.sqlValues}`, preLogEntry)
+      .then(() => stripe.charges.create({
         amount,
         currency: 'eur',
         description,
@@ -115,21 +117,24 @@ class Purchase {
         receipt_email: email,
         source: token,
         statement_descriptor
-    })).then((charge) => {
-      if (!charge.paid) throw new Error(`Charge not paid! WTF? ${JSON.stringify(charge)}`);
-      const id = charge.receipt_number || charge.id;
-      const postLogEntry = new LogEntry(req, `Charge ok: ${id}`);
-      postLogEntry.parameters = charge;
-      return this.db.none(`INSERT INTO Log ${postLogEntry.sqlValues}`, postLogEntry);
-    }).catch(error => {
-      const errLogEntry = new LogEntry(req, `Charge failed! ${error.message}`);
-      errLogEntry.parameters = error;
-      this.db.none(`INSERT INTO Log ${errLogEntry.sqlValues}`, errLogEntry);
-      throw error;
-    });
+      }))
+      .then((charge) => {
+        if (!charge.paid) throw new Error(`Charge not paid! WTF? ${JSON.stringify(charge)}`);
+        charge_id = charge.receipt_number || charge.id;
+        const postLogEntry = new LogEntry(req, `Charge ok: ${charge_id}`);
+        postLogEntry.parameters = charge;
+        return this.db.none(`INSERT INTO Log ${postLogEntry.sqlValues}`, postLogEntry);
+      })
+      .then(() => charge_id)
+      .catch(error => {
+        const errLogEntry = new LogEntry(req, `Charge failed! ${error.message}`);
+        errLogEntry.parameters = error;
+        this.db.none(`INSERT INTO Log ${errLogEntry.sqlValues}`, errLogEntry);
+        throw error;
+      });
   }
 
-  makePurchase(req, res, next) {
+  makeMembershipPurchase(req, res, next) {
     const amount = Number(req.body.amount);
     const email = req.body.email;
     const token = req.body.token;
@@ -147,7 +152,7 @@ class Purchase {
       const ca = calcAmount(newMembers, upgrades);
       if (amount !== ca) throw new InputError(`Amount mismatch: in request ${amount}, calculated ${ca}`);
       const msg = logMessage(newMembers, upgrades);
-      return this.stripeCharge({ req, token, amount, email, msg });
+      return this.stripeCharge(req, { token, amount, email }, msg);
     }).then(() => Promise.all(
       upgrades.map(u => upgradePerson(req, this.db, u))
     )).then(() => Promise.all(
@@ -156,6 +161,14 @@ class Purchase {
       const emails = uniqueEmails(newMembers, upgrades);
       res.status(200).json({ status: 'success', emails });
     }).catch(next);
+  }
+
+  makeOtherPurchase(req, res, next) {
+    const payment = new Payment(req.body);
+    this.stripeCharge(req, payment, payment.type)
+      .then(charge_id => payment.insert(this.db, charge_id))
+      .then(ok => res.status(200).json(Object.assign({ status: 'success' }, ok)))
+      .catch(next);
   }
 }
 
