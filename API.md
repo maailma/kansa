@@ -29,6 +29,7 @@ some relevant data and/or a `message` field.
   * [WebSocket: `wss://server/api/kansa/people/updates`](#websocket-wssserverapikansapeopleupdates)
 * [Purchases](#purchases)
   * [`POST /api/kansa/purchase`](#post-apikansapurchase)
+  * [`POST /api/kansa/purchase/other`](#post-apikansapurchaseother)
   * [`GET /api/kansa/purchase/prices`](#get-apikansapurchaseprices)
 * [Hugo Nominations](#hugo-nominations)
   * [`GET /api/hugo/:id/nominations`](#get-apihugoidnominations)
@@ -314,6 +315,23 @@ to each address. Send the receipt of the purchase to the `email` address.
 {
   status: 'success',
   emails: ['address@example.com', ...]
+}
+```
+
+### `POST /api/kansa/purchase/other`
+- Parameters: `amount`, `data`, `email`, `name`, `invoice`, `person`, `token`,
+  `type: 'Membership' || 'HotelRoom' || 'ArtShowReg' || 'TableReg' || 'Sponsorship'`
+
+Using the `token` received from Stripe, make a charge of `amount` on the card
+and add an entry to the `Payments` table. `data` is a `type`-specific object,
+and `invoice` and `person` are optional. Send the receipt of the purchase to the
+`email` address.
+
+#### Response
+```
+{
+  status: 'success',
+  stripe_charge_id: '...'
 }
 ```
 
