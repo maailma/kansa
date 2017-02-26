@@ -44,6 +44,21 @@ CREATE TABLE IF NOT EXISTS Log (
     description text NOT NULL
 );
 
+CREATE TYPE PaymentType AS ENUM ('Membership','HotelRoom','ArtShowReg','TableReg','Sponsorship');
+CREATE TABLE IF NOT EXISTS Payments (
+    id SERIAL PRIMARY KEY,
+    "timestamp" timestamptz NOT NULL DEFAULT now(),
+    amount integer NOT NULL,
+    currency text NOT NULL,
+    stripe_charge_id text,
+    email text NOT NULL,
+    name text NOT NULL,
+    person integer REFERENCES People,
+    type PaymentType NOT NULL,
+    invoice text,
+    data jsonb
+);
+
 
 -- keep People.last_modified up to date
 CREATE FUNCTION set_last_modified() RETURNS trigger AS $$
