@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS Payments (
     person integer REFERENCES People,
     type PaymentType NOT NULL,
     invoice text,
+    comments text,
     data jsonb
 );
 

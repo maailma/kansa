@@ -3,7 +3,7 @@ const InputError = require('./inputerror');
 class Payment {
   static get fields() { return [
     'amount', 'currency', 'stripe_charge_id', 'email', 'name', 'person',
-    'type', 'invoice', 'data'
+    'type', 'invoice', 'comments', 'data'
   ]}
 
   static get table() { return 'Payments'; }
@@ -27,6 +27,7 @@ class Payment {
     if (Payment.types.indexOf(this.type) === -1) {
       throw new InputError('Supported types: ' + Payment.types.join(', '));
     }
+    this.comments = src.comments || null;
     this.data = src.data || null;
     this.invoice = src.invoice || null;
     this.person = Number(src.person) || null;

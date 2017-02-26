@@ -319,13 +319,13 @@ to each address. Send the receipt of the purchase to the `email` address.
 ```
 
 ### `POST /api/kansa/purchase/other`
-- Parameters: `amount`, `data`, `email`, `name`, `invoice`, `person`, `token`,
+- Parameters: `amount`, `comments`, `data`, `email`, `name`, `invoice`, `person`, `token`,
   `type: 'Membership' || 'HotelRoom' || 'ArtShowReg' || 'TableReg' || 'Sponsorship'`
 
 Using the `token` received from Stripe, make a charge of `amount` on the card
 and add an entry to the `Payments` table. `data` is a `type`-specific object,
-and `invoice` and `person` are optional. Send the receipt of the purchase to the
-`email` address.
+and `comments`, `invoice` and `person` are optional. Send the receipt of the
+purchase to the `email` address.
 
 #### Response
 ```
