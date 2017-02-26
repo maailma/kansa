@@ -1,6 +1,7 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_APIKEY);
 
 const prices = require('../static/prices.json');
+const purchaseData = require('../static/purchase-data.json');
 const { InputError } = require('./errors');
 const LogEntry = require('./types/logentry');
 const Payment = require('./types/payment');
@@ -57,6 +58,7 @@ class Purchase {
     this.pgp = pgp;
     this.db = db;
     this.getPrices = this.getPrices.bind(this);
+    this.getPurchaseData = this.getPurchaseData.bind(this);
     this.makeMembershipPurchase = this.makeMembershipPurchase.bind(this);
     this.makeOtherPurchase = this.makeOtherPurchase.bind(this);
   }
@@ -64,6 +66,11 @@ class Purchase {
   getPrices(req, res, next) {
     if (!prices) next(new Error('Missing membership prices!?'));
     res.status(200).json(prices);
+  }
+
+  getPurchaseData(req, res, next) {
+    if (!purchaseData) next(new Error('Missing purchase data!?'));
+    res.status(200).json(purchaseData);
   }
 
   checkUpgrades(reqUpgrades) {

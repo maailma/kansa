@@ -29,6 +29,7 @@ some relevant data and/or a `message` field.
   * [WebSocket: `wss://server/api/kansa/people/updates`](#websocket-wssserverapikansapeopleupdates)
 * [Purchases](#purchases)
   * [`POST /api/kansa/purchase`](#post-apikansapurchase)
+  * [`GET /api/kansa/purchase/data`](#get-apikansapurchasedata)
   * [`POST /api/kansa/purchase/other`](#post-apikansapurchaseother)
   * [`GET /api/kansa/purchase/prices`](#get-apikansapurchaseprices)
 * [Hugo Nominations](#hugo-nominations)
@@ -315,6 +316,26 @@ to each address. Send the receipt of the purchase to the `email` address.
 {
   status: 'success',
   emails: ['address@example.com', ...]
+}
+```
+
+### `GET /api/kansa/purchase/data`
+
+Current purchase data for non-membership purchases. Top-level keys correspond to
+pre-defined payment types and their `shape` values define the shapes of the
+expected object, with matching types. Arrays of objects define select/radio
+options, valued by their `key` value.
+
+#### Response
+```
+{
+  Sponsorship: {
+    shape: {
+      sponsor: '',
+      type: [{ key: 'bench', amount: 20000, label: 'Sponsored bench' }, ...]
+    }
+  },
+  ...
 }
 ```
 

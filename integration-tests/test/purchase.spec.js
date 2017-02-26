@@ -198,6 +198,24 @@ describe('Other purchases', () => {
     });
   });
 
+  context('Purchase data', function() {
+    const agent = request.agent(host, { ca: cert });
+
+    it('should get data', (done) => {
+      agent.get('/api/kansa/purchase/data')
+        .expect(200)
+        .expect(({ body }) => {
+          if (
+            !body || !body.Sponsorship || !body.Sponsorship.shape.type ||
+            body.Sponsorship.shape.type[0].key !== 'bench'
+          ) throw new Error(
+            `Bad response! ${JSON.stringify(body)}`
+          );
+        })
+        .end(done);
+    });
+  });
+
   context('Sponsorships (using Stripe API)', function() {
     this.timeout(10000);
     const agent = request.agent(host, { ca: cert });

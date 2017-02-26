@@ -1,0 +1,19 @@
+{
+  "Sponsorship": {
+    "shape": {
+      "sponsor": "",
+      "type": [
+        {
+          "key": "bench",
+          "amount": 20000,
+          "label": "Sponsored bench"
+        },
+        {
+          "key": "lounge",
+          "amount": 50000,
+          "label": "Craft lounge"
+        }
+      ]
+    }
+  }
+}
