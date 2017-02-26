@@ -35,7 +35,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 const corsOrigins = process.env.CORS_ORIGIN;
 if (corsOrigins) app.use(cors({
   credentials: true,
-  methods: [ 'GET', 'POST' ],
   origin: corsOrigins.split(/[ ,]+/)
 }));
 app.use(session({
