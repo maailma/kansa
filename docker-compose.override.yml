@@ -36,3 +36,5 @@ services:
       POSTGRES_PASSWORD: adminpwd
       KANSA_PG_PASSWORD: pwd
       HUGO_PG_PASSWORD: pwd
+    volumes:
+      - ./postgres/init/90-dev-init-admin.sql:/docker-entrypoint-initdb.d/90-dev-init-admin.sql:ro

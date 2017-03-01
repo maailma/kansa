@@ -51,7 +51,7 @@ services:
       - "6379"
 
   postgres:
-    build: ./postgres
+    image: postgres:9.5
     environment:
       PGDATA: /pgdata
       PGUSER: admin
@@ -61,3 +61,8 @@ services:
       - "5432"
     volumes:
       - pgdata:/pgdata
+      - ./postgres/damm/damm.control:/usr/share/postgresql/9.5/extension/damm.control:ro
+      - ./postgres/damm/damm--1.0.sql:/usr/share/postgresql/9.5/extension/damm--1.0.sql:ro
+      - ./postgres/init/10-admin-init.sql:/docker-entrypoint-initdb.d/10-admin-init.sql:ro
+      - ./postgres/init/20-kansa-init.sql:/docker-entrypoint-initdb.d/20-kansa-init.sql:ro
+      - ./postgres/init/30-hugo-init.sql:/docker-entrypoint-initdb.d/30-hugo-init.sql:ro
