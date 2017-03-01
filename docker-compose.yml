@@ -11,6 +11,7 @@ services:
     links:
       - hugo
       - kansa
+      - raami
     volumes:
       - ./nginx/conf.template:/nginx.conf.template:ro
       - ./nginx/admin.html:/usr/share/nginx/html/client/admin.html:ro
@@ -30,6 +31,14 @@ services:
     entrypoint: ./wait-for-it.sh postgres:5432 -- npm start
     links:
       - kyyhky
+      - postgres
+    expose:
+      - "3000"
+  
+  raami:
+    build: ./raami
+    entrypoint: ./wait-for-it.sh postgres:5432 -- npm start
+    links:
       - postgres
     expose:
       - "3000"

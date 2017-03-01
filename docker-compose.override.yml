@@ -31,10 +31,17 @@ services:
       LOGIN_URI_ROOT: https://localhost:4430/#/login
       SENDGRID_APIKEY:
 
+  raami:
+    environment:
+      CORS_ORIGIN: http://localhost:8080
+      DATABASE_URL: postgres://raami:pwd@postgres:5432/api
+      SESSION_SECRET: dev secret
+
   postgres:
     environment:
       POSTGRES_PASSWORD: adminpwd
       KANSA_PG_PASSWORD: pwd
       HUGO_PG_PASSWORD: pwd
+      RAAMI_PG_PASSWORD: pwd
     volumes:
       - ./postgres/init/90-dev-init-admin.sql:/docker-entrypoint-initdb.d/90-dev-init-admin.sql:ro
