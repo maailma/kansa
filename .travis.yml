@@ -1,31 +1,18 @@
-language: node_js
-node_js:
-    - "node"
-    
 sudo: required
 
 services:
     - docker
-    
-env:
-  DOCKER_COMPOSE_VERSION: 1.8.0
+
+language: node_js
+node_js:
+    - "node"
 
 before_install:
-    - sudo rm /usr/local/bin/docker-compose
-    - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-    - chmod +x docker-compose
-    - sudo mv docker-compose /usr/local/bin
-    
-install:
-    - cd integration-tests; npm install
+    - docker-compose up --build -d
+    - cd integration-tests
 
-before_script:
-    - docker-compose build
-    - docker-compose up -d
-
-script: 
-    - cd integration-tests; npm test
+after_failure:
+    - docker-compose logs
 
 after_script:
     - docker-compose down
-    
