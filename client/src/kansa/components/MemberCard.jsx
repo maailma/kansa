@@ -8,6 +8,7 @@ import RaisedButton from 'material-ui/RaisedButton'
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
 import MemberForm from './MemberForm'
+import MemberMenu from './MemberMenu'
 import Upgrade from './Upgrade'
 
 export default class Member extends React.Component {
@@ -44,7 +45,12 @@ export default class Member extends React.Component {
       <CardHeader
         title={ membership }
         subtitle={ membership !== 'NonMember' ? '#' + member.get('member_number') : null }
-      />
+      >
+        <MemberMenu
+          id={member.get('id')}
+          style={{ float: 'right', marginRight: -12, marginTop: -4 }}
+        />
+      </CardHeader>
       <CardText>
         <MemberForm
           member={member}

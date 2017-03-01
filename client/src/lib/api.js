@@ -20,6 +20,12 @@ export default class API {
     return this.root + cmd + API.queryFromObj(params);
   }
 
+  DELETE(cmd) {
+    const uri = this.path(cmd);
+    return fetch(uri, { credentials: 'include', method: 'DELETE' })
+      .then(response => API.parse(response));
+  }
+
   GET(cmd, params) {
     const uri = this.path(cmd, params);
     return fetch(uri, { credentials: 'include' })
@@ -35,6 +41,21 @@ export default class API {
       opt.headers = { 'Content-Type': 'application/json' };
       opt.body = JSON.stringify(body);
     }
+    return fetch(uri, opt)
+      .then(response => API.parse(response));
+  }
+
+  PUT(cmd, body) {
+    const uri = this.path(cmd);
+    const opt = {
+      body: JSON.stringify(body),
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: 'PUT'
+    };
     return fetch(uri, opt)
       .then(response => API.parse(response));
   }
