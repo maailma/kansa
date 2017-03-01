@@ -11,5 +11,8 @@ before_install:
     - docker-compose up --build -d
     - cd integration-tests
 
+after_failure:
+    - docker-compose logs
+
 after_script:
     - docker-compose down
