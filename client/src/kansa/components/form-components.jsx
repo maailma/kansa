@@ -12,18 +12,12 @@ const styles = {
   paperPubs: { verticalAlign: 'top' }
 }
 
-const basePropTypes = {
-  getDefaultValue: React.PropTypes.func.isRequired,
-  getValue: React.PropTypes.func.isRequired,
-  onChange: React.PropTypes.func.isRequired
-};
-
 function label(path) {
   const ps = path.join(' ');
   return ps.charAt(0).toUpperCase() + ps.slice(1).replace(/_/g, ' ');
 }
 
-const TextInput = ({ getDefaultValue, getValue, onChange, path, required, style = {}, ...props }) => {
+export const TextInput = ({ getDefaultValue, getValue, onChange, path, required, style = {}, ...props }) => {
   if (!Array.isArray(path)) path = [ path ];
   const value = getValue(path);
   if (value === null) return null;
@@ -42,37 +36,11 @@ const TextInput = ({ getDefaultValue, getValue, onChange, path, required, style 
     { ...props }
   />;
 }
-
-export const CommonFields = (props) => (<div>
-  <Row>
-    <Col xs={12} sm={6}>
-      <TextInput { ...props } path='legal_name' required={true} />
-    </Col>
-    <Col xs={12} sm={6}>
-      <TextInput { ...props } path='email' disabled={true} />
-    </Col>
-  </Row>
-  <Row>
-    <Col xs={12} sm={6}>
-      <TextInput { ...props } path='public_first_name' />
-    </Col>
-    <Col xs={12} sm={6}>
-      <TextInput { ...props } path='public_last_name' />
-    </Col>
-  </Row>
-  <Row>
-    <Col xs={12} sm={4}>
-      <TextInput { ...props } path='city' />
-    </Col>
-    <Col xs={12} sm={4}>
-      <TextInput { ...props } path='state' />
-    </Col>
-    <Col xs={12} sm={4}>
-      <TextInput { ...props } path='country' />
-    </Col>
-  </Row>
-</div>);
-CommonFields.propTypes = basePropTypes;
+TextInput.propTypes = {
+  getDefaultValue: React.PropTypes.func.isRequired,
+  getValue: React.PropTypes.func.isRequired,
+  onChange: React.PropTypes.func.isRequired
+};
 
 export const PaperPubsFields = ({ getDefaultValue, getValue, onChange }) => {
   if (!getValue(['paper_pubs'])) return null;
@@ -95,20 +63,7 @@ export const PaperPubsFields = ({ getDefaultValue, getValue, onChange }) => {
     </Col>
   </Row>;
 }
-PaperPubsFields.propTypes = basePropTypes;
-
-export const CommentField = (props) => (<TextInput
-  path='comment'
-  required={true}
-  multiLine={true}
-  textareaStyle={{ marginBottom: '-24px' }}
-  { ...props }
-  getDefaultValue={ () => '' }
-/>);
-CommentField.propTypes = {
-  getValue: React.PropTypes.func.isRequired,
-  onChange: React.PropTypes.func.isRequired
-};
+PaperPubsFields.propTypes = TextInput.propTypes;
 
 const MembershipSelect = ({ getDefaultValue, getValue, onChange, prices }) => {
   const path = ['membership'];
@@ -155,4 +110,4 @@ export const UpgradeFields = (props) => (<div>
   <br />
   <PaperPubsFields { ...props } />
 </div>);
-UpgradeFields.propTypes = basePropTypes;
+UpgradeFields.propTypes = TextInput.propTypes;

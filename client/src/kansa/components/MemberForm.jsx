@@ -1,12 +1,12 @@
 import { Map } from 'immutable'
 import React from 'react'
 import { connect } from 'react-redux'
+const { Col, Row } = require('react-flexbox-grid');
 
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
 import { memberUpdate } from '../actions'
-import { CommonFields, PaperPubsFields } from './form-components'
-
+import { TextInput, PaperPubsFields } from './form-components'
 
 class MemberForm extends React.Component {
 
@@ -93,19 +93,42 @@ class MemberForm extends React.Component {
   };
 
   render() {
-    return <div>
-      <CommonFields
-        getDefaultValue={this.getDefaultValue}
-        getValue={this.getValue}
-        onChange={this.onChange}
-      />
+    const inputProps = {
+      getDefaultValue: this.getDefaultValue,
+      getValue: this.getValue,
+      onChange: this.onChange
+    };
+    return <form>
+      <Row>
+        <Col xs={12} sm={6}>
+          <TextInput { ...inputProps } path='legal_name' required={true} />
+        </Col>
+        <Col xs={12} sm={6}>
+          Email: <pre>{this.getDefaultValue(['email'])}</pre>
+        </Col>
+      </Row>
+      <Row>
+        <Col xs={12} sm={6}>
+          <TextInput { ...inputProps } path='public_first_name' />
+        </Col>
+        <Col xs={12} sm={6}>
+          <TextInput { ...inputProps } path='public_last_name' />
+        </Col>
+      </Row>
+      <Row>
+        <Col xs={12} sm={4}>
+          <TextInput { ...inputProps } path='city' />
+        </Col>
+        <Col xs={12} sm={4}>
+          <TextInput { ...inputProps } path='state' />
+        </Col>
+        <Col xs={12} sm={4}>
+          <TextInput { ...inputProps } path='country' />
+        </Col>
+      </Row>
       <br />
-      <PaperPubsFields
-        getDefaultValue={this.getDefaultValue}
-        getValue={this.getValue}
-        onChange={this.onChange}
-      />
-    </div>;
+      <PaperPubsFields {...inputProps} />
+    </form>;
   }
 
 }
