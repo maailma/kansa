@@ -29,8 +29,8 @@ const router = express.Router();
 const peopleStream = new PeopleStream(db);
 
 // these are accessible without authentication
-router.get('/public/people', people.getPublicPeople);
-router.get('/public/stats', people.getPublicStats);
+router.get('/public/people', cors({ origin: '*' }), people.getPublicPeople);
+router.get('/public/stats', cors({ origin: '*' }), people.getPublicStats);
 
 router.post('/key', key.setKey);
 router.all('/login', user.login);
