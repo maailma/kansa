@@ -13,7 +13,7 @@ const styles = {
   paperPubs: { marginBottom: 12, verticalAlign: 'top' }
 }
 
-export const TextInput = ({ getDefaultValue, getValue, label, onChange, path, required, style = {}, ...props }) => {
+export const TextInput = ({ getDefaultValue, getValue, inputRef, label, onChange, path, required, style = {}, ...props }) => {
   if (!Array.isArray(path)) path = [ path ];
   const value = getValue(path);
   if (value === null) return null;
@@ -33,6 +33,7 @@ export const TextInput = ({ getDefaultValue, getValue, label, onChange, path, re
     value={value}
     errorText={ !required || value ? '' : 'Required' }
     onChange={ ev => onChange(path, ev.target.value) }
+    ref={ inputRef || (() => {}) }
     { ...props }
   />;
 }

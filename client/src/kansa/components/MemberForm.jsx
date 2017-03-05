@@ -88,7 +88,12 @@ export default class MemberForm extends React.Component {
     return <form>
       <Row>
         <Col xs={12} sm={6}>
-          <TextInput { ...inputProps } path='legal_name' required={true} />
+          <TextInput
+            { ...inputProps }
+            inputRef={ focusRef => this.focusRef = focusRef }
+            path='legal_name'
+            required={true}
+          />
           <div style={hintStyle}>
             We'll need to check this against an official ID at the con, but
             otherwise it'll stay confidential.
@@ -171,4 +176,7 @@ export default class MemberForm extends React.Component {
     </form>;
   }
 
+  componentDidMount() {
+    this.focusRef && this.focusRef.focus();
+  }
 }
