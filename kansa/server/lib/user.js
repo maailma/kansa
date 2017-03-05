@@ -84,8 +84,15 @@ function logout(req, res, next) {
 function getInfo(req, res, next) {
   const email = req.session.user.member_admin && req.query.email || req.session.user.email;
   req.app.locals.db.task(t => t.batch([
-    t.any('SELECT * FROM People WHERE email=$1', email),
-    t.oneOrNone(`SELECT ${Admin.sqlRoles} FROM admin.Admins WHERE email=$1`, email)
+    t.any(`
+        SELECT *
+          FROM People
+         WHERE email=$1
+      ORDER BY public_last_name, public_first_name, legal_name`, email),
+    t.oneOrNone(`
+        SELECT ${Admin.sqlRoles}
+          FROM admin.Admins
+         WHERE email=$1`, email)
   ]))
     .then(data => {
       res.status(200).json({
