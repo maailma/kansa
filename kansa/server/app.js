@@ -39,7 +39,9 @@ router.get('/favicon.ico', (req, res, next) => {
   res.sendFile('static/favicon.ico', { root: __dirname }, err => err && next(err));
 });
 
-router.post('/purchase', purchase.makePurchase);
+router.post('/purchase', purchase.makeMembershipPurchase);
+router.get('/purchase/data', purchase.getPurchaseData);
+router.post('/purchase/other', purchase.makeOtherPurchase);
 router.get('/purchase/prices', purchase.getPrices);
 
 // subsequent routes require authentication
