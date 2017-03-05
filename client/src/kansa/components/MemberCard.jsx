@@ -1,8 +1,12 @@
 import React from 'react'
 import { Card, CardHeader, CardText } from 'material-ui/Card'
 import { List, ListItem } from 'material-ui/List'
+import EuroSymbol from 'material-ui/svg-icons/action/euro-symbol'
+import ContentCreate from 'material-ui/svg-icons/content/create'
+import Palette from 'material-ui/svg-icons/image/palette'
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
+import Rocket from '../../lib/rocket-icon'
 import { isFullMemberType } from '../constants'
 import MemberEdit from './MemberEdit'
 import Upgrade from './Upgrade'
@@ -30,14 +34,17 @@ const Member = ({ member, push, showHugoActions }) => {
   return <Card style={{ marginBottom: 24 }}>
     <CardHeader
       title={ member.get('legal_name') }
+      style={{ fontWeight: 600 }}
       subtitle={ membership === 'NonMember'
           ? 'Non-member' + (member.get('can_hugo_nominate') ? ' (Hugo nominator)' : '')
           : `${membership} member #${member.get('member_number')}` }
     />
-    <CardText>
-      <List>
+    <CardText style={{ paddingTop: 0 }}>
+      <List style={{ paddingTop: 0 }}>
         <MemberEdit member={member}>
           <ListItem
+            innerDivStyle={{ paddingLeft: 60 }}
+            leftIcon={<ContentCreate style={{ top: 12 }}/>}
             primaryText="Edit personal information"
             secondaryText={<p>
               Public name: <span style={infoStyle}>{publicName(member) || '[not set]'}</span><br/>
@@ -48,17 +55,23 @@ const Member = ({ member, push, showHugoActions }) => {
         </MemberEdit>
         <Upgrade member={member}>
           <ListItem
+            innerDivStyle={{ paddingLeft: 60 }}
+            leftIcon={<EuroSymbol style={{ top: 12 }}/>}
             primaryText="Upgrade membership"
             secondaryText="and/or add paper publications"
           />
         </Upgrade>
         { showHugoActions ? <ListItem
+            innerDivStyle={{ paddingLeft: 60 }}
+            leftIcon={<Rocket />}
             onTouchTap={() => push(`/hugo/${id}/nominate`)}
             primaryText="Nominate for the Hugo Awards"
           /> : null }
         { isFullMemberType(membership) ? <ListItem
-          onTouchTap={ () => push(`/exhibition/${id}`) }
-          primaryText="Register for the Art Show"
+            innerDivStyle={{ paddingLeft: 60 }}
+            leftIcon={<Palette />}
+            onTouchTap={ () => push(`/exhibition/${id}`) }
+            primaryText="Register for the Art Show"
         /> : null }
       </List>
     </CardText>

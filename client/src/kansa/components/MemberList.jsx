@@ -29,7 +29,7 @@ class MemberList extends React.Component {
     return <Row>
       {
         people.map(member => <Col
-          xs={12} sm={6} md={4} lg={3}
+          xs={12} sm={6} lg={4}
           key={member.get('id')}
         >
           <MemberCard
