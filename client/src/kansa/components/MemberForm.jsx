@@ -84,6 +84,10 @@ class MemberForm extends React.Component {
   getDefaultValue = (path) => this.props.member.getIn(path) || '';
   getValue = (path) => this.state.member.getIn(path) || '';
 
+  get hasPaperPubs() {
+    return !!this.state.member.get('paper_pubs');
+  }
+
   onChange = (path, value) => {
     this.setState({
       member: this.state.member.setIn(path, value)
@@ -98,13 +102,26 @@ class MemberForm extends React.Component {
       getValue: this.getValue,
       onChange: this.onChange
     };
+    const hintStyle= {
+      color: '#737373',
+      marginBottom: 24
+    };
     return <form>
       <Row>
         <Col xs={12} sm={6}>
           <TextInput { ...inputProps } path='legal_name' required={true} />
+          <div style={hintStyle}>
+            We'll need to check this against an official ID at the con, but
+            otherwise it'll stay confidential.
+          </div>
         </Col>
         <Col xs={12} sm={6}>
-          Email: <pre>{this.getDefaultValue(['email'])}</pre>
+          <TextInput { ...inputProps } path='email' disabled={true} />
+          <div style={hintStyle}>
+            To change the email address associated with this membership, please
+            get in touch with us at <a href="mailto:registration@worldcon.fi">
+            registration@worldcon.fi</a>
+          </div>
         </Col>
       </Row>
       <Row>
@@ -113,6 +130,13 @@ class MemberForm extends React.Component {
         </Col>
         <Col xs={12} sm={6}>
           <TextInput { ...inputProps } path='public_last_name' />
+        </Col>
+        <Col xs={12} style={hintStyle}>
+          How shall we list you in public? Leave these fields blank if you'd
+          prefer we don't list you at all on our website or elsewhere. If you
+          give us two names, we'll use the second for alphabetization (either
+          can contain spaces). A few months before the con, you'll be able to
+          separately customize the text of your badge.
         </Col>
       </Row>
       <Row>
@@ -125,9 +149,22 @@ class MemberForm extends React.Component {
         <Col xs={12} sm={4}>
           <TextInput { ...inputProps } path='country' />
         </Col>
+        <Col xs={12} style={hintStyle}>
+          Where you're from. Not strictly speaking necessary, but we'd love to
+          know how much world is coming to our Worldcon. Be as specific as you
+          wish; not all fields will apply to everyone.
+        </Col>
       </Row>
-      <br />
-      <PaperPubsFields {...inputProps} />
+      { this.hasPaperPubs ? [
+          < PaperPubsFields {...inputProps} />,
+          <Row>
+            <Col xs={12} style={hintStyle}>
+              As you've signed up for paper publications, we'll need to know
+              where to send your mail. Please enter your address details here as
+              you'd wish them to be printed onto a postal label.
+            </Col>
+          </Row>
+      ] : null }
     </form>;
   }
 
