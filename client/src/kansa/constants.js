@@ -6,3 +6,5 @@ export const fields = [ 'membership', 'legal_name', 'email', 'public_first_name'
 export const membershipTypes = [ 'NonMember', 'Supporter', 'KidInTow', 'Child', 'Youth', 'FirstWorldcon', 'Adult' ];
 
 export const emptyPaperPubsMap = Map({ name: '', address: '', country: '' });
+
+export const isFullMemberType = (type) => ['Youth', 'FirstWorldcon', 'Adult'].indexOf(type) !== -1;

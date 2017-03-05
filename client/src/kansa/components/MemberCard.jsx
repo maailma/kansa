@@ -1,88 +1,76 @@
-import { Map } from 'immutable'
 import React from 'react'
-import { Link } from 'react-router'
-
-import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
-import RaisedButton from 'material-ui/RaisedButton'
-
+import { Card, CardHeader, CardText } from 'material-ui/Card'
+import { List, ListItem } from 'material-ui/List'
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
-import MemberForm from './MemberForm'
-import MemberMenu from './MemberMenu'
+import { isFullMemberType } from '../constants'
+import MemberEdit from './MemberEdit'
 import Upgrade from './Upgrade'
 
-export default class Member extends React.Component {
-  static propTypes = {
-    member: ImmutablePropTypes.mapContains({
-      paper_pubs: ImmutablePropTypes.map
-    }),
-    showHugoActions: React.PropTypes.bool
-  }
+const location = (member) => (
+  [member.get('city'), member.get('state'), member.get('country')]
+  .filter(n => n)
+  .join(', ')
+  .trim()
+);
 
-  static defaultProps = {
-    member: Map()
-  }
+const publicName = (member) => (
+  [member.get('public_first_name'), member.get('public_last_name')]
+    .filter(n => n)
+    .join(' ')
+    .trim()
+);
 
-  state = {
-    canSubmit: false,
-    form: null
-  }
+const Member = ({ member, push, showHugoActions }) => {
+  if (!member) return null;
+  const id = member.get('id');
+  const membership = member.get('membership', 'NonMember');
+  const infoStyle = { color: 'rgba(0, 0, 0, 0.870588)' };
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if (nextState.canSubmit !== this.state.canSubmit) return true;
-    if (nextState.form !== this.state.form) return true;
-    if (!nextProps.member.equals(this.props.member)) return true;
-    return false;
-  }
-
-  render() {
-    const { member, showHugoActions } = this.props;
-    if (!member) return null;
-    const membership = member.get('membership', 'NonMember');
-    const { canSubmit, form } = this.state;
-
-    return <Card style={{ marginBottom: 24 }}>
-      <CardHeader
-        title={ membership }
-        subtitle={ membership !== 'NonMember' ? '#' + member.get('member_number') : null }
-      >
-        <MemberMenu
-          id={member.get('id')}
-          style={{ float: 'right', marginRight: -12, marginTop: -4 }}
-        />
-      </CardHeader>
-      <CardText>
-        <MemberForm
-          member={member}
-          onChange={ (canSubmit) => this.setState({ canSubmit }) }
-          setForm={ (form) => this.setState({ form }) }
-        />
-      </CardText>
-      <CardActions
-        style={{
-          display: 'flex',
-          flexDirection: 'row-reverse',
-          paddingRight: 8,
-          paddingBottom: 16
-        }}
-      >
-        <RaisedButton key='ok'
-          disabled={ !canSubmit }
-          label={ form && form.sent ? 'Working...' : 'Apply changes' }
-          onTouchTap={ form && form.submit }
-          style={{ flexShrink: 0 }}
-        />
-        <Upgrade
-          member={member}
-          style={{ marginRight: 8 }}
-        >
-          <RaisedButton label='Upgrade' />
+  return <Card style={{ marginBottom: 24 }}>
+    <CardHeader
+      title={ member.get('legal_name') }
+      subtitle={ membership === 'NonMember'
+          ? 'Non-member' + (member.get('can_hugo_nominate') ? ' (Hugo nominator)' : '')
+          : `${membership} member #${member.get('member_number')}` }
+    />
+    <CardText>
+      <List>
+        <MemberEdit member={member}>
+          <ListItem
+            primaryText="Edit personal information"
+            secondaryText={<p>
+              Public name: <span style={infoStyle}>{publicName(member) || '[not set]'}</span><br/>
+              Location: <span style={infoStyle}>{location(member) || '[not set]'}</span>
+            </p>}
+            secondaryTextLines={2}
+          />
+        </MemberEdit>
+        <Upgrade member={member}>
+          <ListItem
+            primaryText="Upgrade membership"
+            secondaryText="and/or add paper publications"
+          />
         </Upgrade>
-        { showHugoActions ? <Link
-          style={{ flexGrow: 1, marginLeft: 8 }}
-          to={`/hugo/${member.get('id')}/nominate`}
-        >Nominate for the Hugo Awards</Link> : null }
-      </CardActions>
-    </Card>;
-  }
+        { showHugoActions ? <ListItem
+            onTouchTap={() => push(`/hugo/${id}/nominate`)}
+            primaryText="Nominate for the Hugo Awards"
+          /> : null }
+        { isFullMemberType(membership) ? <ListItem
+          onTouchTap={ () => push(`/exhibition/${id}`) }
+          primaryText="Register for the Art Show"
+        /> : null }
+      </List>
+    </CardText>
+  </Card>;
 }
+
+Member.propTypes = {
+  member: ImmutablePropTypes.mapContains({
+    paper_pubs: ImmutablePropTypes.map
+  }),
+  push: React.PropTypes.func.isRequired,
+  showHugoActions: React.PropTypes.bool
+}
+
+export default Member;

@@ -1,6 +1,7 @@
 import { List } from 'immutable'
 import React from 'react'
 import { connect } from 'react-redux'
+import { push } from 'react-router-redux'
 const { Col, Row } = require('react-flexbox-grid');
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
@@ -11,6 +12,7 @@ class MemberList extends React.Component {
 
   static propTypes = {
     people: ImmutablePropTypes.list.isRequired,
+    push: React.PropTypes.func.isRequired,
     setTitle: React.PropTypes.func.isRequired
   }
 
@@ -23,22 +25,23 @@ class MemberList extends React.Component {
   }
 
   render() {
-    const { people } = this.props;
+    const { people, push } = this.props;
     return <Row>
-      <Col
-        xs={12}
-        smOffset={1} sm={10}
-        mdOffset={2} md={8}
-      >{
-        people.map(member => <MemberCard
+      {
+        people.map(member => <Col
+          xs={12} sm={6} md={4} lg={3}
           key={member.get('id')}
-          member={member}
-          showHugoActions={
-            member.get('can_hugo_nominate') &&
-            people.filter(m => m.get('can_hugo_nominate')).size === 1
-          }
-        />)
-      }</Col>
+        >
+          <MemberCard
+            member={member}
+            push={push}
+            showHugoActions={
+              member.get('can_hugo_nominate') &&
+              people.filter(m => m.get('can_hugo_nominate')).size === 1
+            }
+          />
+        </Col>)
+      }
     </Row>;
   }
 }
@@ -47,6 +50,7 @@ export default connect(
   (state) => ({
     people: state.user.get('people') || List()
   }), {
+    push,
     setTitle
   }
 )(MemberList);
