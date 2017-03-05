@@ -196,6 +196,21 @@ describe('Other purchases', () => {
         })
         .end(done);
     });
+
+    it('should require custom data', (done) => {
+      agent.post('/api/kansa/purchase/other')
+        .send({ amount: 1, email: '@', name: 'x', token: 'x', type: 'Sponsorship', data: { type: 'x' } })
+        .expect((res) => {
+          const exp = { status: 400, message: 'Bad data: ' };
+          if (res.status !== exp.status) throw new Error(`Bad status: got ${res.status}, expected ${exp.status}`);
+          if (res.body.message.indexOf(exp.message) !== 0) throw new Error(`Bad reply: ${JSON.stringify(res.body)}`);
+          const { missing, badType } = JSON.parse(res.body.message.substr(exp.message.length));
+          if (missing.length !== 0 || badType.length !== 1 || badType[0] !== 'type') {
+            throw new Error(`Bad reply: ${JSON.stringify(res.body)}`);
+          }
+        })
+        .end(done);
+    });
   });
 
   context('Purchase data', function() {
@@ -237,7 +252,7 @@ describe('Other purchases', () => {
             name: testName,
             token: testToken.id,
             type: 'Sponsorship',
-            data: { test: true }
+            data: { test: true, type: 'bench' }
           })
           .expect((res) => {
             if (res.status !== 200) throw new Error(`Purchase failed! ${JSON.stringify(res.body)}`);

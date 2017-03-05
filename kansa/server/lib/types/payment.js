@@ -1,4 +1,5 @@
 const InputError = require('./inputerror');
+const purchaseData = require('../../static/purchase-data.json');
 
 class Payment {
   static get fields() { return [
@@ -31,6 +32,24 @@ class Payment {
     this.data = src.data || null;
     this.invoice = src.invoice || null;
     this.person = Number(src.person) || null;
+    const dataErrors = this.checkData();
+    if (dataErrors) throw new InputError('Bad data: ' + JSON.stringify(dataErrors));
+  }
+
+  checkData() {
+    const pd = purchaseData[this.type];
+    const rd = pd && pd.required || [];
+    const missing = rd.filter(key => !this.data[key] && this.data[key] !== false);
+    const badType = Object.keys(pd.shape || {}).filter(key => {
+      const src = pd.shape[key];
+      const tgt = this.data[key];
+      if (Array.isArray(src)) {
+        return src.map(t => t.key).indexOf(tgt) === -1;
+      } else {
+        return typeof src === typeof tgt;
+      }
+    });
+    return missing.length || badType.length ? { missing, badType } : null;
   }
 
   insert(db, stripe_charge_id) {

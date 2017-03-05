@@ -1,5 +1,6 @@
 {
   "Sponsorship": {
+    "required": [ "type" ],
     "shape": {
       "sponsor": "",
       "type": [

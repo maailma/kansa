@@ -324,12 +324,14 @@ to each address. Send the receipt of the purchase to the `email` address.
 Current purchase data for non-membership purchases. Top-level keys correspond to
 pre-defined payment types and their `shape` values define the shapes of the
 expected object, with matching types. Arrays of objects define select/radio
-options, valued by their `key` value.
+options, valued by their `key` value. Keys of `shape` matching values of
+`required` need to have a non-empty value in the matching request.
 
 #### Response
 ```
 {
   Sponsorship: {
+    required: ['type'],
     shape: {
       sponsor: '',
       type: [{ key: 'bench', amount: 20000, label: 'Sponsored bench' }, ...]
