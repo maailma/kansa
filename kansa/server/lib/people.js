@@ -10,7 +10,7 @@ module.exports = {
 };
 
 function getPublicPeople(req, res, next) {
-  req.app.locals.db.any(`SELECT country, membership,
+  req.app.locals.db.any(`SELECT country, membership, public_last_name,
       concat_ws(' ', public_first_name, public_last_name) AS public_name
       FROM People WHERE membership != 'NonMember' AND (public_first_name != '' OR public_last_name != '')
       ORDER BY public_last_name, public_first_name, country`)
