@@ -46,16 +46,18 @@ history.listen(({ pathname }) => {
   ga('send', 'pageview');
 });
 
-const authCheck = ({ location: { pathname }}, replace, callback) => {
+function checkAuth(nextState, replace, callback) {
   const email = store.getState().user.get('email');
   if (email) callback();
-  else store.dispatch(tryLogin(err => {
-    if (err && pathname !== PATH_OUT) replace(PATH_OUT);
-    callback();
-  }));
+  else store.dispatch(tryLogin(() => callback()));
 }
 
-const doLogin = ({ params: { email, key, id } }) => {
+function requireAuth({ location: { pathname }}, replace) {
+  const email = store.getState().user.get('email');
+  if (!email && pathname !== PATH_OUT) replace(PATH_OUT);
+}
+
+function doLogin({ params: { email, key, id } }) {
   store.dispatch(keyLogin(email, key, id ? `/hugo/${id}` : null));
 }
 
@@ -63,26 +65,28 @@ ReactDOM.render(
   <Provider store={store} >
     <MuiThemeProvider muiTheme={theme}>
       <Router history={syncHistoryWithStore(history, store)}>
-        <Route path="/" component={App} >
+        <Route path="/login/:email/:key" onEnter={doLogin} />
+        <Route path="/login/:email/:key/:id" onEnter={doLogin} />
+        <Route path="/" component={App} onEnter={checkAuth} >
           <IndexRedirect to={PATH_IN} />
-          <Route path="login" onEnter={authCheck} component={Login} />
-          <Route path="login/:email/:key" onEnter={doLogin} />
-          <Route path="login/:email/:key/:id" onEnter={doLogin} />
-          <Route path="profile" onEnter={authCheck} component={MemberList} />
-          <Route path="exhibition/:id" component={ExhibitReg} />
-          <Route path="hugo" onEnter={authCheck} >
-            <IndexRedirect to={PATH_IN} />
-            <Route path="admin" component={HugoAdmin}>
-              <IndexRedirect to='Novel' />
-              <Route path=":category">
-                <IndexRedirect to='nominations' />
-                <Route path="finalists" component={Finalists} />
-                <Route path="nominations" component={Canon} />
+          <Route path="login" component={Login} />
+          <Route onEnter={requireAuth}>
+            <Route path="profile" component={MemberList} />
+            <Route path="exhibition/:id" component={ExhibitReg} />
+            <Route path="hugo" >
+              <IndexRedirect to={PATH_IN} />
+              <Route path="admin" component={HugoAdmin}>
+                <IndexRedirect to='Novel' />
+                <Route path=":category">
+                  <IndexRedirect to='nominations' />
+                  <Route path="finalists" component={Finalists} />
+                  <Route path="nominations" component={Canon} />
+                </Route>
               </Route>
-            </Route>
-            <Route path=":id">
-              <IndexRedirect to="nominate" />
-              <Route path="nominate" component={Nominate} />
+              <Route path=":id">
+                <IndexRedirect to="nominate" />
+                <Route path="nominate" component={Nominate} />
+              </Route>
             </Route>
           </Route>
         </Route>
