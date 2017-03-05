@@ -1,7 +1,6 @@
 import { Map } from 'immutable'
 import React from 'react'
 const { Col, Row } = require('react-flexbox-grid');
-
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
 import { TextInput, PaperPubsFields } from './form-components'
@@ -11,7 +10,7 @@ export default class MemberForm extends React.Component {
   static propTypes = {
     member: ImmutablePropTypes.mapContains({
       paper_pubs: ImmutablePropTypes.map
-    }).isRequired,
+    }),
     onChange: React.PropTypes.func.isRequired,
   }
 
@@ -27,8 +26,9 @@ export default class MemberForm extends React.Component {
 
   constructor(props) {
     super(props);
-    const { member } = props;
-    this.state = { member };
+    this.state = {
+      member: props.member || Map()
+    };
   }
 
   componentWillReceiveProps(nextProps) {
@@ -44,13 +44,13 @@ export default class MemberForm extends React.Component {
     if (!MemberForm.isValid(this.state.member)) return null;
     const m0 = this.props.member;
     return this.state.member.filter((value, key) => {
-      let v0 = m0.get(key);
+      let v0 = m0 && m0.get(key);
       if (typeof value === 'string' && !v0) v0 = '';
       return Map.isMap(value) ? !value.equals(v0) : value !== v0;
     });
   }
 
-  getDefaultValue = (path) => this.props.member.getIn(path) || '';
+  getDefaultValue = (path) => this.props.member && this.props.member.getIn(path) || '';
   getValue = (path) => this.state.member.getIn(path) || '';
 
   get hasPaperPubs() {
