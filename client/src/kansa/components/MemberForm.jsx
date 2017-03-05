@@ -82,6 +82,7 @@ export default class MemberForm extends React.Component {
     };
     const hintStyle= {
       color: 'rgba(0, 0, 0, 0.3)',
+      fontSize: 13,
       marginBottom: 24
     };
     return <form>
@@ -131,7 +132,7 @@ export default class MemberForm extends React.Component {
           <TextInput { ...inputProps } path='city' />
         </Col>
         <Col xs={12} sm={4}>
-          <TextInput { ...inputProps } path='state' />
+          <TextInput { ...inputProps } label="State/province" path='state' />
         </Col>
         <Col xs={12} sm={4}>
           <TextInput { ...inputProps } path='country' />

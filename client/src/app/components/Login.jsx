@@ -21,9 +21,10 @@ export default () => <div>
           padding: 24,
         }}
       >
-        To access your membership details, please enter your email address below, and a login link will be sent to you.
-        This address will need to match the one we have in our database for you; it's the one that you provided when
-        signing up, and at which you've previously received messages from us.
+        To access our services, you'll need to use a login link sent to you via email. To request a new login link,
+        please enter your email address below, and it'll be sent to you. The address you enter will need to match the
+        one we have in our database for you; it's the one that you provided when signing up, and at which you've
+        previously received messages from us.
         <KeyRequest/>
       </Paper>
       <p>

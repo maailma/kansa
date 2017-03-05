@@ -13,18 +13,17 @@ const styles = {
   paperPubs: { marginBottom: 12, verticalAlign: 'top' }
 }
 
-function label(path) {
-  const ps = path.join(' ');
-  return ps.charAt(0).toUpperCase() + ps.slice(1).replace(/_/g, ' ');
-}
-
-export const TextInput = ({ getDefaultValue, getValue, onChange, path, required, style = {}, ...props }) => {
+export const TextInput = ({ getDefaultValue, getValue, label, onChange, path, required, style = {}, ...props }) => {
   if (!Array.isArray(path)) path = [ path ];
   const value = getValue(path);
   if (value === null) return null;
+  if (!label) {
+    const ps = path.join(' ');
+    label = ps.charAt(0).toUpperCase() + ps.slice(1).replace(/_/g, ' ');
+  }
   const ulStyle = value === getDefaultValue(path) ? {} : styles.changed;
   return <TextField
-    floatingLabelText={label(path)}
+    floatingLabelText={label}
     floatingLabelFixed={true}
     fullWidth={true}
     style={style}
@@ -94,13 +93,18 @@ export const PaperPubsFields = ({ getDefaultValue, getValue, onChange }) => {
   }
   return <Row>
     <Col xs={12} sm={4}>
-      <TextInput { ...props } path={['paper_pubs', 'name']} />
+      <TextInput { ...props } label="Mail name" path={['paper_pubs', 'name']} />
     </Col>
     <Col xs={12} sm={4}>
-      <TextInput { ...props } path={['paper_pubs', 'address']} multiLine={true} />
+      <TextInput
+        { ...props }
+        label="Mail address (multiline)"
+        multiLine={true}
+        path={['paper_pubs', 'address']}
+      />
     </Col>
     <Col xs={12} sm={4}>
-      <TextInput { ...props } path={['paper_pubs', 'country']} />
+      <TextInput { ...props } label="Mail country" path={['paper_pubs', 'country']} />
     </Col>
   </Row>;
 }
