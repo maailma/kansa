@@ -1,37 +1,59 @@
 import { Map } from 'immutable'
 import React from 'react'
-
+import { connect } from 'react-redux'
+const ImmutablePropTypes = require('react-immutable-proptypes');
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
-import RaisedButton from 'material-ui/RaisedButton'
 
-const ImmutablePropTypes = require('react-immutable-proptypes');
-
+import { memberUpdate } from '../actions'
 import MemberForm from './MemberForm'
 
-export default class Member extends React.Component {
+class MemberEdit extends React.Component {
+
   static propTypes = {
     member: ImmutablePropTypes.mapContains({
       paper_pubs: ImmutablePropTypes.map
-    }),
-  }
-
-  static defaultProps = {
-    member: Map()
+    }).isRequired,
+    memberUpdate: React.PropTypes.func.isRequired,
   }
 
   state = {
-    canSubmit: false,
-    form: null,
-    isOpen: false
+    changes: null,
+    isOpen: false,
+    sent: false
   }
 
-  handleOpen = () => this.setState({ isOpen: true });
+  get canSaveChanges() {
+    const { changes, isOpen, sent } = this.state;
+    return isOpen && !sent && Map.isMap(changes) && changes.size > 0;
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { isOpen, sent } = this.state;
+    if (isOpen && sent && !nextProps.member.equals(this.props.member)) {
+      this.handleClose();
+    }
+  }
+
   handleClose = () => this.setState({ isOpen: false });
 
+  handleOpen = () => this.setState({
+    changes: null,
+    isOpen: true,
+    sent: false
+  });
+
+  saveChanges = () => {
+    const { member, memberUpdate } = this.props;
+    const { changes } = this.state;
+    if (this.canSaveChanges) {
+      this.setState({ sent: true });
+      memberUpdate(member.get('id'), changes);
+    }
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
-    if (nextState.canSubmit !== this.state.canSubmit) return true;
-    if (nextState.form !== this.state.form) return true;
+    if (nextState.changes !== this.state.changes) return true;
     if (nextState.isOpen !== this.state.isOpen) return true;
     if (!nextProps.member.equals(this.props.member)) return true;
     return false;
@@ -40,7 +62,7 @@ export default class Member extends React.Component {
   render() {
     const { member, children } = this.props;
     const membership = member.get('membership', 'NonMember');
-    const { canSubmit, form, isOpen } = this.state;
+    const { isOpen } = this.state;
 
     return <div>
       { React.Children.map(children, (child) => React.cloneElement(child, { onTouchTap: this.handleOpen })) }
@@ -54,12 +76,9 @@ export default class Member extends React.Component {
           />,
           <FlatButton
             key='ok'
-            disabled={ !canSubmit }
+            disabled={!this.canSaveChanges}
             label='Save'
-            onTouchTap={() => {
-              form && form.submit();
-              this.handleClose();
-            }}
+            onTouchTap={this.saveChanges}
             primary={true}
           />
         ]}
@@ -72,10 +91,13 @@ export default class Member extends React.Component {
       >
         <MemberForm
           member={member}
-          onChange={ (canSubmit) => this.setState({ canSubmit }) }
-          setForm={ (form) => this.setState({ form }) }
+          onChange={ (changes) => this.setState({ changes }) }
         />
       </Dialog>
     </div>;
   }
 }
+
+export default connect(null, {
+  memberUpdate
+})(MemberEdit);
