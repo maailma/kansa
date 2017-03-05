@@ -7,7 +7,7 @@ import StripeCheckout from 'react-stripe-checkout'
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
 import { buyUpgrade, getPrices } from '../actions'
-import { UpgradeFields } from './form-components';
+import { MembershipSelect, PaperPubsCheckbox, PaperPubsFields } from './form-components';
 import MemberForm from './MemberForm';
 
 function getIn(obj, path, unset) {
@@ -82,6 +82,13 @@ class Upgrade extends React.Component {
     if (membership !== prevMembership) descriptions.push(`${membership} upgrade`);
     if (paper_pubs) descriptions.push(prices.getIn(['PaperPubs', 'description']));
 
+    const inputProps = {
+      getDefaultValue: path => member.getIn(path, null),
+      getValue: path => getIn(this.state, path, ''),
+      onChange: this.setStateIn,
+      prices
+    };
+
     return <div style={style}>
       { React.cloneElement(button, { onTouchTap: this.handleOpen }) }
       <Dialog
@@ -116,12 +123,18 @@ class Upgrade extends React.Component {
         ]}
         actionsContainerStyle={{ alignItems: 'center', display: 'flex', textAlign: 'left' }}
       >
-        <UpgradeFields
-          getDefaultValue={ path => member.getIn(path, null) }
-          getValue={ path => getIn(this.state, path, '') }
-          onChange={this.setStateIn}
-          prices={prices}
-        />
+        <MembershipSelect { ...inputProps } style={{
+          marginRight: 24,
+          width: 224
+        }} />
+        <PaperPubsCheckbox { ...inputProps } style={{
+          display: 'inline-block',
+          width: 288,
+          marginTop: 37,
+          verticalAlign: 'top'
+        }} />
+        <br />
+        <PaperPubsFields { ...inputProps } />
       </Dialog>
     </div>;
   }
