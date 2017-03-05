@@ -3,7 +3,7 @@ import React from 'react'
 const { Col, Row } = require('react-flexbox-grid');
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
-import { TextInput, PaperPubsFields } from './form-components'
+import { TextInput, PaperPubsCheckbox, PaperPubsFields } from './form-components'
 
 export default class MemberForm extends React.Component {
 
@@ -12,6 +12,7 @@ export default class MemberForm extends React.Component {
       paper_pubs: ImmutablePropTypes.map
     }),
     onChange: React.PropTypes.func.isRequired,
+    prices: ImmutablePropTypes.map,
   }
 
   static paperPubsIsValid(pp) {
@@ -33,7 +34,7 @@ export default class MemberForm extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     const { member, onChange } = nextProps;
-    if (!member.equals(this.props.member)) {
+    if (member && !member.equals(this.props.member)) {
       this.setState({ member }, () => {
         onChange(this.changes);
       });
@@ -66,13 +67,14 @@ export default class MemberForm extends React.Component {
   };
 
   render() {
+    const { member, prices } = this.props;
     const inputProps = {
       getDefaultValue: this.getDefaultValue,
       getValue: this.getValue,
       onChange: this.onChange
     };
     const hintStyle= {
-      color: '#737373',
+      color: 'rgba(0, 0, 0, 0.3)',
       marginBottom: 24
     };
     return <form>
@@ -124,13 +126,28 @@ export default class MemberForm extends React.Component {
           wish; not all fields will apply to everyone.
         </Col>
       </Row>
+      { !member ? <Row>
+          <Col xs={12}>
+            <PaperPubsCheckbox
+              { ...inputProps }
+              prices={prices}
+              style={{ marginBottom: 4 }}
+            />
+          </Col>
+          <Col xs={12} style={hintStyle}>
+            By default, we'll be in touch with you electronically to let you
+            know how our preparations are progressing. If you'd prefer to
+            receive our progress reports and other publications by post, select
+            this option (note the additional fee).
+          </Col>
+        </Row> : null }
       { this.hasPaperPubs ? [
-          < PaperPubsFields {...inputProps} />,
-          <Row>
+          <PaperPubsFields {...inputProps} key="form" />,
+          <Row key="hint">
             <Col xs={12} style={hintStyle}>
-              As you've signed up for paper publications, we'll need to know
-              where to send your mail. Please enter your address details here as
-              you'd wish them to be printed onto a postal label.
+              For paper publications, we'll need to know where to send your
+              mail. Please enter your address details here as you'd wish them to
+              be printed onto a postal label.
             </Col>
           </Row>
       ] : null }
