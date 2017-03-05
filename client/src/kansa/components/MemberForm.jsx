@@ -11,6 +11,7 @@ export default class MemberForm extends React.Component {
     member: ImmutablePropTypes.mapContains({
       paper_pubs: ImmutablePropTypes.map
     }),
+    newMember: React.PropTypes.bool,
     onChange: React.PropTypes.func.isRequired,
     prices: ImmutablePropTypes.map,
   }
@@ -34,7 +35,9 @@ export default class MemberForm extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     const { member, onChange } = nextProps;
-    if (member && !member.equals(this.props.member)) {
+    if (!member) {
+      this.setState({ member: Map() });
+    } else if (!member.equals(this.props.member)) {
       this.setState({ member }, () => {
         onChange(this.changes);
       });
@@ -42,13 +45,17 @@ export default class MemberForm extends React.Component {
   }
 
   get changes() {
+    const { member, newMember } = this.props;
     if (!MemberForm.isValid(this.state.member)) return null;
-    const m0 = this.props.member;
-    return this.state.member.filter((value, key) => {
-      let v0 = m0 && m0.get(key);
-      if (typeof value === 'string' && !v0) v0 = '';
-      return Map.isMap(value) ? !value.equals(v0) : value !== v0;
-    });
+    return this.state.member.filter(
+      newMember || !member
+        ? (value) => value
+        : (value, key) => {
+            let v0 = member.get(key);
+            if (typeof value === 'string' && !v0) v0 = '';
+            return Map.isMap(value) ? !value.equals(v0) : value !== v0;
+          }
+    );
   }
 
   getDefaultValue = (path) => this.props.member && this.props.member.getIn(path) || '';
@@ -67,7 +74,7 @@ export default class MemberForm extends React.Component {
   };
 
   render() {
-    const { member, prices } = this.props;
+    const { newMember, prices } = this.props;
     const inputProps = {
       getDefaultValue: this.getDefaultValue,
       getValue: this.getValue,
@@ -87,12 +94,21 @@ export default class MemberForm extends React.Component {
           </div>
         </Col>
         <Col xs={12} sm={6}>
-          <TextInput { ...inputProps } path='email' disabled={true} />
-          <div style={hintStyle}>
-            To change the email address associated with this membership, please
-            get in touch with us at <a href="mailto:registration@worldcon.fi">
-            registration@worldcon.fi</a>
-          </div>
+          { newMember ? [
+              <TextInput { ...inputProps } key="input" path='email' required={true} />,
+              <div key="hint" style={hintStyle}>
+                How we'll get in touch with you before the con, and where we'll
+                send important information about the Hugo Awards and Worldcon Site
+                Selection.
+              </div>
+          ] : [
+              <TextInput { ...inputProps } key="input" path='email' disabled={true} />,
+              <div key="hint" style={hintStyle}>
+                To change the email address associated with this membership, please
+                get in touch with us at <a href="mailto:registration@worldcon.fi">
+                registration@worldcon.fi</a>
+              </div>
+          ] }
         </Col>
       </Row>
       <Row>
@@ -126,7 +142,7 @@ export default class MemberForm extends React.Component {
           wish; not all fields will apply to everyone.
         </Col>
       </Row>
-      { !member ? <Row>
+      { newMember ? <Row>
           <Col xs={12}>
             <PaperPubsCheckbox
               { ...inputProps }
