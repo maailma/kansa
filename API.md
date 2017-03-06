@@ -77,11 +77,10 @@ Membership statistics by country
 ## Authentication
 
 ### `POST /api/kansa/key`
-- Parameters: `email`
+- Parameters: `email`, `reset`
 
-If `email` matches at least one known person (case-insensitively):
-1. Generate and store a `key`
-2. Send a message to the given `email` address with a login link
+If `email` matches (case-insensitively) a known address, send a login link to
+that address. If no key exists or `reset` is true-ish, generate a new key.
 
 #### Response
 ```

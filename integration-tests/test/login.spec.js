@@ -147,3 +147,28 @@ describe('Logout', () => {
     });
   });
 });
+
+describe('Key request', () => {
+  before((done) => {
+    admin.get('/api/kansa/logout')
+      .expect(200, { status: 'success', email: loginparams.email })
+      .end(done);
+  });
+
+  context('Should not reset by default', () => {
+    it('should be successful', (done) => {
+      admin.post('/api/kansa/key')
+        .send({ email: loginparams.email })
+        .expect(200, { status: 'success' })
+        .end(done);
+    });
+
+    it('should still be able to login', (done) => {
+      admin.get('/api/kansa/login')
+        .query(loginparams)
+        .expect('set-cookie',/w75/)
+        .expect(200, { status: 'success', email: loginparams.email })
+        .end(done);
+    });
+  });
+});
