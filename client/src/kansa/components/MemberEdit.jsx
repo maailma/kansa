@@ -91,7 +91,9 @@ class MemberEdit extends React.Component {
       >
         <MemberForm
           member={member}
-          onChange={ (changes) => this.setState({ changes }) }
+          onChange={ (valid, changes) => {
+            if (valid) this.setState({ changes });
+          } }
         />
       </Dialog>
     </div>;

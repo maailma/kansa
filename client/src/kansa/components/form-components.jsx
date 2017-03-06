@@ -49,12 +49,15 @@ export const MembershipSelect = ({ getDefaultValue, getValue, onChange, prices, 
   const prevMembership = getDefaultValue && getDefaultValue(path);
   const prevIdx = membershipTypes.indexOf(prevMembership);
   const prevAmount = prices && prevMembership && prices.getIn(['memberships', prevMembership, 'amount']) || 0;
+  const value = getValue(path) || 'NonMember';
   return <SelectField
+    errorText={ value === 'NonMember' && prevMembership !== 'NonMember' ? 'Required' : '' }
     floatingLabelFixed={true}
     floatingLabelText='Membership type'
+    fullWidth={true}
     onChange={ (ev, idx, value) => onChange(path, value) }
     style={style}
-    value={ getValue(path) || 'NonMember' }
+    value={value}
   >
     { membershipTypes.map((type, idx) => {
       if (type === 'NonMember' && prevMembership !== 'NonMember') return null;
@@ -71,7 +74,7 @@ export const MembershipSelect = ({ getDefaultValue, getValue, onChange, prices, 
   </SelectField>;
 }
 
-export const PaperPubsCheckbox = ({ getDefaultValue, getValue, onChange, prices, style }) => {
+export const PaperPubsCheckbox = ({ getDefaultValue, getValue, newMember, onChange, prices, style }) => {
   const path = ['paper_pubs'];
   const eurAmount = prices ? prices.getIn(['PaperPubs', 'amount'], 0) / 100 : -1;
   return <Checkbox
@@ -79,7 +82,7 @@ export const PaperPubsCheckbox = ({ getDefaultValue, getValue, onChange, prices,
     style={style}
     label={`Add paper publications (€${eurAmount})`}
     checked={!!getValue(path)}
-    disabled={!!getDefaultValue(path)}
+    disabled={!newMember && !!getDefaultValue(path)}
     onCheck={ (ev, checked) => onChange(path, checked ? emptyPaperPubsMap : null) }
   />;
 }

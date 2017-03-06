@@ -39,14 +39,13 @@ export default class MemberForm extends React.Component {
       this.setState({ member: Map() });
     } else if (!member.equals(this.props.member)) {
       this.setState({ member }, () => {
-        onChange(this.changes);
+        onChange(this.isValid, this.changes);
       });
     }
   }
 
   get changes() {
     const { member, newMember } = this.props;
-    if (!MemberForm.isValid(this.state.member)) return null;
     return this.state.member.filter(
       newMember || !member
         ? (value) => value
@@ -65,11 +64,15 @@ export default class MemberForm extends React.Component {
     return !!this.state.member.get('paper_pubs');
   }
 
+  get isValid() {
+    return MemberForm.isValid(this.state.member);
+  }
+
   onChange = (path, value) => {
     this.setState({
       member: this.state.member.setIn(path, value)
     }, () => {
-      this.props.onChange(this.changes);
+      this.props.onChange(this.isValid, this.changes);
     });
   };
 
@@ -152,6 +155,7 @@ export default class MemberForm extends React.Component {
         { newMember ? <Col xs={12} sm={6}>
             <PaperPubsCheckbox
               { ...inputProps }
+              newMember={newMember}
               prices={prices}
               style={{ marginBottom: 4 }}
             />
