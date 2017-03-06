@@ -18,6 +18,7 @@ import { PATH_IN, PATH_OUT } from './constants'
 import App from './app/components/App'
 import Login from './app/components/Login'
 import MemberList from './kansa/components/MemberList'
+import NewMemberForm from './kansa/components/NewMemberForm'
 import ExhibitReg from './raami/components/Exhibition'
 import Nominate from './hugo/components/Nominate'
 import Canon from './hugo-admin/components/Canon'
@@ -70,6 +71,8 @@ ReactDOM.render(
         <Route path="/" component={App} onEnter={checkAuth} >
           <IndexRedirect to={PATH_IN} />
           <Route path="login" component={Login} />
+          <Route path="new" component={NewMemberForm} />
+          <Route path="new/:membership" component={NewMemberForm} />
           <Route onEnter={requireAuth}>
             <Route path="profile" component={MemberList} />
             <Route path="exhibition/:id" component={ExhibitReg} />

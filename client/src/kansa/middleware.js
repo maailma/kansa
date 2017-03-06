@@ -13,6 +13,20 @@ export default ({ dispatch }) => (next) => (action) => {
 
   if (!action.error) switch (action.type) {
 
+    case 'BUY_MEMBERSHIP': {
+      const { amount, callback, member, token } = action;
+      api.POST('kansa/purchase', {
+        amount,
+        email: token.email,
+        token: token.id,
+        new_members: [member]
+      })
+        .then(() => api.GET('kansa/user'))
+        .then(user => dispatch(memberSet(user)))
+        .then(() => callback && callback())
+        .catch(handleError);
+    } return;
+
     case 'BUY_UPGRADE': {
       const { amount, callback, id, membership, paper_pubs, token } = action;
       api.POST('kansa/purchase', {

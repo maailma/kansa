@@ -1,3 +1,12 @@
+export const buyMembership = (member, amount, token, callback) => ({
+  module: 'kansa',
+  type: 'BUY_MEMBERSHIP',
+  amount,
+  callback,
+  member,
+  token
+});
+
 export const buyUpgrade = (id, membership, paper_pubs, amount, token, callback) => ({
   module: 'kansa',
   type: 'BUY_UPGRADE',
