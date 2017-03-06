@@ -33,9 +33,6 @@ class NewMemberIndex extends React.Component {
   render() {
     const { prices, push } = this.props;
     return <Row>
-      <Col xs={12} style={{ paddingTop: 20 }} >
-        <h1>Buy a Worldcon 75 membership</h1>
-      </Col>
       <Col
         xs={12}
         sm={6}

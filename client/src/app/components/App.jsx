@@ -50,7 +50,7 @@ const App = ({ children, email, goToProfiles, hideMessage, location, logout, mes
     path={location.pathname}
     logout={logout}
     title={title}
-  /> : null }
+  /> : <h1 style={{ paddingTop: 24 }}>{title}</h1> }
   <main>
     {children}
   </main>

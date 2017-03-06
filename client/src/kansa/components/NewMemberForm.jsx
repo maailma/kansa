@@ -94,7 +94,6 @@ class NewMemberForm extends React.Component {
         lg={8} lgOffset={2}
         style={{ paddingTop: 20 }}
       >
-        <h1>Buy a Worldcon 75 membership</h1>
         <Card>
           <CardText>
             <Row>
