@@ -5,13 +5,13 @@ import { push } from 'react-router-redux'
 const { Col, Row } = require('react-flexbox-grid');
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
-import { setTitle } from '../../app/actions/app'
-import KeyRequest from '../../app/components/KeyRequest'
-import { getPrices } from '../actions'
-import MemberCard from './MemberCard'
-import NewMemberCard from './NewMemberCard'
+import { setTitle } from '../actions/app'
+import KeyRequest from './KeyRequest'
+import { getPrices } from '../../kansa/actions'
+import MemberCard from '../../kansa/components/MemberCard'
+import NewMemberCard from '../../kansa/components/NewMemberCard'
 
-class MemberList extends React.Component {
+class Index extends React.Component {
 
   static propTypes = {
     getPrices: React.PropTypes.func.isRequired,
@@ -65,4 +65,4 @@ export default connect(
     push,
     setTitle
   }
-)(MemberList);
+)(Index);

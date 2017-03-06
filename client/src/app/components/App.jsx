@@ -19,7 +19,7 @@ const AppBar = ({ email, goToProfiles, logout, path, title }) => <Paper zDepth={
     }}
   >
     <ToolbarGroup>
-      { path === '/profile' ? null : <IconButton
+      { path === '/' ? null : <IconButton
           onTouchTap={goToProfiles}
           style={{ marginLeft: -24 }}
           tooltip='Member details'
@@ -67,7 +67,7 @@ export default connect(
     message: app.get('message'),
     title: app.get('title')
   }), {
-    goToProfiles: () => push('/profile'),
+    goToProfiles: () => push('/'),
     hideMessage,
     logout
   }
