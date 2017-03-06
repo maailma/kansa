@@ -159,7 +159,7 @@ describe('Key request', () => {
     it('should be successful', (done) => {
       admin.post('/api/kansa/key')
         .send({ email: loginparams.email })
-        .expect(200, { status: 'success' })
+        .expect(200, { status: 'success', email: loginparams.email })
         .end(done);
     });
 

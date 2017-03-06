@@ -19,7 +19,7 @@ function _setKeyChecked(req, email) {
 }
 
 function _getKeyChecked(req, email) {
-  return req.app.locals.db.one('SELECT (email, key) FROM Keys WHERE email = $1', email)
+  return req.app.locals.db.one('SELECT email, key FROM Keys WHERE email = $1', email)
     .catch(() => _setKeyChecked(req, email));
 }
 
