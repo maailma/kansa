@@ -74,7 +74,7 @@ export const MembershipSelect = ({ getDefaultValue, getValue, onChange, prices, 
   </SelectField>;
 }
 
-export const PaperPubsCheckbox = ({ getDefaultValue, getValue, newMember, onChange, prices, style }) => {
+export const PaperPubsCheckbox = ({ getDefaultValue, getValue, newMember, onChange, prices, style, tabIndex }) => {
   const path = ['paper_pubs'];
   const eurAmount = prices ? prices.getIn(['PaperPubs', 'amount'], 0) / 100 : -1;
   return <Checkbox
@@ -84,10 +84,11 @@ export const PaperPubsCheckbox = ({ getDefaultValue, getValue, newMember, onChan
     checked={!!getValue(path)}
     disabled={!newMember && !!getDefaultValue(path)}
     onCheck={ (ev, checked) => onChange(path, checked ? emptyPaperPubsMap : null) }
+    tabIndex={tabIndex}
   />;
 }
 
-const AddressField = ({ field, hintText, multiLine=false, onChange, value }) => {
+const AddressField = ({ field, hintText, multiLine=false, onChange, tabIndex, value }) => {
   return <TextField
     fullWidth={true}
     hintStyle={multiLine ? { bottom: 36 } : null}
@@ -96,13 +97,14 @@ const AddressField = ({ field, hintText, multiLine=false, onChange, value }) => 
     required={true}
     rows={multiLine ? 2 : 1}
     style={{ marginLeft: 16 }}
+    tabIndex={tabIndex}
     underlineShow={false}
     value={value}
     onChange={ ev => onChange(['paper_pubs', field], ev.target.value) }
   />;
 }
 
-export const PaperPubsFields = ({ getDefaultValue, getValue, onChange }) => {
+export const PaperPubsFields = ({ getDefaultValue, getValue, onChange, tabIndex }) => {
   const pp = getValue(['paper_pubs']);
   if (!Map.isMap(pp)) return null;
   const changed = !pp.equals(getDefaultValue(['paper_pubs']));
@@ -115,6 +117,7 @@ export const PaperPubsFields = ({ getDefaultValue, getValue, onChange }) => {
       field="name"
       hintText="Paper pubs name"
       onChange={onChange}
+      tabIndex={tabIndex}
       value={pp.get('name')}
     />
     <Divider />
@@ -123,6 +126,7 @@ export const PaperPubsFields = ({ getDefaultValue, getValue, onChange }) => {
       hintText="Paper pubs address"
       multiLine={true}
       onChange={onChange}
+      tabIndex={tabIndex}
       value={pp.get('address')}
     />
     <Divider />
@@ -130,6 +134,7 @@ export const PaperPubsFields = ({ getDefaultValue, getValue, onChange }) => {
       field="country"
       hintText="Paper pubs country"
       onChange={onChange}
+      tabIndex={tabIndex}
       value={pp.get('country')}
     />
   </Paper>;

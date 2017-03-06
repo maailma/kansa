@@ -73,6 +73,7 @@ class MemberEdit extends React.Component {
             label='Cancel'
             onTouchTap={this.handleClose}
             primary={true}
+            tabIndex={3}
           />,
           <FlatButton
             key='ok'
@@ -80,6 +81,7 @@ class MemberEdit extends React.Component {
             label='Save'
             onTouchTap={this.saveChanges}
             primary={true}
+            tabIndex={2}
           />
         ]}
         autoScrollBodyContent={true}
@@ -94,6 +96,7 @@ class MemberEdit extends React.Component {
           onChange={ (valid, changes) => {
             if (valid) this.setState({ changes });
           } }
+          tabIndex={1}
         />
       </Dialog>
     </div>;

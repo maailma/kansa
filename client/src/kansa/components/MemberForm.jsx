@@ -14,6 +14,7 @@ export default class MemberForm extends React.Component {
     newMember: React.PropTypes.bool,
     onChange: React.PropTypes.func.isRequired,
     prices: ImmutablePropTypes.map,
+    tabIndex: React.PropTypes.number
   }
 
   static paperPubsIsValid(pp) {
@@ -77,11 +78,12 @@ export default class MemberForm extends React.Component {
   };
 
   render() {
-    const { newMember, prices } = this.props;
+    const { newMember, prices, tabIndex } = this.props;
     const inputProps = {
       getDefaultValue: this.getDefaultValue,
       getValue: this.getValue,
-      onChange: this.onChange
+      onChange: this.onChange,
+      tabIndex: tabIndex
     };
     const hintStyle= {
       color: 'rgba(0, 0, 0, 0.3)',

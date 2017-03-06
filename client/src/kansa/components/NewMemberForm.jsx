@@ -111,6 +111,7 @@ class NewMemberForm extends React.Component {
               newMember={true}
               onChange={ (valid, member) => this.setState({ member, valid }) }
               prices={prices}
+              tabIndex={2}
             />
           </CardText>
           <CardActions>
@@ -133,6 +134,7 @@ class NewMemberForm extends React.Component {
                 label={ sent ? 'Working...' : 'Pay by card' }
                 disabled={ !valid || this.price <= 0 }
                 onTouchTap={ () => this.setState({ sent: true }) }
+                tabIndex={3}
               />
             </StripeCheckout>
           </CardActions>
