@@ -74,8 +74,8 @@ ReactDOM.render(
           <Route path="login" component={Login} />
           <Route path="new" component={NewMemberIndex} />
           <Route path="new/:membership" component={NewMemberForm} />
+          <Route path="profile" component={MemberList} />
           <Route onEnter={requireAuth}>
-            <Route path="profile" component={MemberList} />
             <Route path="exhibition/:id" component={ExhibitReg} />
             <Route path="hugo" >
               <IndexRedirect to={PATH_IN} />
