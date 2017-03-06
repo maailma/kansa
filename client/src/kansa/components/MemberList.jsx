@@ -6,18 +6,23 @@ const { Col, Row } = require('react-flexbox-grid');
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
 import { setTitle } from '../../app/actions/app'
+import { getPrices } from '../actions'
 import MemberCard from './MemberCard'
+import NewMemberCard from './NewMemberCard'
 
 class MemberList extends React.Component {
 
   static propTypes = {
+    getPrices: React.PropTypes.func.isRequired,
     people: ImmutablePropTypes.list.isRequired,
     push: React.PropTypes.func.isRequired,
     setTitle: React.PropTypes.func.isRequired
   }
 
   componentDidMount() {
-    this.props.setTitle('Member Services')
+    const { getPrices, prices, setTitle } = this.props;
+    setTitle('Memberships');
+    if (!prices) getPrices();
   }
 
   componentWillUnmount() {
@@ -25,7 +30,7 @@ class MemberList extends React.Component {
   }
 
   render() {
-    const { people, push } = this.props;
+    const { people, prices, push } = this.props;
     return <Row>
       {
         people.map(member => <Col
@@ -42,14 +47,19 @@ class MemberList extends React.Component {
           />
         </Col>)
       }
+      <Col xs={12} sm={6} lg={4}>
+        <NewMemberCard category="all" prices={prices} push={push}/>
+      </Col>
     </Row>;
   }
 }
 
 export default connect(
-  (state) => ({
-    people: state.user.get('people') || List()
+  ({ purchase, user }) => ({
+    people: user.get('people') || List(),
+    prices: purchase.get('prices')
   }), {
+    getPrices,
     push,
     setTitle
   }

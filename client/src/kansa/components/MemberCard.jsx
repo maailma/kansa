@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, CardHeader, CardText } from 'material-ui/Card'
+import { Card, CardHeader, CardActions } from 'material-ui/Card'
 import { List, ListItem } from 'material-ui/List'
 import EuroSymbol from 'material-ui/svg-icons/action/euro-symbol'
 import ContentCreate from 'material-ui/svg-icons/content/create'
@@ -39,7 +39,7 @@ const Member = ({ member, push, showHugoActions }) => {
           ? 'Non-member' + (member.get('can_hugo_nominate') ? ' (Hugo nominator)' : '')
           : `${membership} member #${member.get('member_number')}` }
     />
-    <CardText style={{ paddingTop: 0 }}>
+    <CardActions style={{ marginLeft: 8, paddingTop: 0 }}>
       <List style={{ paddingTop: 0 }}>
         <MemberEdit member={member}>
           <ListItem
@@ -74,7 +74,7 @@ const Member = ({ member, push, showHugoActions }) => {
             primaryText="Register for the Art Show"
         /> : null }
       </List>
-    </CardText>
+    </CardActions>
   </Card>;
 }
 
