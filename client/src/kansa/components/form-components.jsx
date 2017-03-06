@@ -1,16 +1,17 @@
+import { Map } from 'immutable'
 import React from 'react'
 import Checkbox from 'material-ui/Checkbox';
+import Divider from 'material-ui/Divider';
 import MenuItem from 'material-ui/MenuItem';
+import Paper from 'material-ui/Paper';
 import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 import ContentMail from 'material-ui/svg-icons/content/mail'
-const { Col, Row } = require('react-flexbox-grid');
 
 import { emptyPaperPubsMap, membershipTypes} from '../constants'
 
 const styles = {
   changed: { borderColor: 'rgb(255, 152, 0)' },
-  paperPubs: { marginBottom: 12, verticalAlign: 'top' }
 }
 
 export const TextInput = ({ getDefaultValue, getValue, inputRef, label, onChange, path, required, style = {}, ...props }) => {
@@ -83,30 +84,51 @@ export const PaperPubsCheckbox = ({ getDefaultValue, getValue, onChange, prices,
   />;
 }
 
+const AddressField = ({ field, hintText, multiLine=false, onChange, value }) => {
+  return <TextField
+    fullWidth={true}
+    hintStyle={multiLine ? { bottom: 36 } : null}
+    hintText={hintText}
+    multiLine={multiLine}
+    required={true}
+    rows={multiLine ? 2 : 1}
+    style={{ marginLeft: 16 }}
+    underlineShow={false}
+    value={value}
+    onChange={ ev => onChange(['paper_pubs', field], ev.target.value) }
+  />;
+}
+
 export const PaperPubsFields = ({ getDefaultValue, getValue, onChange }) => {
-  if (!getValue(['paper_pubs'])) return null;
-  const props = {
-    getDefaultValue,
-    getValue,
-    onChange,
-    required: true,
-    style: styles.paperPubs
-  }
-  return <Row>
-    <Col xs={12} sm={4}>
-      <TextInput { ...props } label="Mail name" path={['paper_pubs', 'name']} />
-    </Col>
-    <Col xs={12} sm={4}>
-      <TextInput
-        { ...props }
-        label="Mail address (multiline)"
-        multiLine={true}
-        path={['paper_pubs', 'address']}
-      />
-    </Col>
-    <Col xs={12} sm={4}>
-      <TextInput { ...props } label="Mail country" path={['paper_pubs', 'country']} />
-    </Col>
-  </Row>;
+  const pp = getValue(['paper_pubs']);
+  if (!Map.isMap(pp)) return null;
+  const changed = !pp.equals(getDefaultValue(['paper_pubs']));
+  const errorStyle = { outline: '1px solid red', outlineOffset: -1 };
+  return <Paper
+    style={ pp.some(v => !v) ? errorStyle : null }
+    zDepth={1}
+  >
+    <AddressField
+      field="name"
+      hintText="Paper pubs name"
+      onChange={onChange}
+      value={pp.get('name')}
+    />
+    <Divider />
+    <AddressField
+      field="address"
+      hintText="Paper pubs address"
+      multiLine={true}
+      onChange={onChange}
+      value={pp.get('address')}
+    />
+    <Divider />
+    <AddressField
+      field="country"
+      hintText="Paper pubs country"
+      onChange={onChange}
+      value={pp.get('country')}
+    />
+  </Paper>;
 }
 PaperPubsFields.propTypes = TextInput.propTypes;

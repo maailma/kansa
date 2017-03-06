@@ -148,31 +148,34 @@ export default class MemberForm extends React.Component {
           wish; not all fields will apply to everyone.
         </Col>
       </Row>
-      { newMember ? <Row>
-          <Col xs={12}>
+      <Row style={{ paddingTop: 16 }}>
+        { newMember ? <Col xs={12} sm={6}>
             <PaperPubsCheckbox
               { ...inputProps }
               prices={prices}
               style={{ marginBottom: 4 }}
             />
-          </Col>
-          <Col xs={12} style={hintStyle}>
-            By default, we'll be in touch with you electronically to let you
-            know how our preparations are progressing. If you'd prefer to
-            receive our progress reports and other publications by post, select
-            this option (note the additional fee).
-          </Col>
-        </Row> : null }
-      { this.hasPaperPubs ? [
-          <PaperPubsFields {...inputProps} key="form" />,
-          <Row key="hint">
-            <Col xs={12} style={hintStyle}>
-              For paper publications, we'll need to know where to send your
-              mail. Please enter your address details here as you'd wish them to
-              be printed onto a postal label.
-            </Col>
-          </Row>
-      ] : null }
+            <div style={hintStyle}>
+              By default, we'll be in touch with you electronically to let you
+              know how our preparations are progressing. If you'd prefer to
+              receive our progress reports and other publications by post, select
+              this option (note the additional fee).
+            </div>
+            { this.hasPaperPubs ? <div style={hintStyle}>
+                We'll need to know where to send your mail. Please enter your
+                address details here as you'd wish them to be printed onto a
+                postal label.
+            </div> : null }
+        </Col> : null }
+        { this.hasPaperPubs ? <Col xs={12} sm={6}>
+            <PaperPubsFields {...inputProps} />
+        </Col> : null }
+        { !newMember && this.hasPaperPubs ? <Col xs={12} sm={6} style={hintStyle}>
+            For paper publications, we'll need to know where to send your mail.
+            Please enter your address details here as you'd wish them to be
+            printed onto a postal label.
+        </Col> : null }
+      </Row>
     </form>;
   }
 
