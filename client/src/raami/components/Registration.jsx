@@ -18,6 +18,7 @@ import { API_ROOT } from '../../constants'
 import API from '../../lib/api'
 
 import Artwork from './Artwork';
+import ArtworkAdderCard from './ArtworkAdderCard'
 import BasicRules from './basic-rules';
 import GalleryCard from './GalleryCard'
 
@@ -302,6 +303,9 @@ class Registration extends React.Component {
           onChange={update => this.setState(update)}
           onSave={() => this.handleSubmit()}
           style={{ marginBottom: '1rem' }}
+        />
+        <ArtworkAdderCard
+          onAdd={() => this.addWork()}
         />
       </Col>
     </Row>)
