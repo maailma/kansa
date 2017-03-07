@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux'
+const { Col, Row } = require('react-flexbox-grid');
 
 import Checkbox from 'material-ui/Checkbox';
 import Dialog from 'material-ui/Dialog';
@@ -6,17 +8,21 @@ import RaisedButton from 'material-ui/RaisedButton'
 import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
-const { Col, Row } = require('react-flexbox-grid');
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import Divider from 'material-ui/Divider';
+
+import { setTitle } from '../../app/actions/app'
+import { API_ROOT } from '../../constants'
+import API from '../../lib/api'
 
 import Artwork from './Artwork';
 import BasicRules from './basic-rules';
 
-import { API_ROOT } from '../../constants'
-import API from '../../lib/api'
+class ExhibitReg extends React.Component {
 
-export default class ExhibitReg extends React.Component {
+  static propTypes = {
+    setTitle: React.PropTypes.func.isRequired,
+  }
 
   constructor(props) {
     super(props);
@@ -54,6 +60,14 @@ export default class ExhibitReg extends React.Component {
         });
       }
     });
+  }
+
+  componentDidMount() {
+    this.props.setTitle('- Art Show Registration')
+  }
+
+  componentWillUnmount() {
+    this.props.setTitle('');
   }
 
   handleSubmit() {
@@ -383,3 +397,9 @@ export default class ExhibitReg extends React.Component {
     )
   }
 }
+
+export default connect(
+  null, {
+    setTitle,
+  }
+)(ExhibitReg);
