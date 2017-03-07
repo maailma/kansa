@@ -44,11 +44,11 @@ class Registration extends React.Component {
     };
     const raami = this.state.api;
     raami.GET('artist').then(artist => {
-      console.log('ARTIST', artist);
+      //console.log('ARTIST', artist);
       if (artist && artist.people_id > 0) {
         this.setState(artist);
         raami.GET('works').then(works => {
-          console.log('WORKS', works);
+          //console.log('WORKS', works);
           if (Array.isArray(works)) this.setState({ Works: works });
         });
       }
@@ -111,7 +111,11 @@ class Registration extends React.Component {
 
   render() {
     return (<Row>
-      <Col xs={12} sm={6} lg={4}>
+      <Col
+        xs={12} sm={6}
+        md={5} mdOffset={1}
+        lg={4} lgOffset={2}
+      >
         <ArtistCard
           artist={this.state}
           onChange={update => this.setState(update)}
@@ -119,7 +123,7 @@ class Registration extends React.Component {
           style={{ marginBottom: '1rem' }}
         />
       </Col>
-      <Col xs={12} sm={6} lg={4}>
+      <Col xs={12} sm={6} md={5} lg={4}>
         <GalleryCard
           artist={this.state}
           onChange={update => this.setState(update)}
