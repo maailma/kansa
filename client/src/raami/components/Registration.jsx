@@ -10,6 +10,8 @@ import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import Divider from 'material-ui/Divider';
+import Paper from 'material-ui/Paper'
+import OpenInNew from 'material-ui/svg-icons/action/open-in-new'
 
 import { setTitle } from '../../app/actions/app'
 import { API_ROOT } from '../../constants'
@@ -17,6 +19,7 @@ import API from '../../lib/api'
 
 import Artwork from './Artwork';
 import BasicRules from './basic-rules';
+import GalleryCard from './GalleryCard'
 
 class Registration extends React.Component {
 
@@ -63,7 +66,7 @@ class Registration extends React.Component {
   }
 
   componentDidMount() {
-    this.props.setTitle('- Art Show Registration')
+    this.props.setTitle('Art Show Registration')
   }
 
   componentWillUnmount() {
@@ -75,7 +78,7 @@ class Registration extends React.Component {
       api: undefined,
       Works: undefined
     });
-    this.state.api.POST('artist', artist).then(res => console.log('POST ARTIST', res));
+    this.state.api.POST('artist', artist).then(res => console.log('POST ARTIST', artist, res));
   }
 
   saveWork(i, id, work) {
@@ -166,235 +169,142 @@ class Registration extends React.Component {
       </Col>
     ));
 
-    let total = this.state.auction * 20 + this.state.print * 10;
-    if (this.state.digital) total += 20;
-    if (this.state.postage > 0) total += parseInt(this.state.postage) + 20;
+    return (<Row>
+      <Col xs={12} sm={6} lg={4}>
+        <Card>
+          <CardHeader style={{ fontWeight: 600 }} title="Artist information"/>
+          <CardText>
+            <p>
+              Please fill in the general fields to register to the W75 art show.
+              You can come back to edit this form and fill in details concerning
+              individual art works later. The fee is a preliminary estimate and
+              may change. Payment will be due in April by the latest. Please wait
+              for confirmation and an invoice from the art show before attempting
+              to pay. Changes and additions to this form will be notified by email.
+            </p>
 
-    return (
-      <Card>
-        <CardHeader>
-          <h2>Worldcon 75 Art Show Registration Form</h2>
-          <div style = {center}>
-            <i>Please fill in the general fields to register to the W75 art show.
-            You can come back to edit this form and fill in details concerning individual art works later.<br/>
-            The fee is a preliminary estimate and may change. Payment will be due in April by the latest.<br/>
-            Please wait for confirmation and an invoice from the art show before attempting to pay. <br/>
-            Changes and additions to this form will be notified by email.</i>
-          </div>
-        </CardHeader>
-        <CardText>
-          <Row>
-            <Col>
-              <TextField  floatingLabelText="Artist name" style={{width: '500px' }}
-              floatingLabelStyle={label} value={this.state.name}
-              onChange={this.handleChange.bind(this, 'name')} />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <TextField
-                style={{width: '500px' }}
-                floatingLabelText="Website URL"
-                floatingLabelStyle={label}
-                onChange={this.handleChange.bind(this, 'url')}
-                value={this.state.url}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <TextField
-                floatingLabelText="Short description for catalogue/website (500 characters)"
-                style={{width: '500px' }}
-                floatingLabelStyle={label}
-                id="description"
-                value={this.state.description}
-                onChange={this.handleChange.bind(this, 'description')}
-                multiLine={true}
-                rows={5}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <SelectField
-                floatingLabelText="Continent for tax purposes"
-                floatingLabelStyle={label}
-                onChange={this.handleSelect.bind(this, 'continent')}
-                value={this.state.continent}
-              >
-                <MenuItem value={'EU'} primaryText="EU" />
-                <MenuItem value={'NON-EU'} primaryText="NON-EU" />
-              </SelectField>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <SelectField
-                floatingLabelText="Select Transportation method"
-                floatingLabelStyle={label}
-                onChange={this.handleSelect.bind(this, 'transport')}
-                value={this.state.transport}
-              >
-                <MenuItem value={'Air mail'} primaryText="Air mail" />
-                <MenuItem value={'Courier'} primaryText="Courier" />
-                <MenuItem value={'Self'} primaryText="Deliver self" />
-              </SelectField>
-              <br />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <TextField
-                floatingLabelText="Agent name and contact details (if applicable)"
-                style={{width: '500px' }}
-                floatingLabelStyle={label}
-                onChange={this.handleChange.bind(this, 'agent')}
-                value={this.state.agent}
-                multiLine={true}
-                rows={3}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <h3>Reserve Gallery Space</h3>
-            </Col>
-          </Row>
-          <Row>
-            <Col sm={2}> 
-              <label style={label}>Auction gallery </label>
+            <TextField
+              floatingLabelStyle={label}
+              floatingLabelText="Artist name"
+              fullWidth={true}
+              onChange={ev => this.setState({ name: ev.target.value })}
+              value={this.state.name}
+            />
+            <TextField
+              floatingLabelStyle={label}
+              floatingLabelText="Website URL"
+              fullWidth={true}
+              onChange={ev => this.setState({ url: ev.target.value })}
+              value={this.state.url}
+            />
+            <TextField
+              floatingLabelStyle={label}
+              floatingLabelText="Short description for catalogue/website (500 characters)"
+              fullWidth={true}
+              multiLine={true}
+              onChange={ev => this.setState({ description: ev.target.value })}
+              rows={5}
+              value={this.state.description}
+            />
+            <SelectField
+              floatingLabelStyle={label}
+              floatingLabelText="Continent for tax purposes"
+              fullWidth={true}
+              onChange={(ev, key, value) => this.setState({ continent: value })}
+              value={this.state.continent}
+            >
+              <MenuItem value="EU" primaryText="EU" />
+              <MenuItem value="NON-EU" primaryText="NON-EU" />
+            </SelectField>
+            <SelectField
+              floatingLabelStyle={label}
+              floatingLabelText="Select Transportation method"
+              fullWidth={true}
+              onChange={(ev, key, value) => this.setState({ transport: value })}
+              value={this.state.transport}
+            >
+              <MenuItem value="Air mail" primaryText="Air mail" />
+              <MenuItem value="Courier" primaryText="Courier" />
+              <MenuItem value="Self" primaryText="Deliver self" />
+            </SelectField>
+            <TextField
+              floatingLabelStyle={label}
+              floatingLabelText="Agent name and contact details (if applicable)"
+              fullWidth={true}
+              multiLine={true}
+              onChange={ev => this.setState({ agent: ev.target.value })}
+              rows={3}
+              value={this.state.agent}
+            />
+
+            <Row style={{ alignItems: 'center', padding: '12px 0' }}>
+              <Col xs={12}>
+                <Checkbox
+                  checked={this.state.legal}
+                  labelStyle={grey}
+                  onCheck={(ev, value) => this.setState({ legal: value })}
+                  style={{ width: 'auto', float: 'left' }}
+                />
+                <span style={label}>
+                  I accept the <span
+                    onClick={this.handleOpen}
+                    style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                  >Worldcon 75 Art Show Basic Rules <OpenInNew style={{ color: '#888', height: 16, marginLeft: 2, position: 'relative', top: 3 }} /></span>
+                </span>
               </Col>
-              <Col sm={4}>
-              <TextField
-                type="number"
-                floatingLabelStyle={label}
-                style={{width: '100px' }}
-                floatingLabelText=""
-                min="0"
-                onChange={this.handleChange.bind(this, 'auction')}
-                value={this.state.auction}
-              /> m
-            </Col>
-          </Row>
-          <Row>
-            <Col sm={2}>
-              <label style={label}>Printshop gallery </label>
+            </Row>
+            <Dialog
+              autoScrollBodyContent = {true}
+              modal={false}
+              onRequestClose={this.handleClose}
+              open={this.state.open}
+              title="Worldcon 75 Art Show Basic Rules"
+            >
+              <BasicRules />
+            </Dialog>
+
+            <RaisedButton
+              type="submit"
+              label="Save"
+              disabled={ !this.state.legal }
+              className="button-submit"
+              onClick={this.handleSubmit.bind(this)}
+              primary={true}
+            />
+
+            <Row>
+              <Col xs={12}>
+                < br/>
+                <Divider />
+                <h3>Submitted Artworks </h3>
+                <div style= { center } >
+                  <i>
+                    Please fill fields to submit individual artworks to the art show.<br/>
+                    You may edit submitted artworks and their details at later date.
+                  </i>
+                </div>
+                <br/>
               </Col>
-              <Col sm={4}>
-              <TextField
-                type="number"
-                floatingLabelStyle={label}
-                style={{width: '100px' }}
-                floatingLabelText=""
-                min="0"
-                onChange={this.handleChange.bind(this, 'print')}
-                value={this.state.print}
-              /> m
-            </Col>
-          </Row>
-          <Row>
-            <Col sm={4}>
-              <Checkbox
-                label="Digital gallery (Max 20 works)"
-                labelPosition="left"
-                labelStyle={grey}
-                onCheck={this.handleCheck.bind(this,'digital')}
-                checked={this.state.digital}
-              />
-              <br/>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={2}>
-              <label style={label} >Estimated Return Postage (plus 20 &euro; for handling) </label>
-            </Col>
-            <Col xs={4}>
-              <TextField
-                type="number"
-                style={{width: '100px' }}
-                value={this.state.postage}
-                onChange={this.handleChange.bind(this, 'postage')}
-              /> &euro;
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={2}>
-              <br/>
-              <label style={{color:'#000',fontSize:'16px'}} >Total Cost of This Submission </label>
-            </Col>
-            <Col xs={4}>
-              <TextField
-                type="number"
-                style={{width: '100px' }}
-                value={total}
-              /> &euro;
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={4}>
-              <br/><br/>
-              <Checkbox
-                label="If the art show is full then I would like to go on the waiting list."
-                labelPosition="left"
-                labelStyle={grey}
-                onCheck={this.handleCheck.bind(this, 'waitlist')}
-                checked={this.state.waitlist}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={12} sm={3}><br /><br />
-              <RaisedButton
-                type="submit"
-                label="Save"
-                disabled={ !this.state.legal }
-                className="button-submit"
-                onClick={this.handleSubmit.bind(this)}
-                primary={true}
-              />
-            </Col>
-            <Col ><br /><br />
-              <a href="javascript:void(0);" onClick={ this.handleOpen } style={grey}>
-                By ticking this box you accept<br/>
-                the W75 Accept Basic Rules
-              </a>
-              <Checkbox onCheck={this.handleCheck.bind(this,'legal')} checked={this.state.legal} />
-              <Dialog
-                title="Accept W75 Basic rules"
-                modal={false}
-                open={this.state.open}
-                onRequestClose={this.handleClose}
-                autoScrollBodyContent = {true}
-              >
-                <BasicRules />
-              </Dialog>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={12}>
-              < br/>
-              <Divider />
-              <h3>Submitted Artworks </h3>
-              <div style= { center } >
-                <i>
-                  Please fill fields to submit individual artworks to the art show.<br/>
-                  You may edit submitted artworks and their details at later date.
-                </i>
-              </div>
-              <br/>
-            </Col>
-          </Row>
-          <Row>
-            { works }
-            <Col xs= {12} >
-              <br />
-              <RaisedButton type="button" label="Add" onClick={this.addWork.bind(this)} className="button-submit" />
-            </Col>
-          </Row>
-        </CardText>
-      </Card>
-    )
+            </Row>
+            <Row>
+              { works }
+              <Col xs= {12} >
+                <br />
+                <RaisedButton type="button" label="Add" onClick={this.addWork.bind(this)} className="button-submit" />
+              </Col>
+            </Row>
+          </CardText>
+        </Card>
+      </Col>
+      <Col xs={12} sm={6} lg={4}>
+        <GalleryCard
+          artist={this.state}
+          onChange={update => this.setState(update)}
+          onSave={() => this.handleSubmit()}
+          style={{ marginBottom: '1rem' }}
+        />
+      </Col>
+    </Row>)
   }
 }
 
