@@ -19,7 +19,7 @@ import API from '../../lib/api'
 
 import Artwork from './Artwork';
 import ArtworkAdderCard from './ArtworkAdderCard'
-import BasicRules from './basic-rules';
+import { BasicRulesDialog } from './basic-rules'
 import GalleryCard from './GalleryCard'
 
 class Registration extends React.Component {
@@ -247,22 +247,16 @@ class Registration extends React.Component {
                   style={{ width: 'auto', float: 'left' }}
                 />
                 <span style={label}>
-                  I accept the <span
-                    onClick={this.handleOpen}
-                    style={{ cursor: 'pointer', textDecoration: 'underline' }}
-                  >Worldcon 75 Art Show Basic Rules <OpenInNew style={{ color: '#888', height: 16, marginLeft: 2, position: 'relative', top: 3 }} /></span>
+                  I accept the{' '}
+                  <BasicRulesDialog>
+                    <span style={{ cursor: 'pointer', textDecoration: 'underline' }}>
+                      Worldcon 75 Art Show Basic Rules
+                      <OpenInNew style={{ color: '#888', height: 16, marginLeft: 2, position: 'relative', top: 3 }} />
+                    </span>
+                  </BasicRulesDialog>
                 </span>
               </Col>
             </Row>
-            <Dialog
-              autoScrollBodyContent = {true}
-              modal={false}
-              onRequestClose={this.handleClose}
-              open={this.state.open}
-              title="Worldcon 75 Art Show Basic Rules"
-            >
-              <BasicRules />
-            </Dialog>
 
             <RaisedButton
               type="submit"
