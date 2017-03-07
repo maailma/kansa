@@ -7,7 +7,7 @@ import { API_ROOT } from '../../constants'
 import API from '../../lib/api'
 
 import ArtistCard from './ArtistCard'
-import Artwork from './Artwork';
+import ArtworkCard from './ArtworkCard';
 import ArtworkAdderCard from './ArtworkAdderCard'
 import GalleryCard from './GalleryCard'
 
@@ -110,16 +110,6 @@ class Registration extends React.Component {
   }
 
   render() {
-    const works = this.state.Works.map((work, i) => (
-      <Col key={ i }>
-        <Artwork
-          onDelete={() => this.deleteWork(i, work.id)}
-          onSave={newWork => this.saveWork(i, work.id, newWork)}
-          work={work}
-        />
-      </Col>
-    ));
-
     return (<Row>
       <Col xs={12} sm={6} lg={4}>
         <ArtistCard
@@ -138,10 +128,17 @@ class Registration extends React.Component {
         />
         <ArtworkAdderCard
           onAdd={() => this.addWork()}
+          style={{ marginBottom: '1rem' }}
         />
-        <Row>
-          { works }
-        </Row>
+        {this.state.Works.map((work, i) => (
+          <ArtworkCard
+            key={i}
+            onDelete={() => this.deleteWork(i, work.id)}
+            onSave={newWork => this.saveWork(i, work.id, newWork)}
+            style={{ marginBottom: '1rem' }}
+            work={work}
+          />
+        ))}
       </Col>
     </Row>)
   }
