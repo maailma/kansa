@@ -67,7 +67,7 @@ const Member = ({ member, push, showHugoActions }) => {
             onTouchTap={() => push(`/hugo/${id}/nominate`)}
             primaryText="Nominate for the Hugo Awards"
           /> : null }
-        { isFullMemberType(membership) ? <ListItem
+        { isFullMemberType(membership) || membership === 'Supporter' ? <ListItem
             innerDivStyle={{ paddingLeft: 60 }}
             leftIcon={<Palette />}
             onTouchTap={ () => push(`/exhibition/${id}`) }
