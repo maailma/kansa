@@ -18,11 +18,11 @@ import App from './app/components/App'
 import Index from './app/components/Index'
 import NewMemberForm from './kansa/components/NewMemberForm'
 import NewMemberIndex from './kansa/components/NewMemberIndex'
-import ExhibitReg from './raami/components/Exhibition'
 import Nominate from './hugo/components/Nominate'
 import Canon from './hugo-admin/components/Canon'
 import Finalists from './hugo-admin/components/Finalists'
 import HugoAdmin from './hugo-admin/components/HugoAdmin'
+import ExhibitRegistration from './raami/components/Registration'
 import middleware from './middleware'
 import reducers from './reducers'
 
@@ -74,7 +74,7 @@ ReactDOM.render(
           <Route path="new" component={NewMemberIndex} />
           <Route path="new/:membership" component={NewMemberForm} />
           <Route onEnter={requireAuth}>
-            <Route path="exhibition/:id" component={ExhibitReg} />
+            <Route path="exhibition/:id" component={ExhibitRegistration} />
             <Route path="hugo" >
               <IndexRedirect to="/" />
               <Route path="admin" component={HugoAdmin}>

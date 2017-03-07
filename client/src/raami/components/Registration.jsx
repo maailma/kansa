@@ -18,7 +18,7 @@ import API from '../../lib/api'
 import Artwork from './Artwork';
 import BasicRules from './basic-rules';
 
-class ExhibitReg extends React.Component {
+class Registration extends React.Component {
 
   static propTypes = {
     setTitle: React.PropTypes.func.isRequired,
@@ -402,4 +402,4 @@ export default connect(
   null, {
     setTitle,
   }
-)(ExhibitReg);
+)(Registration);
