@@ -33,6 +33,7 @@
     "react-addons-shallow-compare": "^15.4.1",
     "react-dom": "^15.4.1",
     "react-flexbox-grid": "eemeli/react-flexbox-grid#pr-66-68",
+    "react-gravatar": "^2.6.1",
     "react-hot-loader": "^3.0.0-beta.4",
     "react-immutable-proptypes": "^2.1.0",
     "react-redux": "^4.4.5",
