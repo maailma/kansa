@@ -27,6 +27,17 @@ export default ({ dispatch }) => (next) => (action) => {
         .catch(handleError);
     } return;
 
+    case 'BUY_OTHER': {
+      const { amount, callback, purchase, token } = action;
+      api.POST('kansa/purchase/other', Object.assign({
+        amount,
+        email: token.email,
+        token: token.id,
+      }, purchase))
+        .then(() => callback && callback())
+        .catch(handleError);
+    } return;
+
     case 'BUY_UPGRADE': {
       const { amount, callback, id, membership, paper_pubs, token } = action;
       api.POST('kansa/purchase', {
@@ -45,6 +56,14 @@ export default ({ dispatch }) => (next) => (action) => {
       api.GET('kansa/purchase/prices')
         .then(prices => {
           next({ ...action, prices });
+        })
+        .catch(handleError);
+    } return;
+
+    case 'GET_PURCHASE_DATA': {
+      api.GET('kansa/purchase/data')
+        .then(data => {
+          next({ ...action, data });
         })
         .catch(handleError);
     } return;
