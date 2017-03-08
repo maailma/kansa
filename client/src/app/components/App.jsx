@@ -1,33 +1,26 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { push } from 'react-router-redux'
 
 import FlatButton from 'material-ui/FlatButton'
-import IconButton from 'material-ui/IconButton'
 import Paper from 'material-ui/Paper'
 import Snackbar from 'material-ui/Snackbar'
-import ChevronLeftIcon from 'material-ui/svg-icons/navigation/chevron-left'
 import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
 
 import { hideMessage } from '../actions/app'
 import { logout } from '../actions/auth'
+import NavDrawer from './NavDrawer'
 
-const AppBar = ({ email, goToProfiles, logout, path, title }) => <Paper zDepth={2} >
+const AppBar = ({ email, id, logout, path, title }) => <Paper zDepth={2} >
   <Toolbar
     style={{
       backgroundColor: 'white'
     }}
   >
     <ToolbarGroup>
-      { path === '/' ? null : <IconButton
-          onTouchTap={goToProfiles}
-          style={{ marginLeft: -24 }}
-          tooltip='Member details'
-          tooltipPosition='bottom-right'
-          tooltipStyles={{ marginTop: -8 }}
-      >
-        <ChevronLeftIcon />
-      </IconButton> }
+      <NavDrawer
+        iconStyle={{ marginLeft: -24 }}
+        id={id}
+      />
       <ToolbarTitle text={title} />
     </ToolbarGroup>
     <ToolbarGroup>
@@ -43,12 +36,12 @@ const AppBar = ({ email, goToProfiles, logout, path, title }) => <Paper zDepth={
   </Toolbar>
 </Paper>;
 
-const App = ({ children, email, goToProfiles, hideMessage, location, logout, message, title }) => <div>
+const App = ({ children, email, hideMessage, location, logout, message, params: { id }, title }) => <div>
   { email ? <AppBar
     email={email}
-    goToProfiles={goToProfiles}
-    path={location.pathname}
+    id={Number(id) || undefined}
     logout={logout}
+    path={location.pathname}
     title={title}
   /> : <h1 style={{ paddingTop: 24 }}>{title}</h1> }
   <main>
@@ -67,10 +60,7 @@ export default connect(
     message: app.get('message'),
     title: app.get('title')
   }), {
-    goToProfiles: () => push('/'),
     hideMessage,
     logout
   }
-)(
-  App
-);
+)(App);
