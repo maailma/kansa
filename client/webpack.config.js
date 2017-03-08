@@ -16,7 +16,8 @@ const cfg = {
     loaders: [
       { test: /\.css$/, loader: 'style!css', exclude: /flexboxgrid/ },
       { test: /\.css$/, loader: 'style!css?modules', include: /flexboxgrid/, },
-      { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel' }
+      { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel' },
+      { test: /\.(jpe?g|png|gif|svg)$/i, loader: 'file-loader?name=img/[name].[ext]' }
     ]
   },
   resolve: {
