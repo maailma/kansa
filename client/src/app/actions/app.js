@@ -1,3 +1,8 @@
+export const dockSidebar = (dock) => ({
+  type: 'DOCK_SIDEBAR',
+  dock
+});
+
 export const setPerson = (person) => ({
   type: 'SET_PERSON',
   person

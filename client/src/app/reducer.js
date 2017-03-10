@@ -1,6 +1,7 @@
 import { Map } from 'immutable'
 
 const defaultState = Map({
+  dockSidebar: true,
   message: '',
   person: -1,
   title: TITLE
@@ -12,6 +13,9 @@ export default function(state = defaultState, action) {
     return state.set('message', `${action.type} error` + (message ? `: ${message}` : ''));
   }
   switch (action.type) {
+
+    case 'DOCK_SIDEBAR':
+      return state.set('dockSidebar', !!action.dock);
 
     case 'SET_PERSON':
       return state.set('person', action.person);

@@ -5,8 +5,6 @@ import { push } from 'react-router-redux'
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
 import Drawer from 'material-ui/Drawer'
-import IconButton from 'material-ui/IconButton'
-import Menu from 'material-ui/svg-icons/navigation/menu'
 
 import NavHead from './NavHead'
 import NavMenu from './NavMenu'
@@ -14,10 +12,13 @@ import NavMenu from './NavMenu'
 class NavDrawer extends React.Component {
 
   static propTypes = {
-    iconStyle: React.PropTypes.object,
+    docked: React.PropTypes.bool,
     id: React.PropTypes.number,
+    onRequestChange: React.PropTypes.func.isRequired,
+    open: React.PropTypes.bool,
     people: ImmutablePropTypes.list.isRequired,
     push: React.PropTypes.func.isRequired,
+    width: React.PropTypes.number,
   };
 
   static currentMember(id, people) {
@@ -43,7 +44,6 @@ class NavDrawer extends React.Component {
     const otherMembers = NavDrawer.otherMembers(currentMember, people);
     this.state = {
       currentMember,
-      open: false,
       otherMembers,
     };
   }
@@ -58,29 +58,21 @@ class NavDrawer extends React.Component {
   }
 
   handleNav = (val) => {
-    console.log('nav', val);
-    this.props.push(val);
-    this.setState({ open: false });
+    const { onRequestChange, push } = this.props;
+    push(val);
+    onRequestChange(false);
   }
 
   render() {
-    const { iconStyle } = this.props;
-    const { currentMember, open, otherMembers } = this.state;
+    const { docked, onRequestChange, open, width } = this.props;
+    const { currentMember, otherMembers } = this.state;
 
-    return <div>
-      <IconButton
-        onTouchTap={() => this.setState({ open: true })}
-        style={iconStyle}
-        tooltip='Navigation menu'
-        tooltipPosition='bottom-right'
-        tooltipStyles={{ marginTop: -8 }}
-      >
-        <Menu />
-      </IconButton>
+    return (
       <Drawer
-        docked={false}
-        open={open}
-        onRequestChange={(open) => this.setState({ open })}
+        docked={docked}
+        open={docked || open}
+        onRequestChange={onRequestChange}
+        width={width}
       >
         <NavHead
           currentMember={currentMember}
@@ -93,7 +85,7 @@ class NavDrawer extends React.Component {
           otherMembers={otherMembers}
         />
       </Drawer>
-    </div>
+    );
   }
 }
 
