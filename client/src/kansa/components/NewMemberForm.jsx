@@ -8,7 +8,7 @@ const { Col, Row } = require('react-flexbox-grid');
 import StripeCheckout from 'react-stripe-checkout'
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
-import { setTitle, showMessage } from '../../app/actions/app'
+import { setScene, showMessage } from '../../app/actions/app'
 import { buyMembership, getPrices } from '../actions'
 import { MembershipSelect } from './form-components'
 import MemberForm from './MemberForm'
@@ -24,7 +24,7 @@ class NewMemberForm extends React.Component {
     }).isRequired,
     push: React.PropTypes.func.isRequired,
     replace: React.PropTypes.func.isRequired,
-    setTitle: React.PropTypes.func.isRequired,
+    setScene: React.PropTypes.func.isRequired,
     showMessage: React.PropTypes.func.isRequired
   }
 
@@ -48,11 +48,7 @@ class NewMemberForm extends React.Component {
   }
 
   componentDidMount() {
-    this.props.setTitle('- New Membership')
-  }
-
-  componentWillUnmount() {
-    this.props.setTitle('');
+    this.props.setScene({ title: 'New Membership', dockSidebar: false });
   }
 
   onCheckout = (token) => {
@@ -152,7 +148,7 @@ export default connect(
     getPrices,
     push,
     replace,
-    setTitle,
+    setScene,
     showMessage
   }
 )(NewMemberForm);

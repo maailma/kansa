@@ -20,8 +20,10 @@ export default function(state = defaultState, action) {
     case 'SET_PERSON':
       return state.set('person', action.person);
 
-    case 'SET_TITLE':
-      return state.set('title', action.title);
+    case 'SET_SCENE': {
+      const { dockSidebar, title } = action;
+      return state.merge({ dockSidebar, title });
+    }
 
     case 'SHOW_MESSAGE':
       return state.set('message', action.message);

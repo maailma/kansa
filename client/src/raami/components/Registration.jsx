@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux'
 const { Col, Row } = require('react-flexbox-grid');
 
-import { setTitle } from '../../app/actions/app'
+import { setScene } from '../../app/actions/app'
 import { API_ROOT } from '../../constants'
 import API from '../../lib/api'
 
@@ -14,13 +14,12 @@ import GalleryCard from './GalleryCard'
 class Registration extends React.Component {
 
   static propTypes = {
-    setTitle: React.PropTypes.func.isRequired,
+    setScene: React.PropTypes.func.isRequired,
   }
 
   constructor(props) {
     super(props);
     const member = props.params.id;
-    console.log(props.params);
     this.state = {
       api: new API(`${API_ROOT}raami/${member}/`),
       people_id: parseInt(member),
@@ -56,11 +55,7 @@ class Registration extends React.Component {
   }
 
   componentDidMount() {
-    this.props.setTitle('Art Show Registration')
-  }
-
-  componentWillUnmount() {
-    this.props.setTitle('');
+    this.props.setScene({ title: 'Art Show Registration', dockSidebar: false });
   }
 
   handleSubmit() {
@@ -102,7 +97,7 @@ class Registration extends React.Component {
     delete works[i];
     this.setState({ Works: works });
   }
-  
+
   addWork() {
     const works = this.state.Works.slice();
     works.push({ id: null });
@@ -150,6 +145,6 @@ class Registration extends React.Component {
 
 export default connect(
   null, {
-    setTitle,
+    setScene,
   }
 )(Registration);

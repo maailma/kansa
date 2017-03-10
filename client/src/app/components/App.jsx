@@ -13,6 +13,19 @@ import { hideMessage } from '../actions/app'
 import { logout } from '../actions/auth'
 import NavDrawer from './NavDrawer'
 
+function getMenuState(allowMenuDocked) {
+  const flexboxgridMd = () => window.matchMedia('(min-width: 64em)').matches;
+  const flexboxgridLg = () => window.matchMedia('(min-width: 75em)').matches;
+  const menuWidth = (cols) => Math.round(window.innerWidth * cols / 12);
+  return !allowMenuDocked || !flexboxgridMd()
+    ? { menuDocked: false, menuWidth: 256 }
+    : {
+        menuDocked: true,
+        menuOpen: false,
+        menuWidth: flexboxgridLg() ? menuWidth(2) : menuWidth(3)
+      };
+}
+
 const AppBar = ({ email, logout, menuDocked, menuWidth, onOpenMenu, title }) => <Paper zDepth={2} >
   <Toolbar
     style={{
@@ -56,24 +69,16 @@ class App extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = Object.assign({ menuOpen: false }, this.menuState);
+    this.state = Object.assign({ menuOpen: false }, getMenuState(props.allowMenuDocked));
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { allowMenuDocked } = nextProps;
+    if (allowMenuDocked !== this.state.allowMenuDocked) this.setState(getMenuState(allowMenuDocked))
   }
 
   handleResize = () => {
-    this.setState(this.menuState);
-  }
-
-  get menuState() {
-    const flexboxgridMd = () => window.matchMedia('(min-width: 64em)').matches;
-    const flexboxgridLg = () => window.matchMedia('(min-width: 75em)').matches;
-    const menuWidth = (cols) => Math.round(window.innerWidth * cols / 12);
-    return !this.props.allowMenuDocked || !flexboxgridMd()
-      ? { menuDocked: false, menuWidth: 256 }
-      : {
-          menuDocked: true,
-          menuOpen: false,
-          menuWidth: flexboxgridLg() ? menuWidth(2) : menuWidth(3)
-        };
+    this.setState(getMenuState(this.props.allowMenuDocked));
   }
 
   render() {

@@ -5,7 +5,7 @@ import { push } from 'react-router-redux'
 const { Col, Row } = require('react-flexbox-grid');
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
-import { setTitle } from '../actions/app'
+import { setScene } from '../actions/app'
 import KeyRequest from './KeyRequest'
 import { getPrices } from '../../kansa/actions'
 import MemberCard from '../../kansa/components/MemberCard'
@@ -17,17 +17,13 @@ class Index extends React.Component {
     getPrices: React.PropTypes.func.isRequired,
     people: ImmutablePropTypes.list.isRequired,
     push: React.PropTypes.func.isRequired,
-    setTitle: React.PropTypes.func.isRequired
+    setScene: React.PropTypes.func.isRequired
   }
 
   componentDidMount() {
-    const { getPrices, prices, setTitle } = this.props;
-    setTitle('Memberships');
+    const { getPrices, prices, setScene } = this.props;
+    setScene({ title: 'Memberships', dockSidebar: false });
     if (!prices) getPrices();
-  }
-
-  componentWillUnmount() {
-    this.props.setTitle('');
   }
 
   render() {
@@ -63,6 +59,6 @@ export default connect(
   }), {
     getPrices,
     push,
-    setTitle
+    setScene
   }
 )(Index);

@@ -4,7 +4,7 @@ import { push } from 'react-router-redux'
 const { Col, Row } = require('react-flexbox-grid');
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
-import { setTitle } from '../../app/actions/app'
+import { setScene } from '../../app/actions/app'
 import { getPrices } from '../actions'
 import NewMemberCard from './NewMemberCard'
 
@@ -13,7 +13,7 @@ class NewMemberIndex extends React.Component {
     getPrices: React.PropTypes.func.isRequired,
     prices: ImmutablePropTypes.map,
     push: React.PropTypes.func.isRequired,
-    setTitle: React.PropTypes.func.isRequired,
+    setScene: React.PropTypes.func.isRequired,
   }
 
   constructor(props) {
@@ -23,11 +23,7 @@ class NewMemberIndex extends React.Component {
   }
 
   componentDidMount() {
-    this.props.setTitle('- New Membership')
-  }
-
-  componentWillUnmount() {
-    this.props.setTitle('');
+    this.props.setScene({ title: 'New Membership', dockSidebar: false });
   }
 
   render() {
@@ -62,6 +58,6 @@ export default connect(
   }), {
     getPrices,
     push,
-    setTitle,
+    setScene,
   }
 )(NewMemberIndex);

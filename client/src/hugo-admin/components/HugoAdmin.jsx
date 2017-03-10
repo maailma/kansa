@@ -3,7 +3,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { locationShape } from 'react-router'
 
-import { setTitle } from '../../app/actions/app'
+import { setScene } from '../../app/actions/app'
 import { initHugoAdmin } from '../actions'
 import NominationToolbar from './NominationToolbar'
 
@@ -34,11 +34,7 @@ class HugoAdmin extends React.Component {
   }
 
   componentDidMount() {
-    this.props.setTitle('Hugo Admin')
-  }
-
-  componentWillUnmount() {
-    this.props.setTitle('');
+    this.props.setScene({ title: 'Hugo Admin', dockSidebar: false });
   }
 
   render() {
@@ -65,6 +61,6 @@ export default connect(
     nominations: hugoAdmin.getIn(['nominations', category])
   }), {
     initHugoAdmin,
-    setTitle
+    setScene
   }
 )(HugoAdmin);
