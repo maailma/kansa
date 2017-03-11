@@ -90,3 +90,20 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER notify
     AFTER INSERT OR UPDATE ON People
     FOR EACH ROW EXECUTE PROCEDURE people_notify();
+
+
+-- utility functions for SELECT people queries
+CREATE FUNCTION public_name(p people) RETURNS varchar AS $$
+BEGIN
+    RETURN nullif(trim(both from concat_ws(' ', p.public_first_name, p.public_last_name)), '');
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE FUNCTION preferred_name(p people) RETURNS varchar AS $$
+DECLARE
+    pn varchar;
+BEGIN
+    pn := concat_ws(' ', p.public_first_name, p.public_last_name);
+    RETURN coalesce(nullif(trim(both from pn), ''), p.legal_name) AS name;
+END;
+$$ LANGUAGE plpgsql;
