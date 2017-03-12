@@ -8,7 +8,7 @@ const prices = require('../../kansa/server/static/prices.json');
 const host = 'https://localhost:4430';
 const adminLoginParams = { email: 'admin@example.com', key: 'key' };
 
-describe('Purchase', () => {
+describe('Membership purchases', () => {
   const agent = request.agent(host, { ca: cert });
 
   context('Parameters', () => {
@@ -168,4 +168,99 @@ describe('Purchase', () => {
     });
 
   });
+});
+
+
+describe('Other purchases', () => {
+  const agent = request.agent(host, { ca: cert });
+
+  context('Parameters', () => {
+    it('should require required parameters', (done) => {
+      agent.post('/api/kansa/purchase/other')
+        .send({ amount: 0, email: '@', name: 'x', token: 'x', type: 'x' })
+        .expect((res) => {
+          const exp = { status: 400, message: 'Required parameters: ' };
+          if (res.status !== exp.status) throw new Error(`Bad status: got ${res.status}, expected ${exp.status}`);
+          if (res.body.message.indexOf(exp.message) !== 0) throw new Error(`Bad reply: ${JSON.stringify(res.body)}`);
+        })
+        .end(done);
+    });
+
+    it('should require a valid type', (done) => {
+      agent.post('/api/kansa/purchase/other')
+        .send({ amount: 1, email: '@', name: 'x', token: 'x', type: 'x' })
+        .expect((res) => {
+          const exp = { status: 400, message: 'Supported types: ' };
+          if (res.status !== exp.status) throw new Error(`Bad status: got ${res.status}, expected ${exp.status}`);
+          if (res.body.message.indexOf(exp.message) !== 0) throw new Error(`Bad reply: ${JSON.stringify(res.body)}`);
+        })
+        .end(done);
+    });
+
+    it('should require custom data', (done) => {
+      agent.post('/api/kansa/purchase/other')
+        .send({ amount: 1, email: '@', name: 'x', token: 'x', type: 'Sponsorship', data: { type: 'x' } })
+        .expect((res) => {
+          const exp = { status: 400, message: 'Bad data: ' };
+          if (res.status !== exp.status) throw new Error(`Bad status: got ${res.status}, expected ${exp.status}`);
+          if (res.body.message.indexOf(exp.message) !== 0) throw new Error(`Bad reply: ${JSON.stringify(res.body)}`);
+          const { missing, badType } = JSON.parse(res.body.message.substr(exp.message.length));
+          if (missing.length !== 0 || badType.length !== 1 || badType[0] !== 'type') {
+            throw new Error(`Bad reply: ${JSON.stringify(res.body)}`);
+          }
+        })
+        .end(done);
+    });
+  });
+
+  context('Purchase data', function() {
+    const agent = request.agent(host, { ca: cert });
+
+    it('should get data', (done) => {
+      agent.get('/api/kansa/purchase/data')
+        .expect(200)
+        .expect(({ body }) => {
+          if (
+            !body || !body.Sponsorship || !body.Sponsorship.shape.type ||
+            body.Sponsorship.shape.type[0].key !== 'bench'
+          ) throw new Error(
+            `Bad response! ${JSON.stringify(body)}`
+          );
+        })
+        .end(done);
+    });
+  });
+
+  context('Sponsorships (using Stripe API)', function() {
+    this.timeout(10000);
+    const agent = request.agent(host, { ca: cert });
+    const testName = 'test-' + (Math.random().toString(36)+'00000000000000000').slice(2, 7);
+
+    it('purchase should succeed', (done) => {
+      stripe.tokens.create({
+        card: {
+          number: '4242424242424242',
+          exp_month: 12,
+          exp_year: 2020,
+          cvc: '123'
+        }
+      }).then(testToken => {
+        agent.post('/api/kansa/purchase/other')
+          .send({
+            amount: 4200,
+            email: 'test@example.com',
+            name: testName,
+            token: testToken.id,
+            type: 'Sponsorship',
+            data: { test: true, type: 'bench' }
+          })
+          .expect((res) => {
+            if (res.status !== 200) throw new Error(`Purchase failed! ${JSON.stringify(res.body)}`);
+            // HERE
+          })
+          .end(done);
+      });
+    });
+  });
+
 });

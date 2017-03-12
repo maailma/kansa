@@ -44,4 +44,4 @@ services:
       HUGO_PG_PASSWORD: pwd
       RAAMI_PG_PASSWORD: pwd
     volumes:
-      - ./postgres/init/90-dev-init-admin.sql:/docker-entrypoint-initdb.d/90-dev-init-admin.sql:ro
+      - ./postgres/init/90-dev-people-init.sql:/docker-entrypoint-initdb.d/90-dev-people-init.sql:ro

@@ -29,6 +29,8 @@ some relevant data and/or a `message` field.
   * [WebSocket: `wss://server/api/kansa/people/updates`](#websocket-wssserverapikansapeopleupdates)
 * [Purchases](#purchases)
   * [`POST /api/kansa/purchase`](#post-apikansapurchase)
+  * [`GET /api/kansa/purchase/data`](#get-apikansapurchasedata)
+  * [`POST /api/kansa/purchase/other`](#post-apikansapurchaseother)
   * [`GET /api/kansa/purchase/prices`](#get-apikansapurchaseprices)
 * [Hugo Nominations](#hugo-nominations)
   * [`GET /api/hugo/:id/nominations`](#get-apihugoidnominations)
@@ -75,11 +77,10 @@ Membership statistics by country
 ## Authentication
 
 ### `POST /api/kansa/key`
-- Parameters: `email`
+- Parameters: `email`, `reset`
 
-If `email` matches at least one known person (case-insensitively):
-1. Generate and store a `key`
-2. Send a message to the given `email` address with a login link
+If `email` matches (case-insensitively) a known address, send a login link to
+that address. If no key exists or `reset` is true-ish, generate a new key.
 
 #### Response
 ```
@@ -316,6 +317,45 @@ to each address. Send the receipt of the purchase to the `email` address.
 {
   status: 'success',
   emails: ['address@example.com', ...]
+}
+```
+
+### `GET /api/kansa/purchase/data`
+
+Current purchase data for non-membership purchases. Top-level keys correspond to
+pre-defined payment types and their `shape` values define the shapes of the
+expected object, with matching types. Arrays of objects define select/radio
+options, valued by their `key` value. Keys of `shape` matching values of
+`required` need to have a non-empty value in the matching request.
+
+#### Response
+```
+{
+  Sponsorship: {
+    required: ['type'],
+    shape: {
+      sponsor: '',
+      type: [{ key: 'bench', amount: 20000, label: 'Sponsored bench' }, ...]
+    }
+  },
+  ...
+}
+```
+
+### `POST /api/kansa/purchase/other`
+- Parameters: `amount`, `comments`, `data`, `email`, `name`, `invoice`, `person`, `token`,
+  `type: 'Membership' || 'HotelRoom' || 'ArtShowReg' || 'TableReg' || 'Sponsorship'`
+
+Using the `token` received from Stripe, make a charge of `amount` on the card
+and add an entry to the `Payments` table. `data` is a `type`-specific object,
+and `comments`, `invoice` and `person` are optional. Send the receipt of the
+purchase to the `email` address.
+
+#### Response
+```
+{
+  status: 'success',
+  stripe_charge_id: '...'
 }
 ```
 
