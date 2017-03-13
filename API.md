@@ -323,31 +323,33 @@ to each address. Send the receipt of the purchase to the `email` address.
 ### `GET /api/kansa/purchase/data`
 
 Current purchase data for non-membership purchases. Top-level keys correspond to
-pre-defined payment types and their `shape` values define the shapes of the
-expected object, with matching types. Arrays of objects define select/radio
-options, valued by their `key` value. Keys of `shape` matching values of
-`required` need to have a non-empty value in the matching request.
+pre-defined payment categories and their `types`. `shape` values define the
+shapes of the expected `data` object, with matching types. Arrays of objects
+define select/radio options, valued by their `key` value. Keys of `shape`
+matching values of `required` need to have a non-empty value in the matching
+request.
 
 #### Response
 ```
 {
   Sponsorship: {
-    required: ['type'],
+    required: ['sponsor'],
     shape: {
-      sponsor: '',
-      type: [{ key: 'bench', amount: 20000, label: 'Sponsored bench' }, ...]
-    }
+      sponsor: ''
+    },
+    types: [{ key: 'bench', amount: 20000, label: 'Sponsored bench' }, ...]
   },
   ...
 }
 ```
 
 ### `POST /api/kansa/purchase/other`
-- Parameters: `amount`, `comments`, `data`, `email`, `name`, `invoice`, `person`, `token`,
-  `type: 'Membership' || 'HotelRoom' || 'ArtShowReg' || 'TableReg' || 'Sponsorship'`
+- Parameters: `amount`,
+  `category: 'Membership' || 'HotelRoom' || 'ArtShowReg' || 'TableReg' || 'Sponsorship'`,
+  `comments`, `data`, `email`, `name`, `invoice`, `person`, `token`, `type`
 
 Using the `token` received from Stripe, make a charge of `amount` on the card
-and add an entry to the `Payments` table. `data` is a `type`-specific object,
+and add an entry to the `Payments` table. `data` is a `category`-specific object,
 and `comments`, `invoice` and `person` are optional. Send the receipt of the
 purchase to the `email` address.
 
