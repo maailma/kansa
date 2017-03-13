@@ -10,14 +10,21 @@ module.exports = {
 };
 
 function getPublicPeople(req, res, next) {
-  req.app.locals.db.any(`SELECT country, membership, public_last_name AS last_name, public_first_name AS first_name
-      FROM People WHERE membership != 'NonMember' AND (first_name != '' OR last_name != '')
-      ORDER BY last_name, first_name, country`)
+  req.app.locals.db.any(`
+      SELECT country, membership,
+             public_last_name AS last_name,
+             public_first_name AS first_name
+        FROM People
+       WHERE membership != 'NonMember' AND
+             (public_first_name != '' OR public_last_name != '')
+    ORDER BY last_name, first_name, country`
+  )
     .then(data => {
       res.status(200).json({ status: 'success', data });
     })
     .catch(err => next(err));
 }
+
 function getPublicStats(req, res, next) {
   req.app.locals.db.any(`SELECT country, membership, COUNT(*)
       FROM People WHERE membership != 'NonMember'
