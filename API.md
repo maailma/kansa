@@ -56,7 +56,7 @@ List of members who have opted to have their info in public
 #### Response
 ```
 [
-  { country, membership, public_name },
+  { country, membership, first_name, last_name },
   …
 ]
 ```
@@ -651,7 +651,7 @@ Full details for singular artist.
     category: 'Cover artist',
     orientation: 'Fantasy',
     description: 'Who is the artist etc.',
-    trasnport: 'Air mail' 
+    transport: 'Air mail'
     }
   …
 ```
