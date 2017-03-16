@@ -4,7 +4,7 @@ export const categoryGroups = {
   Written: ['Novel', 'Novella', 'Novelette', 'ShortStory', 'RelatedWork'],
   GraphicStory: [],
   Series: [],
-  Dramatic: ['DramaticLong', 'DramaticShort'],
+  Dramatic: ['DramaticLong', 'DramaticShort', 'RelatedWork'],
   EditorShort: [],
   EditorLong: [],
   Artists: ['ProArtist', 'FanArtist'],

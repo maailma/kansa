@@ -36,16 +36,16 @@ class NominationToolbar extends React.Component {
     menuOpen: false
   }
 
-  categoryMenuItem = (category, indent) => {
+  categoryMenuItem = (category, group) => {
     const { setQuery, showNominations } = this.props;
     return <MenuItem
-      key={category}
+      key={(group || '') + category}
       onTouchTap={ () => {
         this.setState({ menuOpen: false });
         showNominations(category);
         setQuery('');
       } }
-      primaryText={ indent ? `- ${category}` : category }
+      primaryText={ group ? `- ${category}` : category }
     />
   }
 
@@ -130,8 +130,8 @@ class NominationToolbar extends React.Component {
       >
         <Menu>{
           Object.keys(categoryGroups).reduce((items, gn) => items.concat(
-            this.categoryMenuItem(gn, false),
-            categoryGroups[gn].map(category => this.categoryMenuItem(category, true))
+            this.categoryMenuItem(gn, null),
+            categoryGroups[gn].map(category => this.categoryMenuItem(category, gn))
           ), [])
         }</Menu>
       </Popover>
