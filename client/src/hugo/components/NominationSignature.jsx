@@ -7,13 +7,14 @@ import TextField from 'material-ui/TextField'
 export default class NominationSignature extends React.Component {
 
   static propTypes = {
+    open: React.PropTypes.bool.isRequired,
     setName: React.PropTypes.func.isRequired
   }
 
   state = { name: '' }
 
   render() {
-    const { setName } = this.props;
+    const { open, setName } = this.props;
     const { name } = this.state;
     return <Dialog
       actions={
@@ -25,7 +26,7 @@ export default class NominationSignature extends React.Component {
       }
       autoScrollBodyContent={true}
       modal={true}
-      open={true}
+      open={open}
     >
       <p>
         You have received this link because you are a member of MidAmeriCon II, Worldcon 75 and/or Worldcon 76 in San

@@ -31,7 +31,8 @@ const Messages = connect(
   onRequestClose={ () => clearNominationError(category) }
 />);
 
-const ActiveNominations = ({ name, signature }) => <div>
+
+const NominationsHead = ({ active, name, signature }) => (
   <Row>
     <Col
       xs={10} xsOffset={1}
@@ -39,13 +40,17 @@ const ActiveNominations = ({ name, signature }) => <div>
       style={{ paddingTop: 20 }}
     >
       <h1>{ 'Hugo nominations for ' + name }</h1>
-      <h3 style={{ marginTop: -20 }}>Signing as "{signature}"</h3>
+      { signature ? <h3 style={{ marginTop: -20 }}>Signing as "{signature}"</h3> : null }
     </Col>
     <Col
       xs={10} xsOffset={1}
       sm={8} smOffset={2}
       lg={6} lgOffset={3}
     >
+      { !active ? <p style={{ borderBottom: '1px solid gray', fontWeight: 'bold', marginBottom: '2em', paddingBottom: '2em' }}>
+        At this time Hugo nominations have closed. We are working to compile the final ballot in each category and
+        will announce the results in the first week of April.
+      </p> : null }
       <p>
         Thank you for participating in the 2017 Hugo Awards and the John W. Campbell Award! Please choose up to five
         eligible candidates in each category. We recommend that you nominate whatever works and creators you have
@@ -93,59 +98,12 @@ const ActiveNominations = ({ name, signature }) => <div>
           target="_blank"
         >WSFS constitution</a>.
       </p>
-      <p>
+      { active ? <p>
         We look forward to receiving your nominations.
-      </p>
-
-
+      </p> : null }
     </Col>
   </Row>
-  <Row>
-    <Col
-      xs={10} xsOffset={1}
-      lg={8} lgOffset={2}
-    >{
-      Object.keys(categoryInfo).map(category => (
-        <NominationCategory signature={signature} category={category} key={category}/>
-      ))
-    }</Col>
-  </Row>
-  <SaveAllButton signature={signature} />
-  <Messages />
-</div>;
-
-
-/*
-const ReadOnlyNominations = ({ fields, state }) => {
-  const values = state.get('serverData');
-  return <tbody>{
-    values.map((rowValues, idx) => <tr key={idx}>{
-      fields.map(field => <td key={field}>{ rowValues.get(field, '') }</td>)
-    }</tr>)
-  }</tbody>;
-}
-
-ReadOnlyNominations.propTypes = {
-  fields: React.PropTypes.array.isRequired,
-  state: ImmutablePropTypes.mapContains({
-    serverData: ImmutablePropTypes.list.isRequired,
-  }).isRequired
-};
-
-const connectSetCategories = connect(state => ({
-  setCategories: Object.keys(state.nominations).filter(category =>
-    !state.nominations[category].get('serverData').isEmpty()
-  )
-}));
-
-const InactiveNominations = connectSetCategories(({ setCategories }) => <div>
-  <p>Hugo voting is not currently available</p>
-  { setCategories.isEmpty() ? null : <p>... but here are the nominations we've got from you previously:</p> }
-  {
-    setCategories.map(category => getConnectedNominationForm(category, true))
-  }
-</div>);
-*/
+);
 
 
 class Nominate extends React.Component {
@@ -176,13 +134,32 @@ class Nominate extends React.Component {
   render() {
     const { id, person } = this.props;
     const { signature } = this.state;
+    const active = person.get('can_hugo_nominate');
     return !id ? <div>Loading...</div>
       : !person ? <div>Nominator not found!</div>
       : <div>
-          <ActiveNominations name={this.name} signature={signature} />
-          { signature ? null : <NominationSignature
+          <NominationsHead active={active} name={this.name} signature={signature} />
+          <Row>
+            <Col
+              xs={10} xsOffset={1}
+              lg={8} lgOffset={2}
+            >
+              { Object.keys(categoryInfo).map(category => (
+                <NominationCategory
+                  active={active}
+                  category={category}
+                  key={category}
+                  signature={signature}
+                />
+              )) }
+            </Col>
+          </Row>
+          { active ? <SaveAllButton signature={signature} /> : null }
+          <NominationSignature
+            open={active && !signature}
             setName={ signature => this.setState({ signature }) }
-          /> }
+          />
+          <Messages />
         </div>;
   }
 

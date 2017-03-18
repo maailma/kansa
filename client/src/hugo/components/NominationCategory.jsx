@@ -20,6 +20,7 @@ import { NominationFillerRow, NominationRow } from './NominationRow'
 
 class NominationActionsRow extends React.Component {
   static propTypes = {
+    active: React.PropTypes.bool.isRequired,
     disabled: React.PropTypes.bool.isRequired,
     onSave: React.PropTypes.func.isRequired,
     onReset: React.PropTypes.func.isRequired,
@@ -31,7 +32,7 @@ class NominationActionsRow extends React.Component {
   }
 
   render() {
-    const { disabled, onSave, onReset, saveTime } = this.props;
+    const { active, disabled, onSave, onReset, saveTime } = this.props;
     return <Row
       middle='xs'
       style={{ paddingTop: 20 }}
@@ -42,7 +43,7 @@ class NominationActionsRow extends React.Component {
           title={saveTime}
         >{ 'Last saved ' + time_diff(saveTime) }</span> : null }
       </Col>
-      <Col xs>
+      { active ? <Col xs>
         <RaisedButton
           label='Save'
           disabled={disabled}
@@ -61,7 +62,7 @@ class NominationActionsRow extends React.Component {
           style={{ float: 'right', marginLeft: 15 }}
           title='Reset this category'
         />
-      </Col>
+      </Col> : null }
     </Row>;
   }
 }
@@ -73,16 +74,17 @@ const nominationRowLinks = (n, props) => {
   return res;
 }
 
-const NominationBody = ({ colSpan, fields, maxNominations, onChange, onSave, onReset, state }) => {
+const NominationBody = ({ active, colSpan, fields, maxNominations, onChange, onSave, onReset, state }) => {
   const clientData = state.get('clientData');
   const serverData = state.get('serverData');
   const serverTime = state.get('serverTime');
   const isFetching = state.get('isFetching');
-  const rows = clientData.size < maxNominations ? clientData.push(Map()) : clientData;
+  const rows = active && clientData.size < maxNominations ? clientData.push(Map()) : clientData;
   return <div>
     {
       rows.map((rowValues, idx) => <NominationRow
         key={idx}
+        active={active}
         colSpan={colSpan}
         defaultValues={ serverData.get(idx, Map()) }
         disabled={isFetching}
@@ -94,6 +96,7 @@ const NominationBody = ({ colSpan, fields, maxNominations, onChange, onSave, onR
     }
     { nominationRowLinks(maxNominations - rows.size, { colSpan, fields }) }
     <NominationActionsRow
+      active={active}
       disabled={ isFetching || clientData.equals(serverData) }
       onSave={onSave}
       onReset={onReset}
@@ -103,6 +106,7 @@ const NominationBody = ({ colSpan, fields, maxNominations, onChange, onSave, onR
 }
 
 NominationBody.propTypes = {
+  active: React.PropTypes.bool.isRequired,
   colSpan: React.PropTypes.number.isRequired,
   fields: React.PropTypes.array.isRequired,
   maxNominations: React.PropTypes.number,

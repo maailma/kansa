@@ -80,6 +80,7 @@ export const NominationFillerRow = ({ colSpan, fields }) => <Row>
 
 export class NominationRow extends React.Component {
   static propTypes = {
+    active: React.PropTypes.bool.isRequired,
     colSpan: React.PropTypes.number.isRequired,
     defaultValues: ImmutablePropTypes.map.isRequired,
     disabled: React.PropTypes.bool,
@@ -95,7 +96,7 @@ export class NominationRow extends React.Component {
   }
 
   render() {
-    const { colSpan, defaultValues, disabled, fields, onChange, onRemove, values } = this.props;
+    const { active, colSpan, defaultValues, disabled, fields, onChange, onRemove, values } = this.props;
     return <Row bottom='xs'>
       {
         fields.map(field => <Col
@@ -107,12 +108,12 @@ export class NominationRow extends React.Component {
             changed={ values.get(field, '') != defaultValues.get(field, '') }
             disabled={disabled}
             name={field}
-            onChange={ ev => onChange(field, ev.target.value) }
+            onChange={ active ? ev => onChange(field, ev.target.value) : () => {} }
             value={ values.get(field, '') }
           />
         </Col>)
       }
-      { values.isEmpty() ? null : <NominationRemoveButton disabled={disabled} onRemove={onRemove} /> }
+      { !active || values.isEmpty() ? null : <NominationRemoveButton disabled={disabled} onRemove={onRemove} /> }
     </Row>;
   }
 }
