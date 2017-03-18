@@ -3,8 +3,9 @@ export const setPerson = (person) => ({
   person
 });
 
-export const setTitle = (title) => ({
-  type: 'SET_TITLE',
+export const setScene = ({ title = '', dockSidebar = true }) => ({
+  type: 'SET_SCENE',
+  dockSidebar,
   title
 });
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import { IndexRedirect, Router, Route, browserHistory, hashHistory } from 'react-router'
+import { IndexRedirect, IndexRoute, Redirect, Router, Route, browserHistory, hashHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 import { createStore } from 'redux'
 
@@ -14,15 +14,15 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import { keyLogin, tryLogin } from './app/actions/auth'
-import { PATH_IN, PATH_OUT } from './constants'
 import App from './app/components/App'
-import Login from './app/components/Login'
-import MemberList from './kansa/components/MemberList'
-import ExhibitReg from './raami/components/Exhibition'
+import Index from './app/components/Index'
+import NewMemberForm from './kansa/components/NewMemberForm'
+import NewMemberIndex from './kansa/components/NewMemberIndex'
 import Nominate from './hugo/components/Nominate'
 import Canon from './hugo-admin/components/Canon'
 import Finalists from './hugo-admin/components/Finalists'
 import HugoAdmin from './hugo-admin/components/HugoAdmin'
+import ExhibitRegistration from './raami/components/Registration'
 import middleware from './middleware'
 import reducers from './reducers'
 
@@ -54,7 +54,7 @@ function checkAuth(nextState, replace, callback) {
 
 function requireAuth({ location: { pathname }}, replace) {
   const email = store.getState().user.get('email');
-  if (!email && pathname !== PATH_OUT) replace(PATH_OUT);
+  if (!email && pathname !== '/') replace('/');
 }
 
 function doLogin({ params: { email, key, id } }) {
@@ -68,13 +68,15 @@ ReactDOM.render(
         <Route path="/login/:email/:key" onEnter={doLogin} />
         <Route path="/login/:email/:key/:id" onEnter={doLogin} />
         <Route path="/" component={App} onEnter={checkAuth} >
-          <IndexRedirect to={PATH_IN} />
-          <Route path="login" component={Login} />
+          <IndexRoute component={Index} />
+          <Redirect from="login" to="/" />
+          <Redirect from="profile" to="/" />
+          <Route path="new" component={NewMemberIndex} />
+          <Route path="new/:membership" component={NewMemberForm} />
           <Route onEnter={requireAuth}>
-            <Route path="profile" component={MemberList} />
-            <Route path="exhibition/:id" component={ExhibitReg} />
+            <Route path="exhibition/:id" component={ExhibitRegistration} />
             <Route path="hugo" >
-              <IndexRedirect to={PATH_IN} />
+              <IndexRedirect to="/" />
               <Route path="admin" component={HugoAdmin}>
                 <IndexRedirect to='Novel' />
                 <Route path=":category">

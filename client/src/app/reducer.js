@@ -1,6 +1,7 @@
 import { Map } from 'immutable'
 
 const defaultState = Map({
+  dockSidebar: true,
   message: '',
   person: -1,
   title: TITLE
@@ -13,11 +14,16 @@ export default function(state = defaultState, action) {
   }
   switch (action.type) {
 
+    case 'DOCK_SIDEBAR':
+      return state.set('dockSidebar', !!action.dock);
+
     case 'SET_PERSON':
       return state.set('person', action.person);
 
-    case 'SET_TITLE':
-      return state.set('title', action.title);
+    case 'SET_SCENE': {
+      const { dockSidebar, title } = action;
+      return state.merge({ dockSidebar, title });
+    }
 
     case 'SHOW_MESSAGE':
       return state.set('message', action.message);

@@ -4,7 +4,7 @@ import { push, replace } from 'react-router-redux'
 import API from '../lib/api'
 import { showMessage } from '../app/actions/app'
 import { memberSet } from './actions'
-import { API_ROOT, PATH_IN, PATH_OUT } from '../constants'
+import { API_ROOT } from '../constants'
 
 const api = new API(API_ROOT);
 
@@ -12,6 +12,20 @@ export default ({ dispatch }) => (next) => (action) => {
   const handleError = (error) => next({ ...action, error });
 
   if (!action.error) switch (action.type) {
+
+    case 'BUY_MEMBERSHIP': {
+      const { amount, callback, member, token } = action;
+      api.POST('kansa/purchase', {
+        amount,
+        email: token.email,
+        token: token.id,
+        new_members: [member]
+      })
+        .then(() => api.GET('kansa/user'))
+        .then(user => dispatch(memberSet(user)))
+        .then(() => callback && callback())
+        .catch(handleError);
+    } return;
 
     case 'BUY_UPGRADE': {
       const { amount, callback, id, membership, paper_pubs, token } = action;
@@ -51,11 +65,11 @@ export default ({ dispatch }) => (next) => (action) => {
         .then(() => api.GET('kansa/user'))
         .then(user => {
           dispatch(memberSet(user));
-          dispatch(replace(path || PATH_IN));
+          dispatch(replace(path || '/'));
         })
         .catch(err => {
           handleError(err);
-          dispatch(push(PATH_OUT));
+          dispatch(push('/'));
         });
     } return;
 
@@ -76,7 +90,7 @@ export default ({ dispatch }) => (next) => (action) => {
       api.GET('kansa/logout')
         .then(() => {
           next(action);
-          dispatch(push(PATH_OUT));
+          dispatch(push('/'));
         })
         .catch(handleError);
     } return;

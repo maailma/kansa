@@ -1,33 +1,55 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { push } from 'react-router-redux'
+import EventListener from 'react-event-listener'
 
 import FlatButton from 'material-ui/FlatButton'
 import IconButton from 'material-ui/IconButton'
 import Paper from 'material-ui/Paper'
 import Snackbar from 'material-ui/Snackbar'
-import ChevronLeftIcon from 'material-ui/svg-icons/navigation/chevron-left'
 import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
+import Menu from 'material-ui/svg-icons/navigation/menu'
 
 import { hideMessage } from '../actions/app'
 import { logout } from '../actions/auth'
+import NavDrawer from './NavDrawer'
 
-const AppBar = ({ email, goToProfiles, logout, path, title }) => <Paper zDepth={2} >
+function getMenuState(allowMenuDocked) {
+  const flexboxgridMd = () => window.matchMedia('(min-width: 64em)').matches;
+  const flexboxgridLg = () => window.matchMedia('(min-width: 75em)').matches;
+  const menuWidth = (cols) => Math.round(window.innerWidth * cols / 12);
+  return !allowMenuDocked || !flexboxgridMd()
+    ? { menuDocked: false, menuWidth: 256 }
+    : {
+        menuDocked: true,
+        menuOpen: false,
+        menuWidth: flexboxgridLg() ? menuWidth(2) : menuWidth(3)
+      };
+}
+
+const AppBar = ({ email, logout, menuDocked, menuWidth, onOpenMenu, title }) => <Paper zDepth={2} >
   <Toolbar
     style={{
-      backgroundColor: 'white'
+      backgroundColor: 'white',
+      marginLeft: menuDocked ? menuWidth : 0,
+      //transition: 'margin 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms',
     }}
   >
-    <ToolbarGroup>
-      { path === '/profile' ? null : <IconButton
-          onTouchTap={goToProfiles}
-          style={{ marginLeft: -24 }}
-          tooltip='Member details'
-          tooltipPosition='bottom-right'
-          tooltipStyles={{ marginTop: -8 }}
+    <ToolbarGroup firstChild={!menuDocked}>
+      <IconButton
+        disabled={menuDocked}
+        iconStyle={menuDocked ? { width: 0 } : null}
+        onTouchTap={onOpenMenu}
+        style={menuDocked ? {
+          border: 0,
+          padding: 0,
+          width: 0
+        } : null}
+        tooltip='Navigation menu'
+        tooltipPosition='bottom-right'
+        tooltipStyles={{ marginTop: -8 }}
       >
-        <ChevronLeftIcon />
-      </IconButton> }
+        <Menu />
+      </IconButton>
       <ToolbarTitle text={title} />
     </ToolbarGroup>
     <ToolbarGroup>
@@ -43,34 +65,73 @@ const AppBar = ({ email, goToProfiles, logout, path, title }) => <Paper zDepth={
   </Toolbar>
 </Paper>;
 
-const App = ({ children, email, goToProfiles, hideMessage, location, logout, message, title }) => <div>
-  { email ? <AppBar
-    email={email}
-    goToProfiles={goToProfiles}
-    path={location.pathname}
-    logout={logout}
-    title={title}
-  /> : null }
-  <main>
-    {children}
-  </main>
-  <Snackbar
-    open={!!message}
-    message={message}
-    onRequestClose={hideMessage}
-  />
-</div>;
+class App extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = Object.assign({ menuOpen: false }, getMenuState(props.allowMenuDocked));
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { allowMenuDocked } = nextProps;
+    if (allowMenuDocked !== this.state.allowMenuDocked) this.setState(getMenuState(allowMenuDocked))
+  }
+
+  handleResize = () => {
+    this.setState(getMenuState(this.props.allowMenuDocked));
+  }
+
+  render() {
+    const { allowMenuDocked, children, email, hideMessage, logout, message, params: { id }, title } = this.props;
+    const { menuDocked, menuOpen, menuWidth } = this.state;
+
+    return (
+      <EventListener
+        onResize={this.handleResize}
+        target="window"
+      >
+        <div>
+          { email ? [
+            <NavDrawer
+              docked={menuDocked}
+              id={Number(id) || undefined}
+              key="nav"
+              onRequestChange={(menuOpen) => this.setState({ menuOpen })}
+              open={menuOpen}
+              width={menuWidth}
+            />,
+            <AppBar
+              email={email}
+              key="top"
+              logout={logout}
+              menuDocked={menuDocked}
+              menuWidth={menuWidth}
+              onOpenMenu={() => this.setState({ menuOpen: true })}
+              title={title}
+            />
+          ] : <h1 style={{ paddingTop: 24 }}>{title}</h1> }
+          <main>
+            {children}
+          </main>
+          <Snackbar
+            open={!!message}
+            message={message}
+            onRequestClose={hideMessage}
+          />
+        </div>
+      </EventListener>
+    );
+  }
+}
 
 export default connect(
   ({ app, user }) => ({
+    allowMenuDocked: app.get('dockSidebar'),
     email: user.get('email'),
     message: app.get('message'),
     title: app.get('title')
   }), {
-    goToProfiles: () => push('/profile'),
     hideMessage,
     logout
   }
-)(
-  App
-);
+)(App);

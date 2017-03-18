@@ -86,7 +86,8 @@ class Upgrade extends React.Component {
       getDefaultValue: path => member.getIn(path, null),
       getValue: path => getIn(this.state, path, ''),
       onChange: this.setStateIn,
-      prices
+      prices,
+      tabIndex: 1
     };
 
     return <div style={style}>
@@ -100,7 +101,7 @@ class Upgrade extends React.Component {
           <div key='total' style={{ color: 'rgba(0, 0, 0, 0.3)', flexGrow: 1, paddingLeft: 16 }}>
             Total: €{ amount / 100 }
           </div>,
-          <FlatButton key='cancel' label='Cancel' onTouchTap={this.handleClose} />,
+          <FlatButton key='cancel' label='Cancel' onTouchTap={this.handleClose} tabIndex={3} />,
           <StripeCheckout
             key='pay'
             amount={amount}
@@ -118,6 +119,7 @@ class Upgrade extends React.Component {
               disabled={disabled}
               onTouchTap={ () => this.setState({ sent: true }) }
               style={{ flexShrink: 0 }}
+              tabIndex={2}
             />
           </StripeCheckout>
         ]}

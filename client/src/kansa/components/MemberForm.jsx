@@ -14,6 +14,7 @@ export default class MemberForm extends React.Component {
     newMember: React.PropTypes.bool,
     onChange: React.PropTypes.func.isRequired,
     prices: ImmutablePropTypes.map,
+    tabIndex: React.PropTypes.number
   }
 
   static paperPubsIsValid(pp) {
@@ -39,14 +40,13 @@ export default class MemberForm extends React.Component {
       this.setState({ member: Map() });
     } else if (!member.equals(this.props.member)) {
       this.setState({ member }, () => {
-        onChange(this.changes);
+        onChange(this.isValid, this.changes);
       });
     }
   }
 
   get changes() {
     const { member, newMember } = this.props;
-    if (!MemberForm.isValid(this.state.member)) return null;
     return this.state.member.filter(
       newMember || !member
         ? (value) => value
@@ -65,20 +65,25 @@ export default class MemberForm extends React.Component {
     return !!this.state.member.get('paper_pubs');
   }
 
+  get isValid() {
+    return MemberForm.isValid(this.state.member);
+  }
+
   onChange = (path, value) => {
     this.setState({
       member: this.state.member.setIn(path, value)
     }, () => {
-      this.props.onChange(this.changes);
+      this.props.onChange(this.isValid, this.changes);
     });
   };
 
   render() {
-    const { newMember, prices } = this.props;
+    const { newMember, prices, tabIndex } = this.props;
     const inputProps = {
       getDefaultValue: this.getDefaultValue,
       getValue: this.getValue,
-      onChange: this.onChange
+      onChange: this.onChange,
+      tabIndex: tabIndex
     };
     const hintStyle= {
       color: 'rgba(0, 0, 0, 0.3)',
@@ -88,7 +93,12 @@ export default class MemberForm extends React.Component {
     return <form>
       <Row>
         <Col xs={12} sm={6}>
-          <TextInput { ...inputProps } path='legal_name' required={true} />
+          <TextInput
+            { ...inputProps }
+            inputRef={ focusRef => this.focusRef = focusRef }
+            path='legal_name'
+            required={true}
+          />
           <div style={hintStyle}>
             We'll need to check this against an official ID at the con, but
             otherwise it'll stay confidential.
@@ -143,32 +153,39 @@ export default class MemberForm extends React.Component {
           wish; not all fields will apply to everyone.
         </Col>
       </Row>
-      { newMember ? <Row>
-          <Col xs={12}>
+      <Row style={{ paddingTop: 16 }}>
+        { newMember ? <Col xs={12} sm={6}>
             <PaperPubsCheckbox
               { ...inputProps }
+              newMember={newMember}
               prices={prices}
               style={{ marginBottom: 4 }}
             />
-          </Col>
-          <Col xs={12} style={hintStyle}>
-            By default, we'll be in touch with you electronically to let you
-            know how our preparations are progressing. If you'd prefer to
-            receive our progress reports and other publications by post, select
-            this option (note the additional fee).
-          </Col>
-        </Row> : null }
-      { this.hasPaperPubs ? [
-          <PaperPubsFields {...inputProps} key="form" />,
-          <Row key="hint">
-            <Col xs={12} style={hintStyle}>
-              For paper publications, we'll need to know where to send your
-              mail. Please enter your address details here as you'd wish them to
-              be printed onto a postal label.
-            </Col>
-          </Row>
-      ] : null }
+            <div style={hintStyle}>
+              By default, we'll be in touch with you electronically to let you
+              know how our preparations are progressing. If you'd prefer to
+              receive our progress reports and other publications by post, select
+              this option (note the additional fee).
+            </div>
+            { this.hasPaperPubs ? <div style={hintStyle}>
+                We'll need to know where to send your mail. Please enter your
+                address details here as you'd wish them to be printed onto a
+                postal label.
+            </div> : null }
+        </Col> : null }
+        { this.hasPaperPubs ? <Col xs={12} sm={6}>
+            <PaperPubsFields {...inputProps} />
+        </Col> : null }
+        { !newMember && this.hasPaperPubs ? <Col xs={12} sm={6} style={hintStyle}>
+            For paper publications, we'll need to know where to send your mail.
+            Please enter your address details here as you'd wish them to be
+            printed onto a postal label.
+        </Col> : null }
+      </Row>
     </form>;
   }
 
+  componentDidMount() {
+    this.focusRef && this.focusRef.focus();
+  }
 }

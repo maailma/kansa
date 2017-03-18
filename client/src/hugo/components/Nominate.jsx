@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 const { Col, Row } = require('react-flexbox-grid');
 import Snackbar from 'material-ui/Snackbar'
 
-import { setTitle } from '../../app/actions/app'
+import { setScene } from '../../app/actions/app'
 import { setNominator, clearNominationError } from '../actions'
 import { categoryInfo } from '../constants'
 
@@ -133,7 +133,7 @@ ReadOnlyNominations.propTypes = {
 };
 
 const connectSetCategories = connect(state => ({
-  setCategories: Object.keys(state.nominations).filter(category => 
+  setCategories: Object.keys(state.nominations).filter(category =>
     !state.nominations[category].get('serverData').isEmpty()
   )
 }));
@@ -154,7 +154,7 @@ class Nominate extends React.Component {
     id: React.PropTypes.number.isRequired,
     person: ImmutablePropTypes.map,
     setNominator: React.PropTypes.func.isRequired,
-    setTitle: React.PropTypes.func.isRequired
+    setScene: React.PropTypes.func.isRequired
   }
 
   constructor(props) {
@@ -170,11 +170,7 @@ class Nominate extends React.Component {
   }
 
   componentDidMount() {
-    this.props.setTitle('Hugo Nominations')
-  }
-
-  componentWillUnmount() {
-    this.props.setTitle('');
+    this.props.setScene({ title: 'Hugo Nominations', dockSidebar: false });
   }
 
   render() {
@@ -210,6 +206,6 @@ export default connect(
     }
   }, {
     setNominator,
-    setTitle
+    setScene
   }
 )(Nominate);
