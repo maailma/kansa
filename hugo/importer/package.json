@@ -1,0 +1,17 @@
+{
+  "name": "hugo-importer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "import.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "csv-parse": "^1.2.0",
+    "fetch-cookie": "^0.2.0",
+    "node-fetch": "^1.6.3"
+  }
+}

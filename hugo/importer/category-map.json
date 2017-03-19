@@ -1,0 +1,89 @@
+{
+  "Novel": {
+    "title": "novel_title",
+    "author": "novel_auth",
+    "publisher": "novel_pub"
+  },
+
+  "Novella": {
+    "title": "novella_title",
+    "author": "novella_auth",
+    "publisher": "novella_pub"
+  },
+
+  "Novelette": {
+    "title": "novelette_title",
+    "author": "novelette_auth",
+    "publisher": "novelette_pub"
+  },
+
+  "ShortStory": {
+    "title": "short_title",
+    "author": "short_auth",
+    "publisher": "short_pub"
+  },
+
+  "RelatedWork": {
+    "title": "relwork_title",
+    "author": "relwork_auth",
+    "publisher": "relwork_pub"
+  },
+
+  "GraphicStory": {
+    "title": "graphic_title",
+    "author": "graphic_auth",
+    "publisher": "graphic_pub"
+  },
+
+  "DramaticLong": {
+    "title": "film_auth",
+    "producer": "film_pub"
+  },
+
+  "DramaticShort": {
+    "title": "tv_auth",
+    "series": "",
+    "producer": "tv_pub"
+  },
+
+  "EditorShort": {
+    "editor": "editor_short"
+  },
+
+  "EditorLong": {
+    "editor": "editor_long"
+  },
+
+  "ProArtist": {
+    "author": "pro_artist",
+    "example": "pro_example"
+  },
+
+  "Semiprozine": {
+    "title": "semiprozine"
+  },
+
+  "Fanzine": {
+    "title": "fanzine"
+  },
+
+  "Fancast": {
+    "title": "fancast",
+    "address": ""
+  },
+
+  "FanWriter": {
+    "author": "fan_writer",
+    "example": "fan_w_example"
+  },
+
+  "FanArtist": {
+    "author": "fan_artist",
+    "example": "fan_example"
+  },
+
+  "NewWriter": {
+    "author": "campbell",
+    "example": "fan_c_example"
+  }
+}
