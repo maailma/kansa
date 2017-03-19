@@ -54,6 +54,12 @@ export const setNominations = (category, nominations) => ({
   nominations
 });
 
+export const setShowBallotCounts = (show = true) => ({
+  module: 'hugo-admin',
+  type: 'SET_SHOW_BALLOT_COUNTS',
+  show: !!show
+});
+
 export const updateCanonEntry = (canon_id, category, nomination) => ({
   module: 'hugo-admin',
   type: 'UPDATE_CANON_ENTRY',

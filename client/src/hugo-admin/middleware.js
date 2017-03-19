@@ -1,4 +1,5 @@
-import { addCanon, addClassification, setCanon, setNominations } from './actions'
+import { Map } from 'immutable'
+import { addCanon, addClassification, fetchAllBallots, setCanon, setNominations } from './actions'
 import { API_ROOT } from '../constants'
 
 import API from '../lib/api'
@@ -66,6 +67,15 @@ export default ({ dispatch, getState }) => (next) => (action) => {
         .catch(handleError(setNominations()));
       break;
     }
+
+    case 'SET_SHOW_BALLOT_COUNTS':
+      if (action.show) {
+        const ballots = getState().hugoAdmin.get('ballots');
+        if (!Map.isMap(ballots) || ballots.isEmpty()) {
+          dispatch(fetchAllBallots());
+        }
+      }
+      break;
 
     case 'UPDATE_CANON_ENTRY': {
       const { canon_id, category, nomination } = action;
