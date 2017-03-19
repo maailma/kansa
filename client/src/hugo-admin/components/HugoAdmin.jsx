@@ -16,7 +16,8 @@ class HugoAdmin extends React.Component {
     nominations: React.PropTypes.instanceOf(List),
     params: React.PropTypes.shape({
       category: React.PropTypes.string.isRequired
-    }).isRequired
+    }).isRequired,
+    showBallotCounts: React.PropTypes.bool.isRequired
   }
 
   constructor(props) {
@@ -38,7 +39,7 @@ class HugoAdmin extends React.Component {
   }
 
   render() {
-    const { children, isAdmin, location: { pathname }, params: { category } } = this.props;
+    const { children, isAdmin, location: { pathname }, params: { category }, showBallotCounts } = this.props;
     const { query } = this.state;
     return <div>
       <NominationToolbar
@@ -46,6 +47,7 @@ class HugoAdmin extends React.Component {
         pathname={pathname}
         query={query}
         setQuery={ query => this.setState({ query: query.toLowerCase() }) }
+        showBallotCounts={showBallotCounts}
       />
       { isAdmin
         ? React.Children.map(children, (child) => React.cloneElement(child, { category, query }))
@@ -58,7 +60,8 @@ class HugoAdmin extends React.Component {
 export default connect(
   ({ hugoAdmin, user }, { params: { category }}) => ({
     isAdmin: user.get('hugoAdmin', false),
-    nominations: hugoAdmin.getIn(['nominations', category])
+    nominations: hugoAdmin.getIn(['nominations', category]),
+    showBallotCounts: hugoAdmin.get('showBallotCounts')
   }), {
     initHugoAdmin,
     setScene

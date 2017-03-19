@@ -7,6 +7,7 @@ import 'react-virtualized/styles.css'
 import More from 'material-ui/svg-icons/navigation/more-horiz'
 
 import { nominationFields } from '../../hugo/constants'
+import { setShowBallotCounts } from '../actions'
 import { countRawBallots } from '../nomination-count'
 import './CanonNominationList.css'
 
@@ -20,6 +21,8 @@ class CanonNominationList extends React.Component {
     onShowDetails: React.PropTypes.func.isRequired,
     query: React.PropTypes.string,
     selected: React.PropTypes.instanceOf(List).isRequired,
+    setShowBallotCounts: React.PropTypes.func.isRequired,
+    showBallotCounts: React.PropTypes.bool.isRequired,
     style: React.PropTypes.object
   }
 
@@ -33,7 +36,7 @@ class CanonNominationList extends React.Component {
   }
 
   get columns() {
-    const { ballots, categories, onShowDetails } = this.props;
+    const { ballots, categories, onShowDetails, showBallotCounts } = this.props;
     const controls = [<Column
       cellRenderer={
         ({ cellData, rowData }) => cellData ? <More
@@ -48,7 +51,7 @@ class CanonNominationList extends React.Component {
       style={{ display: 'flex' }}
       width={20}
     />];
-    if (!ballots.isEmpty()) controls.push(<Column
+    if (showBallotCounts && !ballots.isEmpty()) controls.push(<Column
       cellDataGetter={ ({ rowData }) => this.ballotCount(rowData) || '' }
       dataKey='ballotCount'
       key='ballotCount'
@@ -142,6 +145,18 @@ class CanonNominationList extends React.Component {
     return cl.join(' ');
   }
 
+  componentWillReceiveProps(nextProps) {
+    const c0 = this.props.categories;
+    const c1 = nextProps.categories;
+    if (!c0 || !c1 || c0.length !== c1.length) {
+      this.props.setShowBallotCounts(false);
+    } else if (c0 !== c1) {
+      for (let i = 0; i < c0.length; ++i) {
+        if (c0[i] !== c1[i]) return this.props.setShowBallotCounts(false);
+      }
+    }
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
   }
@@ -198,6 +213,9 @@ export default connect(
     canon: hugoAdmin.get('canon'),
     nominations: hugoAdmin.get('nominations')
       .filter((_, cat) => categories.indexOf(cat) !== -1)
-      .valueSeq(true).flatten(true)
-  })
+      .valueSeq(true).flatten(true),
+    showBallotCounts: hugoAdmin.get('showBallotCounts')
+  }), {
+    setShowBallotCounts
+  }
 )(CanonNominationList);
