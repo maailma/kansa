@@ -36,17 +36,19 @@ class Payment {
   }
 
   checkData() {
-    const { required = [], shape = {} } = purchaseData[this.category];
-    const missing = required.filter(key => !this.data[key] && this.data[key] !== false);
+    const { shape = {} } = purchaseData[this.category];
+    const missing = Object.keys(shape).filter(key => (
+      shape[key].required && !this.data[key] && this.data[key] !== false
+    ));
     const badType = Object.keys(shape || {}).filter(key => {
       if (missing.indexOf(key) !== -1) return false;
       const src = shape[key];
       const tgt = this.data[key];
-      if (Array.isArray(src)) {
-        return src.map(t => t.key).indexOf(tgt) === -1;
-      } else {
-        return typeof src !== typeof tgt;
-      }
+      if (src.type && (typeof tgt) !== src.type) return true;
+      if (src.values && (
+        Object.keys(src.values).every(key => tgt !== key)
+      )) return true;
+      return false;
     });
     return missing.length || badType.length ? { missing, badType } : null;
   }

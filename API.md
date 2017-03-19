@@ -324,18 +324,20 @@ to each address. Send the receipt of the purchase to the `email` address.
 
 Current purchase data for non-membership purchases. Top-level keys correspond to
 pre-defined payment categories and their `types`. `shape` values define the
-shapes of the expected `data` object, with matching types. Arrays of objects
-define select/radio options, valued by their `key` value. Keys of `shape`
-matching values of `required` need to have a non-empty value in the matching
+shapes of the expected `data` object, with matching JS `type`. The
+`{ [key]: label }` object `values` of `shape` defines select/radio options. Keys
+of `shape` with `required: true` need to have a non-empty value in the matching
 request.
 
 #### Response
 ```
 {
   Sponsorship: {
-    required: ['sponsor'],
     shape: {
-      sponsor: ''
+      sponsor: {
+        required: true,
+        type: 'string'
+      }
     },
     types: [{ key: 'bench', amount: 20000, label: 'Sponsored bench' }, ...]
   },

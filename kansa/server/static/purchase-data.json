@@ -1,8 +1,10 @@
 {
   "Sponsorship": {
-    "required": [ "sponsor" ],
     "shape": {
-      "sponsor": ""
+      "sponsor": {
+        "required": true,
+        "type": "string"
+      }
     },
     "types": [
       {
