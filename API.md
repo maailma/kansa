@@ -335,6 +335,7 @@ request.
   Sponsorship: {
     shape: {
       sponsor: {
+        label: 'Sponsor name',
         required: true,
         type: 'string'
       }
