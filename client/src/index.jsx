@@ -18,6 +18,7 @@ import App from './app/components/App'
 import Index from './app/components/Index'
 import NewMemberForm from './kansa/components/NewMemberForm'
 import NewMemberIndex from './kansa/components/NewMemberIndex'
+import PurchaseIndex from './kansa/components/PurchaseIndex'
 import Nominate from './hugo/components/Nominate'
 import Canon from './hugo-admin/components/Canon'
 import Finalists from './hugo-admin/components/Finalists'
@@ -89,6 +90,9 @@ ReactDOM.render(
                 <IndexRedirect to="nominate" />
                 <Route path="nominate" component={Nominate} />
               </Route>
+            </Route>
+            <Route path="pay">
+              <IndexRoute component={PurchaseIndex} />
             </Route>
           </Route>
         </Route>
