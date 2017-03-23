@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS Artist (
     description text,
     transport text,
     auction integer,
+    halfs integer,
     print integer,
     digital boolean,
     legal boolean,
@@ -42,7 +43,12 @@ CREATE TABLE IF NOT EXISTS Works (
     filedata text,
     price decimal,
     gallery text,
-    year integer
+    year integer,
+    original boolean,
+    copies integer,
+    start decimal,
+    sale decimal,
+    right boolean
     );
 
 
