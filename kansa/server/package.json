@@ -13,20 +13,20 @@
     "start": "node server"
   },
   "dependencies": {
-    "bluebird": "^3.4.0",
-    "body-parser": "~1.13.2",
-    "connect-pg-simple": "^3.1.0",
-    "cors": "^2.7.1",
-    "csv-express": "^1.1.0",
-    "debug": "~2.2.0",
+    "bluebird": "^3.5.0",
+    "body-parser": "^1.17.1",
+    "connect-pg-simple": "^3.1.2",
+    "cors": "^2.8.1",
+    "csv-express": "^1.2.0",
+    "debug": "^2.6.3",
     "express": "~4.14.0",
-    "express-session": "^1.13.0",
+    "express-session": "^1.15.1",
     "express-ws": "^2.0.0",
-    "morgan": "~1.7.0",
-    "node-fetch": "^1.6.2",
-    "pg-monitor": "^0.5.8",
-    "pg-promise": "^4.6.3",
+    "morgan": "^1.8.1",
+    "node-fetch": "^1.6.3",
+    "pg-monitor": "^0.7.1",
+    "pg-promise": "^5.6.4",
     "randomstring": "^1.1.5",
-    "stripe": "^4.11.0"
+    "stripe": "^4.16.0"
   }
 }
