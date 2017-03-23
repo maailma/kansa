@@ -19,6 +19,7 @@ import Index from './app/components/Index'
 import NewMemberForm from './kansa/components/NewMemberForm'
 import NewMemberIndex from './kansa/components/NewMemberIndex'
 import PurchaseIndex from './kansa/components/PurchaseIndex'
+import PurchaseItem from './kansa/components/PurchaseItem'
 import Nominate from './hugo/components/Nominate'
 import Canon from './hugo-admin/components/Canon'
 import Finalists from './hugo-admin/components/Finalists'
@@ -93,6 +94,8 @@ ReactDOM.render(
             </Route>
             <Route path="pay">
               <IndexRoute component={PurchaseIndex} />
+              <Redirect from=":category" to="/pay" />
+              <Route path=":category/:type" component={PurchaseItem} />
             </Route>
           </Route>
         </Route>
