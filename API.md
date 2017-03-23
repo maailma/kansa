@@ -347,19 +347,39 @@ request.
 ```
 
 ### `POST /api/kansa/purchase/other`
-- Parameters: `amount`,
-  `category: 'Membership' || 'HotelRoom' || 'ArtShowReg' || 'TableReg' || 'Sponsorship'`,
-  `comments`, `data`, `email`, `name`, `invoice`, `person`, `token`, `type`
+Parameters:
+- `amount`: The charge amount, in integer EUR cents
+- `token`: Received from Stripe, used to make the charge
+- `category`, `type`, `data`: Required to match entries returned by
+  [`GET /api/kansa/purchase/data`](#get-apikansapurchasedata)
+- `email`, `name`, `person_id`: If `person_id` is set, `email` and `name` are
+  optional; otherwise they are required, with some previously known `email`
+- `comments`, `invoice`: Optional strings
 
-Using the `token` received from Stripe, make a charge of `amount` on the card
-and add an entry to the `Payments` table. `data` is a `category`-specific object,
-and `comments`, `invoice` and `person` are optional. Send the receipt of the
-purchase to the `email` address.
+Using the `token` received from Stripe, make a charge on the card and add an
+entry to the `Payments` table. On success, sends a receipt of the purchase to
+the `email` address.
+
+#### Request
+```
+{
+  amount: 200000,
+  token: '...',
+  category: 'Sponsorship',
+  type: 'bench',
+  data: { sponsor: '...' },
+  person_id: 123,
+  name: '...',
+  comments: '...',
+  invoice: '456'
+}
+```
 
 #### Response
 ```
 {
   status: 'success',
+  email: '...',
   stripe_charge_id: '...'
 }
 ```

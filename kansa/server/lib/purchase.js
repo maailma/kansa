@@ -172,7 +172,8 @@ class Purchase {
 
   makeOtherPurchase(req, res, next) {
     const payment = new Payment(req.body);
-    this.stripeCharge(req, payment, payment.type)
+    payment.validate(this.db)
+      .then(() => this.stripeCharge(req, payment, payment.type))
       .then(charge_id => payment.insert(this.db, charge_id))
       .then(ok => res.status(200).json(Object.assign({ status: 'success' }, ok)))
       .catch(next);

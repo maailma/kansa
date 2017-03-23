@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS Payments (
     stripe_charge_id text,
     email text NOT NULL,
     name text NOT NULL,
-    person integer REFERENCES People,
+    person_id integer REFERENCES People,
     invoice text,
     comments text,
     data jsonb

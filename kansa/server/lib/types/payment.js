@@ -1,10 +1,11 @@
+const Promise = require('bluebird');
 const InputError = require('./inputerror');
 const purchaseData = require('../../static/purchase-data.json');
 
 class Payment {
   static get fields() { return [
     'amount', 'category', 'currency', 'stripe_charge_id', 'email', 'name',
-    'person', 'type', 'invoice', 'comments', 'data'
+    'person_id', 'type', 'invoice', 'comments', 'data'
   ]}
 
   static get table() { return 'Payments'; }
@@ -19,20 +20,50 @@ class Payment {
       this.email = src.email;
       this.invoice = src.invoice || null;
       this.name = src.name;
-      this.person = Number(src.person) || null;
+      this.person_id = Number(src.person_id) || null;
       this.token = src.token;
       this.type = src.type;
     }
-    if (!this.amount || !this.category || !this.email || !this.name || !this.token) {
-      throw new InputError('Required parameters: amount, category, email, name, token');
+  }
+
+  validate(db) {
+    const rejectInput = (reason) => Promise.reject(new InputError(reason));
+    if (!this.amount || !this.category || !this.token || !this.type) {
+      return rejectInput('Required parameters: amount, category, token, type');
+    }
+    if (!this.person_id && !(this.email && this.name)) {
+      return rejectInput('Either person_id or email & name are required');
     }
     if (!purchaseData[this.category]) {
-      throw new InputError('Supported categories: ' + Object.keys(purchaseData).join(', '));
+      return rejectInput('Supported categories: ' + Object.keys(purchaseData).join(', '));
     }
     const typeErrors = this.checkType();
-    if (typeErrors) throw new InputError('Supported types: ' + JSON.stringify(typeErrors));
+    if (typeErrors) return rejectInput('Supported types: ' + JSON.stringify(typeErrors));
     const dataErrors = this.checkData();
-    if (dataErrors) throw new InputError('Bad data: ' + JSON.stringify(dataErrors));
+    if (dataErrors) return rejectInput('Bad data: ' + JSON.stringify(dataErrors));
+    return (
+      this.person_id
+        ? db.one(`SELECT email, legal_name FROM People WHERE id=$1`, this.person_id)
+            .catch((error) => (
+              error.message === 'No data returned from the query.'
+                ? rejectInput('Not a valid person id: ' + this.person_id)
+                : Promise.reject(error)
+            ))
+        : Promise.resolve({})
+    ).then(({ email, legal_name }) => {
+      if (legal_name && !this.name) this.name = legal_name;
+      if (email && !this.email) {
+        this.email = email;
+      } else if (email !== this.email) {
+        return db.many(`SELECT id FROM People WHERE email=$1`, this.email)
+          .catch((error) => (
+            error.message === 'No data returned from the query.'
+              ? rejectInput('Not a known email address: ' + JSON.stringify(this.email))
+              : Promise.reject(error)
+          ));
+      }
+      return null;
+    });
   }
 
   checkData() {
@@ -66,7 +97,7 @@ class Payment {
     return db.one(`
       INSERT INTO ${Payment.table} (${fields.join(', ')})
            VALUES (${values})
-        RETURNING stripe_charge_id`, this);
+        RETURNING email, stripe_charge_id`, this);
   }
 }
 
