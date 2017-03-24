@@ -3,7 +3,7 @@ import { push, replace } from 'react-router-redux'
 
 import API from '../lib/api'
 import { showMessage } from '../app/actions/app'
-import { memberSet } from './actions'
+import { getPurchaseList, memberSet } from './actions'
 import { API_ROOT } from '../constants'
 
 const api = new API(API_ROOT);
@@ -34,7 +34,10 @@ export default ({ dispatch }) => (next) => (action) => {
         email: token.email,
         token: token.id,
       }, purchase.toJS ? purchase.toJS() : purchase))
-        .then(() => callback && callback())
+        .then(() => {
+          callback && callback();
+          dispatch(getPurchaseList());
+        })
         .catch(handleError);
     } return;
 
@@ -64,6 +67,14 @@ export default ({ dispatch }) => (next) => (action) => {
       api.GET('kansa/purchase/data')
         .then(data => {
           next({ ...action, data });
+        })
+        .catch(handleError);
+    } return;
+
+    case 'GET_PURCHASE_LIST': {
+      api.GET('kansa/purchase/list')
+        .then(list => {
+          next({ ...action, list });
         })
         .catch(handleError);
     } return;

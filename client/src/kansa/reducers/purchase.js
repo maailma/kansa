@@ -4,11 +4,6 @@ const ImmutablePropTypes = require('react-immutable-proptypes');
 
 
 const _PurchasePartPropTypes = {
-  priceItem: ImmutablePropTypes.mapContains({
-    amount: PropTypes.number.isRequired,
-    description: PropTypes.string.isRequired
-  }),
-
   dataShape: ImmutablePropTypes.mapOf(
     ImmutablePropTypes.mapContains({
       label: PropTypes.string,
@@ -26,18 +21,15 @@ const _PurchasePartPropTypes = {
     amount: PropTypes.number,
     key: PropTypes.string.isRequired,
     label: PropTypes.string
+  }),
+
+  priceItem: ImmutablePropTypes.mapContains({
+    amount: PropTypes.number.isRequired,
+    description: PropTypes.string.isRequired
   })
 }
 
 export const PurchasePropTypes = {
-  price: ImmutablePropTypes.mapContains({
-    memberships: ImmutablePropTypes.mapOf(
-      _PurchasePartPropTypes.priceItem,
-      PropTypes.string
-    ).isRequired,
-    PaperPubs: _PurchasePartPropTypes.priceItem.isRequired
-  }),
-
   data: ImmutablePropTypes.mapOf(
     ImmutablePropTypes.mapContains({
       shape: _PurchasePartPropTypes.dataShape,
@@ -47,11 +39,43 @@ export const PurchasePropTypes = {
       )
     }),
     PropTypes.string
-  )
+  ),
+
+  list: ImmutablePropTypes.listOf(
+    ImmutablePropTypes.mapContains({
+      id: PropTypes.number.isRequired,
+      timestamp: PropTypes.string.isRequired,
+      amount: PropTypes.number.isRequired,
+      category: PropTypes.string.isRequired,
+      type: PropTypes.string.isRequired,
+      currency: PropTypes.string.isRequired,
+      stripe_charge_id: PropTypes.string,
+      email: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      person_id: PropTypes.number,
+      invoice: PropTypes.string,
+      comments: PropTypes.string,
+      data: ImmutablePropTypes.map
+    })
+  ),
+
+  prices: ImmutablePropTypes.mapContains({
+    memberships: ImmutablePropTypes.mapOf(
+      _PurchasePartPropTypes.priceItem,
+      PropTypes.string
+    ).isRequired,
+    PaperPubs: _PurchasePartPropTypes.priceItem.isRequired
+  })
 }
 
 
-export default function(state = Map(), action) {
+const defaultState = Map({
+  data: null,
+  list: null,
+  prices: null,
+});
+
+export default function(state = defaultState, action) {
   if (action.error || action.module !== 'kansa') return state;
   switch (action.type) {
 
@@ -66,6 +90,10 @@ export default function(state = Map(), action) {
         cd.types = OrderedMap(cd.types.map(td => [td.key, fromJS(td)]));
       });
       return state.set('data', fromJS(data));
+
+    case 'GET_PURCHASE_LIST':
+      const { list } = action;
+      return state.set('list', fromJS(list));
 
   }
   return state;

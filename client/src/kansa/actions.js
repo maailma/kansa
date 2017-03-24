@@ -38,6 +38,11 @@ export const getPurchaseData = () => ({
   type: 'GET_PURCHASE_DATA'
 });
 
+export const getPurchaseList = () => ({
+  module: 'kansa',
+  type: 'GET_PURCHASE_LIST'
+});
+
 export const memberSet = ({ email, people, roles }) => ({
   module: 'kansa',
   type: 'MEMBER_SET',
