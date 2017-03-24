@@ -51,6 +51,7 @@ const PurchaseForm = ({ onChange, people, purchase, shape }) => {
         </Col>
         <Col xs={12} sm={9}>
           <RadioButtonGroup
+            defaultSelected={people.find(p => p.get('id') === purchase.get('person_id'))}
             name="person"
             onChange={(ev, person) => {
               if (person) {

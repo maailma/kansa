@@ -34,15 +34,16 @@ class PurchaseItem extends React.Component {
 
   constructor(props) {
     super(props);
+    const { email = '', people } = props;
     this.state = {
       amount: 0,
       purchase: Map({
         comments: '',
         data: Map(),
-        email: props.email || '',
+        email,
         invoice: '',
         name: '',
-        person_id: null,
+        person_id: people.first().get('id'),
       }),
       sent: false,
     };
