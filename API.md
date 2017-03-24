@@ -30,6 +30,7 @@ some relevant data and/or a `message` field.
 * [Purchases](#purchases)
   * [`POST /api/kansa/purchase`](#post-apikansapurchase)
   * [`GET /api/kansa/purchase/data`](#get-apikansapurchasedata)
+  * [`GET /api/kansa/purchase/list`](#get-apikansapurchaselist)
   * [`POST /api/kansa/purchase/other`](#post-apikansapurchaseother)
   * [`GET /api/kansa/purchase/prices`](#get-apikansapurchaseprices)
 * [Hugo Nominations](#hugo-nominations)
@@ -344,6 +345,33 @@ request.
   },
   ...
 }
+```
+
+### `GET /api/kansa/purchase/list`
+
+Purchases made using this account's `email` address, or one set as a query
+parameter (requires `member_admin` access).
+
+#### Response
+```
+[
+  {
+    id: 123,
+    timestamp: '2017-03-24 06:49:57.229836+00',
+    amount: 200000,
+    currency: 'eur',
+    stripe_charge_id: '...',
+    category: 'Sponsorship',
+    type: 'bench',
+    email: '...',
+    name: '...',
+    person_id: 456,
+    data: { sponsor: '...' },
+    comments: '...',
+    invoice: '456'
+  },
+  ...
+]
 ```
 
 ### `POST /api/kansa/purchase/other`

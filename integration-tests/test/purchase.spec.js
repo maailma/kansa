@@ -262,6 +262,22 @@ describe('Other purchases', () => {
           .end(done);
       });
     });
+
+    it('should be listed', (done) => {
+      const admin = request.agent(host, { ca: cert });
+      admin.get('/api/kansa/login')
+        .query(adminLoginParams)
+        .end(() => {
+          admin.get('/api/kansa/purchase/list')
+            .query({ email: 'test@example.com' })
+            .expect((res) => {
+              if (res.status !== 200) throw new Error(`Listing purchases failed! ${JSON.stringify(res.body)}`);
+              if (res.body.every(p => p.name !== testName)) throw new Error(`Purchase not in results! ${JSON.stringify(res.body)}`);
+            })
+            .end(done);
+        });
+
+    });
   });
 
 });

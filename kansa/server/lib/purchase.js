@@ -59,6 +59,7 @@ class Purchase {
     this.db = db;
     this.getPrices = this.getPrices.bind(this);
     this.getPurchaseData = this.getPurchaseData.bind(this);
+    this.getPurchases = this.getPurchases.bind(this);
     this.makeMembershipPurchase = this.makeMembershipPurchase.bind(this);
     this.makeOtherPurchase = this.makeOtherPurchase.bind(this);
   }
@@ -71,6 +72,12 @@ class Purchase {
   getPurchaseData(req, res, next) {
     if (!purchaseData) next(new Error('Missing purchase data!?'));
     res.status(200).json(purchaseData);
+  }
+
+  getPurchases(req, res, next) {
+    const email = req.session.user.member_admin && req.query.email || req.session.user.email;
+    this.db.any(`SELECT * FROM Payments WHERE email=$1`, email)
+      .then(data => res.status(200).json(data));
   }
 
   checkUpgrades(reqUpgrades) {
