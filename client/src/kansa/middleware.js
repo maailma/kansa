@@ -33,7 +33,7 @@ export default ({ dispatch }) => (next) => (action) => {
         amount,
         email: token.email,
         token: token.id,
-      }, purchase))
+      }, purchase.toJS ? purchase.toJS() : purchase))
         .then(() => callback && callback())
         .catch(handleError);
     } return;

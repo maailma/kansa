@@ -42,7 +42,7 @@ const DataField = ({ field, name, onChange, value }) => {
 }
 
 const PurchaseForm = ({ onChange, people, purchase, shape }) => {
-  const currentPersonId = purchase.get('person');
+  const currentPersonId = purchase.get('person_id');
   return (
     <form>
       <Row>
@@ -57,9 +57,9 @@ const PurchaseForm = ({ onChange, people, purchase, shape }) => {
                 const email = person.get('email');
                 const id = person.get('id');
                 const name = person.get('legal_name');
-                onChange({ email, name, person: id });
+                onChange({ email, name, person_id: id });
               } else {
-                onChange({ person: null });
+                onChange({ person_id: null });
               }
             }}
             style={{ paddingLeft: 24 }}

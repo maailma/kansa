@@ -42,7 +42,7 @@ class PurchaseItem extends React.Component {
         email: props.email || '',
         invoice: '',
         name: '',
-        person: 0,
+        person_id: null,
       }),
       sent: false,
     };
