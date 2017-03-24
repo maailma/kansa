@@ -1,7 +1,7 @@
 import { Map } from 'immutable'
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { replace } from 'react-router-redux'
+import { push, replace } from 'react-router-redux'
 const { Col, Row } = require('react-flexbox-grid');
 const ImmutablePropTypes = require('react-immutable-proptypes');
 import StripeCheckout from 'react-stripe-checkout'
@@ -27,6 +27,7 @@ class PurchaseItem extends React.Component {
     }).isRequired,
     people: ImmutablePropTypes.list,
     purchaseData: PurchasePropTypes.data,
+    push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
     setScene: PropTypes.func.isRequired,
     showMessage: PropTypes.func.isRequired,
@@ -85,11 +86,12 @@ class PurchaseItem extends React.Component {
   }
 
   onCheckout = (token) => {
-    const { buyOther, params, showMessage } = this.props;
+    const { buyOther, params, push, showMessage } = this.props;
     const { amount, purchase } = this.state;
     showMessage(`Charging ${purchase.get('email')} EUR ${amount / 100}...`);
     buyOther(purchase.merge(params).filter(v => v), amount, token, () => {
       showMessage('Payment successful!');
+      push('/pay');
     });
   }
 
@@ -164,6 +166,7 @@ export default connect(
   }), {
     buyOther,
     getPurchaseData,
+    push,
     replace,
     setScene,
     showMessage

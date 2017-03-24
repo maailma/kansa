@@ -16,7 +16,9 @@ const PurchaseSelectCard = ({ data, label, onSelect, title }) => {
       primaryText={primary}
     />;
   });
-  return <Card>
+  return <Card
+    style={{ marginBottom: 24 }}
+  >
     {title && <CardHeader title={title} />}
     <CardActions>
       <List>{ items.toJS() }</List>
