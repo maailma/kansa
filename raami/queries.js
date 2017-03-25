@@ -1,5 +1,6 @@
 const AuthError = require('./errors').AuthError;
 const InputError = require('./errors').InputError;
+const csv = require('csv-express');
 
 module.exports = {
 	upsertArtist,
@@ -9,6 +10,7 @@ module.exports = {
 	createWork,
 	updateWork,
 	removeWork,
+  exportArtists
 };
 
 function access(req) {
@@ -122,4 +124,19 @@ function removeWork(req, res, next) {
     ))
     .then(() => res.status(200).json({ status: 'success' }))
     .catch(next);
+}
+
+/**** export CSV ****/
+
+function exportArtists(req, res, next) {
+     // if (!req.session.user.raami_admin) return res.status(401).json({ status: 'unauthorized' });
+    req.app.locals.db.any(`
+    SELECT p.member_number, p.membership, p.legal_name, p.email, p.city, p.country,
+        a.name, a.continent, a.url,
+        a.category, a.description, a.transport, a.auction, a.print, a.digital,
+        a.legal, a.agent, a.contact, a.waitlist, a.postage 
+        FROM Artist as a, kansa.people as p WHERE a.people_id = p.ID order by p.member_number
+    `)
+    .then((data) => res.status(200).csv(data, true))
+    .catch(next)
 }
