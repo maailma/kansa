@@ -54,6 +54,7 @@ router.get('/members/paperpubs', people.getMemberPaperPubs);
 
 router.get('/people', people.getPeople);
 router.post('/people', people.authAddPerson);
+router.post('/people/lookup', people.lookupPerson);
 
 router.all('/people/:id*', user.verifyPeopleAccess);
 router.get('/people/:id', people.getPerson);

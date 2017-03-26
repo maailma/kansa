@@ -26,6 +26,7 @@ some relevant data and/or a `message` field.
   * [`GET /api/kansa/people/:id/log`](#get-apikansapeopleidlog)
   * [`POST /api/kansa/people/:id`](#post-apikansapeopleid)
   * [`POST /api/kansa/people/:id/upgrade`](#post-apikansapeopleidupgrade)
+  * [`POST /api/kansa/people/lookup`](#post-apikansapeoplelookup)
   * [WebSocket: `wss://server/api/kansa/people/updates`](#websocket-wssserverapikansapeopleupdates)
 * [Purchases](#purchases)
   * [`POST /api/kansa/purchase`](#post-apikansapurchase)
@@ -280,6 +281,26 @@ from membership changes.
 {
   status: 'success',
   updated: [ 'membership', 'member_number', 'paper_pubs' ]
+}
+```
+
+
+### `POST /api/kansa/people/lookup`
+- Parameters: `email`, `member_number`, `name`
+
+Finds a person's `id`, `membership` and `name` based on a slightly fuzzy lookup
+given some subset of the parameters `email`, `member_number`, and `name`. If the
+lookup matches more than one hit, `status` will be `multiple`. If no matches are
+found, `status` will be `not found`. Non-members and Child & Kid-in-tow members
+are not included in the results.
+
+#### Response
+```
+{
+  status: 'success',
+	id,
+  membership,
+  name
 }
 ```
 
