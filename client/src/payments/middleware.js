@@ -1,5 +1,5 @@
 import API from '../lib/api'
-import { memberSet } from '../kansa/actions'
+import { memberSet } from '../membership/actions'
 import { getPurchaseList } from './actions'
 import { API_ROOT } from '../constants'
 

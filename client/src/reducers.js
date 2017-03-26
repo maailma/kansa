@@ -5,7 +5,7 @@ import app from './app/reducer'
 import hugoAdmin from './hugo-admin/reducer'
 import nominations from './hugo/reducers/nominations'
 import purchase from './payments/reducers'
-import user from './kansa/reducers/user'
+import user from './membership/reducers/user'
 
 export default combineReducers({
   app,

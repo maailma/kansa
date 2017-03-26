@@ -8,8 +8,8 @@ const ImmutablePropTypes = require('react-immutable-proptypes');
 import { setScene } from '../actions/app'
 import KeyRequest from './KeyRequest'
 import { getPrices } from '../../payments/actions'
-import MemberCard from '../../kansa/components/MemberCard'
-import NewMemberCard from '../../kansa/components/NewMemberCard'
+import MemberCard from '../../membership/components/MemberCard'
+import NewMemberCard from '../../membership/components/NewMemberCard'
 
 class Index extends React.Component {
 
