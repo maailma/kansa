@@ -6,7 +6,7 @@ import StripeCheckout from 'react-stripe-checkout'
 
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
-import { buyUpgrade, getPrices } from '../actions'
+import { buyUpgrade, getPrices } from '../../payments/actions'
 import { MembershipSelect, PaperPubsCheckbox, PaperPubsFields } from './form-components';
 import MemberForm from './MemberForm';
 

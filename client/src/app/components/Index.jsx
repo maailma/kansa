@@ -7,7 +7,7 @@ const ImmutablePropTypes = require('react-immutable-proptypes');
 
 import { setScene } from '../actions/app'
 import KeyRequest from './KeyRequest'
-import { getPrices } from '../../kansa/actions'
+import { getPrices } from '../../payments/actions'
 import MemberCard from '../../kansa/components/MemberCard'
 import NewMemberCard from '../../kansa/components/NewMemberCard'
 

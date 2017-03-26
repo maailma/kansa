@@ -5,7 +5,7 @@ const { Col, Row } = require('react-flexbox-grid');
 
 import { setScene } from '../../app/actions/app'
 import { getPurchaseData, getPurchaseList } from '../actions'
-import { PurchasePropTypes } from '../reducers/purchase'
+import { PurchasePropTypes } from '../reducers'
 import PurchaseItemCard from './PurchaseItemCard'
 import PurchaseSelectCard from './PurchaseSelectCard'
 

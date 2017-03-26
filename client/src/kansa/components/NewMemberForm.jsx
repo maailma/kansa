@@ -9,7 +9,7 @@ import StripeCheckout from 'react-stripe-checkout'
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
 import { setScene, showMessage } from '../../app/actions/app'
-import { buyMembership, getPrices } from '../actions'
+import { buyMembership, getPrices } from '../../payments/actions'
 import { MembershipSelect } from './form-components'
 import MemberForm from './MemberForm'
 

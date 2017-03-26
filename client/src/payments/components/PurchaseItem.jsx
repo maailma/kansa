@@ -12,7 +12,7 @@ import TextField from 'material-ui/TextField'
 
 import { setScene, showMessage } from '../../app/actions/app'
 import { buyOther, getPurchaseData } from '../actions'
-import { PurchasePropTypes } from '../reducers/purchase'
+import { PurchasePropTypes } from '../reducers'
 import PurchaseForm from './PurchaseForm'
 import PurchaseSelectCard from './PurchaseSelectCard'
 

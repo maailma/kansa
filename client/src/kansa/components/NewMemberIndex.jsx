@@ -5,7 +5,7 @@ const { Col, Row } = require('react-flexbox-grid');
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
 import { setScene } from '../../app/actions/app'
-import { getPrices } from '../actions'
+import { getPrices } from '../../payments/actions'
 import NewMemberCard from './NewMemberCard'
 
 class NewMemberIndex extends React.Component {
