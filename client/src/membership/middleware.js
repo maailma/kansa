@@ -59,6 +59,13 @@ export default ({ dispatch }) => (next) => (action) => {
         .catch(handleError);
     } return;
 
+    case 'MEMBER_LOOKUP': {
+      const { query } = action;
+      api.POST(`kansa/people/lookup`, query.toJS())
+        .then((results) => next({ ...action, results }))
+        .catch(handleError);
+    } return;
+
     case 'MEMBER_UPDATE': {
       const { id, changes } = action;
       if (!id || !Map.isMap(changes) || changes.isEmpty()) {

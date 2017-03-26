@@ -1,3 +1,10 @@
+// query: Map({ email, member_number, name })
+export const memberLookup = (query) => ({
+  module: 'kansa',
+  type: 'MEMBER_LOOKUP',
+  query
+});
+
 export const memberSet = ({ email, people, roles }) => ({
   module: 'kansa',
   type: 'MEMBER_SET',
