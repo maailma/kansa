@@ -33,22 +33,23 @@ CREATE TABLE IF NOT EXISTS Works (
     id SERIAL PRIMARY KEY,
     people_id integer REFERENCES Artist NOT NULL,
     title text,
-    width decimal,
-    height decimal,
-    depth decimal,
+    width integer,
+    height integer,
+    depth integer,
     technique text,
     orientation text,
     graduation text,
     filename text,
     filedata text,
-    price decimal,
+    price integer,
     gallery text,
     year integer,
     original boolean,
     copies integer,
-    start decimal,
-    sale decimal,
-    permission boolean
+    start integer,
+    sale integer,
+    permission boolean,
+    form text
     );
 
 
