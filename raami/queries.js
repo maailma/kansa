@@ -40,7 +40,7 @@ function upsertArtist(req, res, next) {
       const keys = [
         'people_id', 'name', 'continent', 'url', 'filename', 'filedata',
         'category', 'description', 'transport', 'auction', 'print', 'digital',
-        'legal', 'agent', 'contact', 'waitlist', 'postage'
+        'legal', 'agent', 'contact', 'waitlist', 'postage','half'
       ].filter(key => artist.hasOwnProperty(key));
       const insertValues = keys.map(key => `$(${key})`).join(', ');
       const insertArtist = `(${keys.join(', ')}) VALUES(${insertValues})`;
@@ -80,8 +80,8 @@ function createWork(req, res, next) {
     .then(({ id }) => {
       const work = Object.assign({}, req.body, { people_id: id });
       const keys = [
-        'people_id', 'title', 'width', 'height', 'depth', 'gallery',
-        'orientation', 'technique', 'filename', 'filedata', 'year', 'price'
+        'people_id', 'title', 'width', 'height', 'depth', 'gallery','original',
+        'orientation', 'technique', 'filename', 'filedata', 'year', 'price','start','sale','copies','form','permission'
       ].filter(key => work.hasOwnProperty(key));
       const insertValues = keys.map(key => `$(${key})`).join(', ');
       return req.app.locals.db.one(`
@@ -102,8 +102,8 @@ function updateWork(req, res, next) {
         work: req.params.work
       });
       const keys = [
-        'title', 'width', 'height', 'depth', 'gallery', 'orientation',
-        'technique', 'filename', 'filedata', 'year', 'price'
+        'people_id', 'title', 'width', 'height', 'depth', 'gallery','original',
+        'orientation', 'technique', 'filename', 'filedata', 'year', 'price','start','sale','copies','form','permission'
       ].filter(key => work.hasOwnProperty(key));
       const updateWork = keys.map(key => `${key}=$(${key})`).join(', ');
       return req.app.locals.db.none(`
@@ -129,11 +129,11 @@ function removeWork(req, res, next) {
 /**** export CSV ****/
 
 function exportArtists(req, res, next) {
-     // if (!req.session.user.raami_admin) return res.status(401).json({ status: 'unauthorized' });
+     if (!req.session.user.raami_admin) return res.status(401).json({ status: 'unauthorized' });
     req.app.locals.db.any(`
     SELECT p.member_number, p.membership, p.legal_name, p.email, p.city, p.country,
         a.name, a.continent, a.url,
-        a.category, a.description, a.transport, a.auction, a.print, a.digital,
+        a.category, a.description, a.transport, a.auction, a.print, a.digital, a.halfs,
         a.legal, a.agent, a.contact, a.waitlist, a.postage 
         FROM Artist as a, kansa.people as p WHERE a.people_id = p.ID order by p.member_number
     `)
