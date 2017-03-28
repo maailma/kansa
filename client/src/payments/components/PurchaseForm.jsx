@@ -5,9 +5,9 @@ const { Col, Row } = require('react-flexbox-grid');
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import { List, ListItem } from 'material-ui/List'
 import Paper from 'material-ui/Paper'
-import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton'
-import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
+
+import MemberLookupSelector from '../../membership/components/MemberLookupSelector'
 
 const PurchaseTextField = ({ label, onChange, required, value, ...props }) => {
   return <TextField
@@ -41,75 +41,57 @@ const DataField = ({ field, name, onChange, value }) => {
   }
 }
 
-const PurchaseForm = ({ onChange, people, purchase, shape }) => {
-  const currentPersonId = purchase.get('person_id');
-  return (
-    <form>
-      <Row>
-        <Col xs={12} sm={3} style={{ paddingBottom: 24 }}>
-          Payment by or on behalf of:
-        </Col>
-        <Col xs={12} sm={9}>
-          <RadioButtonGroup
-            defaultSelected={people.find(p => p.get('id') === purchase.get('person_id'))}
-            name="person"
-            onChange={(ev, person) => {
-              if (person) {
-                const email = person.get('email');
-                const id = person.get('id');
-                const name = person.get('legal_name');
-                onChange({ email, name, person_id: id });
-              } else {
-                onChange({ person_id: null });
-              }
-            }}
-            style={{ paddingLeft: 24 }}
-          >
-            {people.entrySeq().map(([i, person]) => (
-              <RadioButton
-                key={i}
-                label={person.get('legal_name')}
-                style={{ marginBottom: 8 }}
-                value={person}
-              />
-            ))}
-          </RadioButtonGroup>
-        </Col>
-      </Row>
-      {shape.entrySeq().map(([name, field]) => (
-        <DataField
-          key={name}
-          field={field}
-          name={name}
-          onChange={(ev, value) => onChange({ data: purchase.get('data').set(name, value) })}
-          value={purchase.getIn(['data', name]) || ''}
-        />
-      ))}
-      <PurchaseTextField
-        label="Invoice number"
-        name="invoice"
-        onChange={ev => onChange({ invoice: ev.target.value })}
-        value={purchase.get('invoice')}
-      />
-      <div style={{
-        color: 'rgba(0, 0, 0, 0.3)',
-        fontSize: 12,
-        marginTop: -4,
-        textAlign: 'right'
-      }}>
-        If you've received an invoice from Worldcon 75, please include its
-        invoice number here.
-      </div>
-      <PurchaseTextField
-        label="Comments"
-        multiLine={true}
-        name="comments"
-        onChange={ev => onChange({ comments: ev.target.value })}
-        rows={2}
-        value={purchase.get('comments')}
-      />
-    </form>
-  );
-}
+export default class PurchaseForm extends React.Component {
 
-export default PurchaseForm;
+  render() {
+    const { onChange, people, purchase, shape } = this.props;
+    return (
+      <form>
+        <Row>
+          <Col xs={12} sm={3} style={{ paddingBottom: 24 }}>
+            Payment by or on behalf of:
+          </Col>
+          <Col xs={12} sm={9} style={{ paddingLeft: 24 }}>
+            <MemberLookupSelector
+              onChange={onChange}
+              people={people}
+              selectedPersonId={purchase.get('person_id')}
+            />
+          </Col>
+        </Row>
+        {shape.entrySeq().map(([name, field]) => (
+          <DataField
+            key={name}
+            field={field}
+            name={name}
+            onChange={(ev, value) => onChange({ data: purchase.get('data').set(name, value) })}
+            value={purchase.getIn(['data', name]) || ''}
+          />
+        ))}
+        <PurchaseTextField
+          label="Invoice number"
+          name="invoice"
+          onChange={ev => onChange({ invoice: ev.target.value })}
+          value={purchase.get('invoice')}
+        />
+        <div style={{
+          color: 'rgba(0, 0, 0, 0.3)',
+          fontSize: 12,
+          marginTop: -4,
+          textAlign: 'right'
+        }}>
+          If you've received an invoice from Worldcon 75, please include its
+          invoice number here.
+        </div>
+        <PurchaseTextField
+          label="Comments"
+          multiLine={true}
+          name="comments"
+          onChange={ev => onChange({ comments: ev.target.value })}
+          rows={2}
+          value={purchase.get('comments')}
+        />
+      </form>
+    );
+  }
+}
