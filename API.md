@@ -43,10 +43,9 @@ some relevant data and/or a `message` field.
   * [`GET /api/hugo/admin/canon`](#get-apihugoadmincanon)
   * [`POST /api/hugo/admin/canon/:id`](#post-apihugoadmincanonid)
   * [WebSocket: `wss://server/api/hugo/admin/canon-updates`](#websocket-wssserverapihugoadmincanonupdates)
-* [Raami exhibitions](#raami)
   * [`POST /api/hugo/admin/classify`](#post-apihugoadminclassify)
   * [`GET /api/hugo/admin/nominations`](#get-apihugoadminnominations)
-  * [WebSocket: `wss://server/api/hugo/admin/canon-updates`](#websocket-wssserverapihugoadmincanon-updates)
+* [Raami exhibitions](#raami)
 
 ----
 
@@ -70,9 +69,9 @@ Membership statistics by country
 #### Response
 ```
 {
-	Finland: { Adult: 13, …, total: 26 },
-	…,
-	'': { Adult: 131, …, total: 262 }
+  Finland: { Adult: 13, …, total: 26 },
+  …,
+  '': { Adult: 131, …, total: 262 }
 }
 ```
 
@@ -108,8 +107,8 @@ If the pair `key`, `email` matches known values, create a new session object
 Set-Cookie: w75=sessionId
 
 {
-	status: 'success',
-	email
+  status: 'success',
+  email
 }
 ```
 
@@ -127,10 +126,10 @@ re-requested.
 #### Response
 ```
 {
-	status: 'success',
-	email,
-	opt: undefined | 'all' | 'reset',
-	sessions: undefined | #
+  status: 'success',
+  email,
+  opt: undefined | 'all' | 'reset',
+  sessions: undefined | #
 }
 ```
 
@@ -148,9 +147,9 @@ memberships matching the given email address, and the roles (e.g.
 #### Response
 ```
 {
-	email,
+  email,
   people: [ { id, membership, legal_name, … }, … ],
-	roles: [ … ]
+  roles: [ … ]
 }
 ```
 
@@ -165,7 +164,7 @@ log entries with `author` set to the given email address.
 #### Response
 ```
 {
-	email,
+  email,
   log: [ … ]
 }
 ```
@@ -207,8 +206,8 @@ be generated.
 #### Response
 ```
 {
-	status: 'success',
-	id
+  status: 'success',
+  id
 }
 ```
 
@@ -239,8 +238,8 @@ match the session data, `member_admin` authority is required.
 #### Response
 ```
 [
-	{ timestamp: …, author: …, subject: …, action: …, … },
-	…
+  { timestamp: …, author: …, subject: …, action: …, … },
+  …
 ]
 ```
 
@@ -262,8 +261,8 @@ non-null value.
 #### Response
 ```
 {
-	status: 'success',
-	updated: [ 'legal_name', … ]
+  status: 'success',
+  updated: [ 'legal_name', … ]
 }
 ```
 
@@ -507,7 +506,7 @@ nomination.
       …
     ]
   },
-	…
+  …
 ]
 ```
 
@@ -694,30 +693,28 @@ events to signal `'Unauthorized'` and `'Not Found'` (respectively) to the client
 ```
 
 
-## Raami exhibition
+## Raami Arts Show Exhibitions
 
-### `GET /api/raami/artists`
+<!-- router.get('/:id/artist', db.getArtist);
+router.post('/:id/artist', db.upsertArtist);
+router.get('/:id/works', db.getWorks);
+router.put('/:id/works', db.createWork);
+router.post('/:id/works/:work', db.updateWork);
+router.delete('/:id/works/:work', db.removeWork);
+ -->
 
-List of members who have opted to participate in the art exhibition
-
-#### Response
-```
-[
-  { person\_id: 'person_id',
-    continent: 'Europe',
-    }
-  …
-]
 ```
 
-### `GET /api/raami/artists/:id`
+### `GET /api/raami/:id/artist/`
 
+- Requires authentication
 - Parameters: `id` (required)
 
-Full details for singular artist.
+Full details for singular artist connected to member with `id`.
 
 #### Response
 ```
+<<<<<<< HEAD
   { continent: 'Europe',
     url: 'http://www.example.com',
     filename: 'portfolio.pdf',
@@ -729,78 +726,66 @@ Full details for singular artist.
     }
   …
 ```
+=======
+>>>>>>> daddb57... raami api up to date
 
-### `POST /api/raami/artist`
+{people_id:1, title:'title', width:10, height:10, depth:10, gallery:'Print',
+        orientation:'vertical', technique:'3D', filename:'image.jpg', filedata:'base64...', year:2016, price:100,
+        … }
+```
 
-- Parameters: `person_id`, `continent`, `url`, `filename`, `portfolio`, `category`, `orientation`, `description`, `transport`
+### `POST /api/raami/:id/artist`
 
-Insert new artist's details.
+- Requires authentication
+- Parameters: `id` (required)
+- Parameters: `people_id`, `name`, `continent`, `url`, `filename`, `filedata`, `category`, `description`, `transport`, `auction`, `print`, `digital`, `legal`, `agent`, `contact`, `waitlist`, `postage`
+
+Update or insert artist's details for this member.
 
 #### Response
 ```
 {
   status: 'success',
-  inserted: [ 'id', 'continent', 'url','filename', 'portfolio', 'category', 'orientation', 'description', 'transport' ]
+  people_id: 1 
 }
 ```
 
-### `PUT /api/raami/artist/:id`
 
-- Parameters: `id` (required), `continent`, `url`, `filename`, `portfolio`, `category`, `orientation`, `description`, `transport`
+### `GET /api/raami/:id/works`
 
-Update new artist's details.
-
-#### Response
-```
-{
-  status: 'success',
-  updated: [ 'id', 'continent', 'url', 'filename', 'portfolio', 'category', 'orientation', 'description', 'transport' ]
-}
-```
-
-### `GET /api/raami/works/:id`
-
+- Requires authentication
 - Parameters: `id` (required) artists id
 
-Ids of works for particular artists
+Get details for works by artist with this member id.
 
 #### Response
 ```
 [
-  { id: 1 },
+  {id:999, people:id: 1, title:'text', width: 10, height: 10, depth: 10… }
   …
 ]
 ```
 
 
-### `GET /api/raami/work/:id`
+### `GET /api/raami/:id/work/:work`
 
-- Parameters: `id` (required) work id
+- Requires authentication
+- Parameters: `id` (required) member id, `work` (required) work id
 
-Full details for singular work.
+Full details for singular work. 
 
 #### Response
 ```
-[
-  { artist_id: 1,
-    title: 'Book cover',
-    width: 10.0,
-    height: 10.0,
-    technique: 'Oil on canvas',
-    graduation: 0,
-    filename: 'file.jpg',
-    image: bytes,
-    price: 100.0
-    }
-  …
-]
+  {id:999, people:id: 1, title:'text', width: 10, height: 10, depth: 10… }
+
 ```
 
-### `POST /api/raami/work`
+### `POST /api/raami/:id/work`
 
-- Parameters: `artist_id`, `title`, `width`, `height`, `technique`, `graduation`, `filename`, `image`, `price`
+- Requires authentication
+- Parameters: `people_id` as id (required) , `title`, `width`, `height`, `depth`, `gallery`,`orientation`, `technique`, `filename`, `filedata`, `year`, `price`
 
-Insert new works's details.
+Insert works's details for this member id.
 
 #### Response
 ```
@@ -810,9 +795,10 @@ Insert new works's details.
 }
 ```
 
-### `PUT /api/raami/work/:id`
+### `PUT /api/raami/:id/work/:work`
 
-- Parameters: `id`, `artist_id`, `title`, `width`, `height`, `technique`, `graduation`, `filename`, `image`, `price`
+- Requires authentication
+- Parameters: `work`(required) as `id` , `id` (required) as `people_id`, `title`, `width`, `height`, `depth`, `gallery`,`orientation`, `technique`, `filename`, `filedata`, `year`, `price`
 
 Update works's details.
 
@@ -820,13 +806,15 @@ Update works's details.
 ```
 {
   status: 'success',
-  updated: [ 'id', 'artist_id', 'title', 'width', 'height', 'technique', 'graduation', 'filename', 'image', 'price' ]
 }
 ```
 
-### `DELETE /api/raami/work/:id`
+### `DELETE /api/raami/:id/work/:work`
 
-- Patameters: `id` (required)
+- Requires authentication
+- Patameters: `id` (required), `work` (required)
+
+Remove this work from artist's works with id.
 
 #### Response
 ```
