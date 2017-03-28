@@ -7,13 +7,13 @@ import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField';
 
 import { memberLookup } from '../actions'
-import { LookupPropTypes } from '../reducers/lookup'
+import * as MemberPropTypes from '../proptypes'
 import { TextInput } from './form-components'
 
 class MemberLookupForm extends React.Component {
 
   static propTypes = {
-    lookupData: LookupPropTypes.lookup.isRequired,
+    lookupData: MemberPropTypes.lookup.isRequired,
     memberLookup: PropTypes.func.isRequired,
     style: PropTypes.object,
     onQueryResults: PropTypes.func.isRequired

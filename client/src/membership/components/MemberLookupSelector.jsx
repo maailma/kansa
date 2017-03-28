@@ -4,7 +4,7 @@ import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton'
 import FindReplace from 'material-ui/svg-icons/action/find-replace'
 
 import MemberLookupForm from './MemberLookupForm'
-import { PersonPropTypes } from '../reducers/user'
+import * as MemberPropTypes from '../proptypes'
 
 const MemberLabel = ({ title, subtitle }) => (
   <div>
@@ -35,7 +35,7 @@ const ResetFindButton = ({ onReset }) => (
 export default class MemberLookupSelector extends React.Component {
   static propTypes = {
     onChange: PropTypes.func.isRequired,
-    people: PersonPropTypes.people.isRequired,
+    people: MemberPropTypes.people.isRequired,
     selectedPersonId: PropTypes.number
   }
 
