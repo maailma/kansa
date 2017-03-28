@@ -26,25 +26,25 @@ class Index extends React.Component {
     if (!prices) getPrices();
   }
 
+  get memberCards() {
+    const { people, push } = this.props;
+    const nomCount = people.filter(m => m.get('can_hugo_nominate')).size;
+    return people.map(member => (
+      <MemberCard
+        key={member.get('id')}
+        member={member}
+        push={push}
+        showHugoActions={member.get('can_hugo_nominate') && nomCount === 1}
+      />
+    ));
+  }
+
   render() {
     const { people, prices, push } = this.props;
     return <Row>
-      { people && people.size ? people.map(member => <Col
-          xs={12} sm={6}
-          lg={4} lgOffset={people.size > 1 ? 0 : 2}
-          key={member.get('id')}
-        >
-          <MemberCard
-            member={member}
-            push={push}
-            showHugoActions={
-              member.get('can_hugo_nominate') &&
-              people.filter(m => m.get('can_hugo_nominate')).size === 1
-            }
-          />
-        </Col>) : <Col xs={12} sm={6} lg={4} lgOffset={2}>
-          <KeyRequest/>
-        </Col>}
+      <Col xs={12} sm={6} lg={4} lgOffset={2}>
+        {people && people.size ? this.memberCards : <KeyRequest/>}
+      </Col>
       <Col xs={12} sm={6} lg={4}>
         <NewMemberCard category="all" prices={prices} push={push}/>
       </Col>

@@ -31,7 +31,7 @@ const Member = ({ member, push, showHugoActions }) => {
   const membership = member.get('membership', 'NonMember');
   const infoStyle = { color: 'rgba(0, 0, 0, 0.870588)' };
 
-  return <Card style={{ marginBottom: 24 }}>
+  return <Card style={{ marginBottom: 18 }}>
     <CardHeader
       title={ member.get('legal_name') }
       style={{ fontWeight: 600 }}
