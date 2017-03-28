@@ -71,13 +71,18 @@ class PurchaseItem extends React.Component {
     if (nextProps.purchaseData) this.init(nextProps);
   }
 
-  get disabledCheckout() {
-    return this.state.amount <= 0;
-  }
-
   get dataShape() {
     const { params: { category }, purchaseData } = this.props;
     return purchaseData.getIn([category, 'shape'])
+  }
+
+  get disabledCheckout() {
+    const { amount, purchase } = this.state;
+    return !(
+      amount > 0 &&
+      (purchase.get('person_id') || purchase.get('email') && purchase.get('name')) &&
+      this.dataShape.every((s, key) => !s.get('required') || purchase.getIn(['data', key]))
+    );
   }
 
   get title() {

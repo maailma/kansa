@@ -15,6 +15,7 @@ const PurchaseTextField = ({ label, onChange, required, value, ...props }) => {
     floatingLabelFixed={true}
     fullWidth={true}
     value={value}
+    errorStyle={{ color: 'rgba(0, 0, 0, 0.5)' }}
     errorText={ !required || value ? '' : 'Required' }
     onChange={onChange}
     { ...props }
