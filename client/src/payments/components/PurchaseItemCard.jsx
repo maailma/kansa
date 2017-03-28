@@ -10,10 +10,10 @@ const PurchaseItemCard = ({ label, purchase, shape }) => {
     amount, category, comments, data, email, invoice, name, stripe_charge_id, timestamp
   } = purchase.toJS();
   return <Card
-    style={{ marginBottom: 24 }}
+    style={{ marginBottom: 18 }}
   >
     <CardHeader
-      style={{ display: 'flex' }}
+      style={{ display: 'flex', fontWeight: 600 }}
       title={label}
       subtitle={category}
     >

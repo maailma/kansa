@@ -62,7 +62,7 @@ class PurchaseItem extends React.Component {
 
   componentDidMount() {
     const { getPurchaseData, purchaseData, setScene } = this.props;
-    setScene({ title: 'New Purchase', dockSidebar: false });
+    setScene({ title: 'New Payment', dockSidebar: false });
     if (purchaseData) this.init(this.props);
     else getPurchaseData();
   }

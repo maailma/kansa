@@ -17,9 +17,12 @@ const PurchaseSelectCard = ({ data, label, onSelect, title }) => {
     />;
   });
   return <Card
-    style={{ marginBottom: 24 }}
+    style={{ marginBottom: 18 }}
   >
-    {title && <CardHeader title={title} />}
+    {title && <CardHeader
+      style={{ fontWeight: 600 }}
+      title={title}
+    />}
     <CardActions>
       <List>{ items.toJS() }</List>
     </CardActions>
