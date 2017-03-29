@@ -104,6 +104,7 @@ const NewMemberCard = ({ category, onSelectType, prices }) => {
         memberTypes={memberships}
         onSelectType={onSelectType}
         prices={prices}
+        style={{ paddingTop: 0 }}
       />
     </CardActions>
   </Card>;
