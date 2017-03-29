@@ -1,36 +1,29 @@
 import React, { PropTypes } from 'react'
 import IconButton from 'material-ui/IconButton'
-import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton'
+import { List, ListItem, makeSelectable } from 'material-ui/List'
 import FindReplace from 'material-ui/svg-icons/action/find-replace'
+import Face from 'material-ui/svg-icons/action/face'
+import Search from 'material-ui/svg-icons/action/search'
 
-import MemberLookupForm from './MemberLookupForm'
 import * as MemberPropTypes from '../proptypes'
+import MemberLookupForm from './MemberLookupForm'
+import { memberTypeData } from './MemberTypeList'
 
-const MemberLabel = ({ title, subtitle }) => (
-  <div>
-    {title}
-    <div style={{ fontSize: 'smaller', color: 'rgba(0, 0, 0, 0.3)' }}>
-      {subtitle}
-    </div>
-  </div>
-);
+const SelectableList = makeSelectable(List);
 
 const ResetFindButton = ({ onReset }) => (
   <IconButton
-    iconStyle={{ color: 'rgba(0, 0, 0, 0.5)' }}
     onTouchTap={onReset}
-    style={{
-      height: 'initial',
-      marginLeft: 24,
-      padding: 4,
-      zIndex: 2
-    }}
     tooltip="Find another member"
-    tooltipStyles={{ top: 24 }}
   >
     <FindReplace />
   </IconButton>
 );
+
+const getMemberIcon = (type) => {
+  const typeData = memberTypeData[type];
+  return typeData && typeData.icon || <Face />;
+}
 
 export default class MemberLookupSelector extends React.Component {
   static propTypes = {
@@ -43,60 +36,65 @@ export default class MemberLookupSelector extends React.Component {
     foundPerson: null
   }
 
+  onSelectPerson = (ev, id) => {
+    const { onChange, people, selectedPersonId } = this.props;
+    const person = people.find(p => p.get('id') === id);
+    if (person) {
+      onChange({ membership: person.get('membership'), name: person.get('legal_name'), person_id: id });
+      this.setState({ foundPerson: null })
+    } else {
+      onChange({ membership: null, name: '', person_id: 0 });
+    }
+  }
+
   render() {
     const { formStyle, onChange, people, selectedPersonId } = this.props;
     const { foundPerson } = this.state;
     return <div>
-      <RadioButtonGroup
-        name="person"
-        onChange={(ev, person_id) => {
-          const person = people.find(p => p.get('id') === person_id);
-          if (person) {
-            onChange({ membership: person.get('membership'), name: person.get('legal_name'), person_id });
-            this.setState({ foundPerson: null })
-          } else {
-            onChange({ membership: null, name: '', person_id: 0 });
-          }
-        }}
-        valueSelected={selectedPersonId}
+      <SelectableList
+        onChange={this.onSelectPerson}
+        value={selectedPersonId}
       >
         {people.entrySeq().map(([i, person]) => (
-          <RadioButton
+          <ListItem
+            innerDivStyle={{ paddingLeft: 60 }}
             key={i}
-            iconStyle={{ alignSelf: 'center' }}
-            label={<MemberLabel
-              title={person.get('legal_name')}
-              subtitle={person.get('membership')}
-            />}
-            labelStyle={{ lineHeight: 'normal' }}
-            style={{ marginBottom: 8 }}
+            leftIcon={getMemberIcon(person.get('membership'))}
+            primaryText={person.get('legal_name')}
+            secondaryText={person.get('membership')}
             value={person.get('id')}
           />
         ))}
-        <RadioButton
-          iconStyle={{ alignSelf: 'center' }}
-          label={foundPerson ? <div style={{ display: 'flex' }}>
-            <MemberLabel
-              title={foundPerson.name}
-              subtitle={foundPerson.membership}
-            />
-            <ResetFindButton
-              onReset={() => {
-                onChange({ membership: null, name: '', person_id: 0 });
-                this.setState({ foundPerson: null });
-              }}
-            />
-          </div> : <MemberLabel
-            title="Other member..."
-            subtitle="Find using name and/or email address"
-          />}
-          labelStyle={{ lineHeight: 'normal' }}
-          style={{ marginBottom: 8 }}
-          value={foundPerson ? foundPerson.id : 0}
-        />
-      </RadioButtonGroup>
+        {foundPerson ? (
+          <ListItem
+            innerDivStyle={{ paddingLeft: 60 }}
+            leftIcon={getMemberIcon(foundPerson.membership)}
+            primaryText={foundPerson.name}
+            rightIconButton={(
+              <IconButton
+                iconStyle={{ color: 'rgb(117, 117, 117)' }}
+                onTouchTap={() => {
+                  onChange({ membership: null, name: '', person_id: 0 });
+                  this.setState({ foundPerson: null });
+                }}
+                tooltip="Find another member"
+              ><FindReplace /></IconButton>
+            )}
+            secondaryText={foundPerson.membership}
+            value={foundPerson.id}
+          />
+        ) : (
+          <ListItem
+            innerDivStyle={{ paddingLeft: 60 }}
+            leftIcon={<Search />}
+            primaryText="Other member..."
+            secondaryText="Find using name and/or email address"
+            value={0}
+          />
+        )}
+      </SelectableList>
       {selectedPersonId ? null : <MemberLookupForm
-        style={{ marginLeft: 32 }}
+        style={{ marginLeft: 52 }}
         onQueryResults={({ results }) => {
           if (results.get('status') === 'success') {
             const foundPerson = results.toJS();

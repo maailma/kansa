@@ -49,10 +49,10 @@ export default class PurchaseForm extends React.Component {
     return (
       <form>
         <Row>
-          <Col xs={12} sm={3} style={{ paddingBottom: 24 }}>
+          <Col xs={12} sm={3} style={{ padding: 8 }}>
             Payment by or on behalf of:
           </Col>
-          <Col xs={12} sm={9} style={{ paddingLeft: 24 }}>
+          <Col xs={12} sm={9}>
             <MemberLookupSelector
               onChange={onChange}
               people={people}
