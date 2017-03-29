@@ -1,45 +1,8 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 const ImmutablePropTypes = require('react-immutable-proptypes');
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
-import Divider from 'material-ui/Divider';
-import { List, ListItem } from 'material-ui/List'
-import EventSeat from 'material-ui/svg-icons/action/event-seat'
-import DirectionsRun from 'material-ui/svg-icons/maps/directions-run'
-import DirectionsWalk from 'material-ui/svg-icons/maps/directions-walk'
-import StarTicket from 'material-ui/svg-icons/maps/local-play'
-import ChildFriendly from 'material-ui/svg-icons/places/child-friendly'
-import SmilingFace from 'material-ui/svg-icons/social/mood'
 
-const membershipData = {
-  FirstWorldcon: {
-    primary: 'First Worldcon membership',
-    secondary: 'Have never been a Worldcon member',
-    icon: <StarTicket/>
-  },
-  Youth: {
-    primary: 'Youth membership',
-    secondary: 'Born on or after 10 August 1991',
-    icon: <DirectionsRun/>
-  },
-  Adult: {
-    primary: 'Adult membership',
-    icon: <DirectionsWalk/>
-  },
-  Child: {
-    primary: 'Child membership',
-    secondary: 'Born on or after 10 August 2001',
-    icon: <SmilingFace/>
-  },
-  KidInTow: {
-    primary: 'Kid-in-tow membership',
-    secondary: 'Born on or after 10 August 2011',
-    icon: <ChildFriendly/>
-  },
-  Supporter: {
-    primary: 'Supporting membership',
-    icon: <EventSeat/>
-  }
-};
+import MemberTypeList from './MemberTypeList'
 
 const contents = {
   all: {
@@ -137,33 +100,18 @@ const NewMemberCard = ({ category, onSelectType, prices }) => {
       { body }
     </CardText>
     <CardActions style={{ marginLeft: 8, paddingTop: 0 }}>
-      <List style={{ paddingTop: 0 }}>
-        { memberships.map((type, i) => {
-          if (type === '_divider') return <Divider
-            key={`div${i}`}
-            style={{ marginTop: 8, marginBottom: 8, marginLeft: 60 }}
-          />;
-          const { primary, secondary, icon } = membershipData[type];
-          const amount = prices && prices.getIn(['memberships', type, 'amount']);
-          const suffix = amount > 0 ? ` (€${amount / 100})`
-            : amount === 0 ? ' (free)' : '';
-          return <ListItem
-            key={type}
-            innerDivStyle={{ paddingLeft: 60 }}
-            leftIcon={icon}
-            onTouchTap={() => onSelectType(type)}
-            primaryText={primary + suffix}
-            secondaryText={secondary}
-          />
-        })}
-      </List>
+      <MemberTypeList
+        memberTypes={memberships}
+        onSelectType={onSelectType}
+        prices={prices}
+      />
     </CardActions>
   </Card>;
 }
 
 NewMemberCard.propTypes = {
-  category: React.PropTypes.string.isRequired,
-  onSelectType: React.PropTypes.func.isRequired,
+  category: PropTypes.oneOf(Object.keys(contents)).isRequired,
+  onSelectType: PropTypes.func.isRequired,
   prices: ImmutablePropTypes.map,
 }
 
