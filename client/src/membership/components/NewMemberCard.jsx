@@ -119,7 +119,7 @@ const contents = {
   }
 };
 
-const NewMemberCard = ({ category, prices, push }) => {
+const NewMemberCard = ({ category, onSelectType, prices }) => {
   const { title, body, expandable = false, memberships } = contents[category];
   return <Card
     style={{ marginBottom: 24 }}
@@ -151,7 +151,7 @@ const NewMemberCard = ({ category, prices, push }) => {
             key={type}
             innerDivStyle={{ paddingLeft: 60 }}
             leftIcon={icon}
-            onTouchTap={ () => push(`/new/${type}`) }
+            onTouchTap={() => onSelectType(type)}
             primaryText={primary + suffix}
             secondaryText={secondary}
           />
@@ -163,8 +163,8 @@ const NewMemberCard = ({ category, prices, push }) => {
 
 NewMemberCard.propTypes = {
   category: React.PropTypes.string.isRequired,
+  onSelectType: React.PropTypes.func.isRequired,
   prices: ImmutablePropTypes.map,
-  push: React.PropTypes.func.isRequired,
 }
 
 export default NewMemberCard;

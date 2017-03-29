@@ -46,7 +46,11 @@ class Index extends React.Component {
         {people && people.size ? this.memberCards : <KeyRequest/>}
       </Col>
       <Col xs={12} sm={6} lg={4}>
-        <NewMemberCard category="all" prices={prices} push={push}/>
+        <NewMemberCard
+          category="all"
+          onSelectType={(type) => push(`/new/${type}`)}
+          prices={prices}
+        />
       </Col>
     </Row>;
   }
