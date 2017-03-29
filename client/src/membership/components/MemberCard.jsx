@@ -59,7 +59,13 @@ const Member = ({ member, push, showHugoActions }) => {
           primaryText="Upgrade membership"
           secondaryText="and/or add paper publications"
         />
-        { showHugoActions ? <ListItem
+        { showHugoActions && member.get('can_hugo_vote') ? <ListItem
+            innerDivStyle={{ paddingLeft: 60 }}
+            leftIcon={<Rocket />}
+            onTouchTap={() => push(`/hugo/${id}/vote`)}
+            primaryText="Vote for the Hugo Awards"
+          /> : null }
+        { showHugoActions && member.get('can_hugo_nominate') ? <ListItem
             innerDivStyle={{ paddingLeft: 60 }}
             leftIcon={<Rocket />}
             onTouchTap={() => push(`/hugo/${id}/nominate`)}

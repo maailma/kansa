@@ -28,13 +28,15 @@ class Index extends React.Component {
 
   get memberCards() {
     const { people, push } = this.props;
-    const nomCount = people.filter(m => m.get('can_hugo_nominate')).size;
+    const hugoCount = people.reduce((sum, m) => (
+      sum + (m.get('can_hugo_nominate') || m.get('can_hugo_vote')) ? 1 : 0
+    ), 0);
     return people.map(member => (
       <MemberCard
         key={member.get('id')}
         member={member}
         push={push}
-        showHugoActions={member.get('can_hugo_nominate') && nomCount === 1}
+        showHugoActions={hugoCount === 1}
       />
     ));
   }

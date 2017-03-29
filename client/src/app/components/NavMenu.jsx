@@ -28,6 +28,10 @@ const linkHugoNominations = (currentMember, otherMembers) => (
   singleWithKey(currentMember, otherMembers, 'can_hugo_nominate')
 );
 
+const linkHugoVotes = (currentMember, otherMembers) => (
+  singleWithKey(currentMember, otherMembers, 'can_hugo_vote')
+);
+
 const NavMenu = ({ currentMember, handleNav, otherMembers }) => {
   const id = currentMember && currentMember.get('id');
 
@@ -38,6 +42,13 @@ const NavMenu = ({ currentMember, handleNav, otherMembers }) => {
     primaryText="Nominate for the Hugo Awards"
     style={{ fontSize: 14 }}
     value={`/hugo/${id}/nominate`}
+  />);
+  if (linkHugoVotes(currentMember, otherMembers)) memberItems.push(<ListItem
+    key="hv"
+    leftIcon={<Rocket/>}
+    primaryText="Vote for the Hugo Awards"
+    style={{ fontSize: 14 }}
+    value={`/hugo/${id}/vote`}
   />);
   if (linkArtshowRegistration(currentMember)) memberItems.push(<ListItem
     key="art"

@@ -21,8 +21,9 @@ import NewMemberIndex from './membership/components/NewMemberIndex'
 import Upgrade from './membership/components/Upgrade'
 import PurchaseIndex from './payments/components/PurchaseIndex'
 import PurchaseItem from './payments/components/PurchaseItem'
-import Nominate from './hugo-nominations/components/Nominate'
 import Canon from './hugo-admin/components/Canon'
+import Nominate from './hugo-nominations/components/Nominate'
+import Vote from './hugo-votes/components/Vote'
 import Finalists from './hugo-admin/components/Finalists'
 import HugoAdmin from './hugo-admin/components/HugoAdmin'
 import ExhibitRegistration from './raami/components/Registration'
@@ -89,8 +90,9 @@ ReactDOM.render(
                 </Route>
               </Route>
               <Route path=":id">
-                <IndexRedirect to="nominate" />
+                <IndexRedirect to="vote" />
                 <Route path="nominate" component={Nominate} />
+                <Route path="vote" component={Vote} />
               </Route>
             </Route>
             <Route path="pay">
