@@ -242,7 +242,7 @@ function lookupPerson(req, res, next) {
     SELECT id, membership, preferred_name(p) AS name
       FROM people p
      WHERE ${queryParts.join(' AND ')}
-           AND membership NOT IN ('Child', 'KidInTow', 'NonMember')`, queryValues
+           AND membership NOT IN ('Child', 'KidInTow')`, queryValues
   )
     .then(results => {
       switch (results.length) {

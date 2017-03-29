@@ -290,8 +290,8 @@ from membership changes.
 Finds a person's `id`, `membership` and `name` based on a slightly fuzzy lookup
 given some subset of the parameters `email`, `member_number`, and `name`. If the
 lookup matches more than one hit, `status` will be `multiple`. If no matches are
-found, `status` will be `not found`. Non-members and Child & Kid-in-tow members
-are not included in the results.
+found, `status` will be `not found`. Child and Kid-in-tow members are not
+included in the results.
 
 #### Response
 ```
@@ -746,7 +746,7 @@ Update or insert artist's details for this member.
 ```
 {
   status: 'success',
-  people_id: 1 
+  people_id: 1
 }
 ```
 
@@ -772,7 +772,7 @@ Get details for works by artist with this member id.
 - Requires authentication
 - Parameters: `id` (required) member id, `work` (required) work id
 
-Full details for singular work. 
+Full details for singular work.
 
 #### Response
 ```
