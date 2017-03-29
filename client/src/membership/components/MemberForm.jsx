@@ -5,6 +5,48 @@ const ImmutablePropTypes = require('react-immutable-proptypes');
 
 import { TextInput, PaperPubsCheckbox, PaperPubsFields } from './form-components'
 
+const hintStyle= {
+  color: 'rgba(0, 0, 0, 0.3)',
+  fontSize: 13,
+  marginBottom: 24
+};
+
+export const PaperPubsRow = ({ hasPaperPubs, newMember, prices, ...inputProps }) => (
+  <Row style={{ paddingTop: 16 }}>
+    { newMember ? <Col xs={12} sm={6}>
+        <PaperPubsCheckbox
+          { ...inputProps }
+          newMember={newMember}
+          prices={prices}
+          style={{ marginBottom: 4 }}
+        />
+        <div style={hintStyle}>
+          By default, we'll be in touch with you electronically to let you
+          know how our preparations are progressing. If you'd prefer to
+          receive our progress reports and other publications by post, select
+          this option (note the additional fee).
+        </div>
+        { hasPaperPubs ? <div style={hintStyle}>
+            We'll need to know where to send your mail. Please enter your
+            address details here as you'd wish them to be printed onto a
+            postal label.
+        </div> : null }
+    </Col> : null }
+    { hasPaperPubs ? <Col xs={12} sm={6}>
+        <PaperPubsFields autoFocus={newMember} {...inputProps} />
+    </Col> : null }
+    { !newMember && hasPaperPubs ? <Col xs={12} sm={6} style={hintStyle}>
+        For paper publications, we'll need to know where to send your mail.
+        Please enter your address details here as you'd wish them to be
+        printed onto a postal label.
+    </Col> : null }
+  </Row>
+);
+
+export const paperPubsIsValid = (pp) => (
+  !pp || pp.get('name') && pp.get('address') && !!pp.get('country')
+);
+
 export default class MemberForm extends React.Component {
 
   static propTypes = {
@@ -17,14 +59,10 @@ export default class MemberForm extends React.Component {
     tabIndex: React.PropTypes.number
   }
 
-  static paperPubsIsValid(pp) {
-    return !pp || pp.get('name') && pp.get('address') && !!pp.get('country');
-  }
-
   static isValid(member) {
     return Map.isMap(member)
       && member.get('legal_name', false) && member.get('email', false)
-      && MemberForm.paperPubsIsValid(member.get('paper_pubs'));
+      && paperPubsIsValid(member.get('paper_pubs'));
   }
 
   constructor(props) {
@@ -84,11 +122,6 @@ export default class MemberForm extends React.Component {
       getValue: this.getValue,
       onChange: this.onChange,
       tabIndex: tabIndex
-    };
-    const hintStyle= {
-      color: 'rgba(0, 0, 0, 0.3)',
-      fontSize: 13,
-      marginBottom: 24
     };
     return <form>
       <Row>
@@ -153,35 +186,12 @@ export default class MemberForm extends React.Component {
           wish; not all fields will apply to everyone.
         </Col>
       </Row>
-      <Row style={{ paddingTop: 16 }}>
-        { newMember ? <Col xs={12} sm={6}>
-            <PaperPubsCheckbox
-              { ...inputProps }
-              newMember={newMember}
-              prices={prices}
-              style={{ marginBottom: 4 }}
-            />
-            <div style={hintStyle}>
-              By default, we'll be in touch with you electronically to let you
-              know how our preparations are progressing. If you'd prefer to
-              receive our progress reports and other publications by post, select
-              this option (note the additional fee).
-            </div>
-            { this.hasPaperPubs ? <div style={hintStyle}>
-                We'll need to know where to send your mail. Please enter your
-                address details here as you'd wish them to be printed onto a
-                postal label.
-            </div> : null }
-        </Col> : null }
-        { this.hasPaperPubs ? <Col xs={12} sm={6}>
-            <PaperPubsFields {...inputProps} />
-        </Col> : null }
-        { !newMember && this.hasPaperPubs ? <Col xs={12} sm={6} style={hintStyle}>
-            For paper publications, we'll need to know where to send your mail.
-            Please enter your address details here as you'd wish them to be
-            printed onto a postal label.
-        </Col> : null }
-      </Row>
+      <PaperPubsRow
+        hasPaperPubs={this.hasPaperPubs}
+        newMember={newMember}
+        prices={prices}
+        {...inputProps}
+      />
     </form>;
   }
 
