@@ -32,6 +32,7 @@ export const TextInput = ({ getDefaultValue, getValue, inputRef, label, onChange
     underlineStyle={ulStyle}
     underlineFocusStyle={ulStyle}
     value={value}
+    errorStyle={{ color: 'rgba(0, 0, 0, 0.5)' }}
     errorText={ !required || value ? '' : 'Required' }
     onChange={ ev => onChange(path, ev.target.value) }
     ref={ inputRef || (() => {}) }
@@ -88,8 +89,9 @@ export const PaperPubsCheckbox = ({ getDefaultValue, getValue, newMember, onChan
   />;
 }
 
-const AddressField = ({ field, hintText, multiLine=false, onChange, tabIndex, value }) => {
+const AddressField = ({ autoFocus, field, hintText, multiLine=false, onChange, tabIndex, value }) => {
   return <TextField
+    autoFocus={autoFocus}
     fullWidth={true}
     hintStyle={multiLine ? { bottom: 36 } : null}
     hintText={hintText}
@@ -104,16 +106,17 @@ const AddressField = ({ field, hintText, multiLine=false, onChange, tabIndex, va
   />;
 }
 
-export const PaperPubsFields = ({ getDefaultValue, getValue, onChange, tabIndex }) => {
+export const PaperPubsFields = ({ autoFocus, getDefaultValue, getValue, onChange, tabIndex }) => {
   const pp = getValue(['paper_pubs']);
   if (!Map.isMap(pp)) return null;
   const changed = !pp.equals(getDefaultValue(['paper_pubs']));
-  const errorStyle = { outline: '1px solid red', outlineOffset: -1 };
+  const errorStyle = { outline: '1px solid rgba(0, 0, 0, 0.5)', outlineOffset: -1 };
   return <Paper
     style={ pp.some(v => !v) ? errorStyle : null }
     zDepth={1}
   >
     <AddressField
+      autoFocus={autoFocus}
       field="name"
       hintText="Paper pubs name"
       onChange={onChange}
