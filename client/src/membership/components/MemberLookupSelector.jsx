@@ -52,10 +52,10 @@ export default class MemberLookupSelector extends React.Component {
         onChange={(ev, person_id) => {
           const person = people.find(p => p.get('id') === person_id);
           if (person) {
-            onChange({ name: person.get('legal_name'), person_id });
+            onChange({ membership: person.get('membership'), name: person.get('legal_name'), person_id });
             this.setState({ foundPerson: null })
           } else {
-            onChange({ name: '', person_id: 0 });
+            onChange({ membership: null, name: '', person_id: 0 });
           }
         }}
         valueSelected={selectedPersonId}
@@ -82,7 +82,7 @@ export default class MemberLookupSelector extends React.Component {
             />
             <ResetFindButton
               onReset={() => {
-                onChange({ name: '', person_id: 0 });
+                onChange({ membership: null, name: '', person_id: 0 });
                 this.setState({ foundPerson: null });
               }}
             />
@@ -100,10 +100,10 @@ export default class MemberLookupSelector extends React.Component {
         onQueryResults={({ results }) => {
           if (results.get('status') === 'success') {
             const foundPerson = results.toJS();
-            onChange({ name: foundPerson.name, person_id: foundPerson.id });
+            onChange({ membership: foundPerson.membership, name: foundPerson.name, person_id: foundPerson.id });
             this.setState({ foundPerson });
           } else if (foundPerson) {
-            onChange({ name: '', person_id: 0 });
+            onChange({ membership: null, name: '', person_id: 0 });
             this.setState({ foundPerson: null });
           }
         }}
