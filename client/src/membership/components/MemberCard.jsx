@@ -9,7 +9,6 @@ const ImmutablePropTypes = require('react-immutable-proptypes');
 import Rocket from '../../lib/rocket-icon'
 import { isFullMemberType } from '../constants'
 import MemberEdit from './MemberEdit'
-import Upgrade from './Upgrade'
 
 const location = (member) => (
   [member.get('city'), member.get('state'), member.get('country')]
@@ -53,14 +52,13 @@ const Member = ({ member, push, showHugoActions }) => {
             secondaryTextLines={2}
           />
         </MemberEdit>
-        <Upgrade member={member}>
-          <ListItem
-            innerDivStyle={{ paddingLeft: 60 }}
-            leftIcon={<EuroSymbol style={{ top: 12 }}/>}
-            primaryText="Upgrade membership"
-            secondaryText="and/or add paper publications"
-          />
-        </Upgrade>
+        <ListItem
+          innerDivStyle={{ paddingLeft: 60 }}
+          leftIcon={<EuroSymbol style={{ top: 12 }}/>}
+          onTouchTap={() => push(`/upgrade/${id}`)}
+          primaryText="Upgrade membership"
+          secondaryText="and/or add paper publications"
+        />
         { showHugoActions ? <ListItem
             innerDivStyle={{ paddingLeft: 60 }}
             leftIcon={<Rocket />}

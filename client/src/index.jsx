@@ -18,6 +18,7 @@ import App from './app/components/App'
 import Index from './app/components/Index'
 import NewMemberForm from './membership/components/NewMemberForm'
 import NewMemberIndex from './membership/components/NewMemberIndex'
+import Upgrade from './membership/components/Upgrade'
 import PurchaseIndex from './payments/components/PurchaseIndex'
 import PurchaseItem from './payments/components/PurchaseItem'
 import Nominate from './hugo/components/Nominate'
@@ -96,6 +97,10 @@ ReactDOM.render(
               <IndexRoute component={PurchaseIndex} />
               <Redirect from=":category" to="/pay" />
               <Route path=":category/:type" component={PurchaseItem} />
+            </Route>
+            <Route path="upgrade">
+              <IndexRoute component={Upgrade} />
+              <Route path=":id" component={Upgrade} />
             </Route>
           </Route>
         </Route>
