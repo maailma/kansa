@@ -41,9 +41,10 @@ class Index extends React.Component {
 
   render() {
     const { people, prices, push } = this.props;
+    const isLoggedIn = !!(people && people.size);
     return <Row>
       <Col xs={12} sm={6} lg={4} lgOffset={2}>
-        {people && people.size ? this.memberCards : <KeyRequest/>}
+        {isLoggedIn ? this.memberCards : <KeyRequest/>}
       </Col>
       <Col xs={12} sm={6} lg={4}>
         <NewMemberCard
@@ -54,7 +55,8 @@ class Index extends React.Component {
         />
         <NewMemberCard
           category="upgrade"
-          expandable={true}
+          disabled={!isLoggedIn}
+          expandable={isLoggedIn}
           onSelectType={(type) => push('/upgrade')}
         />
       </Col>

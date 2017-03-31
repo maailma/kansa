@@ -92,7 +92,7 @@ const contents = {
   }
 };
 
-const NewMemberCard = ({ category, expandable = false, onSelectType, prices }) => {
+const NewMemberCard = ({ category, disabled = false, expandable = false, onSelectType, prices }) => {
   const { title, body, memberships } = contents[category];
   return <Card
     style={{ marginBottom: 24 }}
@@ -111,6 +111,7 @@ const NewMemberCard = ({ category, expandable = false, onSelectType, prices }) =
     </CardText>
     <CardActions style={{ marginLeft: 8, paddingTop: 0 }}>
       <MemberTypeList
+        disabled={disabled}
         memberTypes={memberships}
         onSelectType={onSelectType}
         prices={prices}

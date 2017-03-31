@@ -51,6 +51,7 @@ export const memberTypeData = {
 export default class MemberTypeList extends React.Component {
   static propTypes = {
     canAddPaperPubs: PropTypes.bool,
+    disabled: PropTypes.bool,
     memberTypes: PropTypes.arrayOf(PropTypes.string),
     onSelectType: PropTypes.func.isRequired,
     prevType: PropTypes.string,
@@ -68,10 +69,10 @@ export default class MemberTypeList extends React.Component {
   }
 
   listItemProps(type) {
-    const { canAddPaperPubs, memberTypes, prevType } = this.props;
+    const { canAddPaperPubs, disabled, memberTypes, prevType } = this.props;
     const { primary, secondary, icon } = memberTypeData[type];
     const amount = this.getAmount(type);
-    const disabled = prevType && amount < 0;
+    const isDisabled = disabled || prevType && amount < 0;
     const primaryText = amount < 0 ? primary
         : amount > 0 ? `${primary} (€${amount / 100})`
         : !prevType ? `${primary} (free)`
@@ -79,12 +80,12 @@ export default class MemberTypeList extends React.Component {
     const secondaryText = !prevType || amount ? secondary
         : canAddPaperPubs ? 'Just add paper publications' : 'Already has paper publications';
     return {
-      disabled,
+      disabled: isDisabled,
       innerDivStyle: { paddingLeft: 60 },
       leftIcon: icon,
       primaryText,
       secondaryText,
-      style: disabled ? { opacity: 0.3 } : null,
+      style: isDisabled ? { opacity: 0.3 } : null,
       value: type
     }
   }
