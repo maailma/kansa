@@ -20,7 +20,12 @@ function getPublicPeople(req, res, next) {
     ORDER BY last_name, first_name, country`
   )
     .then(data => {
-      res.status(200).json({ status: 'success', data });
+      const csv = !!(req.query.csv);
+      if (csv) {
+        res.status(200).csv(data, true);
+      } else {
+        res.status(200).json(data);
+      }
     })
     .catch(err => next(err));
 }
@@ -30,14 +35,19 @@ function getPublicStats(req, res, next) {
       FROM People WHERE membership != 'NonMember'
       GROUP BY CUBE(country, membership)`)
     .then(data => {
-      const members = data.reduce((stats, d) => {
-        const c = d.country || '';
-        const m = d.membership || 'total'
-        if (!stats[c]) stats[c] = {};
-        stats[c][m] = parseInt(d.count);
-        return stats;
-      }, {});
-      res.status(200).json({ status: 'success', members });
+      const csv = !!(req.query.csv);
+      if (csv) {
+        res.status(200).csv(data, true);
+      } else {
+        const members = data.reduce((stats, d) => {
+          const c = d.country || '';
+          const m = d.membership || 'total'
+          if (!stats[c]) stats[c] = {};
+          stats[c][m] = parseInt(d.count);
+          return stats;
+        }, {});
+        res.status(200).json(members);
+      }
     })
     .catch(err => next(err));
 }
