@@ -22,11 +22,9 @@ const contents = {
         convention.
       </p><p>
         Participants of the 2017 Worldcon Site Selection have been automatically
-        granted supporting membership. Supporting memberships may be upgraded to
-        attending memberships.
+        granted supporting membership.
       </p>
     </div>,
-    expandable: true,
     memberships: [
       'FirstWorldcon', 'Youth', 'Adult', '_divider',
       'Child', 'KidInTow', '_divider',
@@ -47,8 +45,7 @@ const contents = {
       </p><p>
         All attending memberships carry the same rights as supporting
         memberships, in addition to the right of general admission to the
-        convention. Supporting members may upgrade their membership for the
-        current difference in the membership costs.
+        convention.
       </p>
     </div>,
     memberships: ['FirstWorldcon', 'Youth', 'Adult']
@@ -79,11 +76,24 @@ const contents = {
       </p>
     </div>,
     memberships: [ 'Supporter' ]
+  },
+
+  upgrade: {
+    title: 'Upgrade membership',
+    body: <div>
+      <p>
+        <b>Supporting</b> and other memberships may be upgraded to attending
+        memberships for the current difference in membership costs. To upgrade
+        your own or someone else's membership, you'll need to be logged in to
+        our services.
+      </p>
+    </div>,
+    memberships: [ 'Upgrade' ]
   }
 };
 
-const NewMemberCard = ({ category, onSelectType, prices }) => {
-  const { title, body, expandable = false, memberships } = contents[category];
+const NewMemberCard = ({ category, expandable = false, onSelectType, prices }) => {
+  const { title, body, memberships } = contents[category];
   return <Card
     style={{ marginBottom: 24 }}
   >

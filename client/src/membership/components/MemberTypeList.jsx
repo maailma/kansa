@@ -3,6 +3,7 @@ const ImmutablePropTypes = require('react-immutable-proptypes');
 import Divider from 'material-ui/Divider';
 import { List, ListItem, makeSelectable } from 'material-ui/List'
 import EventSeat from 'material-ui/svg-icons/action/event-seat'
+import ThumbUp from 'material-ui/svg-icons/action/thumb-up'
 import DirectionsRun from 'material-ui/svg-icons/maps/directions-run'
 import DirectionsWalk from 'material-ui/svg-icons/maps/directions-walk'
 import StarTicket from 'material-ui/svg-icons/maps/local-play'
@@ -39,6 +40,11 @@ export const memberTypeData = {
   Supporter: {
     primary: 'Supporting membership',
     icon: <EventSeat/>
+  },
+  Upgrade: {
+    primary: 'Upgrade membership',
+    secondary: 'and/or add paper publications',
+    icon: <ThumbUp/>
   }
 };
 

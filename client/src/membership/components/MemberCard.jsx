@@ -1,7 +1,7 @@
 import React from 'react'
 import { Card, CardHeader, CardActions } from 'material-ui/Card'
 import { List, ListItem } from 'material-ui/List'
-import EuroSymbol from 'material-ui/svg-icons/action/euro-symbol'
+import ThumbUp from 'material-ui/svg-icons/action/thumb-up'
 import ContentCreate from 'material-ui/svg-icons/content/create'
 import Palette from 'material-ui/svg-icons/image/palette'
 const ImmutablePropTypes = require('react-immutable-proptypes');
@@ -54,7 +54,7 @@ const Member = ({ member, push, showHugoActions }) => {
         </MemberEdit>
         <ListItem
           innerDivStyle={{ paddingLeft: 60 }}
-          leftIcon={<EuroSymbol style={{ top: 12 }}/>}
+          leftIcon={<ThumbUp style={{ top: 12 }}/>}
           onTouchTap={() => push(`/upgrade/${id}`)}
           primaryText="Upgrade membership"
           secondaryText="and/or add paper publications"

@@ -29,7 +29,7 @@ class NewMemberIndex extends React.Component {
   onSelectType = (type) => this.props.push(`/new/${type}`);
 
   render() {
-    const { prices } = this.props;
+    const { prices, push } = this.props;
     return <Row>
       <Col
         xs={12}
@@ -39,6 +39,7 @@ class NewMemberIndex extends React.Component {
         style={{ paddingLeft: '0.75rem', paddingRight: '0.75rem' }}
       >
         <NewMemberCard category="attend" onSelectType={this.onSelectType} prices={prices}/>
+        <NewMemberCard category="upgrade" onSelectType={() => push('/upgrade')} />
       </Col>
       <Col
         xs={12}

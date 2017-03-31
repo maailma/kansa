@@ -4,6 +4,7 @@ const ImmutablePropTypes = require('react-immutable-proptypes');
 import Divider from 'material-ui/Divider'
 import { List, ListItem, makeSelectable } from 'material-ui/List'
 import EuroSymbol from 'material-ui/svg-icons/action/euro-symbol'
+import ThumbUp from 'material-ui/svg-icons/action/thumb-up'
 import Palette from 'material-ui/svg-icons/image/palette'
 import People from 'material-ui/svg-icons/social/people'
 import PersonAdd from 'material-ui/svg-icons/social/person-add'
@@ -64,6 +65,12 @@ const NavMenu = ({ currentMember, handleNav, otherMembers }) => {
       primaryText="New Membership"
       style={{ fontSize: 14 }}
       value="/new"
+    />
+    <ListItem
+      leftIcon={<ThumbUp/>}
+      primaryText="Upgrade Membership"
+      style={{ fontSize: 14 }}
+      value="/upgrade"
     />
     <ListItem
       leftIcon={<EuroSymbol/>}

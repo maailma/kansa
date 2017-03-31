@@ -48,8 +48,14 @@ class Index extends React.Component {
       <Col xs={12} sm={6} lg={4}>
         <NewMemberCard
           category="all"
+          expandable={true}
           onSelectType={(type) => push(`/new/${type}`)}
           prices={prices}
+        />
+        <NewMemberCard
+          category="upgrade"
+          expandable={true}
+          onSelectType={(type) => push('/upgrade')}
         />
       </Col>
     </Row>;
