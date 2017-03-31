@@ -109,13 +109,13 @@ class NewMemberForm extends React.Component {
               tabIndex={2}
             />
           </CardText>
-          <CardActions>
-            <FlatButton
-              disabled={true}
-              label={`Total: €${this.price / 100}`}
-            />
+          <CardActions style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: 16, paddingBottom: 16 }}>
+            <div style={{ color: 'rgba(0, 0, 0, 0.5)', paddingTop: 8, paddingRight: 16 }}>
+              {this.price > 0 ? `Total: €${this.price / 100}` : ''}
+            </div>
             <StripeCheckout
               amount={this.price}
+              closed={() => this.setState({ sent: false })}
               currency='EUR'
               description={this.description}
               email={member.get('email')}
@@ -129,6 +129,7 @@ class NewMemberForm extends React.Component {
                 label={ sent ? 'Working...' : 'Pay by card' }
                 disabled={ !valid || this.price <= 0 }
                 onTouchTap={ () => this.setState({ sent: true }) }
+                style={{ flexShrink: 0 }}
                 tabIndex={3}
               />
             </StripeCheckout>

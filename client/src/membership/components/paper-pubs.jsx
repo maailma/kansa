@@ -79,7 +79,7 @@ const PaperPubsCheckbox = ({ eurAmount, getValue, onChange, ...props }) => (
   />
 );
 
-export const AddPaperPubs = ({ getValue, onChange, prices, ...inputProps }) => {
+export const AddPaperPubs = ({ getDefaultValue, getValue, onChange, prices, ...inputProps }) => {
   const amount = prices && prices.getIn(['PaperPubs', 'amount'], 0);
   const label = 'Add paper publications' + (amount ? ` (€${amount / 100})` : '');
   const hasPaperPubs = !!getValue(['paper_pubs']);
