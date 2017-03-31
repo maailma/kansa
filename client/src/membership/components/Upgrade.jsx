@@ -3,9 +3,10 @@ import { connect } from 'react-redux'
 import { push, replace } from 'react-router-redux'
 import { Card, CardActions, CardText } from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
-const { Col, Row } = require('react-flexbox-grid');
+import Subheader from 'material-ui/Subheader'
+const { Col, Row } = require('react-flexbox-grid')
 import StripeCheckout from 'react-stripe-checkout'
-const ImmutablePropTypes = require('react-immutable-proptypes');
+const ImmutablePropTypes = require('react-immutable-proptypes')
 
 import { setScene, showMessage } from '../../app/actions/app'
 import { buyUpgrade, getPrices } from '../../payments/actions'
@@ -14,6 +15,8 @@ import * as MemberPropTypes from '../proptypes'
 import MemberLookupSelector from './MemberLookupSelector'
 import MemberTypeList from './MemberTypeList'
 import { AddPaperPubs, paperPubsIsValid } from './paper-pubs';
+
+const UPGRADE_TARGET_TYPES = ['Adult', 'Youth', 'FirstWorldcon', 'Child'];
 
 function getIn(obj, path, unset) {
   const val = obj[path[0]];
@@ -37,22 +40,32 @@ class Upgrade extends React.Component {
     showMessage: React.PropTypes.func.isRequired
   }
 
-  static getPerson(props) {
+  static getNextState(props) {
+    const nextState = {};
     const id = Number(props.params.id);
-    return id && props.people && props.people.find(p => p.get('id') === id) || null;
+    const person = id && props.people && props.people.find(p => p.get('id') === id);
+    if (person) {
+      const pm = nextState.prevMembership = person.get('membership');
+      nextState.membership = UPGRADE_TARGET_TYPES.indexOf(pm) !== -1 ? pm : null;
+      const cap = nextState.canAddPaperPubs = !person.get('paper_pubs');
+      if (!cap) nextState.paperPubs = null;
+    } else {
+      nextState.canAddPaperPubs = false;
+      nextState.membership = null;
+      nextState.paperPubs = null;
+    }
+    return nextState;
   }
 
   constructor(props) {
     super(props);
-    const person = Upgrade.getPerson(props);
-    const prevMembership = person && person.get('membership') || null;
-    this.state = {
+    this.state = Object.assign({
       canAddPaperPubs: false,
       membership: null,
       paperPubs: null,
-      prevMembership,
+      prevMembership: null,
       sent: false
-    }
+    }, Upgrade.getNextState(props));
   }
 
   componentWillMount() {
@@ -63,18 +76,7 @@ class Upgrade extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.params.id !== this.props.params.id) {
-      const nextState = {};
-      const person = Upgrade.getPerson(nextProps);
-      if (person) {
-        nextState.prevMembership = person.get('membership');
-        if (!this.canUpgrade(nextState.prevMembership, this.state.membership)) nextState.membership = null;
-        const cap = nextState.canAddPaperPubs = !person.get('paper_pubs');
-        if (!cap) nextState.paperPubs = null;
-      } else {
-        nextState.canAddPaperPubs = false;
-        nextState.paperPubs = null;
-      }
-      this.setState(nextState);
+      this.setState(Upgrade.getNextState(nextProps));
     }
   }
 
@@ -88,14 +90,6 @@ class Upgrade extends React.Component {
     return nextAmount - prevAmount + ppAmount;
   }
 
-  canUpgrade(src, tgt) {
-    const { prices } = this.props;
-    if (!prices) return false;
-    const srcAmount = prices.getIn(['memberships', src, 'amount']) || 0;
-    const tgtAmount = prices.getIn(['memberships', tgt, 'amount']) || 0;
-    return tgtAmount > srcAmount;
-  }
-
   get description() {
     const { prices } = this.props;
     const { membership, paperPubs, prevMembership } = this.state;
@@ -106,8 +100,8 @@ class Upgrade extends React.Component {
   }
 
   get disabledCheckout() {
-    const { paperPubs, sent } = this.state;
-    return sent || this.amount <= 0 || !paperPubsIsValid(paperPubs);
+    const { paperPubs, prevMembership, sent } = this.state;
+    return sent || !prevMembership || this.amount <= 0 || !paperPubsIsValid(paperPubs);
   }
 
   get id() {
@@ -145,17 +139,43 @@ class Upgrade extends React.Component {
     });
   }
 
-  setStateIn = (path, value) => {
-    const key = path[0];
-    if (path.length > 1) value = this.state[key].setIn(path.slice(1), value);
-    return this.setState({ [key]: value });
+  renderActions() {
+    const { prevMembership, sent } = this.state;
+    const amount = this.amount;
+    const disabled = this.disabledCheckout;
+    return (
+      <CardActions style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: 16, paddingBottom: 16 }}>
+        <div style={{ color: 'rgba(0, 0, 0, 0.5)', paddingTop: 8, paddingRight: 16 }}>
+          {prevMembership && amount > 0 ? `Total: €${amount / 100}` : ''}
+        </div>
+        <StripeCheckout
+          amount={amount}
+          closed={() => this.setState({ sent: false })}
+          currency="EUR"
+          description={this.description}
+          email={this.props.email}
+          name={TITLE}
+          stripeKey={STRIPE_KEY}
+          token={(token) => this.onPurchase(amount, token)}
+          triggerEvent="onTouchTap"
+          zipCode={true}
+        >
+          <FlatButton
+            label={sent ? 'Working...' : 'Pay by card'}
+            disabled={disabled}
+            onTouchTap={() => this.setState({ sent: true })}
+            style={{ flexShrink: 0 }}
+            tabIndex={2}
+          />
+        </StripeCheckout>
+      </CardActions>
+    )
   }
 
   render() {
-    const { email, people, prices } = this.props;
+    const { people, prices } = this.props;
     if (!people) return null;
     const { canAddPaperPubs, membership, paperPubs, prevMembership } = this.state;
-    const amount = this.amount;
     return <Row>
       <Col
         xs={12}
@@ -167,9 +187,9 @@ class Upgrade extends React.Component {
           <CardText>
             <Row>
               <Col xs={12} sm={6}>
-                <div>
+                <Subheader>
                   Membership to upgrade:
-                </div>
+                </Subheader>
                 <MemberLookupSelector
                   onChange={this.onSelectMember}
                   people={people}
@@ -177,11 +197,12 @@ class Upgrade extends React.Component {
                 />
               </Col>
               <Col xs={12} sm={6}>
-                <div>
+                <Subheader>
                   Upgrade to:
-                </div>
+                </Subheader>
                   <MemberTypeList
-                    memberTypes={['Adult', 'Youth', 'FirstWorldcon', 'Child']}
+                    canAddPaperPubs={canAddPaperPubs}
+                    memberTypes={UPGRADE_TARGET_TYPES}
                     onSelectType={(membership) => this.setState({ membership })}
                     prevType={prevMembership}
                     prices={prices}
@@ -195,32 +216,10 @@ class Upgrade extends React.Component {
                 onChange={this.onPaperPubsChange}
                 prices={prices}
                 tabIndex={1}
+              />
             ) : null}
           </CardText>
-          <CardActions style={{ alignItems: 'center', display: 'flex', textAlign: 'left' }}>
-            <div style={{ color: 'rgba(0, 0, 0, 0.3)', flexGrow: 1, paddingLeft: 16 }}>
-              Total: €{ amount / 100 }
-            </div>
-            <StripeCheckout
-              amount={amount}
-              currency="EUR"
-              description={this.description}
-              email={email}
-              name={TITLE}
-              stripeKey={STRIPE_KEY}
-              token={(token) => this.onPurchase(amount, token)}
-              triggerEvent="onTouchTap"
-              zipCode={true}
-            >
-              <FlatButton
-                label={ sent ? 'Working...' : 'Pay by card' }
-                disabled={this.disabledCheckout}
-                onTouchTap={() => this.setState({ sent: true })}
-                style={{ flexShrink: 0 }}
-                tabIndex={2}
-              />
-            </StripeCheckout>
-          </CardActions>
+          { this.renderActions() }
         </Card>
       </Col>
     </Row>;
