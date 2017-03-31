@@ -3,49 +3,15 @@ import React from 'react'
 const { Col, Row } = require('react-flexbox-grid');
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
-import { TextInput, PaperPubsCheckbox, PaperPubsFields } from './form-components'
+import { emptyPaperPubsMap } from '../constants'
+import { TextInput } from './form-components'
+import { paperPubsIsValid, AddPaperPubs, EditPaperPubs } from './paper-pubs'
 
-const hintStyle= {
+export const hintStyle = {
   color: 'rgba(0, 0, 0, 0.3)',
   fontSize: 13,
   marginBottom: 24
 };
-
-export const PaperPubsRow = ({ hasPaperPubs, newMember, prices, ...inputProps }) => (
-  <Row style={{ paddingTop: 16 }}>
-    { newMember ? <Col xs={12} sm={6}>
-        <PaperPubsCheckbox
-          { ...inputProps }
-          newMember={newMember}
-          prices={prices}
-          style={{ marginBottom: 4 }}
-        />
-        <div style={hintStyle}>
-          By default, we'll be in touch with you electronically to let you
-          know how our preparations are progressing. If you'd prefer to
-          receive our progress reports and other publications by post, select
-          this option (note the additional fee).
-        </div>
-        { hasPaperPubs ? <div style={hintStyle}>
-            We'll need to know where to send your mail. Please enter your
-            address details here as you'd wish them to be printed onto a
-            postal label.
-        </div> : null }
-    </Col> : null }
-    { hasPaperPubs ? <Col xs={12} sm={6}>
-        <PaperPubsFields autoFocus={newMember} {...inputProps} />
-    </Col> : null }
-    { !newMember && hasPaperPubs ? <Col xs={12} sm={6} style={hintStyle}>
-        For paper publications, we'll need to know where to send your mail.
-        Please enter your address details here as you'd wish them to be
-        printed onto a postal label.
-    </Col> : null }
-  </Row>
-);
-
-export const paperPubsIsValid = (pp) => (
-  !pp || pp.get('name') && pp.get('address') && !!pp.get('country')
-);
 
 export default class MemberForm extends React.Component {
 
@@ -186,12 +152,17 @@ export default class MemberForm extends React.Component {
           wish; not all fields will apply to everyone.
         </Col>
       </Row>
-      <PaperPubsRow
-        hasPaperPubs={this.hasPaperPubs}
-        newMember={newMember}
-        prices={prices}
-        {...inputProps}
-      />
+      {newMember ? (
+        <AddPaperPubs
+          prices={prices}
+          {...inputProps}
+        />
+      ) : this.hasPaperPubs ? (
+        <EditPaperPubs
+          prices={prices}
+          {...inputProps}
+        />
+      ) : null}
     </form>;
   }
 

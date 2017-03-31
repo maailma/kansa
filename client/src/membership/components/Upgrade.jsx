@@ -11,9 +11,9 @@ import { setScene, showMessage } from '../../app/actions/app'
 import { buyUpgrade, getPrices } from '../../payments/actions'
 import * as PaymentPropTypes from '../../payments/proptypes'
 import * as MemberPropTypes from '../proptypes'
-import { PaperPubsRow, paperPubsIsValid } from './MemberForm';
 import MemberLookupSelector from './MemberLookupSelector'
 import MemberTypeList from './MemberTypeList'
+import { AddPaperPubs, paperPubsIsValid } from './paper-pubs';
 
 function getIn(obj, path, unset) {
   const val = obj[path[0]];
@@ -47,6 +47,7 @@ class Upgrade extends React.Component {
     const person = Upgrade.getPerson(props);
     const prevMembership = person && person.get('membership') || null;
     this.state = {
+      canAddPaperPubs: false,
       membership: null,
       paperPubs: null,
       prevMembership,
@@ -65,10 +66,12 @@ class Upgrade extends React.Component {
       const nextState = {};
       const person = Upgrade.getPerson(nextProps);
       if (person) {
-        if (person.get('paper_pubs')) nextState.paperPubs = null;
         nextState.prevMembership = person.get('membership');
         if (!this.canUpgrade(nextState.prevMembership, this.state.membership)) nextState.membership = null;
+        const cap = nextState.canAddPaperPubs = !person.get('paper_pubs');
+        if (!cap) nextState.paperPubs = null;
       } else {
+        nextState.canAddPaperPubs = false;
         nextState.paperPubs = null;
       }
       this.setState(nextState);
@@ -83,11 +86,6 @@ class Upgrade extends React.Component {
     const nextAmount = prices.getIn(['memberships', membership, 'amount']) || 0;
     const ppAmount = paperPubs && prices.getIn(['PaperPubs', 'amount']) || 0;
     return nextAmount - prevAmount + ppAmount;
-  }
-
-  get canAddPaperPubs() {
-    const person = this.person;
-    return person && !person.get('paper_pubs');
   }
 
   canUpgrade(src, tgt) {
@@ -156,7 +154,7 @@ class Upgrade extends React.Component {
   render() {
     const { email, people, prices } = this.props;
     if (!people) return null;
-    const { membership, paperPubs, prevMembership, sent } = this.state;
+    const { canAddPaperPubs, membership, paperPubs, prevMembership } = this.state;
     const amount = this.amount;
     return <Row>
       <Col
@@ -191,16 +189,13 @@ class Upgrade extends React.Component {
                   />
               </Col>
             </Row>
-            <PaperPubsRow
-              autoFocus={true}
-              getDefaultValue={() => null}
-              getValue={([pp, key]) => key ? paperPubs.get(key) : paperPubs}
-              hasPaperPubs={!!paperPubs}
-              newMember={true}
-              onChange={this.onPaperPubsChange}
-              prices={prices}
-              tabIndex={1}
-            />
+            {canAddPaperPubs ? (
+              <AddPaperPubs
+                getValue={([pp, key]) => key ? paperPubs.get(key) : paperPubs}
+                onChange={this.onPaperPubsChange}
+                prices={prices}
+                tabIndex={1}
+            ) : null}
           </CardText>
           <CardActions style={{ alignItems: 'center', display: 'flex', textAlign: 'left' }}>
             <div style={{ color: 'rgba(0, 0, 0, 0.3)', flexGrow: 1, paddingLeft: 16 }}>

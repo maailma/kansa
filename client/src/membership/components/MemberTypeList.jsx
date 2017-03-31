@@ -54,10 +54,30 @@ export default class MemberTypeList extends React.Component {
 
   getAmount(type) {
     const { prevType, prices } = this.props;
-    if (!prices) return undefined;
+    if (!prices) return -1;
     const prevAmount = prices.getIn(['memberships', prevType, 'amount']) || 0;
     const thisAmount = prices.getIn(['memberships', type, 'amount']) || 0;
     return thisAmount - prevAmount;
+  }
+
+  listItemProps(type) {
+    const { memberTypes, prevType } = this.props;
+    const { primary, secondary, icon } = memberTypeData[type];
+    const amount = this.getAmount(type);
+    const disabled = prevType && amount < 0;
+    const primaryText = amount < 0 ? primary
+       : amount > 0 ? `${primary} (€${amount / 100})`
+       : prevType ? 'No upgrade' : `${primary} (free)`;
+    const secondaryText = prevType && !amount ? 'Just add paper publications' : secondary;
+    return {
+      disabled,
+      innerDivStyle: { paddingLeft: 60 },
+      leftIcon: icon,
+      primaryText,
+      secondaryText,
+      style: disabled ? { opacity: 0.3 } : null,
+      value: type
+    }
   }
 
   render() {
@@ -68,25 +88,13 @@ export default class MemberTypeList extends React.Component {
         style={style}
         value={selectedType}
       >
-        {memberTypes.map((type, i) => {
-          if (type === '_divider') return (<Divider
-            key={'div'+i}
-            style={{ marginTop: 8, marginBottom: 8, marginLeft: 60 }}
-          />);
-          const { primary, secondary, icon } = memberTypeData[type];
-          const amount = this.getAmount(type);
-          const disabled = prevType && !(amount >= 0);  // negative or undefined
-          const suffix = amount > 0 ? ` (€${amount / 100})` : amount === 0 ? ' (free)' : '';
-          return (<ListItem
-            disabled={disabled}
-            innerDivStyle={{ paddingLeft: 60 }}
-            key={type}
-            leftIcon={icon}
-            primaryText={primary + suffix}
-            secondaryText={secondary}
-            value={type}
-          />);
-        })}
+        {memberTypes.map((type, i) => (
+          type === '_divider' ? (
+            <Divider key={'div'+i} style={{ marginTop: 8, marginBottom: 8, marginLeft: 60 }} />
+          ) : (
+            <ListItem key={type} {...this.listItemProps(type)} />
+          )
+        ))}
       </SelectableList>
     );
   }
