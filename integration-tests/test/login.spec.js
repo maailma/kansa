@@ -40,7 +40,7 @@ describe('Check that API services are up', function() {
 describe('Member list', () => {
   it('Returns `success` as status and test data member list.', (done) => {
     unlogged.get('/api/kansa/public/people')
-      .expect(200, { status: 'success', data: memberlist })
+      .expect(200, memberlist)
       .end(done);
     })
 });
@@ -50,8 +50,7 @@ describe('Country statistics', () => {
     unlogged.get('/api/kansa/public/stats')
       .expect((res) => {
         if (
-          res.status !== 200 || res.body.status !== 'success' ||
-          !res.body.members || !res.body.members[''].hasOwnProperty('total')
+          res.status !== 200 || !res.body || !res.body[''].hasOwnProperty('total')
         ) {
           throw new Error(`Fail! ${JSON.stringify(res.body)}`);
         }

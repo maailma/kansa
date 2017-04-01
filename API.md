@@ -51,7 +51,10 @@ some relevant data and/or a `message` field.
 ## Public information
 
 ### `GET /api/kansa/public/people`
-List of members who have opted to have their info in public
+- Parameters: `csv`
+
+List of members who have opted to have their info in public. If the query
+parameter `csv` is true-ish, returns results as csv rather than json format.
 
 #### Response
 ```
@@ -63,7 +66,10 @@ List of members who have opted to have their info in public
 
 
 ### `GET /api/kansa/public/stats`
-Membership statistics by country
+- Parameters: `csv`
+
+Membership statistics by country. If the query parameter `csv` is true-ish,
+returns results as csv rather than json format.
 
 #### Response
 ```
