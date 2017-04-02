@@ -29,15 +29,17 @@ class PurchaseIndex extends React.Component {
 
   get nextPurchaseCards() {
     const { purchaseData, push } = this.props;
-    return purchaseData.entrySeq().map(([category, data]) => (
-      <PurchaseSelectCard
-        data={data}
-        key={category}
-        label={category}
-        onSelect={(type) => push(`/pay/${category}/${type}`)}
-        title={`New ${category}`}
-      />
-    ));
+    return purchaseData.entrySeq()
+      .filter(([category, data]) => !data.get('unlisted'))
+      .map(([category, data]) => (
+        <PurchaseSelectCard
+          data={data}
+          key={category}
+          label={category}
+          onSelect={(type) => push(`/pay/${category}/${type}`)}
+          title={`New ${category}`}
+        />
+      ));
   }
 
   get prevPurchaseCards() {

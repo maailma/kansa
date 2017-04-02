@@ -7,7 +7,7 @@ import * as PurchasePropTypes from '../proptypes'
 
 const PurchaseItemCard = ({ label, purchase, shape }) => {
   const {
-    amount, category, comments, data, email, invoice, name, stripe_charge_id, timestamp
+    amount, category, comments, data, invoice, paid, payment_email, stripe_charge_id
   } = purchase.toJS();
   return <Card
     style={{ marginBottom: 18 }}
@@ -23,19 +23,19 @@ const PurchaseItemCard = ({ label, purchase, shape }) => {
         >
           €{amount / 100}<br/>
         </div>
-        <div
+        {paid ? <div
           style={{ color: 'rgba(0, 0, 0, 0.541176)', fontSize: 14 }}
-          title={timestamp}
+          title={paid}
         >
-          {timestamp.slice(0, timestamp.indexOf('T'))}
-        </div>
+          {paid.slice(0, paid.indexOf('T'))}
+        </div> : null}
       </div>
     </CardHeader>
     <CardText style={{ paddingTop: 0 }}>
       <table style={{ margin: 0, width: '100%' }}><tbody>
         <tr>
           <td>Payment from:</td>
-          <td>{`${name} <${email}>`}</td>
+          <td>{payment_email}</td>
         </tr>
         <tr>
           <td>Charge id:</td>

@@ -25,9 +25,20 @@ const PurchaseTextField = ({ label, onChange, required, value, ...props }) => {
 const DataField = ({ field, name, onChange, value }) => {
   switch (field.get('type')) {
 
+    case 'number':
+      return <PurchaseTextField
+        label={field.get('label')}
+        name={name}
+        onChange={onChange}
+        required={field.get('required')}
+        value={value}
+        type="number"
+      />;
+
     case 'string':
       return <PurchaseTextField
         label={field.get('label')}
+        name={name}
         onChange={onChange}
         required={field.get('required')}
         value={value}
@@ -38,6 +49,7 @@ const DataField = ({ field, name, onChange, value }) => {
 
     default:
       // select(values)
+      return <div>{field.get('label') || name}: {value || '[empty]'}</div>;
 
   }
 }

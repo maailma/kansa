@@ -7,13 +7,12 @@ export const buyMembership = (member, amount, token, callback) => ({
   token
 });
 
-// purchase: { comments, data, email, invoice, name, person, type }
-export const buyOther = (purchase, amount, token, callback) => ({
+// items: [{ category, comments, data, email, invoice, name, person_id, type }]
+export const buyOther = (token, items, callback) => ({
   module: 'kansa',
   type: 'BUY_OTHER',
-  amount,
   callback,
-  purchase,
+  items,
   token
 });
 

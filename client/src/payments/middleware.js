@@ -25,12 +25,11 @@ export default ({ dispatch }) => (next) => (action) => {
     } return;
 
     case 'BUY_OTHER': {
-      const { amount, callback, purchase, token } = action;
-      api.POST('kansa/purchase/other', Object.assign({
-        amount,
-        email: token.email,
-        token: token.id,
-      }, purchase.toJS ? purchase.toJS() : purchase))
+      const { callback, items, token: { email, id } } = action;
+      api.POST('kansa/purchase/other', {
+        token: { email, id },
+        items: items.toJS ? items.toJS() : items
+      })
         .then(() => {
           callback && callback();
           dispatch(getPurchaseList());

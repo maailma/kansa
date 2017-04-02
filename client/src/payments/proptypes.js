@@ -28,18 +28,20 @@ export const data = ImmutablePropTypes.mapOf(categoryData, PropTypes.string);
 
 export const purchase = ImmutablePropTypes.mapContains({
   id: PropTypes.number.isRequired,
-  timestamp: PropTypes.string.isRequired,
+  created: PropTypes.string.isRequired,
+  paid: PropTypes.string,
+  payment_email: PropTypes.string.isRequired,
+  stripe_charge_id: PropTypes.string,
+  stripe_token: PropTypes.string,
+  error: PropTypes.string,
   amount: PropTypes.number.isRequired,
+  currency: PropTypes.string.isRequired,
+  person_id: PropTypes.number,
   category: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
-  currency: PropTypes.string.isRequired,
-  stripe_charge_id: PropTypes.string,
-  email: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  person_id: PropTypes.number,
+  data: ImmutablePropTypes.map,
   invoice: PropTypes.string,
-  comments: PropTypes.string,
-  data: ImmutablePropTypes.map
+  comments: PropTypes.string
 });
 
 export const list = ImmutablePropTypes.listOf(purchase);

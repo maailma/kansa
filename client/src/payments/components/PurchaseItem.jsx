@@ -93,8 +93,9 @@ class PurchaseItem extends React.Component {
   onCheckout = (token) => {
     const { buyOther, params, push, showMessage } = this.props;
     const { amount, purchase } = this.state;
+    const item = purchase.merge(params).set('amount', amount).filter(v => v).toJS();
     showMessage(`Charging ${purchase.get('email')} EUR ${amount / 100}...`);
-    buyOther(purchase.merge(params).filter(v => v), amount, token, () => {
+    buyOther(token, [item], () => {
       showMessage('Payment successful!');
       push('/pay');
     });
