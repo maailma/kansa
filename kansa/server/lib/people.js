@@ -1,4 +1,4 @@
-const { _setKeyChecked } = require('./key');
+const { setKeyChecked } = require('./key');
 const sendEmail = require('./kyyhky-send-email');
 const LogEntry = require('./types/logentry');
 const { AuthError, InputError } = require('./errors');
@@ -207,7 +207,7 @@ function updatePerson(req, res, next) {
     .then(([{ can_hugo_nominate, prev_email, legal_name, public_first_name, public_last_name }, key]) => {
       if (!data.email || data.email === prev_email || !can_hugo_nominate) return {};
       const name = [public_first_name, public_last_name].filter(n => n).join(' ').trim() || legal_name;
-      return key ? { key: key.key, name } : _setKeyChecked(req, data.email).then(({ key }) => ({ key, name }));
+      return key ? { key: key.key, name } : setKeyChecked(req, data.email).then(({ key }) => ({ key, name }));
     })
     .then(({ key, name }) => !!(key && sendEmail('hugo-update-email', {
       email: data.email,
