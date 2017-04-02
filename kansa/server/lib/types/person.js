@@ -59,6 +59,11 @@ class Person {
     this.data.paper_pubs = Person.cleanPaperPubs(this.data.paper_pubs);
   }
 
+  get preferredName() {
+    const { legal_name, public_first_name, public_last_name } = this.data;
+    return [public_first_name, public_last_name].filter(n => n).join(' ').trim() || legal_name;
+  }
+
   get sqlValues() {
     const fields = Person.fields.filter(fn => this.data.hasOwnProperty(fn));
     const values = fields.map(fn => `$(${fn})`).join(', ');

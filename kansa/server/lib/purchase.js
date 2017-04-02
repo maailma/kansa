@@ -6,6 +6,8 @@ const { InputError } = require('./errors');
 const LogEntry = require('./types/logentry');
 const Payment = require('./types/payment');
 const Person = require('./types/person');
+const { getKeyChecked } = require('./key');
+const sendEmail = require('./kyyhky-send-email');
 const { addPerson } = require('./people');
 const { upgradePerson } = require('./upgrade');
 
@@ -83,8 +85,8 @@ class Purchase {
   checkUpgrades(reqUpgrades) {
     if (reqUpgrades.length === 0) return Promise.resolve([]);
     return this.db.any(`
-      SELECT id, email, membership, paper_pubs
-        FROM People
+      SELECT id, email, membership, preferred_name(p) as name, paper_pubs
+        FROM People p
        WHERE id IN ($1:csv)`, [reqUpgrades.map(u => u.id)]
     ).then(prevData => {
       if (prevData.length !== reqUpgrades.length) throw new InputError(
@@ -111,6 +113,7 @@ class Purchase {
 
         return Object.assign({}, upgrade, {
           email: prev.email,
+          name: prev.name,
           paper_pubs: Person.cleanPaperPubs(upgrade.paper_pubs),
           prev_membership: prev.membership
         });
@@ -160,20 +163,45 @@ class Purchase {
     if (newMembers.length === 0 && reqUpgrades.length === 0) return next(
       new InputError('Non-empty new_members or upgrades is required')
     );
-    let upgrades;
+    const sentEmails = {};
+    let charge_id, upgrades;
     this.checkUpgrades(reqUpgrades).then(_upgrades => {
       upgrades = _upgrades;
       const ca = calcAmount(newMembers, upgrades);
       if (amount !== ca) throw new InputError(`Amount mismatch: in request ${amount}, calculated ${ca}`);
       const msg = logMessage(newMembers, upgrades);
       return this.stripeCharge(req, { token, amount, email }, msg);
+    }).then(_charge_id => {
+      charge_id = _charge_id;
+      return Promise.all(upgrades.map(u => (
+        upgradePerson(req, this.db, u)
+          .then(({ member_number }) => {
+            u.member_number = member_number;
+            return getKeyChecked(req, u.email);
+          })
+          .then(({ key }) => sendEmail(
+            ((!u.membership || u.membership === u.prev_membership) && u.paper_pubs)
+              ? 'kansa-add-paper-pubs' : 'kansa-upgrade-person',
+            Object.assign({ charge_id, key }, u)
+          ))
+          .then(() => sentEmails[u.email] = true)
+      )));
     }).then(() => Promise.all(
-      upgrades.map(u => upgradePerson(req, this.db, u))
-    )).then(() => Promise.all(
-      newMembers.map(m => addPerson(req, this.db, m))
+      newMembers.map(m => (
+        addPerson(req, this.db, m)
+          .then(({ id, member_number }) => {
+            m.data.id = id;
+            m.data.member_number = member_number;
+            return getKeyChecked(req, m.data.email);
+          })
+          .then(({ key }) => sendEmail(
+            'kansa-new-member',
+            Object.assign({ charge_id, key, name: m.preferredName }, m.data)
+          ))
+          .then(() => sentEmails[m.data.email] = true)
+      ))
     )).then(() => {
-      const emails = uniqueEmails(newMembers, upgrades);
-      res.status(200).json({ status: 'success', emails });
+      res.status(200).json({ status: 'success', emails: Object.keys(sentEmails) });
     }).catch(next);
   }
 
