@@ -48,22 +48,23 @@ class Mailer {
     return [ this.tmplDir, '/', tmplName, this.tmplSuffix ].filter(s => s).join('');
   }
 
-  sgRequest(recipient, { from, fromname, subject }, msg) {
+  sgRequest(msgTemplate, data) {
+    const { attributes: { from, fromname, recipient, subject }, body } = tfm(msgTemplate);
+    const to = [{ email: data.email }];
+    if (data.name) to[0].name = data.name;
     return this.sendgrid.emptyRequest({
       method: 'POST',
       path: '/v3/mail/send',
       body: {
-        personalizations: [{
-          to: [{ email: recipient }],
-        }],
+        personalizations: [{ to }],
         from: {
           email: from,
           name: fromname,
         },
-        subject: subject,
+        subject: mustache.render(subject, data),
         content: [{
           type: 'text/plain',
-          value: wrap(72)(msg)
+          value: wrap(72)(mustache.render(body, data))
         }]
       }
     });
@@ -80,12 +81,10 @@ class Mailer {
         break;
 
     }
-    fs.readFile(this.tmplFileName(tmplName), 'utf8', (err, raw) => {
+    fs.readFile(this.tmplFileName(tmplName), 'utf8', (err, msgTemplate) => {
       if (err) return done(err);
       try {
-        const {attributes, body} = tfm(raw);
-        const msg = mustache.render(body, tmplData);
-        const request = this.sgRequest(data.email, attributes, msg);
+        const request = this.sgRequest(msgTemplate, tmplData);
         this.sendgrid.API(request, (err, response) => {
           if (err) {
             console.warn('SendGrid error', response);
