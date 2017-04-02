@@ -69,7 +69,7 @@ describe('Membership purchases', () => {
     const agent = request.agent(host, { ca: cert });
     const testName = 'test-' + (Math.random().toString(36)+'00000000000000000').slice(2, 7);
 
-    it('should get new memberships', (done) => {
+    it('should add new memberships', (done) => {
       stripe.tokens.create({
         card: {
           number: '4242424242424242',
@@ -81,17 +81,19 @@ describe('Membership purchases', () => {
         agent.post('/api/kansa/purchase')
           .send({
             amount: prices.memberships.Supporter.amount + prices.memberships.Adult.amount + prices.PaperPubs.amount,
-            email: 'test@example.com',
+            email: `${testName}@example.com`,
             token: testToken.id,
             new_members: [
-              { membership: 'Supporter', email: '@', legal_name: `s-${testName}` },
-              { membership: 'Adult', email: '@', legal_name: `a-${testName}`,
+              { membership: 'Supporter', email: `${testName}@example.com`, legal_name: `s-${testName}` },
+              { membership: 'Adult', email: `${testName}@example.com`, legal_name: `a-${testName}`,
                 paper_pubs: { name: testName, address: 'address', country: 'land'} }
             ]
           })
           .expect((res) => {
             if (res.status !== 200) throw new Error(`Purchase failed! ${JSON.stringify(res.body)}`);
-            // HERE
+            if (res.body.emails.length !== 1 || res.body.emails[0] !== `${testName}@example.com`) {
+              throw new Error(`Bad response! ${JSON.stringify(res.body)}`)
+            }
           })
           .end(done);
       });
@@ -110,7 +112,7 @@ describe('Membership purchases', () => {
         .query(adminLoginParams)
         .end(() => {
           admin.post('/api/kansa/people')
-            .send({ membership: 'Supporter', email: 'test@example.com', legal_name: testName })
+            .send({ membership: 'Supporter', email: `${testName}@example.com`, legal_name: testName })
             .expect((res) => {
               if (res.status !== 200) throw new Error(`Member init failed! ${JSON.stringify(res.body)}`);
               testId = res.body.id;
@@ -131,13 +133,15 @@ describe('Membership purchases', () => {
         agent.post('/api/kansa/purchase')
           .send({
             amount: prices.memberships.Adult.amount - prices.memberships.Supporter.amount,
-            email: 'test@example.com',
+            email: `${testName}@example.com`,
             token: testToken.id,
             upgrades: [{ id: testId, membership: 'Adult' }]
           })
           .expect((res) => {
             if (res.status !== 200) throw new Error(`Upgrade failed! ${JSON.stringify(res.body)}`);
-            // HERE
+            if (res.body.emails.length !== 1 || res.body.emails[0] !== `${testName}@example.com`) {
+              throw new Error(`Bad response! ${JSON.stringify(res.body)}`)
+            }
           })
           .end(done);
       });
@@ -155,7 +159,7 @@ describe('Membership purchases', () => {
         agent.post('/api/kansa/purchase')
           .send({
             amount: prices.PaperPubs.amount,
-            email: 'test@example.com',
+            email: `${testName}@example.com`,
             token: testToken.id,
             upgrades: [{ id: testId, paper_pubs: { name: 'name', address: 'multi\n-line\n-address', country: 'land'} }]
           })
@@ -177,7 +181,10 @@ describe('Other purchases', () => {
   context('Parameters', () => {
     it('should require required parameters', (done) => {
       agent.post('/api/kansa/purchase/other')
-        .send({ amount: 0, category: 'x', email: '@', name: 'x', token: 'x', type: 'y' })
+        .send({
+          token: { id: 'x', email: 'nonesuch@example.com' },
+          items: [{ amount: 0, category: 'x', type: 'y' }]
+        })
         .expect((res) => {
           const exp = { status: 400, message: 'Required parameters: ' };
           if (res.status !== exp.status) throw new Error(`Bad status: got ${res.status}, expected ${exp.status}`);
@@ -186,9 +193,12 @@ describe('Other purchases', () => {
         .end(done);
     });
 
-    it('should require a valid categrory', (done) => {
+    it('should require a valid category', (done) => {
       agent.post('/api/kansa/purchase/other')
-        .send({ amount: 1, category: 'x', email: '@', name: 'x', token: 'x', type: 'y' })
+        .send({
+          token: { id: 'x', email: 'nonesuch@example.com' },
+          items: [{ amount: 1, category: 'x', type: 'y' }]
+        })
         .expect((res) => {
           const exp = { status: 400, message: 'Supported categories: ' };
           if (res.status !== exp.status) throw new Error(`Bad status: got ${res.status}, expected ${exp.status}`);
@@ -199,7 +209,10 @@ describe('Other purchases', () => {
 
     it('should require custom data', (done) => {
       agent.post('/api/kansa/purchase/other')
-        .send({ amount: 1, category: 'Sponsorship', email: '@', name: 'x', token: 'x', type: 'bench', data: {} })
+        .send({
+          token: { id: 'x', email: 'nonesuch@example.com' },
+          items: [{ amount: 1, category: 'Sponsorship', type: 'bench', data: {} }]
+        })
         .expect((res) => {
           const exp = { status: 400, message: 'Bad data: ' };
           if (res.status !== exp.status) throw new Error(`Bad status: got ${res.status}, expected ${exp.status}`);
@@ -208,6 +221,34 @@ describe('Other purchases', () => {
           if (missing.length !== 1 || badType.length !== 0 || missing[0] !== 'sponsor') {
             throw new Error(`Bad reply: ${JSON.stringify(res.body)}`);
           }
+        })
+        .end(done);
+    });
+
+    it('should require a known email address', (done) => {
+      agent.post('/api/kansa/purchase/other')
+        .send({
+          token: { id: 'x', email: 'nonesuch@example.com' },
+          items: [{ amount: 1, category: 'Sponsorship', type: 'bench', data: { sponsor: 'y' } }]
+        })
+        .expect((res) => {
+          const exp = { status: 400, message: 'Not a known email address: ' };
+          if (res.status !== exp.status) throw new Error(`Bad status: got ${res.status}, expected ${exp.status}`);
+          if (res.body.message.indexOf(exp.message) !== 0) throw new Error(`Bad reply: ${JSON.stringify(res.body)}`);
+        })
+        .end(done);
+    });
+
+    it('should require person_id to be valid if not null', (done) => {
+      agent.post('/api/kansa/purchase/other')
+        .send({
+          token: { id: 'x', email: 'admin@example.com' },
+          items: [{ amount: 1, person_id: -1, category: 'Sponsorship', type: 'bench', data: { sponsor: 'y' } }]
+        })
+        .expect((res) => {
+          const exp = { status: 400, message: 'Not a valid person id: ' };
+          if (res.status !== exp.status) throw new Error(`Bad status: got ${res.status}, expected ${exp.status}`);
+          if (res.body.message.indexOf(exp.message) !== 0) throw new Error(`Bad reply: ${JSON.stringify(res.body)}`);
         })
         .end(done);
     });
@@ -233,8 +274,23 @@ describe('Other purchases', () => {
 
   context('Sponsorships (using Stripe API)', function() {
     this.timeout(10000);
+    const admin = request.agent(host, { ca: cert });
     const agent = request.agent(host, { ca: cert });
     const testName = 'test-' + (Math.random().toString(36)+'00000000000000000').slice(2, 7);
+
+    before((done) => {
+      admin.get('/api/kansa/login')
+        .query(adminLoginParams)
+        .end(() => {
+          admin.post('/api/kansa/people')
+            .send({ membership: 'Supporter', email: `${testName}@example.com`, legal_name: testName })
+            .expect((res) => {
+              if (res.status !== 200) throw new Error(`Member init failed! ${JSON.stringify(res.body)}`);
+              testId = res.body.id;
+            })
+            .end(done);
+        });
+    });
 
     it('purchase should succeed', (done) => {
       stripe.tokens.create({
@@ -247,36 +303,39 @@ describe('Other purchases', () => {
       }).then(testToken => {
         agent.post('/api/kansa/purchase/other')
           .send({
-            amount: 4200,
-            category: 'Sponsorship',
-            email: 'test@example.com',
-            name: testName,
-            token: testToken.id,
-            type: 'bench',
-            data: { sponsor: 'test' }
+            token: { id: testToken.id, email: `${testName}@example.com` },
+            items: [{
+              amount: 4200,
+              category: 'Sponsorship',
+              type: 'bench',
+              data: { sponsor: testName }
+            }]
           })
-          .expect((res) => {
-            if (res.status !== 200) throw new Error(`Purchase failed! ${JSON.stringify(res.body)}`);
-            // HERE
+          .expect(200)
+          .expect(({ body }) => {
+            if (
+              !body || body.status !== 'success' || !body.stripe_charge_id ||
+              body.email !== `${testName}@example.com`
+            ) throw new Error(
+              `Bad response! ${JSON.stringify(body)}`
+            );
           })
           .end(done);
       });
     });
 
     it('should be listed', (done) => {
-      const admin = request.agent(host, { ca: cert });
-      admin.get('/api/kansa/login')
-        .query(adminLoginParams)
-        .end(() => {
-          admin.get('/api/kansa/purchase/list')
-            .query({ email: 'test@example.com' })
-            .expect((res) => {
-              if (res.status !== 200) throw new Error(`Listing purchases failed! ${JSON.stringify(res.body)}`);
-              if (res.body.every(p => p.name !== testName)) throw new Error(`Purchase not in results! ${JSON.stringify(res.body)}`);
-            })
-            .end(done);
-        });
-
+      admin.get('/api/kansa/purchase/list')
+        .query({ email: `${testName}@example.com` })
+        .expect((res) => {
+          if (res.status !== 200) throw new Error(`Listing purchases failed! ${JSON.stringify(res.body)}`);
+          const purchase = res.body.find(p => p.data.sponsor === testName);
+          if (!purchase) throw new Error(`Purchase for "${testName}" not in results! ${JSON.stringify(res.body)}`);
+          if (!purchase.paid || !purchase.stripe_charge_id) {
+            throw new Error(`Purchase not completed! ${JSON.stringify(purchase)}`);
+          }
+        })
+        .end(done);
     });
   });
 

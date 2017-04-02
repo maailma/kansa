@@ -1,58 +1,12 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_APIKEY);
-
 const prices = require('../static/prices.json');
 const purchaseData = require('../static/purchase-data.json');
 const { InputError } = require('./errors');
-const LogEntry = require('./types/logentry');
 const Payment = require('./types/payment');
 const Person = require('./types/person');
 const { getKeyChecked } = require('./key');
 const sendEmail = require('./kyyhky-send-email');
 const { addPerson } = require('./people');
 const { upgradePerson } = require('./upgrade');
-
-// https://stripe.com/docs/api/node#create_charge-statement_descriptor
-const statement_descriptor = 'Worldcon 75 membership'; // max 22 chars
-
-function calcAmount(newMembers, upgrades) {
-  const ppa = prices.PaperPubs.amount;
-  const sumNew = newMembers.reduce((sum, m) => {
-    const ms = prices.memberships[m.data.membership];
-    if (!ms) throw new InputError(`No price found for ${JSON.stringify(m.data.membership)} membership`);
-    return sum + ms.amount + (m.data.paper_pubs ? ppa : 0);
-  }, 0);
-  const sumUpgrades = upgrades.reduce((sum, u) => {
-    if (!u.membership) return sum + (u.paper_pubs ? ppa : 0);
-    const ms0 = prices.memberships[u.prev_membership];
-    const ms1 = prices.memberships[u.membership];
-    return sum + ms1.amount - (ms0 ? ms0.amount : 0) + (u.paper_pubs ? ppa : 0);
-  }, 0);
-  return sumNew + sumUpgrades;
-}
-
-function logMessage(newMembers, upgrades) {
-  const ma = [];
-  switch (newMembers.length) {
-    case 0: break;
-    case 1: ma.push('1 new membership'); break;
-    default: ma.push(`${newMembers.length} new memberships`);
-  }
-  switch (upgrades.length) {
-    case 0: break;
-    case 1: ma.push('1 membership upgrade'); break;
-    default: ma.push(`${upgrades.length} membership upgrades`);
-  }
-  const pp = newMembers.filter(m => m.data.paper_pubs).length + upgrades.filter(u => u.paper_pubs).length;
-  if (pp) ma.push(`${pp} paper publications`);
-  return ma.join(', ');
-}
-
-function uniqueEmails(newMembers, upgrades) {
-  const emails = {};
-  newMembers.forEach(m => { emails[m.data.email] = true; });
-  upgrades.forEach(u => { emails[u.email] = true; });
-  return Object.keys(emails);
-}
 
 
 class Purchase {
@@ -78,7 +32,13 @@ class Purchase {
 
   getPurchases(req, res, next) {
     const email = req.session.user.member_admin && req.query.email || req.session.user.email;
-    this.db.any(`SELECT * FROM Payments WHERE email=$1`, email)
+    this.db.any(`
+      SELECT *
+        FROM Payments
+       WHERE payment_email=$1 OR
+             person_id IN (
+               SELECT id FROM People WHERE email=$1
+             )`, email)
       .then(data => res.status(200).json(data));
   }
 
@@ -111,7 +71,14 @@ class Purchase {
           throw new InputError('Change in at least one of membership and/or paper_pubs is required for upgrade');
         }
 
+        const prevPriceData = prices.memberships[prev.membership]
+        const membershipAmount = upgrade.membership
+          ? prices.memberships[upgrade.membership].amount - (prevPriceData && prevPriceData.amount || 0)
+          : 0;
+        const paperPubsAmount = upgrade.paper_pubs ? prices.PaperPubs.amount : 0;
+
         return Object.assign({}, upgrade, {
+          amount: membershipAmount + paperPubsAmount,
           email: prev.email,
           name: prev.name,
           paper_pubs: Person.cleanPaperPubs(upgrade.paper_pubs),
@@ -119,36 +86,6 @@ class Purchase {
         });
       });
     });
-  }
-
-  stripeCharge(req, { token, amount, email }, msg) {
-    let charge_id = null;
-    const description = `Charge of €${amount/100} by ${email} for ${msg}`;
-    const preLogEntry = new LogEntry(req, description);
-    return this.db.none(`INSERT INTO Log ${preLogEntry.sqlValues}`, preLogEntry)
-      .then(() => stripe.charges.create({
-        amount,
-        currency: 'eur',
-        description,
-        metadata: { email },
-        receipt_email: email,
-        source: token,
-        statement_descriptor
-      }))
-      .then((charge) => {
-        if (!charge.paid) throw new Error(`Charge not paid! WTF? ${JSON.stringify(charge)}`);
-        charge_id = charge.receipt_number || charge.id;
-        const postLogEntry = new LogEntry(req, `Charge ok: ${charge_id}`);
-        postLogEntry.parameters = charge;
-        return this.db.none(`INSERT INTO Log ${postLogEntry.sqlValues}`, postLogEntry);
-      })
-      .then(() => charge_id)
-      .catch(error => {
-        const errLogEntry = new LogEntry(req, `Charge failed! ${error.message}`);
-        errLogEntry.parameters = error;
-        this.db.none(`INSERT INTO Log ${errLogEntry.sqlValues}`, errLogEntry);
-        throw error;
-      });
   }
 
   makeMembershipPurchase(req, res, next) {
@@ -167,12 +104,28 @@ class Purchase {
     let charge_id, upgrades;
     this.checkUpgrades(reqUpgrades).then(_upgrades => {
       upgrades = _upgrades;
-      const ca = calcAmount(newMembers, upgrades);
-      if (amount !== ca) throw new InputError(`Amount mismatch: in request ${amount}, calculated ${ca}`);
-      const msg = logMessage(newMembers, upgrades);
-      return this.stripeCharge(req, { token, amount, email }, msg);
-    }).then(_charge_id => {
-      charge_id = _charge_id;
+      const newMemberPaymentItems = newMembers.map(p => ({
+        amount: p.priceAsNewMember,
+        currency: 'eur',
+        category: 'New membership',
+        type: p.data.membership,
+        data: p.data
+      }));
+      const upgradePaymentItems = upgrades.map(u => ({
+        amount: u.amount,
+        currency: 'eur',
+        person_id: u.id,
+        category: 'Upgrade membership',
+        type: 'upgrade',
+        data: { membership: u.membership, paper_pubs: u.paper_pubs || undefined },
+      }));
+      const items = newMemberPaymentItems.concat(upgradePaymentItems);
+      const calcAmount = items.reduce((sum, item) => sum + item.amount, 0);
+      if (amount !== calcAmount) throw new InputError(`Amount mismatch: in request ${amount}, calculated ${calcAmount}`);
+      return new Payment(this.pgp, this.db, { id: token, email }, items)
+        .process()
+    }).then(items => {
+      charge_id = items[0].stripe_charge_id;
       return Promise.all(upgrades.map(u => (
         upgradePerson(req, this.db, u)
           .then(({ member_number }) => {
@@ -206,11 +159,13 @@ class Purchase {
   }
 
   makeOtherPurchase(req, res, next) {
-    const payment = new Payment(req.body);
-    payment.validate(this.db)
-      .then(() => this.stripeCharge(req, payment, payment.type))
-      .then(charge_id => payment.insert(this.db, charge_id))
-      .then(ok => res.status(200).json(Object.assign({ status: 'success' }, ok)))
+    new Payment(this.pgp, this.db, req.body.token, req.body.items)
+      .process()
+      .then(items => res.status(200).json({
+        status: 'success',
+        email: items[0].payment_email,
+        stripe_charge_id: items[0].stripe_charge_id
+      }))
       .catch(next);
   }
 }
