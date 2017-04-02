@@ -31,13 +31,17 @@ queue.on('job failed', (id, result) => {
   console.warn('Job #%d failed:', id, result);
 });
 
-queue.process('kansa-set-key', (job, done) => {
-  mailer.sendEmail(job.type, job.data, done);
-});
-
-queue.process('hugo-update-email', (job, done) => {
-  mailer.sendEmail(job.type, job.data, done);
-});
+[
+  'hugo-update-email',
+  'kansa-add-paper-pubs',
+  'kansa-new-member',
+  'kansa-set-key',
+  'kansa-upgrade-person'
+].forEach(type => (
+  queue.process(type, (job, done) => {
+    mailer.sendEmail(job.type, job.data, done);
+  })
+));
 
 queue.process('hugo-update-nominations', (job, done) => {
   const email = job.data.email;

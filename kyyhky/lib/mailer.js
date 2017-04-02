@@ -80,6 +80,10 @@ class Mailer {
         tmplData.nominations = nominationsString(data.nominations);
         break;
 
+      case 'kansa-upgrade-person':
+        if (data.paper_pubs) tmplData.membership += ' with paper pubs';
+        break;
+
     }
     fs.readFile(this.tmplFileName(tmplName), 'utf8', (err, msgTemplate) => {
       if (err) return done(err);

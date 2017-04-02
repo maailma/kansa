@@ -157,7 +157,7 @@ describe('Membership purchases', () => {
             amount: prices.PaperPubs.amount,
             email: 'test@example.com',
             token: testToken.id,
-            upgrades: [{ id: testId, paper_pubs: { name: 'name', address: 'address', country: 'land'} }]
+            upgrades: [{ id: testId, paper_pubs: { name: 'name', address: 'multi\n-line\n-address', country: 'land'} }]
           })
           .expect((res) => {
             if (res.status !== 200) throw new Error(`Paper pubs purchase failed! ${JSON.stringify(res.body)}`);
