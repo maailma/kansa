@@ -26,7 +26,22 @@ class Mailer {
   constructor(tmplDir, tmplSuffix, sendgridApiKey) {
     this.tmplDir = tmplDir;
     this.tmplSuffix = tmplSuffix;
-    this.sendgrid = SendGrid(sendgridApiKey);
+    if (sendgridApiKey) {
+      this.sendgrid = SendGrid(sendgridApiKey);
+    } else {
+      this.sendgrid = {
+        emptyRequest: (request) => request,
+        API: ({ body: { content, from, personalizations: [recipient], subject }, method, path }, callback) => {
+          console.log('MOCK SendGrid request', method, path);
+          console.log('FROM:', JSON.stringify(from.name), `<${from.email}>`);
+          console.log('TO:', JSON.stringify(recipient.name), `<${recipient.email}>`);
+          console.log('SUBJECT:', subject);
+          console.log('--------\n', content[0] && content[0].value, '\n--------');
+          callback(null, null);
+        }
+      };
+      console.warn('Using MOCK SendGrid instance -> emails will not be sent!');
+    }
   }
 
   tmplFileName(tmplName) {
