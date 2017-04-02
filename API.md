@@ -207,7 +207,8 @@ be generated.
 ```
 {
   status: 'success',
-  id
+  id,
+  member_number
 }
 ```
 
@@ -279,6 +280,7 @@ from membership changes.
 ```
 {
   status: 'success',
+  member_number,
   updated: [ 'membership', 'member_number', 'paper_pubs' ]
 }
 ```

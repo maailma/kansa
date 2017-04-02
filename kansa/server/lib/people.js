@@ -144,16 +144,19 @@ function getPerson(req, res, next) {
 
 function addPerson(req, db, person) {
   const log = new LogEntry(req, 'Add new person');
+  let res;
   return db.tx(tx => tx.sequence((i, data) => { switch (i) {
 
     case 0:
-      return tx.one(`INSERT INTO People ${person.sqlValues} RETURNING id`, person.data);
+      return tx.one(`INSERT INTO People ${person.sqlValues} RETURNING id, member_number`, person.data);
 
     case 1:
+      res = data;
       log.subject = parseInt(data.id);
       return tx.none(`INSERT INTO Log ${log.sqlValues}`, log);
 
-  }})).then(() => log.subject);
+  }}))
+    .then(() => res);
 }
 
 function authAddPerson(req, res, next) {
@@ -167,7 +170,7 @@ function authAddPerson(req, res, next) {
     return next(err);
   }
   addPerson(req, req.app.locals.db, person)
-    .then(id => res.status(200).json({ status: 'success', id }))
+    .then(({ id, member_number }) => res.status(200).json({ status: 'success', id, member_number }))
     .catch(next);
 }
 
