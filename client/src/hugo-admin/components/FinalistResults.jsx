@@ -4,7 +4,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { AutoSizer, Column, SortDirection, Table } from 'react-virtualized'
 import 'react-virtualized/styles.css'
 
-import { nominationFields } from '../../hugo/constants'
+import { nominationFields } from '../../hugo-nominations/constants'
 import './FinalistResults.css'
 
 export default class FinalistResults extends React.Component {
@@ -101,4 +101,3 @@ export default class FinalistResults extends React.Component {
     return shallowCompare(this, nextProps, nextState)
   }
 }
-
