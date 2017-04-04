@@ -22,6 +22,9 @@ import Number4 from 'material-ui/svg-icons/image/looks-4'
 import Number5 from 'material-ui/svg-icons/image/looks-5'
 import Number6 from 'material-ui/svg-icons/image/looks-6'
 
+import { noAwardEntry } from '../constants'
+import * as VotePropTypes from '../proptypes'
+
 const SelectableList = makeSelectable(List);
 
 const fieldLabel = (field) => field.charAt(0).toUpperCase() + field.substr(1);
@@ -39,14 +42,11 @@ const getIcon = (n, entry) => {
   }
 }
 
-const noAwardEntry = Map({ 'no-award': true });
-
 export default class VoteList extends React.Component {
 
   static propTypes = {
-    fields: PropTypes.arrayOf(PropTypes.string).isRequired,
-    finalists: ImmutablePropTypes.listOf(ImmutablePropTypes.map).isRequired,
-    preference: ImmutablePropTypes.listOf(ImmutablePropTypes.map).isRequired,
+    finalists: VotePropTypes.categoryFinalists.isRequired,
+    preference: VotePropTypes.categoryVotes.isRequired,
     setPreference: PropTypes.func.isRequired
   }
 
@@ -67,34 +67,18 @@ export default class VoteList extends React.Component {
   }
 
   getPrimaryText(entry) {
-    if (noAwardEntry.equals(entry)) return 'No award';
-    return entry && entry.get(this.props.fields[0]) || <span style={{ color: 'rgba(0, 0, 0, 0.541176)' }}>[No entry]</span>;
+    return entry ? entry.get('title', '[title]') : <span style={{ color: 'rgba(0, 0, 0, 0.541176)' }}>[No entry]</span>;
   }
 
   getSecondaryText(entry) {
-    const { fields } = this.props;
-    if (!entry) return 'Tap to remove';
-    if (noAwardEntry.equals(entry)) return '';
-    switch (fields.length) {
-      case 1: return '';
-      case 2: return fieldLabel(fields[1]) + ': ' + entry.get(fields[1]);
-      default: return (
-        <div>
-          {fieldLabel(fields[1]) + ': ' + entry.get(fields[1])}
-          <br />
-          {fieldLabel(fields[2]) + ': ' + entry.get(fields[2])}
-        </div>
-      );
-    }
+    return entry ? entry.get('subtitle', '') : 'Tap to remove';
   }
 
-  listItemProps(entry) {
-    return {
-      primaryText: this.getPrimaryText(entry),
-      secondaryText: this.getSecondaryText(entry),
-      secondaryTextLines: this.props.fields.length > 2 ? 2 : 1
-    }
-  }
+  listItemProps = (entry) => ({
+    primaryText: this.getPrimaryText(entry),
+    secondaryText: this.getSecondaryText(entry),
+    secondaryTextLines: 1
+  });
 
   openPopover = (event, idx, entry) => {
     event.preventDefault();
@@ -106,31 +90,66 @@ export default class VoteList extends React.Component {
     });
   }
 
+  setPreference = (idx, fi) => {
+    let { preference } = this.props;
+    if (fi) {
+      let prevIdx;
+      do {
+        prevIdx = preference.keyOf(fi);
+        if (typeof prevIdx !== 'number') break;
+        if (prevIdx === idx) return;
+        if (prevIdx < idx) {
+          preference = preference.set(prevIdx, null);
+        } else {
+          preference = preference.delete(prevIdx)
+        }
+      } while (preference.size)
+      if (preference.get(idx)) {
+        if (preference.size >= 7) ++idx;
+        preference = preference.insert(idx, fi);
+      } else {
+        preference = preference.set(idx, fi);
+      }
+    } else {
+      preference = preference.delete(idx);
+    }
+    while (preference.size && !preference.last()) {
+      preference = preference.pop();
+    }
+    while (preference.size > 7) {
+      const emptyIdx = preference.findLastKey(e => !e);
+      if (typeof emptyIdx !== 'number') break;
+      preference = preference.delete(emptyIdx);
+    }
+    this.props.setPreference(preference);
+  }
+
   render() {
-    const { fields, finalists, preference, setPreference } = this.props;
+    const { finalists, preference } = this.props;
     const { popAnchor, popEntry, popIdx, popOpen } = this.state;
-    const npFinalists = finalists.push(noAwardEntry).filter(entry => !preference.includes(entry));
+    const pFinalists = preference.map(fi => finalists.get(fi));
+    const npFinalists = finalists.toList().filter(entry => !pFinalists.includes(entry));
 
     return (
       <List>
-        {preference.map((entry, idx) => (
+        {pFinalists.map((entry, idx) => (
           <ListItem
             key={'p'+idx}
             leftIcon={getIcon(idx, entry)}
             onTouchTap={(ev) => {
               if (entry) this.openPopover(ev, idx, entry);
-              else setPreference(idx, null);
+              else this.setPreference(idx, null);
             }}
             rightIconButton={<IconButton
               iconStyle={{ color: 'rgba(0, 0, 0, 0.541176)' }}
-              onTouchTap={() => setPreference(idx, null)}
+              onTouchTap={() => this.setPreference(idx, null)}
               tooltip="Remove this entry"
             ><ContentClear /></IconButton>}
             { ...this.listItemProps(entry) }
           />
         ))}
 
-        {preference.size && npFinalists.size ? <Divider /> : null}
+        {pFinalists.size && npFinalists.size ? <Divider /> : null}
 
         {npFinalists.map((entry, idx) => (
           <ListItem
@@ -150,7 +169,8 @@ export default class VoteList extends React.Component {
         >
           <SelectableList
             onChange={(ev, idx) => {
-              if (idx >= 0) setPreference(idx, popEntry);
+              if (idx < 0) this.setPreference(popIdx, null);
+              else this.setPreference(idx, popEntry.get('id'));
               this.setState({ popOpen: false });
             }}
             style={{ padding: 0 }}

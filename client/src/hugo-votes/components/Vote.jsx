@@ -1,5 +1,5 @@
 import { Map } from 'immutable'
-import React from 'react'
+import React, { PropTypes } from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 import { connect } from 'react-redux'
 
@@ -8,57 +8,46 @@ import Snackbar from 'material-ui/Snackbar'
 
 import { setScene } from '../../app/actions/app'
 import { categoryInfo } from '../../hugo-nominations/constants'
+import { getFinalists, setVoter } from '../actions'
+import * as VotePropTypes from '../proptypes'
 
 import VoteCategory from './VoteCategory'
 import VoteIntro from './VoteIntro'
 import VoteSignature from './VoteSignature'
-//import './Nominate.css'
-
-/*
-const Messages = connect(
-  ({ nominations }) => {
-    const [ category, data ] = nominations.findEntry(data => data.get('error'), null, []);
-    return {
-      category,
-      error: data ? data.get('error') : ''
-    }
-  }, {
-    clearNominationError
-  }
-)(({ category, error, clearNominationError }) => <Snackbar
-  open={ !!category }
-  message={ category ? `${category}: ${error}` : '' }
-  onRequestClose={ () => clearNominationError(category) }
-/>);
-*/
 
 class Vote extends React.Component {
 
   static propTypes = {
-    id: React.PropTypes.number.isRequired,
+    getFinalists: PropTypes.func.isRequired,
     person: ImmutablePropTypes.map,
-    setScene: React.PropTypes.func.isRequired
+    setScene: PropTypes.func.isRequired,
+    setVoter: PropTypes.func.isRequired,
+    signature: PropTypes.string,
+    voterId: PropTypes.number
   }
 
-  state = {
-    signature: ''
-  };
-
   componentDidMount() {
-    this.props.setScene({ title: 'Hugo Votes', dockSidebar: false });
+    const { getFinalists, setScene } = this.props;
+    getFinalists();
+    setScene({ title: 'Hugo Votes', dockSidebar: false });
+    this.componentWillReceiveProps(this.props);
+  }
+
+  componentWillReceiveProps({ person, setVoter, voterId }) {
+    const personId = person && person.get('id') || null;
+    if (personId !== voterId) setVoter(personId, null);
   }
 
   render() {
-    const { id, person } = this.props;
-    const { signature } = this.state;
+    const { person, setVoter, signature } = this.props;
     const active = person.get('can_hugo_vote');
-    if (!id || !person) return <div>Voter not found!</div>;
+    if (!person) return <div>Voter not found!</div>;
     return (
       <div>
         <VoteIntro active={active} name={this.name} />
         <VoteSignature
           signature={signature}
-          setSignature={signature => this.setState({ signature })}
+          setSignature={signature => setVoter(person.get('id'), signature)}
         />
         {signature ? (
           <Row>
@@ -68,12 +57,7 @@ class Vote extends React.Component {
               lg={8} lgOffset={2}
             >
               {Object.keys(categoryInfo).map(category => (
-                <VoteCategory
-                  active={active}
-                  category={category}
-                  key={category}
-                  signature={signature}
-                />
+                <VoteCategory category={category} key={category} />
               ))}
             </Col>
           </Row>
@@ -93,14 +77,17 @@ class Vote extends React.Component {
 }
 
 export default connect(
-  ({ app, user }, { params }) => {
+  ({ hugoVotes, user }, { params }) => {
     const id = params && Number(params.id);
     const people = user.get('people');
     return {
-      id: app.get('person'),
-      person: people && people.find(p => p.get('id') === id)
+      person: id && people && people.find(p => p.get('id') === id),
+      signature: hugoVotes.get('signature'),
+      voterId: hugoVotes.get('id')
     }
   }, {
-    setScene
+    getFinalists,
+    setScene,
+    setVoter
   }
 )(Vote);

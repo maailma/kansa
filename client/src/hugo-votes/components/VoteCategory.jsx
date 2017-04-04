@@ -1,8 +1,6 @@
-import { fromJS, List, Map } from 'immutable'
-import React from 'react'
-import ImmutablePropTypes from 'react-immutable-proptypes'
+import { List as ImmutableList, Map as ImmutableMap } from 'immutable'
+import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
 
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import RaisedButton from 'material-ui/RaisedButton'
@@ -12,6 +10,9 @@ const { Col, Row } = require('react-flexbox-grid');
 
 import time_diff from '../../lib/time_diff'
 import { categoryInfo, nominationFields } from '../../hugo-nominations/constants'
+import { setVotes } from '../actions'
+import { categories } from '../constants'
+import * as VotePropTypes from '../proptypes'
 
 import VoteList from './VoteList'
 
@@ -24,76 +25,16 @@ const demoFinalists = (category) => {
     }, {}));
 }
 
-/*
-class VoteStatusRow extends React.Component {
-  static propTypes = {
-    saveTime: React.PropTypes.instanceOf(Date)
-  }
-
-  shouldComponentUpdate(nextProps) {
-    return nextProps.saveTime !== this.props.saveTime;
-  }
-
-  render() {
-    const { saveTime } = this.props;
-    return <Row
-      middle='xs'
-      style={{ paddingTop: 20 }}
-    >
-      <Col xs>
-        { saveTime ? <span
-          style={{ color: 'rgba(0, 0, 0, 0.3)' }}
-          title={saveTime}
-        >{ 'Last saved ' + time_diff(saveTime) }</span> : null }
-      </Col>
-    </Row>;
-  }
-}
-*/
-
 class VoteCategory extends React.Component {
-
-  state = {
-    preference: List()
-  }
-
-  setPreference = (idx, entry) => {
-    let { preference } = this.state;
-    if (entry) {
-      let prevIdx;
-      do {
-        prevIdx = preference.findKey(e => entry.equals(e));
-        if (typeof prevIdx !== 'number') break;
-        if (prevIdx === idx) return;
-        if (prevIdx < idx) {
-          preference = preference.set(prevIdx, null);
-        } else {
-          preference = preference.delete(prevIdx)
-        }
-      } while (preference.size)
-      if (preference.get(idx)) {
-        if (preference.size >= 7) ++idx;
-        preference = preference.insert(idx, entry);
-      } else {
-        preference = preference.set(idx, entry);
-      }
-    } else {
-      preference = preference.delete(idx);
-    }
-    while (preference.size && !preference.last()) {
-      preference = preference.pop();
-    }
-    while (preference.size > 7) {
-      const emptyIdx = preference.findLastKey(e => !e);
-      if (typeof emptyIdx !== 'number') break;
-      preference = preference.delete(emptyIdx);
-    }
-    this.setState({ preference });
+  static propTypes = {
+    category: PropTypes.oneOf(categories),
+    finalists: VotePropTypes.categoryFinalists,
+    preference: VotePropTypes.categoryVotes,
+    setVotes: PropTypes.func.isRequired
   }
 
   render() {
-    const { category } = this.props;
-    const { preference } = this.state;
+    const { category, finalists, preference, setVotes } = this.props;
     const { title, description } = categoryInfo[category];
 
     return <Card className='NominationCategory'>
@@ -112,26 +53,24 @@ class VoteCategory extends React.Component {
       </CardText>
       <CardText>
         <VoteList
-          fields={nominationFields(category)}
-          finalists={fromJS(demoFinalists(category))}
+          finalists={finalists}
           preference={preference}
-          setPreference={this.setPreference}
+          setPreference={(preference) => {
+            setVotes(ImmutableMap([[category, preference]]));
+          }}
         />
       </CardText>
     </Card>
   }
 }
 
-export default VoteCategory;
-
-/*
 export default connect(
-  (state, { category }) => ({
-    state: state.nominations.get(category)
-  }), (dispatch, { category, signature }) => bindActionCreators({
-    onChange: (idx, values) => editNomination(category, idx, values),
-    onSave: () => submitNominations(category, signature),
-    onReset: () => resetNominations(category)
-  }, dispatch)
+  ({ hugoVotes }, { category }) => ({
+    finalists: hugoVotes.getIn(['finalists', category]) || ImmutableMap(),
+    preference: hugoVotes.getIn(['clientVotes',category]) ||
+      hugoVotes.getIn(['serverVotes', category]) ||
+      ImmutableList(),
+  }), {
+    setVotes
+  }
 )(VoteCategory);
-*/
