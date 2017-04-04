@@ -22,6 +22,19 @@ function nominationsString(data) {
   }).join('\n\n');
 }
 
+function votesString(data) {
+  return data
+    .map(({ category, finalists }) => ({
+      title: category.charAt(0) + category.slice(1).replace(/[A-Z]/g, ' $&'),
+      votes: finalists && finalists.filter(finalist => finalist).map((finalist, i) => {
+        return `  ${i+1}. ` + wrap(68)(finalist).replace(/\n/g, '\n     ');
+      })
+    }))
+    .filter(({ votes }) => votes && votes.length > 0)
+    .map(({ title, votes }) => `${title}:\n${votes.join('\n')}`)
+    .join('\n\n');
+}
+
 class Mailer {
   constructor(tmplDir, tmplSuffix, sendgridApiKey) {
     this.tmplDir = tmplDir;
@@ -78,6 +91,10 @@ class Mailer {
 
       case 'hugo-update-nominations':
         tmplData.nominations = nominationsString(data.nominations);
+        break;
+
+      case 'hugo-update-votes':
+        tmplData.votes = votesString(data.votes);
         break;
 
       case 'kansa-upgrade-person':

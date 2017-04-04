@@ -43,16 +43,21 @@ queue.on('job failed', (id, result) => {
   })
 ));
 
-queue.process('hugo-update-nominations', (job, done) => {
-  const email = job.data.email;
-  search.query(email).end((err, ids) => {
-    if (err) return done(err);
-    const later = ids.filter(id => id > job.id);  // TODO: verify that this is valid
-    if (later.length > 0) {
-      done();
-    } else {
-      mailer.sendEmail(job.type, job.data, done);
-    }
+[
+  'hugo-update-nominations',
+  'hugo-update-votes'
+].forEach(type => {
+  queue.process(type, (job, done) => {
+    const email = job.data.email;
+    search.query(email).end((err, ids) => {
+      if (err) return done(err);
+      const later = ids.filter(id => id > job.id);  // TODO: verify that this is valid
+      if (later.length > 0) {
+        done();
+      } else {
+        mailer.sendEmail(job.type, job.data, done);
+      }
+    });
   });
 });
 
