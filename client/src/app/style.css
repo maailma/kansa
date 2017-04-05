@@ -5,12 +5,13 @@
 body {
   margin: 0;
   font-family: 'Open Sans', sans-serif;
-  background: #f1f7f7;
+  background: url(../img/bg-aurora.jpg) center top / cover no-repeat fixed #005f96;
   -webkit-font-smoothing: antialiased;
 }
 
 main {
   padding: 24px;
+  background: url(../img/ursa.png) right bottom / 25% no-repeat content-box;
 }
 
 h1, h2, h3 {

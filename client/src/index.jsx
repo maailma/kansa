@@ -29,11 +29,9 @@ import HugoAdmin from './hugo-admin/components/HugoAdmin'
 import ExhibitRegistration from './raami/components/Registration'
 import middleware from './middleware'
 import reducers from './reducers'
+import { theme } from './theme'
 
 import './app/style.css'
-const theme = getMuiTheme({
-  fontFamily: '"Open Sans", sans-serif'
-});
 
 const history = ENV === 'production' ? browserHistory : hashHistory;
 const store = createStore(reducers, middleware(history));
