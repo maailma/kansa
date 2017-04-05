@@ -1,3 +1,4 @@
+const { AuthError, InputError, isNoDataError } = require('./errors');
 const Admin = require('./types/admin');
 const LogEntry = require('./types/logentry');
 const util = require('./util');
@@ -23,37 +24,22 @@ function verifyPeopleAccess(req, res, next) {
 }
 
 function login(req, res, next) {
-  const db = req.app.locals.db;
   const email = req.body && req.body.email || req.query.email || null;
   const key = req.body && req.body.key || req.query.key || null;
-  if (!email || !key) return res.status(400).json({
-    status: 'error',
-    message: 'Email and key are required for login'
+  if (!email || !key) return next(new InputError('Email and key are required for login'));
+  const db = req.app.locals.db;
+  db.one(`
+    SELECT ${Admin.sqlRoles}
+      FROM kansa.Keys LEFT JOIN admin.Admins USING (email)
+     WHERE email=$(email) AND key=$(key)`, { email, key }
+  ).then(roles => {
+    req.session.user = Object.assign({ email }, roles);
+    res.status(200).json({ status: 'success', email });
+    const log = new LogEntry(req, 'Login');
+    db.none(`INSERT INTO Log ${log.sqlValues}`, log);
+  }).catch(error => {
+    next(isNoDataError(error) ? new AuthError('Email and key don\'t match') : error);
   });
-  db.task(t => t.batch([
-    t.one('SELECT COUNT(*) FROM Keys WHERE email=$(email) AND key=$(key)', { email, key }),
-    t.oneOrNone(`SELECT ${Admin.sqlRoles} FROM admin.Admins WHERE email=$1`, email)
-  ]))
-    .then(data => {
-      if (data[0].count > 0) {
-        req.session.user = {
-          email,
-          member_admin: !!(data[1] && data[1].member_admin),
-          hugo_admin: !!(data[1] && data[1].hugo_admin),
-          admin_admin: !!(data[1] && data[1].admin_admin),
-          raami_admin: !!(data[1] && data[1].raami_admin)
-        };
-        res.status(200).json({ status: 'success', email });
-        const log = new LogEntry(req, 'Login');
-        db.none(`INSERT INTO Log ${log.sqlValues}`, log);
-      } else {
-        res.status(401).json({
-          status: 'unauthorized',
-          message: 'Email and key don\'t match'
-        });
-      }
-    })
-    .catch(err => next(err));
 }
 
 function logout(req, res, next) {

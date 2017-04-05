@@ -4,12 +4,13 @@ class Admin {
       'email',  // text PRIMARY KEY
       'member_admin',  // bool NOT NULL DEFAULT false
       'hugo_admin',  // bool NOT NULL DEFAULT false
-      'admin_admin'  // bool NOT NULL DEFAULT false
+      'admin_admin',  // bool NOT NULL DEFAULT false
+      'raami_admin'  // bool NOT NULL DEFAULT false
     ];
   }
 
   static get roleFields() {
-    return [ 'member_admin', 'hugo_admin', 'admin_admin' ];
+    return [ 'member_admin', 'hugo_admin', 'admin_admin', 'raami_admin' ];
   }
 
   static get sqlRoles() {
@@ -27,8 +28,8 @@ class Admin {
     this.member_admin = false;
     this.hugo_admin = false;
     this.admin_admin = false;
+    this.raami_admin = false;
   }
 }
 
 module.exports = Admin;
-
