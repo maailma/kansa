@@ -133,7 +133,7 @@ function exportArtists(req, res, next) {
     req.app.locals.db.any(`
     SELECT p.member_number, p.membership, p.legal_name, p.email, p.city, p.country,
         a.name, a.continent, a.url,
-        a.category, a.description, a.transport, a.auction, a.print, a.digital, a.halfs,
+        a.category, a.description, a.transport, a.auction, a.print, a.digital, a.half,
         a.legal, a.agent, a.contact, a.waitlist, a.postage 
         FROM Artist as a, kansa.people as p WHERE a.people_id = p.ID order by p.member_number
     `)
