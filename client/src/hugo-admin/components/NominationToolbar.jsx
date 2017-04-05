@@ -13,7 +13,7 @@ import Popover from 'material-ui/Popover'
 import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
 
-import { categoryInfo } from '../../hugo/constants';
+import { categoryInfo } from '../../hugo-nominations/constants';
 import { setShowBallotCounts } from '../actions'
 import { HUGO_ADMIN_ROUTE_ROOT, categoryGroups } from '../constants';
 import CategoryInfo from './CategoryInfo'

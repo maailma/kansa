@@ -8,7 +8,7 @@ import ContentClear from 'material-ui/svg-icons/content/clear'
 import DisqualifyChecked from 'material-ui/svg-icons/navigation/cancel'
 import DisqualifyUnchecked from 'material-ui/svg-icons/toggle/radio-button-unchecked'
 
-import { nominationFields } from '../../hugo/constants'
+import { nominationFields } from '../../hugo-nominations/constants'
 import { classify, fetchAllBallots, updateCanonEntry } from '../actions'
 import { countRawBallots } from '../nomination-count';
 import './NominationDetails.css'

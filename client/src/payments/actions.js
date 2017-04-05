@@ -7,6 +7,15 @@ export const buyMembership = (member, amount, token, callback) => ({
   token
 });
 
+// items: [{ category, comments, data, email, invoice, name, person_id, type }]
+export const buyOther = (token, items, callback) => ({
+  module: 'kansa',
+  type: 'BUY_OTHER',
+  callback,
+  items,
+  token
+});
+
 export const buyUpgrade = (id, membership, paper_pubs, amount, token, callback) => ({
   module: 'kansa',
   type: 'BUY_UPGRADE',
@@ -23,17 +32,12 @@ export const getPrices = () => ({
   type: 'GET_PRICES'
 });
 
-export const memberSet = ({ email, people, roles }) => ({
+export const getPurchaseData = () => ({
   module: 'kansa',
-  type: 'MEMBER_SET',
-  email,
-  people,
-  roles
+  type: 'GET_PURCHASE_DATA'
 });
 
-export const memberUpdate = (id, changes) => ({
+export const getPurchaseList = () => ({
   module: 'kansa',
-  type: 'MEMBER_UPDATE',
-  id,
-  changes
+  type: 'GET_PURCHASE_LIST'
 });

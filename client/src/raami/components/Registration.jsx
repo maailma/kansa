@@ -38,6 +38,7 @@ class Registration extends React.Component {
       contact:'',
       waitlist: false,
       postage: 0,
+      half: 0,
       open: false,
       Works: [{ id: null }]
     };

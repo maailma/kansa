@@ -1,7 +1,7 @@
 import React from 'react'
 import { Card, CardHeader, CardActions } from 'material-ui/Card'
 import { List, ListItem } from 'material-ui/List'
-import EuroSymbol from 'material-ui/svg-icons/action/euro-symbol'
+import ThumbUp from 'material-ui/svg-icons/action/thumb-up'
 import ContentCreate from 'material-ui/svg-icons/content/create'
 import Palette from 'material-ui/svg-icons/image/palette'
 const ImmutablePropTypes = require('react-immutable-proptypes');
@@ -9,7 +9,6 @@ const ImmutablePropTypes = require('react-immutable-proptypes');
 import Rocket from '../../lib/rocket-icon'
 import { isFullMemberType } from '../constants'
 import MemberEdit from './MemberEdit'
-import Upgrade from './Upgrade'
 
 const location = (member) => (
   [member.get('city'), member.get('state'), member.get('country')]
@@ -31,7 +30,7 @@ const Member = ({ member, push, showHugoActions }) => {
   const membership = member.get('membership', 'NonMember');
   const infoStyle = { color: 'rgba(0, 0, 0, 0.870588)' };
 
-  return <Card style={{ marginBottom: 24 }}>
+  return <Card style={{ marginBottom: 18 }}>
     <CardHeader
       title={ member.get('legal_name') }
       style={{ fontWeight: 600 }}
@@ -53,15 +52,20 @@ const Member = ({ member, push, showHugoActions }) => {
             secondaryTextLines={2}
           />
         </MemberEdit>
-        <Upgrade member={member}>
-          <ListItem
+        <ListItem
+          innerDivStyle={{ paddingLeft: 60 }}
+          leftIcon={<ThumbUp style={{ top: 12 }}/>}
+          onTouchTap={() => push(`/upgrade/${id}`)}
+          primaryText="Upgrade membership"
+          secondaryText="and/or add paper publications"
+        />
+        { showHugoActions && member.get('can_hugo_vote') ? <ListItem
             innerDivStyle={{ paddingLeft: 60 }}
-            leftIcon={<EuroSymbol style={{ top: 12 }}/>}
-            primaryText="Upgrade membership"
-            secondaryText="and/or add paper publications"
-          />
-        </Upgrade>
-        { showHugoActions ? <ListItem
+            leftIcon={<Rocket />}
+            onTouchTap={() => push(`/hugo/${id}/vote`)}
+            primaryText="Vote for the Hugo Awards"
+          /> : null }
+        { showHugoActions && member.get('can_hugo_nominate') ? <ListItem
             innerDivStyle={{ paddingLeft: 60 }}
             leftIcon={<Rocket />}
             onTouchTap={() => push(`/hugo/${id}/nominate`)}

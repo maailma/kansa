@@ -6,7 +6,7 @@ import { AutoSizer, Column, SortDirection, Table } from 'react-virtualized'
 import 'react-virtualized/styles.css'
 import More from 'material-ui/svg-icons/navigation/more-horiz'
 
-import { nominationFields } from '../../hugo/constants'
+import { nominationFields } from '../../hugo-nominations/constants'
 import { setShowBallotCounts } from '../actions'
 import { countRawBallots } from '../nomination-count'
 import './CanonNominationList.css'

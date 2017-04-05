@@ -13,42 +13,6 @@ export default ({ dispatch }) => (next) => (action) => {
 
   if (!action.error) switch (action.type) {
 
-    case 'BUY_MEMBERSHIP': {
-      const { amount, callback, member, token } = action;
-      api.POST('kansa/purchase', {
-        amount,
-        email: token.email,
-        token: token.id,
-        new_members: [member]
-      })
-        .then(() => api.GET('kansa/user'))
-        .then(user => dispatch(memberSet(user)))
-        .then(() => callback && callback())
-        .catch(handleError);
-    } return;
-
-    case 'BUY_UPGRADE': {
-      const { amount, callback, id, membership, paper_pubs, token } = action;
-      api.POST('kansa/purchase', {
-        amount,
-        email: token.email,
-        token: token.id,
-        upgrades: [{ id, membership, paper_pubs }]
-      })
-        .then(() => api.GET('kansa/user'))
-        .then(user => dispatch(memberSet(user)))
-        .then(() => callback && callback())
-        .catch(handleError);
-    } return;
-
-    case 'GET_PRICES': {
-      api.GET('kansa/purchase/prices')
-        .then(prices => {
-          next({ ...action, prices });
-        })
-        .catch(handleError);
-    } return;
-
     case 'KEY_REQUEST': {
       const { email } = action;
       if (!email) return next({ ...action, error: 'Email missing for key request' });
@@ -92,6 +56,13 @@ export default ({ dispatch }) => (next) => (action) => {
           next(action);
           dispatch(push('/'));
         })
+        .catch(handleError);
+    } return;
+
+    case 'MEMBER_LOOKUP': {
+      const { query } = action;
+      api.POST(`kansa/people/lookup`, query.toJS())
+        .then((results) => next({ ...action, results }))
         .catch(handleError);
     } return;
 

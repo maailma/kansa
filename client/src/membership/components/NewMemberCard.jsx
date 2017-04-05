@@ -1,45 +1,8 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 const ImmutablePropTypes = require('react-immutable-proptypes');
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
-import Divider from 'material-ui/Divider';
-import { List, ListItem } from 'material-ui/List'
-import EventSeat from 'material-ui/svg-icons/action/event-seat'
-import DirectionsRun from 'material-ui/svg-icons/maps/directions-run'
-import DirectionsWalk from 'material-ui/svg-icons/maps/directions-walk'
-import StarTicket from 'material-ui/svg-icons/maps/local-play'
-import ChildFriendly from 'material-ui/svg-icons/places/child-friendly'
-import SmilingFace from 'material-ui/svg-icons/social/mood'
 
-const membershipData = {
-  FirstWorldcon: {
-    primary: 'First Worldcon membership',
-    secondary: 'Have never been a Worldcon member',
-    icon: <StarTicket/>
-  },
-  Youth: {
-    primary: 'Youth membership',
-    secondary: 'Born on or after 10 August 1991',
-    icon: <DirectionsRun/>
-  },
-  Adult: {
-    primary: 'Adult membership',
-    icon: <DirectionsWalk/>
-  },
-  Child: {
-    primary: 'Child membership',
-    secondary: 'Born on or after 10 August 2001',
-    icon: <SmilingFace/>
-  },
-  KidInTow: {
-    primary: 'Kid-in-tow membership',
-    secondary: 'Born on or after 10 August 2011',
-    icon: <ChildFriendly/>
-  },
-  Supporter: {
-    primary: 'Supporting membership',
-    icon: <EventSeat/>
-  }
-};
+import MemberTypeList from './MemberTypeList'
 
 const contents = {
   all: {
@@ -59,11 +22,9 @@ const contents = {
         convention.
       </p><p>
         Participants of the 2017 Worldcon Site Selection have been automatically
-        granted supporting membership. Supporting memberships may be upgraded to
-        attending memberships.
+        granted supporting membership.
       </p>
     </div>,
-    expandable: true,
     memberships: [
       'FirstWorldcon', 'Youth', 'Adult', '_divider',
       'Child', 'KidInTow', '_divider',
@@ -84,8 +45,7 @@ const contents = {
       </p><p>
         All attending memberships carry the same rights as supporting
         memberships, in addition to the right of general admission to the
-        convention. Supporting members may upgrade their membership for the
-        current difference in the membership costs.
+        convention.
       </p>
     </div>,
     memberships: ['FirstWorldcon', 'Youth', 'Adult']
@@ -116,11 +76,24 @@ const contents = {
       </p>
     </div>,
     memberships: [ 'Supporter' ]
+  },
+
+  upgrade: {
+    title: 'Upgrade membership',
+    body: <div>
+      <p>
+        <b>Supporting</b> and other memberships may be upgraded to attending
+        memberships for the current difference in membership costs. To upgrade
+        your own or someone else's membership, you'll need to be logged in to
+        our services.
+      </p>
+    </div>,
+    memberships: [ 'Upgrade' ]
   }
 };
 
-const NewMemberCard = ({ category, prices, push }) => {
-  const { title, body, expandable = false, memberships } = contents[category];
+const NewMemberCard = ({ category, disabled = false, expandable = false, onSelectType, prices }) => {
+  const { title, body, memberships } = contents[category];
   return <Card
     style={{ marginBottom: 24 }}
   >
@@ -137,34 +110,21 @@ const NewMemberCard = ({ category, prices, push }) => {
       { body }
     </CardText>
     <CardActions style={{ marginLeft: 8, paddingTop: 0 }}>
-      <List style={{ paddingTop: 0 }}>
-        { memberships.map((type, i) => {
-          if (type === '_divider') return <Divider
-            key={`div${i}`}
-            style={{ marginTop: 8, marginBottom: 8, marginLeft: 60 }}
-          />;
-          const { primary, secondary, icon } = membershipData[type];
-          const amount = prices && prices.getIn(['memberships', type, 'amount']);
-          const suffix = amount > 0 ? ` (€${amount / 100})`
-            : amount === 0 ? ' (free)' : '';
-          return <ListItem
-            key={type}
-            innerDivStyle={{ paddingLeft: 60 }}
-            leftIcon={icon}
-            onTouchTap={ () => push(`/new/${type}`) }
-            primaryText={primary + suffix}
-            secondaryText={secondary}
-          />
-        })}
-      </List>
+      <MemberTypeList
+        disabled={disabled}
+        memberTypes={memberships}
+        onSelectType={onSelectType}
+        prices={prices}
+        style={{ paddingTop: 0 }}
+      />
     </CardActions>
   </Card>;
 }
 
 NewMemberCard.propTypes = {
-  category: React.PropTypes.string.isRequired,
+  category: PropTypes.oneOf(Object.keys(contents)).isRequired,
+  onSelectType: PropTypes.func.isRequired,
   prices: ImmutablePropTypes.map,
-  push: React.PropTypes.func.isRequired,
 }
 
 export default NewMemberCard;

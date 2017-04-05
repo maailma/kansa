@@ -5,7 +5,7 @@ const { Col, Row } = require('react-flexbox-grid');
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
 import { setScene } from '../../app/actions/app'
-import { getPrices } from '../actions'
+import { getPrices } from '../../payments/actions'
 import NewMemberCard from './NewMemberCard'
 
 class NewMemberIndex extends React.Component {
@@ -26,6 +26,8 @@ class NewMemberIndex extends React.Component {
     this.props.setScene({ title: 'New Membership', dockSidebar: false });
   }
 
+  onSelectType = (type) => this.props.push(`/new/${type}`);
+
   render() {
     const { prices, push } = this.props;
     return <Row>
@@ -36,7 +38,8 @@ class NewMemberIndex extends React.Component {
         lg={4} lgOffset={2}
         style={{ paddingLeft: '0.75rem', paddingRight: '0.75rem' }}
       >
-        <NewMemberCard category="attend" prices={prices} push={push}/>
+        <NewMemberCard category="attend" onSelectType={this.onSelectType} prices={prices}/>
+        <NewMemberCard category="upgrade" onSelectType={() => push('/upgrade')} />
       </Col>
       <Col
         xs={12}
@@ -45,8 +48,8 @@ class NewMemberIndex extends React.Component {
         lg={4}
         style={{ paddingLeft: '0.75rem', paddingRight: '0.75rem' }}
       >
-        <NewMemberCard category="child" prices={prices} push={push}/>
-        <NewMemberCard category="support" prices={prices} push={push}/>
+        <NewMemberCard category="child" onSelectType={this.onSelectType} prices={prices}/>
+        <NewMemberCard category="support" onSelectType={this.onSelectType} prices={prices}/>
       </Col>
     </Row>;
   }

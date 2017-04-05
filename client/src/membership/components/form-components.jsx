@@ -1,12 +1,7 @@
-import { Map } from 'immutable'
 import React from 'react'
-import Checkbox from 'material-ui/Checkbox';
-import Divider from 'material-ui/Divider';
 import MenuItem from 'material-ui/MenuItem';
-import Paper from 'material-ui/Paper';
 import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
-import ContentMail from 'material-ui/svg-icons/content/mail'
 
 import { emptyPaperPubsMap, membershipTypes} from '../constants'
 
@@ -32,6 +27,7 @@ export const TextInput = ({ getDefaultValue, getValue, inputRef, label, onChange
     underlineStyle={ulStyle}
     underlineFocusStyle={ulStyle}
     value={value}
+    errorStyle={{ color: 'rgba(0, 0, 0, 0.5)' }}
     errorText={ !required || value ? '' : 'Required' }
     onChange={ ev => onChange(path, ev.target.value) }
     ref={ inputRef || (() => {}) }
@@ -73,70 +69,3 @@ export const MembershipSelect = ({ getDefaultValue, getValue, onChange, prices, 
     }) }
   </SelectField>;
 }
-
-export const PaperPubsCheckbox = ({ getDefaultValue, getValue, newMember, onChange, prices, style, tabIndex }) => {
-  const path = ['paper_pubs'];
-  const eurAmount = prices ? prices.getIn(['PaperPubs', 'amount'], 0) / 100 : -1;
-  return <Checkbox
-    checkedIcon={<ContentMail />}
-    style={style}
-    label={`Add paper publications (€${eurAmount})`}
-    checked={!!getValue(path)}
-    disabled={!newMember && !!getDefaultValue(path)}
-    onCheck={ (ev, checked) => onChange(path, checked ? emptyPaperPubsMap : null) }
-    tabIndex={tabIndex}
-  />;
-}
-
-const AddressField = ({ field, hintText, multiLine=false, onChange, tabIndex, value }) => {
-  return <TextField
-    fullWidth={true}
-    hintStyle={multiLine ? { bottom: 36 } : null}
-    hintText={hintText}
-    multiLine={multiLine}
-    required={true}
-    rows={multiLine ? 2 : 1}
-    style={{ marginLeft: 16 }}
-    tabIndex={tabIndex}
-    underlineShow={false}
-    value={value}
-    onChange={ ev => onChange(['paper_pubs', field], ev.target.value) }
-  />;
-}
-
-export const PaperPubsFields = ({ getDefaultValue, getValue, onChange, tabIndex }) => {
-  const pp = getValue(['paper_pubs']);
-  if (!Map.isMap(pp)) return null;
-  const changed = !pp.equals(getDefaultValue(['paper_pubs']));
-  const errorStyle = { outline: '1px solid red', outlineOffset: -1 };
-  return <Paper
-    style={ pp.some(v => !v) ? errorStyle : null }
-    zDepth={1}
-  >
-    <AddressField
-      field="name"
-      hintText="Paper pubs name"
-      onChange={onChange}
-      tabIndex={tabIndex}
-      value={pp.get('name')}
-    />
-    <Divider />
-    <AddressField
-      field="address"
-      hintText="Paper pubs address"
-      multiLine={true}
-      onChange={onChange}
-      tabIndex={tabIndex}
-      value={pp.get('address')}
-    />
-    <Divider />
-    <AddressField
-      field="country"
-      hintText="Paper pubs country"
-      onChange={onChange}
-      tabIndex={tabIndex}
-      value={pp.get('country')}
-    />
-  </Paper>;
-}
-PaperPubsFields.propTypes = TextInput.propTypes;

@@ -16,7 +16,7 @@
 
 import { List, Map, Seq } from 'immutable'
 
-import { maxNominationsPerCategory } from '../hugo/constants';
+import { maxNominationsPerCategory } from '../hugo-nominations/constants';
 
 
 /**
