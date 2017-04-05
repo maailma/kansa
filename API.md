@@ -26,10 +26,12 @@ some relevant data and/or a `message` field.
   * [`GET /api/kansa/people/:id/log`](#get-apikansapeopleidlog)
   * [`POST /api/kansa/people/:id`](#post-apikansapeopleid)
   * [`POST /api/kansa/people/:id/upgrade`](#post-apikansapeopleidupgrade)
+  * [`POST /api/kansa/people/lookup`](#post-apikansapeoplelookup)
   * [WebSocket: `wss://server/api/kansa/people/updates`](#websocket-wssserverapikansapeopleupdates)
 * [Purchases](#purchases)
   * [`POST /api/kansa/purchase`](#post-apikansapurchase)
   * [`GET /api/kansa/purchase/data`](#get-apikansapurchasedata)
+  * [`GET /api/kansa/purchase/list`](#get-apikansapurchaselist)
   * [`POST /api/kansa/purchase/other`](#post-apikansapurchaseother)
   * [`GET /api/kansa/purchase/prices`](#get-apikansapurchaseprices)
 * [Hugo Nominations](#hugo-nominations)
@@ -41,10 +43,9 @@ some relevant data and/or a `message` field.
   * [`GET /api/hugo/admin/canon`](#get-apihugoadmincanon)
   * [`POST /api/hugo/admin/canon/:id`](#post-apihugoadmincanonid)
   * [WebSocket: `wss://server/api/hugo/admin/canon-updates`](#websocket-wssserverapihugoadmincanonupdates)
-* [Raami exhibitions](#raami)
   * [`POST /api/hugo/admin/classify`](#post-apihugoadminclassify)
   * [`GET /api/hugo/admin/nominations`](#get-apihugoadminnominations)
-  * [WebSocket: `wss://server/api/hugo/admin/canon-updates`](#websocket-wssserverapihugoadmincanon-updates)
+* [Raami exhibitions](#raami)
 
 ----
 
@@ -74,9 +75,9 @@ returns results as csv rather than json format.
 #### Response
 ```
 {
-	Finland: { Adult: 13, …, total: 26 },
-	…,
-	'': { Adult: 131, …, total: 262 }
+  Finland: { Adult: 13, …, total: 26 },
+  …,
+  '': { Adult: 131, …, total: 262 }
 }
 ```
 
@@ -112,8 +113,8 @@ If the pair `key`, `email` matches known values, create a new session object
 Set-Cookie: w75=sessionId
 
 {
-	status: 'success',
-	email
+  status: 'success',
+  email
 }
 ```
 
@@ -131,10 +132,10 @@ re-requested.
 #### Response
 ```
 {
-	status: 'success',
-	email,
-	opt: undefined | 'all' | 'reset',
-	sessions: undefined | #
+  status: 'success',
+  email,
+  opt: undefined | 'all' | 'reset',
+  sessions: undefined | #
 }
 ```
 
@@ -152,9 +153,9 @@ memberships matching the given email address, and the roles (e.g.
 #### Response
 ```
 {
-	email,
+  email,
   people: [ { id, membership, legal_name, … }, … ],
-	roles: [ … ]
+  roles: [ … ]
 }
 ```
 
@@ -169,7 +170,7 @@ log entries with `author` set to the given email address.
 #### Response
 ```
 {
-	email,
+  email,
   log: [ … ]
 }
 ```
@@ -211,8 +212,9 @@ be generated.
 #### Response
 ```
 {
-	status: 'success',
-	id
+  status: 'success',
+  id,
+  member_number
 }
 ```
 
@@ -243,8 +245,8 @@ match the session data, `member_admin` authority is required.
 #### Response
 ```
 [
-	{ timestamp: …, author: …, subject: …, action: …, … },
-	…
+  { timestamp: …, author: …, subject: …, action: …, … },
+  …
 ]
 ```
 
@@ -266,8 +268,8 @@ non-null value.
 #### Response
 ```
 {
-	status: 'success',
-	updated: [ 'legal_name', … ]
+  status: 'success',
+  updated: [ 'legal_name', … ]
 }
 ```
 
@@ -284,7 +286,28 @@ from membership changes.
 ```
 {
   status: 'success',
+  member_number,
   updated: [ 'membership', 'member_number', 'paper_pubs' ]
+}
+```
+
+
+### `POST /api/kansa/people/lookup`
+- Parameters: `email`, `member_number`, `name`
+
+Finds a person's `id`, `membership` and `name` based on a slightly fuzzy lookup
+given some subset of the parameters `email`, `member_number`, and `name`. If the
+lookup matches more than one hit, `status` will be `multiple`. If no matches are
+found, `status` will be `not found`. Child and Kid-in-tow members are not
+included in the results.
+
+#### Response
+```
+{
+  status: 'success',
+	id,
+  membership,
+  name
 }
 ```
 
@@ -329,38 +352,94 @@ to each address. Send the receipt of the purchase to the `email` address.
 ### `GET /api/kansa/purchase/data`
 
 Current purchase data for non-membership purchases. Top-level keys correspond to
-pre-defined payment types and their `shape` values define the shapes of the
-expected object, with matching types. Arrays of objects define select/radio
-options, valued by their `key` value. Keys of `shape` matching values of
-`required` need to have a non-empty value in the matching request.
+pre-defined payment categories and their `types`. `shape` values define the
+shapes of the expected `data` object, with matching JS `type`. The
+`{ [key]: label }` object `values` of `shape` defines select/radio options. Keys
+of `shape` with `required: true` need to have a non-empty value in the matching
+request.
 
 #### Response
 ```
 {
   Sponsorship: {
-    required: ['type'],
     shape: {
-      sponsor: '',
-      type: [{ key: 'bench', amount: 20000, label: 'Sponsored bench' }, ...]
-    }
+      sponsor: {
+        label: 'Sponsor name',
+        required: true,
+        type: 'string'
+      }
+    },
+    types: [{ key: 'bench', amount: 20000, label: 'Sponsored bench' }, ...]
   },
   ...
 }
 ```
 
-### `POST /api/kansa/purchase/other`
-- Parameters: `amount`, `comments`, `data`, `email`, `name`, `invoice`, `person`, `token`,
-  `type: 'Membership' || 'HotelRoom' || 'ArtShowReg' || 'TableReg' || 'Sponsorship'`
+### `GET /api/kansa/purchase/list`
 
-Using the `token` received from Stripe, make a charge of `amount` on the card
-and add an entry to the `Payments` table. `data` is a `type`-specific object,
-and `comments`, `invoice` and `person` are optional. Send the receipt of the
-purchase to the `email` address.
+Purchases made using this account's `email` address, or one set as a query
+parameter (requires `member_admin` access).
+
+#### Response
+```
+[
+  {
+    id: 123,
+    timestamp: '2017-03-24 06:49:57.229836+00',
+    amount: 200000,
+    currency: 'eur',
+    stripe_charge_id: '...',
+    category: 'Sponsorship',
+    type: 'bench',
+    email: '...',
+    name: '...',
+    person_id: 456,
+    data: { sponsor: '...' },
+    comments: '...',
+    invoice: '456'
+  },
+  ...
+]
+```
+
+### `POST /api/kansa/purchase/other`
+Parameters:
+- `token: { id, email }`: Received from Stripe, used to make the charge
+- `items`: Array of payment objects, each consisting of:
+  - `amount`, `currency`: The charge amount, in integer cents of `currency`
+  - `person_id`: The beneficiary of the payment (optional)
+  - `category`, `type`, `data`: Required to match entries returned by
+    [`GET /api/kansa/purchase/data`](#get-apikansapurchasedata)
+  - `comments`, `invoice`: Optional strings
+
+Using the `token` received from Stripe, make a charge on the card and adds
+entries to the `Payments` table for each item.
+
+#### Request
+```
+{
+  token: { id: '...', email: '...' },
+  items: [
+    {
+      amount: 200000,
+      currency: 'eur',
+      category: 'Sponsorship',
+      type: 'bench',
+      data: { sponsor: '...' },
+      person_id: 123,
+      name: '...',
+      comments: '...',
+      invoice: '456'
+    }
+  ]
+}
+```
 
 #### Response
 ```
 {
   status: 'success',
+  emails: ['...'],
   stripe_charge_id: '...'
 }
 ```
@@ -439,7 +518,7 @@ nomination.
       …
     ]
   },
-	…
+  …
 ]
 ```
 
@@ -626,30 +705,28 @@ events to signal `'Unauthorized'` and `'Not Found'` (respectively) to the client
 ```
 
 
-## Raami exhibition
+## Raami Arts Show Exhibitions
 
-### `GET /api/raami/artists`
+<!-- router.get('/:id/artist', db.getArtist);
+router.post('/:id/artist', db.upsertArtist);
+router.get('/:id/works', db.getWorks);
+router.put('/:id/works', db.createWork);
+router.post('/:id/works/:work', db.updateWork);
+router.delete('/:id/works/:work', db.removeWork);
+ -->
 
-List of members who have opted to participate in the art exhibition
-
-#### Response
-```
-[
-  { person\_id: 'person_id',
-    continent: 'Europe',
-    }
-  …
-]
 ```
 
-### `GET /api/raami/artists/:id`
+### `GET /api/raami/:id/artist/`
 
+- Requires authentication
 - Parameters: `id` (required)
 
-Full details for singular artist.
+Full details for singular artist connected to member with `id`.
 
 #### Response
 ```
+<<<<<<< HEAD
   { continent: 'Europe',
     url: 'http://www.example.com',
     filename: 'portfolio.pdf',
@@ -661,78 +738,66 @@ Full details for singular artist.
     }
   …
 ```
+=======
+>>>>>>> daddb57... raami api up to date
 
-### `POST /api/raami/artist`
+{people_id:1, title:'title', width:10, height:10, depth:10, gallery:'Print',
+        orientation:'vertical', technique:'3D', filename:'image.jpg', filedata:'base64...', year:2016, price:100,
+        … }
+```
 
-- Parameters: `person_id`, `continent`, `url`, `filename`, `portfolio`, `category`, `orientation`, `description`, `transport`
+### `POST /api/raami/:id/artist`
 
-Insert new artist's details.
+- Requires authentication
+- Parameters: `id` (required)
+- Parameters: `people_id`, `name`, `continent`, `url`, `filename`, `filedata`, `category`, `description`, `transport`, `auction`, `print`, `digital`, `legal`, `agent`, `contact`, `waitlist`, `postage`
+
+Update or insert artist's details for this member.
 
 #### Response
 ```
 {
   status: 'success',
-  inserted: [ 'id', 'continent', 'url','filename', 'portfolio', 'category', 'orientation', 'description', 'transport' ]
+  people_id: 1
 }
 ```
 
-### `PUT /api/raami/artist/:id`
 
-- Parameters: `id` (required), `continent`, `url`, `filename`, `portfolio`, `category`, `orientation`, `description`, `transport`
+### `GET /api/raami/:id/works`
 
-Update new artist's details.
-
-#### Response
-```
-{
-  status: 'success',
-  updated: [ 'id', 'continent', 'url', 'filename', 'portfolio', 'category', 'orientation', 'description', 'transport' ]
-}
-```
-
-### `GET /api/raami/works/:id`
-
+- Requires authentication
 - Parameters: `id` (required) artists id
 
-Ids of works for particular artists
+Get details for works by artist with this member id.
 
 #### Response
 ```
 [
-  { id: 1 },
+  {id:999, people:id: 1, title:'text', width: 10, height: 10, depth: 10… }
   …
 ]
 ```
 
 
-### `GET /api/raami/work/:id`
+### `GET /api/raami/:id/work/:work`
 
-- Parameters: `id` (required) work id
+- Requires authentication
+- Parameters: `id` (required) member id, `work` (required) work id
 
 Full details for singular work.
 
 #### Response
 ```
-[
-  { artist_id: 1,
-    title: 'Book cover',
-    width: 10.0,
-    height: 10.0,
-    technique: 'Oil on canvas',
-    graduation: 0,
-    filename: 'file.jpg',
-    image: bytes,
-    price: 100.0
-    }
-  …
-]
+  {id:999, people:id: 1, title:'text', width: 10, height: 10, depth: 10… }
+
 ```
 
-### `POST /api/raami/work`
+### `POST /api/raami/:id/work`
 
-- Parameters: `artist_id`, `title`, `width`, `height`, `technique`, `graduation`, `filename`, `image`, `price`
+- Requires authentication
+- Parameters: `people_id` as id (required) , `title`, `width`, `height`, `depth`, `gallery`,`orientation`, `technique`, `filename`, `filedata`, `year`, `price`
 
-Insert new works's details.
+Insert works's details for this member id.
 
 #### Response
 ```
@@ -742,9 +807,10 @@ Insert new works's details.
 }
 ```
 
-### `PUT /api/raami/work/:id`
+### `PUT /api/raami/:id/work/:work`
 
-- Parameters: `id`, `artist_id`, `title`, `width`, `height`, `technique`, `graduation`, `filename`, `image`, `price`
+- Requires authentication
+- Parameters: `work`(required) as `id` , `id` (required) as `people_id`, `title`, `width`, `height`, `depth`, `gallery`,`orientation`, `technique`, `filename`, `filedata`, `year`, `price`
 
 Update works's details.
 
@@ -752,13 +818,15 @@ Update works's details.
 ```
 {
   status: 'success',
-  updated: [ 'id', 'artist_id', 'title', 'width', 'height', 'technique', 'graduation', 'filename', 'image', 'price' ]
 }
 ```
 
-### `DELETE /api/raami/work/:id`
+### `DELETE /api/raami/:id/work/:work`
 
-- Patameters: `id` (required)
+- Requires authentication
+- Patameters: `id` (required), `work` (required)
+
+Remove this work from artist's works with id.
 
 #### Response
 ```

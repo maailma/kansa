@@ -22,33 +22,62 @@ function nominationsString(data) {
   }).join('\n\n');
 }
 
+function votesString(data) {
+  return data
+    .map(({ category, finalists }) => ({
+      title: category.charAt(0) + category.slice(1).replace(/[A-Z]/g, ' $&'),
+      votes: finalists && finalists.filter(finalist => finalist).map((finalist, i) => {
+        return `  ${i+1}. ` + wrap(68)(finalist).replace(/\n/g, '\n     ');
+      })
+    }))
+    .filter(({ votes }) => votes && votes.length > 0)
+    .map(({ title, votes }) => `${title}:\n${votes.join('\n')}`)
+    .join('\n\n');
+}
+
 class Mailer {
   constructor(tmplDir, tmplSuffix, sendgridApiKey) {
     this.tmplDir = tmplDir;
     this.tmplSuffix = tmplSuffix;
-    this.sendgrid = SendGrid(sendgridApiKey);
+    if (sendgridApiKey) {
+      this.sendgrid = SendGrid(sendgridApiKey);
+    } else {
+      this.sendgrid = {
+        emptyRequest: (request) => request,
+        API: ({ body: { content, from, personalizations: [recipient], subject }, method, path }, callback) => {
+          console.log('MOCK SendGrid request', method, path);
+          console.log('FROM:', JSON.stringify(from.name), `<${from.email}>`);
+          console.log('TO:', JSON.stringify(recipient.name), `<${recipient.email}>`);
+          console.log('SUBJECT:', subject);
+          console.log('--------\n', content[0] && content[0].value, '\n--------');
+          callback(null, null);
+        }
+      };
+      console.warn('Using MOCK SendGrid instance -> emails will not be sent!');
+    }
   }
 
   tmplFileName(tmplName) {
     return [ this.tmplDir, '/', tmplName, this.tmplSuffix ].filter(s => s).join('');
   }
 
-  sgRequest(recipient, { from, fromname, subject }, msg) {
+  sgRequest(msgTemplate, data) {
+    const { attributes: { from, fromname, recipient, subject }, body } = tfm(msgTemplate);
+    const to = [{ email: data.email }];
+    if (data.name) to[0].name = data.name;
     return this.sendgrid.emptyRequest({
       method: 'POST',
       path: '/v3/mail/send',
       body: {
-        personalizations: [{
-          to: [{ email: recipient }],
-        }],
+        personalizations: [{ to }],
         from: {
           email: from,
           name: fromname,
         },
-        subject: subject,
+        subject: mustache.render(subject, data),
         content: [{
           type: 'text/plain',
-          value: wrap(72)(msg)
+          value: wrap(72)(mustache.render(body, data))
         }]
       }
     });
@@ -64,13 +93,19 @@ class Mailer {
         tmplData.nominations = nominationsString(data.nominations);
         break;
 
+      case 'hugo-update-votes':
+        tmplData.votes = votesString(data.votes);
+        break;
+
+      case 'kansa-upgrade-person':
+        if (data.paper_pubs) tmplData.membership += ' with paper pubs';
+        break;
+
     }
-    fs.readFile(this.tmplFileName(tmplName), 'utf8', (err, raw) => {
+    fs.readFile(this.tmplFileName(tmplName), 'utf8', (err, msgTemplate) => {
       if (err) return done(err);
       try {
-        const {attributes, body} = tfm(raw);
-        const msg = mustache.render(body, tmplData);
-        const request = this.sgRequest(data.email, attributes, msg);
+        const request = this.sgRequest(msgTemplate, tmplData);
         this.sendgrid.API(request, (err, response) => {
           if (err) {
             console.warn('SendGrid error', response);

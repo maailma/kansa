@@ -4,9 +4,9 @@ const { InputError } = require('./errors');
 const sendEmail = require('./kyyhky-send-email');
 const LogEntry = require('./types/logentry');
 
-module.exports = { _setKeyChecked, setKey, setAllKeys };
+module.exports = { getKeyChecked, setKeyChecked, setKey, setAllKeys };
 
-function _setKeyChecked(req, email) {
+function setKeyChecked(req, email) {
   const key = randomstring.generate(12);
   const log = new LogEntry(req, 'Set access key');
   log.author = email;
@@ -18,9 +18,9 @@ function _setKeyChecked(req, email) {
     .then(() => ({ email, key }));
 }
 
-function _getKeyChecked(req, email) {
+function getKeyChecked(req, email) {
   return req.app.locals.db.one('SELECT email, key FROM Keys WHERE email = $1', email)
-    .catch(() => _setKeyChecked(req, email));
+    .catch(() => setKeyChecked(req, email));
 }
 
 function setKey(req, res, next) {
@@ -28,8 +28,8 @@ function setKey(req, res, next) {
   const reset = req.body.reset;
   req.app.locals.db.many('SELECT email FROM People WHERE email ILIKE $1', req.body.email)
     .then(data => reset
-      ? _setKeyChecked(req, data[0].email)
-      : _getKeyChecked(req, data[0].email))
+      ? setKeyChecked(req, data[0].email)
+      : getKeyChecked(req, data[0].email))
     .then(data => sendEmail('kansa-set-key', data)
       .then(() => res.status(200).json({ status: 'success', email: data.email }))
     )

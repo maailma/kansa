@@ -46,20 +46,22 @@ CREATE TABLE IF NOT EXISTS Log (
     description text NOT NULL
 );
 
-CREATE TYPE PaymentType AS ENUM ('Membership','HotelRoom','ArtShowReg','TableReg','Sponsorship');
 CREATE TABLE IF NOT EXISTS Payments (
     id SERIAL PRIMARY KEY,
-    "timestamp" timestamptz NOT NULL DEFAULT now(),
+    created timestamptz NOT NULL DEFAULT now(),
+    paid timestamptz,
+    payment_email text,
+    stripe_charge_id text,
+    stripe_token text,
+    error text,
     amount integer NOT NULL,
     currency text NOT NULL,
-    stripe_charge_id text,
-    email text NOT NULL,
-    name text NOT NULL,
-    person integer REFERENCES People,
-    type PaymentType NOT NULL,
+    person_id integer REFERENCES People,
+    category text NOT NULL,
+    type text,
+    data jsonb,
     invoice text,
-    comments text,
-    data jsonb
+    comments text
 );
 
 

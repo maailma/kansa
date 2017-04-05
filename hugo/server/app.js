@@ -12,6 +12,8 @@ require('pg-monitor').attach(pgOptions);
 const db = pgp(process.env.DATABASE_URL);
 
 const nominate = require('./lib/nominate');
+const Vote = require('./lib/vote');
+const vote = new Vote(pgp, db);
 const Admin = require('./lib/admin');
 const admin = new Admin(pgp, db);
 const CanonStream = require('./lib/canon-stream');
@@ -54,6 +56,10 @@ router.post('/admin/canon/:id', admin.updateCanonEntry);
 
 router.get('/:id/nominations', nominate.getNominations);
 router.post('/:id/nominate', nominate.nominate);
+
+router.get('/finalists', vote.getFinalists);
+router.get('/:id/votes', vote.getVotes);
+router.post('/:id/vote', vote.setVotes);
 
 app.ws('/admin/canon-updates', (ws, req) => {
   if (req.session.user.hugo_admin) canonStream.addClient(ws);

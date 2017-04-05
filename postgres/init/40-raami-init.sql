@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS Artist (
     description text,
     transport text,
     auction integer,
+    half integer,
     print integer,
     digital boolean,
     legal boolean,
@@ -32,17 +33,23 @@ CREATE TABLE IF NOT EXISTS Works (
     id SERIAL PRIMARY KEY,
     people_id integer REFERENCES Artist NOT NULL,
     title text,
-    width decimal,
-    height decimal,
-    depth decimal,
+    width integer,
+    height integer,
+    depth integer,
     technique text,
     orientation text,
     graduation text,
     filename text,
     filedata text,
-    price decimal,
+    price integer,
     gallery text,
-    year integer
+    year integer,
+    original boolean,
+    copies integer,
+    start integer,
+    sale integer,
+    permission boolean,
+    form text
     );
 
 

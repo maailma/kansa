@@ -1,20 +1,140 @@
 {
-  "Sponsorship": {
-    "required": [ "type" ],
+  "New membership": {
+    "allow_new_email": true,
     "shape": {
-      "sponsor": "",
-      "type": [
-        {
-          "key": "bench",
-          "amount": 20000,
-          "label": "Sponsored bench"
-        },
-        {
-          "key": "lounge",
-          "amount": 50000,
-          "label": "Craft lounge"
-        }
-      ]
-    }
+      "membership": {
+        "label": "Membership type",
+        "required": true,
+        "type": "string"
+      },
+      "legal_name": {
+        "label": "Legal name",
+        "required": true,
+        "type": "string"
+      },
+      "email": {
+        "label": "Email",
+        "required": true,
+        "type": "string"
+      },
+      "public_first_name": {
+        "label": "Public first name",
+        "type": "string"
+      },
+      "public_last_name": {
+        "label": "Public last name",
+        "type": "string"
+      },
+      "city": {
+        "label": "City",
+        "type": "string"
+      },
+      "state": {
+        "label": "State/province",
+        "type": "string"
+      },
+      "country": {
+        "label": "Country",
+        "type": "string"
+      },
+      "paper_pubs": {
+        "label": "Paper publications",
+        "type": "object"
+      }
+    },
+    "types": [
+      {
+        "key": "Adult",
+        "amount": 17000,
+        "label": "Adult"
+      }, {
+        "key": "FirstWorldcon",
+        "amount": 9500,
+        "label": "First Worldcon"
+      }, {
+        "key": "Youth",
+        "amount": 10000,
+        "label": "Youth"
+      }, {
+        "key": "Child",
+        "amount": 7000,
+        "label": "Child"
+      }, {
+        "key": "KidInTow",
+        "amount": 0,
+        "label": "Kid-in-tow"
+      }, {
+        "key": "Supporter",
+        "amount": 3500,
+        "label": "Supporting"
+      }
+    ],
+    "unlisted": true
+  },
+  "Paper publications": {
+    "shape": {
+      "name": {
+        "label": "Paper pubs name",
+        "required": true,
+        "type": "string"
+      },
+      "address": {
+        "label": "Paper pubs address",
+        "required": true,
+        "type": "string"
+      },
+      "country": {
+        "label": "Paper pubs country",
+        "required": true,
+        "type": "string"
+      }
+    },
+    "types": [
+      {
+        "key": "paper_pubs",
+        "amount": 1000,
+        "label": "Paper publications"
+      }
+    ],
+    "unlisted": true
+  },
+  "Sponsorship": {
+    "shape": {
+      "sponsor": {
+        "label": "Sponsor name",
+        "required": true,
+        "type": "string"
+      }
+    },
+    "types": [
+      {
+        "key": "bench",
+        "amount": 20000,
+        "label": "Sponsored bench"
+      }, {
+        "key": "lounge",
+        "amount": 50000,
+        "label": "Craft lounge"
+      }
+    ]
+  },
+  "Upgrade membership": {
+    "shape": {
+      "membership": {
+        "label": "Membership type",
+        "type": "string"
+      },
+      "paper_pubs": {
+        "label": "Paper publications",
+        "type": "object"
+      }
+    },
+    "types": [
+      {
+        "key": "upgrade",
+        "label": "Upgrade"
+      }
+    ],
+    "unlisted": true
   }
 }

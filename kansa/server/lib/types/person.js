@@ -1,3 +1,4 @@
+const prices = require('../../static/prices.json');
 const util = require('../util');
 
 class Person {
@@ -57,6 +58,17 @@ class Person {
     util.forceInt(this.data, 'member_number');
     if (this.data.membership === 'NonMember') this.data.member_number = null;
     this.data.paper_pubs = Person.cleanPaperPubs(this.data.paper_pubs);
+  }
+
+  get preferredName() {
+    const { legal_name, public_first_name, public_last_name } = this.data;
+    return [public_first_name, public_last_name].filter(n => n).join(' ').trim() || legal_name;
+  }
+
+  get priceAsNewMember() {
+    const ms = prices.memberships[this.data.membership];
+    const pp = this.data.paper_pubs ? prices.PaperPubs.amount : 0;
+    return (ms && ms.amount || 0) + pp;
   }
 
   get sqlValues() {

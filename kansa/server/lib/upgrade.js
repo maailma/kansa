@@ -27,10 +27,14 @@ function upgradePaperPubs(req, db, data) {
          UPDATE People
             SET paper_pubs=$(paper_pubs)
           WHERE id=$(id) AND membership != 'NonMember'
-      RETURNING true`,
+      RETURNING member_number`,
       data),
     tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
   ]))
+    .then((results) => ({
+      member_number: results[0].member_number,
+      updated: ['paper_pubs']
+    }))
     .catch(err => {
       if (!err[0].success && err[1].success && err[0].result.message == 'No data returned from the query.') {
         const err2 = new Error('Paper publications are only available for members');
@@ -44,6 +48,7 @@ function upgradePaperPubs(req, db, data) {
 
 function upgradeMembership(req, db, data) {
   const set = [ 'membership=$(membership)' ];
+  let member_number;
   return db.tx(tx => tx.sequence((i, prev) => { switch (i) {
 
     case 0:
@@ -63,17 +68,20 @@ function upgradeMembership(req, db, data) {
            UPDATE People
               SET ${set.join(', ')}
             WHERE id=$(id)
-        RETURNING true`,
-        data);
+        RETURNING member_number`, data);
 
     case 2:
+      member_number = prev.member_number;
       const log = new LogEntry(req, `Upgrade to ${data.membership}`);
       if (data.paper_pubs) log.description += ' and add paper pubs';
       log.subject = data.id;
       return tx.none(`INSERT INTO Log ${log.sqlValues}`, log);
 
   }}))
-    .then(() => set.map(sql => sql.replace(/=.*/, '')));
+    .then(() => ({
+      member_number,
+      updated: set.map(sql => sql.replace(/=.*/, ''))
+    }));
 }
 
 function upgradePerson(req, db, data) {
@@ -84,7 +92,7 @@ function upgradePerson(req, db, data) {
   }
   return data.membership
     ? upgradeMembership(req, db, data)
-    : upgradePaperPubs(req, db, data).then(() => ['paper_pubs']);
+    : upgradePaperPubs(req, db, data);
 }
 
 function authUpgradePerson(req, res, next) {
@@ -93,6 +101,6 @@ function authUpgradePerson(req, res, next) {
     id: parseInt(req.params.id)
   });
   upgradePerson(req, req.app.locals.db, data)
-    .then(updated => res.status(200).json({ status: 'success', updated }))
+    .then(({ member_number, updated }) => res.status(200).json({ status: 'success', member_number, updated }))
     .catch(next);
 }

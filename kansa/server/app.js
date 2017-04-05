@@ -41,6 +41,7 @@ router.get('/favicon.ico', (req, res, next) => {
 
 router.post('/purchase', purchase.makeMembershipPurchase);
 router.get('/purchase/data', purchase.getPurchaseData);
+router.get('/purchase/list', purchase.getPurchases);
 router.post('/purchase/other', purchase.makeOtherPurchase);
 router.get('/purchase/prices', purchase.getPrices);
 
@@ -53,6 +54,7 @@ router.get('/members/paperpubs', people.getMemberPaperPubs);
 
 router.get('/people', people.getPeople);
 router.post('/people', people.authAddPerson);
+router.post('/people/lookup', people.lookupPerson);
 
 router.all('/people/:id*', user.verifyPeopleAccess);
 router.get('/people/:id', people.getPerson);

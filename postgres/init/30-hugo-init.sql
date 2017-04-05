@@ -21,6 +21,24 @@ CREATE TABLE Nominations (
     nominations jsonb[] NOT NULL
 );
 
+CREATE TABLE Finalists (
+    id SERIAL PRIMARY KEY,
+    category Category NOT NULL,
+    title text NOT NULL,
+    subtitle text
+);
+
+CREATE TABLE Votes (
+    id SERIAL PRIMARY KEY,
+    time timestamptz DEFAULT now(),
+    client_ip text NOT NULL,
+    client_ua text,
+    person_id integer REFERENCES kansa.People NOT NULL,
+    signature text NOT NULL,
+    category Category NOT NULL,
+    votes integer[] NOT NULL
+);
+
 CREATE TABLE Canon (
     id SERIAL PRIMARY KEY,
     category Category NOT NULL,
