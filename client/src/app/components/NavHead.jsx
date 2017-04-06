@@ -6,7 +6,7 @@ import headerBg from '../../img/header-bg.jpg'
 import titleImg from '../../img/title.png'
 import MemberAvatar from './MemberAvatar'
 
-const NavAvatars = ({ currentMember, otherMembers }) => <div style={{ display: 'flex', padding: 16 }}>
+const NavAvatars = ({ currentMember, otherMembers }) => <div style={{ display: 'flex', padding: '72px 16px 16px' }}>
   <div style={{ flexGrow: otherMembers ? 1 : 0 }}>{
     currentMember && <MemberAvatar
       member={currentMember}
@@ -44,22 +44,6 @@ const NavHead = ({ currentMember, handleNav, otherMembers }) => <div
     cursor: 'pointer',
   }}
 >
-  <div
-    src={JS_ROOT + titleImg}
-    style={{
-      alignItems: 'center',
-      display: 'flex',
-      height: 56,
-      justifyContent: 'center'
-    }}
-  >
-    <img
-      alt="Worldcon 75"
-      src={JS_ROOT + titleImg}
-      style={{ marginLeft: -16 }}
-      width={160}
-    />
-  </div>
   <NavAvatars
     currentMember={currentMember}
     otherMembers={otherMembers}

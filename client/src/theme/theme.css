@@ -77,6 +77,25 @@ span.upload input {
     opacity: 0.7
 }
 
+.logo {
+  color: #999 !important;
+  height: 56px !important;
+  left: 48px !important;
+  pointer-events: none;
+  position: absolute;
+  top: 0 !important;
+  transition: all 600ms !important;
+  width: auto !important;
+  z-index: 9999;
+}
+
+.logo.navbar {
+  color: #fc7c39 !important;
+  height: 80px !important;
+  left: 24px !important;
+  top: -10px !important;
+}
+
 .logoutHint {
   opacity: 0;
   transition: opacity 450ms cubic-bezier(0.23, 1, 0.32, 1);

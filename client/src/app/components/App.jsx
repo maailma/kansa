@@ -1,7 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import EventListener from 'react-event-listener'
-
 import FlatButton from 'material-ui/FlatButton'
 import IconButton from 'material-ui/IconButton'
 import Paper from 'material-ui/Paper'
@@ -9,7 +8,8 @@ import Snackbar from 'material-ui/Snackbar'
 import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
 import Menu from 'material-ui/svg-icons/navigation/menu'
 
-import { darkBlue } from '../../theme'
+import Worldcon75 from '../../lib/worldcon75'
+import { darkBlue, orange1 } from '../../theme'
 import { hideMessage } from '../actions/app'
 import { logout } from '../actions/auth'
 import NavDrawer from './NavDrawer'
@@ -44,7 +44,9 @@ const AppBar = ({ email, logout, menuDocked, menuWidth, onOpenMenu, title }) => 
           border: 0,
           padding: 0,
           width: 0
-        } : null}
+        } : {
+          paddingRight: 184
+        }}
         tooltip='Navigation menu'
         tooltipPosition='bottom-right'
         tooltipStyles={{ marginTop: -8 }}
@@ -93,6 +95,9 @@ class App extends React.Component {
       >
         <div>
           { email ? [
+            <Worldcon75 key="logo"
+              className={menuOpen ? 'logo navbar' : 'logo'}
+            />,
             <NavDrawer
               docked={menuDocked}
               id={Number(id) || undefined}
