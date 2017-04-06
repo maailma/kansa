@@ -31,8 +31,6 @@ import middleware from './middleware'
 import reducers from './reducers'
 import { theme } from './theme'
 
-import './app/style.css'
-
 const history = ENV === 'production' ? browserHistory : hashHistory;
 const store = createStore(reducers, middleware(history));
 

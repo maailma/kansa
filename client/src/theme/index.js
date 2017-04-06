@@ -1,5 +1,7 @@
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 
+import './theme.css'
+
 export const black = '#262626';
 export const darkGray = '#393939';
 export const midGray = '#616161';
