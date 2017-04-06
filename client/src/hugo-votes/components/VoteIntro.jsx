@@ -40,19 +40,18 @@ const VoteIntro = ({ active, name }) => (
         information about the voting process, a gallery of past trophy designs, and more.
       </p>
 
-      <h2>How to Vote</h2>
+      <h2>Deadline for Voting</h2>
 
       <p>
         The deadline for voting is Saturday 15 July 2017 at 11:59pm Pacific Daylight Time (2:59 am Eastern Daylight Time,
         07:59 British Summer Time, 09:59 in Finland, all on 16 July). Your ballot at that time will be your final vote.
       </p>
+
+      <h2>How Votes are Counted</h2>
+
       <p>
-        You can make as many changes as you like up to your ballot until the deadline. You may save your vote at any
-        time. Your current ballot will be emailed to you an hour after you finish modifying it.
-      </p>
-      <p>
-        The Hugo Awards use an instant runoff ballot. To vote, mark your choices in each category in order of preference:
-        “1” for first place, “2” for second place, and so on.
+        The Hugo Awards use an instant runoff ballot.  Rank the finalists in each category in order of preference: “1”
+        for first place, “2” for second place, and so on.
       </p>
       <p>
         You are not required to rank all the finalists in any category, and we recommend avoid voting in any category
@@ -68,13 +67,13 @@ const VoteIntro = ({ active, name }) => (
         half the votes, the finalist with the fewest first place votes is eliminated and its votes are transferred to
         the finalists marked “2” on those ballots. This process of elimination continues until one finalist receives
         more than half the votes, at which point it becomes the winner (unless the votes are outnumbered by “No Award”
-        votes under specific conditions described in Section 3.11 of the WSFS Constitution).
+         votes under specific conditions described in Section 3.11 of the WSFS Constitution).
       </p>
       <p>
         Please note that second and further preferences play no part in the vote unless and until your first choice is
-        eliminated. This is not as point system where the second choices of many voters can overwhelm the first choice
+        eliminated. This is not a point system where the second choices of many voters can overwhelm the first choice
         of a few voters. We suggest that after marking your first choice, you proceed by imagining that it has
-        disappeared from the ballot, and placing your “2” by the remaining finalist you most prefer, and so on. This
+        disappeared from the ballot, and then give the second place to the next finalist you prefer, and so on. This
         mimics the way the ballots are actually counted. Thus, even if your heart is set on one finalist, don’t
         hesitate to give “2” (and other rankings) to other finalists you also consider worthy of the award.
       </p>
@@ -83,18 +82,35 @@ const VoteIntro = ({ active, name }) => (
         be the tiebreaker between the remaining finalists. No matter how much you dislike a finalist, if you rank it,
         the vote will be counted if all your previous choices are eliminated.
       </p>
+
+      <h2>How to Vote Online</h2>
+
+      <ol>
+        <li>Go to the category you wish to vote for.</li>
+        <li>Choose the finalist you wish to rank.  When you select them, a box appears with all the numbers for possible rankings.</li>
+        <li>Choose the ranking you wish to give to the finalist.</li>
+        <li>The finalist will appear according to its ranking above the line. All unranked finalists appear below the line.</li>
+      </ol>
       <p>
-        If you have difficulties accessing the online ballot, or you have more general questions on the Hugo process,
-        you can e-mail <a href="mailto:hugohelp@worldcon.fi">hugohelp@worldcon.fi</a> for assistance. See <a
-          href="http://www.worldcon.fi/wsfs/hugo/" target="_blank"
-        >here</a> for more information about the Hugo Awards. The full rules for the Hugo Awards are contained in the <a
-          href="http://www.wsfs.org/wp-content/uploads/2016/10/WSFS-Constitution-as-of-August-22-2016.pdf"
-          target="_blank"
-        >WSFS constitution</a>.
+        If you change your mind on how the finalist should be ranked, you can either:
       </p>
-      { active ? <p>
-        We look forward to receiving your votes.
-      </p> : null }
+      <ul>
+        <li>Use the X to remove the ranking</li>
+        <li>Choose the finalist again and change the numerical ranking.</li>
+      </ul>
+      <p>
+        Another way to change the ranking:  If you rank a different finalist with the same number, the new ranking will
+        take the place of the original. For example if Finalist A is ranked at 1, and you set Finalist B to 1, Finalist
+        A will move to 2 in the ranking.
+      </p>
+      <p>
+        You can make as many changes as you like up to your ballot until the deadline. Your changes are automatically
+        saved. Your current ballot will be emailed to you 30 minutes after you finish modifying it.
+      </p>
+      <p>
+        If you have questions regarding the ballot, please contact <a href="mailto:hugohelp@worldcon.fi">hugohelp@worldcon.fi</a>.
+      </p>
+
     </Col>
   </Row>
 );
