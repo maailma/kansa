@@ -33,10 +33,10 @@ export default class VoteSignature extends React.Component {
                 setSignature(name);
               }}>
                 <TextField
-                  autoFocus={true}
                   floatingLabelText="Signature"
                   fullWidth={true}
                   onChange={(ev, name) => this.setState({ name })}
+                  tabIndex={1}
                   value={name}
                 />
               </form>

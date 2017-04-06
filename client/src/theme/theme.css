@@ -2,26 +2,66 @@
 
 * { box-sizing:border-box; }
 
+html { height: 100%; }
+
 body {
-  margin: 0;
-  font-family: 'Open Sans', sans-serif;
   background: url(../img/bg-aurora.jpg) center top / cover no-repeat fixed #005f96;
+  font-family: 'Open Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
+  margin: 0;
+  min-height: 100%;
 }
 
 main {
-  padding: 24px;
-  background: url(../img/ursa.png) right bottom / 25% no-repeat content-box;
+  margin: 24px 24px 0;
 }
 
+#ursa {
+  float: right;
+  margin: -8px 4% 24px !important;
+  opacity: 1 !important;
+  position: relative;
+  width: 40%;
+  z-index: 2;
+}
+
+@media only screen and (min-width: 64em) {
+  #ursa {
+    margin-right: 8% !important;
+    transition: margin-right 30s ease-out 5s;
+    width: 25%;
+  }
+}
+
+
 h1, h2, h3 {
+  color: #fc7c39;
   font-weight: 300;
   text-align: center;
+  text-shadow: 0 0 2px #fc7c39;
 }
 
 h1 { font-size: 36px }
 h2 { font-size: 24px }
 h3 { font-size: 18px }
+
+.bg-text {
+  color: white;
+  text-shadow: 0 0 3px black;
+}
+.bg-text a {
+  color: #00a1ff;
+  text-decoration: none;
+}
+.bg-text a:hover { text-decoration: underline }
+
+.action-head { background-color: #026faf !important }
+.action-head * { color: white !important }
+
+.body-card {
+  margin: 30px 0;
+  padding: 5px 15px;
+}
 
 div.upload {
 	min-height: 100px;
@@ -37,5 +77,8 @@ span.upload input {
     opacity: 0.7
 }
 
-.logoutHint { display: none; }
-.logoutButton:hover .logoutHint { display: inline; }
+.logoutHint {
+  opacity: 0;
+  transition: opacity 450ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.logoutButton:hover .logoutHint { opacity: 1 }

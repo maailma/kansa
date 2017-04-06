@@ -55,6 +55,7 @@ class Vote extends React.Component {
               xs={12}
               md={10} mdOffset={1}
               lg={8} lgOffset={2}
+              style={{ marginBottom: -30 }}
             >
               {Object.keys(categoryInfo).map(category => (
                 <VoteCategory category={category} key={category} />

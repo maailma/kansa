@@ -99,9 +99,11 @@ const NewMemberCard = ({ category, disabled = false, expandable = false, onSelec
   >
     <CardHeader
       actAsExpander={expandable}
+      className="action-head"
       showExpandableButton={expandable}
+      textStyle={{ paddingRight: 0 }}
       title={title}
-      style={{ fontWeight: 600 }}
+      style={{ fontWeight: 600, marginBottom: 16 }}
     />
     <CardText
       expandable={expandable}

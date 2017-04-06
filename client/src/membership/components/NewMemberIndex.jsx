@@ -30,7 +30,7 @@ class NewMemberIndex extends React.Component {
 
   render() {
     const { prices, push } = this.props;
-    return <Row>
+    return <Row style={{ marginBottom: -24 }}>
       <Col
         xs={12}
         sm={6}

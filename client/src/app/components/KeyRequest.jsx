@@ -58,7 +58,7 @@ class KeyRequest extends React.Component {
           />
         </CardText>
       </Card>
-      <div style={{ fontSize: 14, marginBottom: 20, padding: '0 16px' }}>
+      <div className="bg-text" style={{ fontSize: 14, marginBottom: 20, padding: '0 16px' }}>
         <p>
           If you're not able to enter a valid address, or if you do not receive
           the login link within 30 minutes or so, please get in touch with us at

@@ -1,6 +1,7 @@
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 
 import './theme.css'
+import '../img/ursa.png'
 
 export const black = '#262626';
 export const darkGray = '#393939';

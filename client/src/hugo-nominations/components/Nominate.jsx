@@ -33,7 +33,7 @@ const Messages = connect(
 
 
 const NominationsHead = ({ active, name, signature }) => (
-  <Row>
+  <Row className="bg-text">
     <Col
       xs={10} xsOffset={1}
       lg={8} lgOffset={2}

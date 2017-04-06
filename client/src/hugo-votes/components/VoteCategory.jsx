@@ -37,15 +37,18 @@ class VoteCategory extends React.Component {
     const { category, finalists, preference, setVotes } = this.props;
     const { title, description } = categoryInfo[category];
 
-    return <Card className='NominationCategory'>
+    return <Card className='body-card'>
       <CardHeader
-        className='NominationHeader'
+        textStyle={{
+          display: 'block',
+          padding: 0
+        }}
         title={title}
         titleStyle={{
           fontSize: 24,
-          fontWeight: 300,
+          fontWeight: 400,
           textAlign: 'center',
-          width: '100%',
+          width: '100%'
         }}
       />
       <CardText>

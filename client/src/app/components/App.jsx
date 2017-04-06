@@ -9,6 +9,7 @@ import Snackbar from 'material-ui/Snackbar'
 import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
 import Menu from 'material-ui/svg-icons/navigation/menu'
 
+import { darkBlue } from '../../theme'
 import { hideMessage } from '../actions/app'
 import { logout } from '../actions/auth'
 import NavDrawer from './NavDrawer'
@@ -52,14 +53,14 @@ const AppBar = ({ email, logout, menuDocked, menuWidth, onOpenMenu, title }) => 
       </IconButton>
       <ToolbarTitle text={title} />
     </ToolbarGroup>
-    <ToolbarGroup>
+    <ToolbarGroup lastChild={true}>
       <FlatButton
         className='logoutButton'
         label={<span><span className='logoutHint'>Sign out </span>{email}</span>}
-        labelStyle={{ textTransform: 'none', verticalAlign: 'initial' }}
+        labelStyle={{ color: darkBlue, textTransform: 'none', verticalAlign: 'initial' }}
         onTouchTap={logout}
         primary={true}
-        style={{ marginTop: 10 }}
+        style={{ marginTop: 10, marginRight: 10 }}
       />
     </ToolbarGroup>
   </Toolbar>

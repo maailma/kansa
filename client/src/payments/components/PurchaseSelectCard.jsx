@@ -20,10 +20,11 @@ const PurchaseSelectCard = ({ data, label, onSelect, title }) => {
     style={{ marginBottom: 18 }}
   >
     {title && <CardHeader
+      className="action-head"
       style={{ fontWeight: 600 }}
       title={title}
     />}
-    <CardActions>
+    <CardActions style={{ paddingLeft: 16 }}>
       <List>{ items.toJS() }</List>
     </CardActions>
   </Card>;

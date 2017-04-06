@@ -2,7 +2,7 @@ import React from 'react'
 const { Col, Row } = require('react-flexbox-grid');
 
 const VoteIntro = ({ active, name }) => (
-  <Row>
+  <Row className="bg-text">
     <Col
       xs={10} xsOffset={1}
       lg={8} lgOffset={2}

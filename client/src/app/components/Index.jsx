@@ -44,7 +44,7 @@ class Index extends React.Component {
   render() {
     const { people, prices, push } = this.props;
     const isLoggedIn = !!(people && people.size);
-    return <Row>
+    return <Row style={{ marginBottom: -24 }}>
       <Col xs={12} sm={6} lg={4} lgOffset={2}>
         {isLoggedIn ? this.memberCards : <KeyRequest/>}
       </Col>
