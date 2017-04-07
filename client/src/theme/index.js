@@ -1,6 +1,7 @@
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 
 import './theme.css'
+import '../img/bg-aurora.jpg'
 import '../img/ursa.png'
 
 export const black = '#262626';
