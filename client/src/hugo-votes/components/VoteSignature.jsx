@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
+const ImmutablePropTypes = require('react-immutable-proptypes');
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
@@ -8,13 +9,16 @@ const { Col, Row } = require('react-flexbox-grid');
 export default class VoteSignature extends React.Component {
 
   static propTypes = {
-    setSignature: React.PropTypes.func.isRequired
+    person: ImmutablePropTypes.map.isRequired,
+    preferredName: PropTypes.string,
+    setSignature: PropTypes.func.isRequired,
+    signature: PropTypes.string
   }
 
   state = { name: '' }
 
   render() {
-    const { setSignature, signature } = this.props;
+    const { person, preferredName, setSignature, signature } = this.props;
     const { name } = this.state;
     return signature ? (
       <h3 style={{}}>Signing as "{signature}"</h3>
@@ -25,9 +29,14 @@ export default class VoteSignature extends React.Component {
           sm={6} smOffset={3}
           lg={4} lgOffset={4}
         >
-          <Card className='NominationCategory'>
+          <Card style={{ marginTop: 30, padding: '5px 15px' }}>
+            <CardHeader
+              textStyle={{ paddingRight: 0 }}
+              title={`${preferredName} <${person.get('email')}>`}
+              subtitle={`Member #${person.get('member_number')}`}
+            />
             <CardText>
-              <p>To start voting, please confirm your name:</p>
+              By entering your name, you are confirming that the above information is correct.
               <form onSubmit={ev => {
                 ev.preventDefault();
                 setSignature(name);

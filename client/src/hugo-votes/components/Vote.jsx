@@ -46,6 +46,8 @@ class Vote extends React.Component {
       <div>
         <VoteIntro active={active} name={this.name} />
         <VoteSignature
+          person={person}
+          preferredName={this.name}
           signature={signature}
           setSignature={signature => setVoter(person.get('id'), signature)}
         />
