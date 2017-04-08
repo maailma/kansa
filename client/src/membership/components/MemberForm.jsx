@@ -3,12 +3,13 @@ import React from 'react'
 const { Col, Row } = require('react-flexbox-grid');
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
+import { midGray } from '../../theme'
 import { emptyPaperPubsMap } from '../constants'
 import { TextInput } from './form-components'
 import { paperPubsIsValid, AddPaperPubs, EditPaperPubs } from './paper-pubs'
 
 export const hintStyle = {
-  color: 'rgba(0, 0, 0, 0.3)',
+  color: midGray,
   fontSize: 13,
   marginBottom: 24
 };

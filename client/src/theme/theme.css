@@ -5,7 +5,7 @@
 html { height: 100%; }
 
 body {
-  background: url(https://worldcon75.github.io/client/master/img/bg-aurora.jpg) center top / cover no-repeat fixed #005f96;
+  background: url(https://worldcon75.github.io/client/master/img/bg-aurora.jpg) center top / cover no-repeat fixed #005383;
   font-family: 'Open Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   margin: 0;
@@ -22,40 +22,43 @@ main {
   opacity: 1 !important;
   position: relative;
   width: 40%;
+  transition: opacity 1s 2s;
   z-index: 2;
 }
 
 @media only screen and (min-width: 64em) {
   #ursa {
     margin-right: 8% !important;
-    transition: margin-right 30s ease-out 5s;
     width: 25%;
   }
 }
 
 
 h1, h2, h3 {
-  color: #fc7c39;
+  color: #ca4f1c;
   font-weight: 300;
   text-align: center;
-  text-shadow: 0 0 2px #fc7c39;
+  text-shadow: 0 0 2px #ff4900;
 }
 
 h1 { font-size: 36px }
 h2 { font-size: 24px }
 h3 { font-size: 18px }
 
+:-moz-ui-invalid { box-shadow: none }
+
 .bg-text {
   color: white;
   text-shadow: 0 0 3px black;
 }
-.bg-text a {
+a {
   color: #00a1ff;
   text-decoration: none;
 }
-.bg-text a:hover { text-decoration: underline }
+a:active { color: #ca4f1c }
+a:hover { text-decoration: underline }
 
-.action-head { background-color: #026faf !important }
+.action-head { background-color: #3da9d4 !important }
 .action-head * { color: white !important }
 
 .body-card {
@@ -90,7 +93,7 @@ span.upload input {
 }
 
 .logo.navbar {
-  color: #fc7c39 !important;
+  color: #ca4f1c !important;
   height: 80px !important;
   left: 24px !important;
   top: -10px !important;
@@ -98,6 +101,6 @@ span.upload input {
 
 .logoutHint {
   opacity: 0;
-  transition: opacity 450ms cubic-bezier(0.23, 1, 0.32, 1);
+  transition: opacity 450ms;
 }
 .logoutButton:hover .logoutHint { opacity: 1 }

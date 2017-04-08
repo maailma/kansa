@@ -9,7 +9,7 @@ import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
 import Menu from 'material-ui/svg-icons/navigation/menu'
 
 import Worldcon75 from '../../lib/worldcon75'
-import { darkBlue, orange1 } from '../../theme'
+import { darkBlue } from '../../theme'
 import { hideMessage } from '../actions/app'
 import { logout } from '../actions/auth'
 import NavDrawer from './NavDrawer'

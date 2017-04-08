@@ -5,6 +5,7 @@ const ImmutablePropTypes = require('react-immutable-proptypes');
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 
+import { orange } from '../../theme'
 import { memberUpdate } from '../actions'
 import MemberForm from './MemberForm'
 
@@ -87,9 +88,11 @@ class MemberEdit extends React.Component {
         autoScrollBodyContent={true}
         onRequestClose={this.handleClose}
         open={isOpen}
-        title={ membership === 'NonMember'
+        title={membership === 'NonMember'
           ? 'Edit non-member'
-          : `Edit ${membership} member #${member.get('member_number')}` }
+          : `Edit ${membership} member #${member.get('member_number')}`
+        }
+        titleStyle={{ color: orange, textShadow: 'none' }}
       >
         <MemberForm
           member={member}
