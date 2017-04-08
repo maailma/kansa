@@ -61,13 +61,17 @@ function doLogin({ params: { email, key, id } }) {
   store.dispatch(keyLogin(email, key, id ? `/hugo/${id}` : null));
 }
 
+const scrollUpOnChange = (_, { location: { action } }) => {
+  if (action !== 'POP') window.scrollTo(0, 0);
+}
+
 ReactDOM.render(
   <Provider store={store} >
     <MuiThemeProvider muiTheme={theme}>
       <Router history={syncHistoryWithStore(history, store)}>
         <Route path="/login/:email/:key" onEnter={doLogin} />
         <Route path="/login/:email/:key/:id" onEnter={doLogin} />
-        <Route path="/" component={App} onEnter={checkAuth} >
+        <Route path="/" component={App} onChange={scrollUpOnChange} onEnter={checkAuth} >
           <IndexRoute component={Index} />
           <Redirect from="login" to="/" />
           <Redirect from="profile" to="/" />
