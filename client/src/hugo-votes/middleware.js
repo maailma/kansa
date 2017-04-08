@@ -5,8 +5,9 @@ const api = new API(API_ROOT);
 
 const submitDelay = 15 * 1000;
 let submitTimeout = null;
+let submitBeforeUnload = null;
 
-function handleSubmitVotes(dispatch, { hugoVotes }) {
+function handleSubmitVotes(dispatch, { hugoVotes }, atUnload) {
   const id = hugoVotes.get('id');
   const signature = hugoVotes.get('signature');
   if (!id || !signature) {
@@ -15,12 +16,27 @@ function handleSubmitVotes(dispatch, { hugoVotes }) {
   const votes = hugoVotes.get('clientVotes').filter((catVotes, category) => (
     catVotes && !catVotes.equals(hugoVotes.getIn(['serverVotes', category]))
   ));
-  if (votes.size) api.POST(`hugo/${id}/vote`, { signature, votes: votes.toJS() })
-    .then(({ time }) => {
-      dispatch(setServerData(votes, new Date(time)));
-      if (window.ga) votes.forEach((_, category) => ga('send', 'event', 'Vote', category));
-    })
-    .catch(error => dispatch({ type: 'ERROR', error}));
+  if (votes.size) {
+    const data = { signature, votes: votes.toJS() };
+    const path = `hugo/${id}/vote`;
+    if (atUnload) {
+      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(API_ROOT + path, blob);
+      } else {  // IE, Safari
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', API_ROOT + path, false);
+        xhr.send(blob);
+      }
+    } else {
+      api.POST(path, data)
+        .then(({ time }) => {
+          dispatch(setServerData(votes, new Date(time)));
+          if (window.ga) votes.forEach((_, category) => ga('send', 'event', 'Vote', category));
+        })
+        .catch(error => dispatch({ type: 'ERROR', error}));
+    }
+  }
 }
 
 export default ({ dispatch, getState }) => (next) => (action) => {
@@ -42,6 +58,10 @@ export default ({ dispatch, getState }) => (next) => (action) => {
     case 'SET_VOTES':
       if (submitTimeout) clearTimeout(submitTimeout);
       submitTimeout = setTimeout(() => dispatch(submitVotes()), submitDelay);
+      if (!submitBeforeUnload) {
+        submitBeforeUnload = () => handleSubmitVotes(() => {}, getState(), true);
+        window.addEventListener('beforeunload', submitBeforeUnload);
+      }
       break;
 
     case 'SUBMIT_VOTES':
