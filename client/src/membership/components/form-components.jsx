@@ -3,11 +3,8 @@ import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 
+import { midGray, orange } from '../../theme'
 import { emptyPaperPubsMap, membershipTypes} from '../constants'
-
-const styles = {
-  changed: { borderColor: 'rgb(255, 152, 0)' },
-}
 
 export const TextInput = ({ getDefaultValue, getValue, inputRef, label, onChange, path, required, style = {}, ...props }) => {
   if (!Array.isArray(path)) path = [ path ];
@@ -17,18 +14,24 @@ export const TextInput = ({ getDefaultValue, getValue, inputRef, label, onChange
     const ps = path.join(' ');
     label = ps.charAt(0).toUpperCase() + ps.slice(1).replace(/_/g, ' ');
   }
-  const ulStyle = value === getDefaultValue(path) ? {} : styles.changed;
+  if (required) label += ' (Required)';
+  const ulStyle = {}
+  if (required && !value) {
+    ulStyle.borderBottomWidth = 2;
+    ulStyle.borderColor = midGray;
+  } else if (value !== getDefaultValue(path)) {
+    ulStyle.borderColor = orange;
+  }
   return <TextField
     floatingLabelText={label}
     floatingLabelFixed={true}
+    floatingLabelStyle={{ color: value ? midGray : 'rgba(0, 0, 0, 0.870588)' }}
     fullWidth={true}
     style={style}
     className='memberInput'
     underlineStyle={ulStyle}
     underlineFocusStyle={ulStyle}
     value={value}
-    errorStyle={{ color: 'rgba(0, 0, 0, 0.5)' }}
-    errorText={ !required || value ? '' : 'Required' }
     onChange={ ev => onChange(path, ev.target.value) }
     ref={ inputRef || (() => {}) }
     { ...props }

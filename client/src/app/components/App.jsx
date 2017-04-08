@@ -115,7 +115,12 @@ class App extends React.Component {
               onOpenMenu={() => this.setState({ menuOpen: true })}
               title={title}
             />
-          ] : <h1 style={{ paddingTop: 24 }}>{title}</h1> }
+          ] : (
+            <h1 style={{ paddingTop: 24 }}>
+              <Worldcon75 className="h1-logo" />
+              {title}
+            </h1>
+          )}
           <main>
             {children}
           </main>

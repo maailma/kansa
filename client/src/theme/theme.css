@@ -35,10 +35,10 @@ main {
 
 
 h1, h2, h3 {
-  color: #ca4f1c;
+  color: #fc7c39;
   font-weight: 300;
   text-align: center;
-  text-shadow: 0 0 2px #ff4900;
+  text-shadow: 0 0 2px #fc7c39;
 }
 
 h1 { font-size: 36px }
@@ -49,13 +49,13 @@ h3 { font-size: 18px }
 
 .bg-text {
   color: white;
-  text-shadow: 0 0 3px black;
+  text-shadow: 0 0 2px black, 0 0 3px black;
 }
 a {
   color: #00a1ff;
   text-decoration: none;
 }
-a:active { color: #ca4f1c }
+a:active { color: #fc7c39 }
 a:hover { text-decoration: underline }
 
 .action-head { background-color: #3da9d4 !important }
@@ -93,10 +93,17 @@ span.upload input {
 }
 
 .logo.navbar {
-  color: #ca4f1c !important;
+  color: #fc7c39 !important;
   height: 80px !important;
   left: 24px !important;
   top: -10px !important;
+}
+
+.h1-logo {
+  color: #fc7c39 !important;
+  height: 72px !important;
+  margin: 0 8px -24px 0;
+  width: auto !important;
 }
 
 .logoutHint {
