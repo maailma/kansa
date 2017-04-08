@@ -2,6 +2,7 @@ import { Map } from 'immutable'
 import React, { PropTypes } from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 import { connect } from 'react-redux'
+import { Link } from 'react-router'
 
 const { Col, Row } = require('react-flexbox-grid');
 import Snackbar from 'material-ui/Snackbar'
@@ -62,6 +63,28 @@ class Vote extends React.Component {
               {Object.keys(categoryInfo).map(category => (
                 <VoteCategory category={category} key={category} />
               ))}
+              <div
+                className="bg-text"
+                style={{
+                  fontSize: 14,
+                  marginTop: -14,
+                  padding: '0 0 16px 15px',
+                  position: 'absolute',
+                  width: '48%'
+                }}
+              >
+                <p>
+                  Your votes are automatically saved to our server every few
+                  seconds. You will receive a confirmation email of your votes
+                  thirty minutes after your last change.
+                </p>
+                <p>
+                  Thank you for voting in the 2017 Hugo Awards!
+                </p>
+                <p>
+                  <Link to="/">&laquo; Return to the main member page</Link>
+                </p>
+              </div>
             </Col>
           </Row>
         ) : null}
