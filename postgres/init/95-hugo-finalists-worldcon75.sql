@@ -15,7 +15,7 @@ INSERT INTO Finalists (category, title, subtitle) VALUES
 ('Novella','This Census-Taker','by China Miéville (Del Rey / Picador)'),
 ('Novelette','Alien Stripper Boned From Behind By The T-Rex','by Stix Hiscock (self-published)'),
 ('Novelette','"The Art of Space Travel"','by Nina Allan (Tor.com, July 2016)'),
-('Novelette','"The Jewel and Her Lapidary"','by Fran Wilde (Tor.com publishing, May 2016)'),
+('Novelette','The Jewel and Her Lapidary','by Fran Wilde (Tor.com publishing, May 2016)'),
 ('Novelette','"The Tomato Thief"','by Ursula Vernon (Apex Magazine, January 2016)'),
 ('Novelette','"Touring with the Alien"','by Carolyn Ives Gilman (Clarkesworld Magazine, April 2016)'),
 ('Novelette','"You''ll Surely Drown Here If You Stay"','by Alyssa Wong (Uncanny Magazine, May 2016)'),
