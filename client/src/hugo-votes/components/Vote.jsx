@@ -5,6 +5,8 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router'
 
 const { Col, Row } = require('react-flexbox-grid');
+import { Card } from 'material-ui/Card'
+import Divider from 'material-ui/Divider'
 import Snackbar from 'material-ui/Snackbar'
 
 import { setScene } from '../../app/actions/app'
@@ -30,7 +32,7 @@ class Vote extends React.Component {
   componentDidMount() {
     const { getFinalists, setScene } = this.props;
     getFinalists();
-    setScene({ title: 'Hugo Votes', dockSidebar: false });
+    setScene({ title: 'Hugo Award Voting', dockSidebar: false });
     this.componentWillReceiveProps(this.props);
   }
 
@@ -45,13 +47,26 @@ class Vote extends React.Component {
     if (!person) return <div>Voter not found!</div>;
     return (
       <div>
-        <VoteIntro active={active} name={this.name} />
-        <VoteSignature
-          person={person}
-          preferredName={this.name}
-          signature={signature}
-          setSignature={signature => setVoter(person.get('id'), signature)}
-        />
+        <Row>
+          <Col
+            xs={12}
+            sm={10} smOffset={1}
+            md={8} mdOffset={2}
+            lg={6} lgOffset={3}
+            style={{ paddingTop: 20 }}
+          >
+            <Card>
+              <VoteIntro active={active} />
+              <Divider />
+              <VoteSignature
+                person={person}
+                preferredName={this.name}
+                signature={signature}
+                setSignature={signature => setVoter(person.get('id'), signature)}
+              />
+            </Card>
+          </Col>
+        </Row>
         {signature ? (
           <Row>
             <Col

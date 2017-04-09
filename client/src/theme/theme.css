@@ -34,22 +34,22 @@ main {
 }
 
 
-h1, h2, h3 {
+h1 {
   color: #fc7c39;
+  font-size: 36px;
   font-weight: 300;
   text-align: center;
   text-shadow: 0 0 2px #fc7c39;
 }
 
-h1 { font-size: 36px }
-h2 { font-size: 24px }
-h3 { font-size: 18px }
+h2 { color: #fc7c39; font-size: 24px }
+h3 { color: #fc7c39; font-size: 18px }
 
 :-moz-ui-invalid { box-shadow: none }
 
 .bg-text {
   color: white;
-  text-shadow: 0 0 2px black, 0 0 3px black;
+  text-shadow: 0 0 3px black;
 }
 a {
   color: #00a1ff;
@@ -112,7 +112,19 @@ span.upload input {
 }
 .logoutButton:hover .logoutHint { opacity: 1 }
 
-/* VoteList item secondaryText */
+.vote-intro h3 {
+  font-size: 18px;
+  font-weight: 400;
+  margin: 36px 0 0;
+}
+.vote-intro h3:first-child { margin-top: 16px }
+
+.vote-intro .disabled {
+  border-bottom: 1px solid #808080;
+  font-weight: bold;
+  padding-bottom: 2em;
+}
+
 .vote-item > div > div > div:last-child {
   height: auto !important;
   white-space: normal !important;

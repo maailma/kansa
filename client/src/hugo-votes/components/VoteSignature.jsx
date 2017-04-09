@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 const ImmutablePropTypes = require('react-immutable-proptypes');
-import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
+import { CardActions, CardHeader, CardText } from 'material-ui/Card'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import TextField from 'material-ui/TextField'
@@ -21,45 +21,41 @@ export default class VoteSignature extends React.Component {
     const { person, preferredName, setSignature, signature } = this.props;
     const { name } = this.state;
     return signature ? (
-      <h3 style={{}}>Signing as "{signature}"</h3>
+      <CardHeader
+        style={{ padding: '16px 32px' }}
+        textStyle={{ paddingRight: 0 }}
+        title={`Signing as "${signature}"`}
+      />
     ) : (
-      <Row>
-        <Col
-          xs={10} xsOffset={1}
-          sm={6} smOffset={3}
-          lg={4} lgOffset={4}
-        >
-          <Card style={{ marginTop: 30, padding: '5px 15px' }}>
-            <CardHeader
-              textStyle={{ paddingRight: 0 }}
-              title={`${preferredName} <${person.get('email')}>`}
-              subtitle={`Member #${person.get('member_number')}`}
+      <div style={{ padding: '16px' }}>
+        <CardHeader
+          textStyle={{ paddingRight: 0 }}
+          title={`${preferredName} <${person.get('email')}>`}
+          subtitle={`Member #${person.get('member_number')}`}
+        />
+        <CardText>
+          By entering your name, you are confirming that the above information is correct.
+          <form onSubmit={ev => {
+            ev.preventDefault();
+            setSignature(name);
+          }}>
+            <TextField
+              floatingLabelText="Signature"
+              fullWidth={true}
+              onChange={(ev, name) => this.setState({ name })}
+              tabIndex={1}
+              value={name}
             />
-            <CardText>
-              By entering your name, you are confirming that the above information is correct.
-              <form onSubmit={ev => {
-                ev.preventDefault();
-                setSignature(name);
-              }}>
-                <TextField
-                  floatingLabelText="Signature"
-                  fullWidth={true}
-                  onChange={(ev, name) => this.setState({ name })}
-                  tabIndex={1}
-                  value={name}
-                />
-              </form>
-            </CardText>
-            <CardActions style={{ display: 'flex', justifyContent: 'flex-end', padding: '0 8px 16px' }}>
-              <FlatButton
-                disabled={!name}
-                label="OK"
-                onTouchTap={() => setSignature(name)}
-              />
-            </CardActions>
-          </Card>
-        </Col>
-      </Row>
+          </form>
+        </CardText>
+        <CardActions style={{ display: 'flex', justifyContent: 'flex-end', padding: '0 8px 16px' }}>
+          <FlatButton
+            disabled={!name}
+            label="OK"
+            onTouchTap={() => setSignature(name)}
+          />
+        </CardActions>
+      </div>
     );
   }
 
