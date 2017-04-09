@@ -34,7 +34,7 @@ services:
       - postgres
     expose:
       - "3000"
-  
+
   raami:
     build: ./raami
     entrypoint: ./wait-for-it.sh postgres:5432 -- npm start
@@ -75,3 +75,4 @@ services:
       - ./postgres/init/10-admin-init.sql:/docker-entrypoint-initdb.d/10-admin-init.sql:ro
       - ./postgres/init/20-kansa-init.sql:/docker-entrypoint-initdb.d/20-kansa-init.sql:ro
       - ./postgres/init/30-hugo-init.sql:/docker-entrypoint-initdb.d/30-hugo-init.sql:ro
+      - ./postgres/init/40-raami-init.sql:/docker-entrypoint-initdb.d/40-raami-init.sql:ro
