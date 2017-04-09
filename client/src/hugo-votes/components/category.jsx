@@ -14,7 +14,7 @@ import { setVotes } from '../actions'
 import { categories } from '../constants'
 import * as VotePropTypes from '../proptypes'
 
-import VoteList from './VoteList'
+import CategoryList from './category-list'
 
 const demoFinalists = (category) => {
   const labels = categoryInfo[category].nominationFieldLabels;
@@ -52,7 +52,7 @@ class VoteCategory extends React.Component {
         }}
       />
       <CardText>
-        <VoteList
+        <CategoryList
           finalists={finalists}
           preference={preference}
           setPreference={(preference) => {

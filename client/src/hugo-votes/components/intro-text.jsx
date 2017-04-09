@@ -1,12 +1,8 @@
 import React from 'react'
 import { CardActions, CardHeader, CardText } from 'material-ui/Card'
 
-const VoteIntro = ({ active }) => (
+const VoteIntroText = () => (
   <CardText className="vote-intro" style={{ padding: '16px 32px' }}>
-    { !active ? <p className="disabled">
-      At this time Hugo voting has closed. We are working to compile the final results in each category.
-    </p> : null }
-
     <h3>
       Thank you for participating in the 2017 Hugo Awards and the John W. Campbell Award!
     </h3>
@@ -101,4 +97,4 @@ const VoteIntro = ({ active }) => (
   </CardText>
 );
 
-export default VoteIntro;
+export default VoteIntroText;

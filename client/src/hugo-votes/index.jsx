@@ -10,14 +10,14 @@ import { Card, CardText } from 'material-ui/Card'
 import Divider from 'material-ui/Divider'
 import Snackbar from 'material-ui/Snackbar'
 
-import { setScene } from '../../app/actions/app'
-import { categoryInfo } from '../../hugo-nominations/constants'
-import { getFinalists, setVoter } from '../actions'
-import * as VotePropTypes from '../proptypes'
+import { setScene } from '../app/actions/app'
+import { categoryInfo } from '../hugo-nominations/constants'
 
-import VoteCategory from './VoteCategory'
-import VoteIntro from './VoteIntro'
-import VoteSignature from './VoteSignature'
+import { getFinalists, setVoter } from './actions'
+import * as VotePropTypes from './proptypes'
+import VoteCategory from './components/category'
+import VoteIntroText from './components/intro-text'
+import VoteSignature from './components/signature'
 
 class Vote extends React.Component {
 
@@ -63,7 +63,7 @@ class Vote extends React.Component {
             style={{ paddingTop: 20 }}
           >
             <Card>
-              <VoteIntro active={active} />
+              <VoteIntroText />
               <Divider />
               {person ? (
                 <VoteSignature

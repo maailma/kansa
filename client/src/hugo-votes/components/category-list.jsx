@@ -43,7 +43,7 @@ const getIcon = (n, entry) => {
   }
 }
 
-export default class VoteList extends React.Component {
+export default class CategoryList extends React.Component {
 
   static propTypes = {
     finalists: VotePropTypes.categoryFinalists.isRequired,
