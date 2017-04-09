@@ -21,6 +21,7 @@ import Number3 from 'material-ui/svg-icons/image/looks-3'
 import Number4 from 'material-ui/svg-icons/image/looks-4'
 import Number5 from 'material-ui/svg-icons/image/looks-5'
 import Number6 from 'material-ui/svg-icons/image/looks-6'
+import Number7 from '../../lib/looks-7'
 
 import { noAwardEntry } from '../constants'
 import * as VotePropTypes from '../proptypes'
@@ -37,7 +38,7 @@ const getIcon = (n, entry) => {
     case 3: return entry ? <Number4 /> : <Blank4 />;
     case 4: return entry ? <Number5 /> : <Blank5 />;
     case 5: return entry ? <Number6 /> : <Blank6 />;
-    case 6: return entry ? <Blank7 /> : <Blank7 />;
+    case 6: return entry ? <Number7 /> : <Blank7 />;
     default: return <NoNumber />;
   }
 }
