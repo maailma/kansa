@@ -1,4 +1,5 @@
-import { setServerData, submitVotes } from './actions'
+import { showMessage } from '../app/actions/app'
+import { getVotes, setServerData, submitVotes } from './actions'
 import { API_ROOT } from '../constants'
 import API from '../lib/api'
 const api = new API(API_ROOT);
@@ -6,6 +7,17 @@ const api = new API(API_ROOT);
 const submitDelay = 15 * 1000;
 let submitTimeout = null;
 let submitBeforeUnload = null;
+
+function handleReceiveVotes(dispatch, data) {
+  let latestTime = null;
+  const allVotes = Object.keys(data).reduce((allVotes, category) => {
+    const { time, votes } = data[category];
+    if (!latestTime || time > latestTime) latestTime = time;
+    allVotes[category] = votes;
+    return allVotes;
+  }, {});
+  dispatch(setServerData(allVotes, latestTime));
+}
 
 function handleSubmitVotes(dispatch, { hugoVotes }, atUnload) {
   const id = hugoVotes.get('id');
@@ -17,7 +29,8 @@ function handleSubmitVotes(dispatch, { hugoVotes }, atUnload) {
     catVotes && !catVotes.equals(hugoVotes.getIn(['serverVotes', category]))
   ));
   if (votes.size) {
-    const data = { signature, votes: votes.toJS() };
+    const lastmod = hugoVotes.get('serverTime');
+    const data = { lastmod, signature, votes: votes.toJS() };
     const path = `hugo/${id}/vote`;
     if (atUnload) {
       const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
@@ -31,10 +44,13 @@ function handleSubmitVotes(dispatch, { hugoVotes }, atUnload) {
     } else {
       api.POST(path, data)
         .then(({ time }) => {
-          dispatch(setServerData(votes, new Date(time)));
+          dispatch(setServerData(votes, time));
           if (window.ga) votes.forEach((_, category) => ga('send', 'event', 'Vote', category));
         })
-        .catch(error => dispatch({ type: 'ERROR', error}));
+        .catch(error => dispatch(error.message === 'Client has stale data'
+          ? getVotes()
+          : { type: 'ERROR', error }
+        ));
     }
   }
 }
@@ -50,9 +66,19 @@ export default ({ dispatch, getState }) => (next) => (action) => {
       return;
     }
 
+    case 'GET_VOTES':
+      const id = getState().hugoVotes.get('id');
+      if (!id) return dispatch({ type: 'ERROR', error: new Error('Voter id not set!') })
+      api.GET(`hugo/${id}/votes`)
+        .then(data => {
+          handleReceiveVotes(dispatch, data);
+          dispatch(showMessage('Client votes have been refreshed from the server'));
+        });
+      break;
+
     case 'SET_VOTER':
       api.GET(`hugo/${action.id}/votes`)
-        .then(votes => dispatch(setServerData(votes)));
+        .then(data => handleReceiveVotes(dispatch, data));
       break;
 
     case 'SET_VOTES':

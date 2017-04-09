@@ -7,7 +7,7 @@ const defaultState = Map({
   finalists: Map(),
   id: null,
   isSaving: false,
-  saveTime: null,
+  serverTime: null,
   serverVotes: Map(),
   signature: null
 });
@@ -25,11 +25,14 @@ export default (state = defaultState, action) => {
         })
       ));
 
+    case 'GET_VOTES':
+      return state.set('clientVotes', Map());
+
     case 'SET_SERVER_DATA': {
       const { time, votes } = action;
       return state.mergeDeep({
         isSaving: false,
-        saveTime: time || new Date(),
+        serverTime: time || null,
         serverVotes: Map.isMap(votes) ? votes : fromJS(votes)
       });
     }

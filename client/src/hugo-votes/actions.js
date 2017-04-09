@@ -3,6 +3,11 @@ export const getFinalists = () => ({
   type: 'GET_FINALISTS'
 });
 
+export const getVotes = () => ({
+  module: 'hugo-votes',
+  type: 'GET_VOTES'
+});
+
 export const setServerData = (votes, time) => ({
   module: 'hugo-votes',
   type: 'SET_SERVER_DATA',

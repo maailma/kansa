@@ -32,7 +32,7 @@ export const hugoVotes = ImmutablePropTypes.mapContains({
   finalists: finalists.isRequired,
   id: PropTypes.number,
   isSaving: PropTypes.bool,
-  saveTime: PropTypes.instanceOf(Date),
+  serverTime: PropTypes.instanceOf(Date),
   serverVotes: votes.isRequired,
   signature: PropTypes.string
 });
