@@ -47,16 +47,15 @@ class Vote {
   }
 
   getVotes(req, res, next) {
-    const distinct = req.query.all ? '' : 'DISTINCT ON (category)';
     this.access(req)
       .then(({ id }) => this.db.any(`
-          SELECT $1^ category, votes
+          SELECT DISTINCT ON (category) category, votes, time
             FROM Votes
-           WHERE person_id = $2
-        ORDER BY category, time DESC`, [ distinct, id ])
+           WHERE person_id = $1
+        ORDER BY category, time DESC`, id)
       )
-      .then(data => res.status(200).json(data.reduce((set, { category, votes }) => {
-        set[category] = votes;
+      .then(data => res.status(200).json(data.reduce((set, { category, time, votes }) => {
+        set[category] = { time, votes };
         return set;
       }, {})))
       .catch(next);
@@ -99,7 +98,7 @@ class Vote {
   }
 
   setVotes(req, res, next) {
-    let { signature, votes } = req.body;
+    let { lastmod, signature, votes } = req.body;
     if (!signature || !votes) return next(
       new InputError('Required parameters: signature, votes')
     );
@@ -120,6 +119,13 @@ class Vote {
           category,
           votes: votes[category]
         }));
+        return this.db.one(`SELECT max(time) from Votes where person_id=$1`, id);
+      })
+      .then(({ max }) => {
+        if (max) {
+          const dm = new Date(lastmod);
+          if (!lastmod || isNaN(dm) || dm < max) throw new InputError('Client has stale data');
+        }
         return this._setVoteData(data);
       })
       .then(([{ time }, ...rest]) => {
