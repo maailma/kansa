@@ -77,7 +77,7 @@ export default ({ dispatch, getState }) => (next) => (action) => {
       break;
 
     case 'SET_VOTER':
-      api.GET(`hugo/${action.id}/votes`)
+      if (action.id) api.GET(`hugo/${action.id}/votes`)
         .then(data => handleReceiveVotes(dispatch, data));
       break;
 

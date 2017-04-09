@@ -3,9 +3,10 @@ import React, { PropTypes } from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
+import { replace } from 'react-router-redux'
 
 const { Col, Row } = require('react-flexbox-grid');
-import { Card } from 'material-ui/Card'
+import { Card, CardText } from 'material-ui/Card'
 import Divider from 'material-ui/Divider'
 import Snackbar from 'material-ui/Snackbar'
 
@@ -22,10 +23,13 @@ class Vote extends React.Component {
 
   static propTypes = {
     getFinalists: PropTypes.func.isRequired,
+    params: PropTypes.shape({ id: PropTypes.string }),
     person: ImmutablePropTypes.map,
+    replace: PropTypes.func.isRequired,
     setScene: PropTypes.func.isRequired,
     setVoter: PropTypes.func.isRequired,
     signature: PropTypes.string,
+    soleVoterId: PropTypes.number,
     voterId: PropTypes.number
   }
 
@@ -36,15 +40,18 @@ class Vote extends React.Component {
     this.componentWillReceiveProps(this.props);
   }
 
-  componentWillReceiveProps({ person, setVoter, voterId }) {
+  componentWillReceiveProps({ params, person, replace, setVoter, soleVoterId, voterId }) {
     const personId = person && person.get('id') || null;
     if (personId !== voterId) setVoter(personId, null);
+    if (!person) {
+      if (params.id) replace('/hugo/vote');
+      else if (soleVoterId) replace(`/hugo/vote/${soleVoterId}`);
+    }
   }
 
   render() {
     const { person, setVoter, signature } = this.props;
-    const active = person.get('can_hugo_vote');
-    if (!person) return <div>Voter not found!</div>;
+    const active = person && person.get('can_hugo_vote');
     return (
       <div>
         <Row>
@@ -58,12 +65,29 @@ class Vote extends React.Component {
             <Card>
               <VoteIntro active={active} />
               <Divider />
-              <VoteSignature
-                person={person}
-                preferredName={this.name}
-                signature={signature}
-                setSignature={signature => setVoter(person.get('id'), signature)}
-              />
+              {person ? (
+                <VoteSignature
+                  person={person}
+                  preferredName={this.name}
+                  signature={signature}
+                  setSignature={signature => setVoter(person.get('id'), signature)}
+                />
+              ) : (
+                <CardText style={{ padding: '16px 32px' }}>
+                  <p>
+                    To access Hugo Award voting, please use a personal login link sent to
+                    you by email.
+                  </p><p>
+                    If your email address is associated with more than one membership that
+                    is eligible to vote or nominate in the 2017 Hugo Awards, you'll need to
+                    use the separately emailed Hugo login link to access those services.
+                    For further assistance with Hugo nominations, please e-mail
+                    {' '}<a href="mailto:hugohelp@worldcon.fi">hugohelp@worldcon.fi</a>.
+                  </p><p>
+                    <Link to="/">&laquo; Return to the main member page</Link>
+                  </p>
+                </CardText>
+              )}
             </Card>
           </Col>
         </Row>
@@ -119,15 +143,18 @@ class Vote extends React.Component {
 
 export default connect(
   ({ hugoVotes, user }, { params }) => {
-    const id = params && Number(params.id);
+    const id = params && Number(params.id) || null;
     const people = user.get('people');
+    const pv = id ? null : people && people.filter(p => p.get('can_hugo_vote'))
     return {
-      person: id && people && people.find(p => p.get('id') === id),
+      person: id && people && people.find(p => p.get('id') === id) || null,
       signature: hugoVotes.get('signature'),
+      soleVoterId: pv && pv.size === 1 && pv.first().get('id') || null,
       voterId: hugoVotes.get('id')
     }
   }, {
     getFinalists,
+    replace,
     setScene,
     setVoter
   }

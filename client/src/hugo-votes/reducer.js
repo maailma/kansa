@@ -40,7 +40,7 @@ export default (state = defaultState, action) => {
     case 'SET_VOTER': {
       const { id, signature } = action;
       const finalists = state.get('finalists');
-      return defaultState.merge({ id, finalists, signature })
+      return defaultState.merge({ id: id || null, finalists, signature })
     }
 
     case 'SET_VOTES':

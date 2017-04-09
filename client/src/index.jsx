@@ -57,8 +57,9 @@ function requireAuth({ location: { pathname }}, replace) {
   if (!email && pathname !== '/') replace('/');
 }
 
-function doLogin({ params: { email, key, id } }) {
-  store.dispatch(keyLogin(email, key, id ? `/hugo/${id}` : null));
+function doLogin({ location: { query }, params: { email, key, id } }) {
+  const next = query && query.next || (id ? `/hugo/vote/${id}` : null);
+  store.dispatch(keyLogin(email, key, next));
 }
 
 const scrollUpOnChange = (_, { location: { action } }) => {
@@ -77,24 +78,26 @@ ReactDOM.render(
           <Redirect from="profile" to="/" />
           <Route path="new" component={NewMemberIndex} />
           <Route path="new/:membership" component={NewMemberForm} />
-          <Route onEnter={requireAuth}>
-            <Route path="exhibition/:id" component={ExhibitRegistration} />
-            <Route path="hugo" >
-              <IndexRedirect to="/" />
-              <Route path="admin" component={HugoAdmin}>
-                <IndexRedirect to='Novel' />
-                <Route path=":category">
-                  <IndexRedirect to='nominations' />
-                  <Route path="finalists" component={Finalists} />
-                  <Route path="nominations" component={Canon} />
-                </Route>
-              </Route>
-              <Route path=":id">
-                <IndexRedirect to="vote" />
-                <Route path="nominate" component={Nominate} />
-                <Route path="vote" component={Vote} />
+          <Route path="hugo" >
+            <IndexRedirect to="vote" />
+            <Route path="admin" onEnter={requireAuth} component={HugoAdmin}>
+              <IndexRedirect to='Novel' />
+              <Route path=":category">
+                <IndexRedirect to='nominations' />
+                <Route path="finalists" component={Finalists} />
+                <Route path="nominations" component={Canon} />
               </Route>
             </Route>
+            <Route path="nominate/:id" onEnter={requireAuth} component={Nominate} />
+            <Route path="vote">
+              <IndexRoute component={Vote} />
+              <Route path=":id" component={Vote} />
+            </Route>
+            <Redirect from=":id/nominate" to="nominate/:id" />
+            <Redirect from=":id/vote" to="vote/:id" />
+          </Route>
+          <Route onEnter={requireAuth}>
+            <Route path="exhibition/:id" component={ExhibitRegistration} />
             <Route path="pay">
               <IndexRoute component={PurchaseIndex} />
               <Redirect from=":category" to="/pay" />
