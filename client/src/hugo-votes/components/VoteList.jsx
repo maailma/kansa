@@ -135,6 +135,7 @@ export default class VoteList extends React.Component {
       <List>
         {pFinalists.map((entry, idx) => (
           <ListItem
+            className="vote-item"
             key={'p'+idx}
             leftIcon={getIcon(idx, entry)}
             onTouchTap={(ev) => {
@@ -154,6 +155,7 @@ export default class VoteList extends React.Component {
 
         {npFinalists.map((entry, idx) => (
           <ListItem
+            className="vote-item"
             key={'n'+idx}
             leftIcon={<NoNumber />}
             onTouchTap={(ev) => this.openPopover(ev, -1, entry)}

@@ -111,3 +111,9 @@ span.upload input {
   transition: opacity 450ms;
 }
 .logoutButton:hover .logoutHint { opacity: 1 }
+
+/* VoteList item secondaryText */
+.vote-item > div > div > div:last-child {
+  height: auto !important;
+  white-space: normal !important;
+}

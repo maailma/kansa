@@ -35,7 +35,7 @@ class VoteCategory extends React.Component {
 
   render() {
     const { category, finalists, preference, setVotes } = this.props;
-    const { title, description } = categoryInfo[category];
+    const { title } = categoryInfo[category];
 
     return <Card className='body-card'>
       <CardHeader
@@ -51,9 +51,6 @@ class VoteCategory extends React.Component {
           width: '100%'
         }}
       />
-      <CardText>
-        { description }
-      </CardText>
       <CardText>
         <VoteList
           finalists={finalists}
