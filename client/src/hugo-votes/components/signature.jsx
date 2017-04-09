@@ -12,21 +12,14 @@ export default class VoteSignature extends React.Component {
     person: ImmutablePropTypes.map.isRequired,
     preferredName: PropTypes.string,
     setSignature: PropTypes.func.isRequired,
-    signature: PropTypes.string
   }
 
   state = { name: '' }
 
   render() {
-    const { person, preferredName, setSignature, signature } = this.props;
+    const { person, preferredName, setSignature } = this.props;
     const { name } = this.state;
-    return signature ? (
-      <CardHeader
-        style={{ padding: '16px 32px' }}
-        textStyle={{ paddingRight: 0 }}
-        title={`Signing as "${signature}"`}
-      />
-    ) : (
+    return (
       <div style={{ padding: '16px' }}>
         <CardHeader
           textStyle={{ paddingRight: 0 }}

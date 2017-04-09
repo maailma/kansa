@@ -16,8 +16,7 @@ import { categoryInfo } from '../hugo-nominations/constants'
 import { getFinalists, setVoter } from './actions'
 import * as VotePropTypes from './proptypes'
 import VoteCategory from './components/category'
-import VoteIntroText from './components/intro-text'
-import VoteSignature from './components/signature'
+import VoteIntro from './components/intro'
 
 class Vote extends React.Component {
 
@@ -62,33 +61,11 @@ class Vote extends React.Component {
             lg={6} lgOffset={3}
             style={{ paddingTop: 20 }}
           >
-            <Card>
-              <VoteIntroText />
-              <Divider />
-              {person ? (
-                <VoteSignature
-                  person={person}
-                  preferredName={this.name}
-                  signature={signature}
-                  setSignature={signature => setVoter(person.get('id'), signature)}
-                />
-              ) : (
-                <CardText style={{ padding: '16px 32px' }}>
-                  <p>
-                    To access Hugo Award voting, please use a personal login link sent to
-                    you by email.
-                  </p><p>
-                    If your email address is associated with more than one membership that
-                    is eligible to vote or nominate in the 2017 Hugo Awards, you'll need to
-                    use the separately emailed Hugo login link to access those services.
-                    For further assistance with Hugo nominations, please e-mail
-                    {' '}<a href="mailto:hugohelp@worldcon.fi">hugohelp@worldcon.fi</a>.
-                  </p><p>
-                    <Link to="/">&laquo; Return to the main member page</Link>
-                  </p>
-                </CardText>
-              )}
-            </Card>
+            <VoteIntro
+              person={person}
+              signature={signature}
+              setSignature={signature => setVoter(person.get('id'), signature)}
+            />
           </Col>
         </Row>
         {signature ? (
@@ -130,15 +107,6 @@ class Vote extends React.Component {
       </div>
     );
   }
-
-  get name() {
-    const { person } = this.props;
-    if (!Map.isMap(person)) return '<>';
-    const pna = [person.get('public_first_name'), person.get('public_last_name')];
-    const pns = pna.filter(s => s).join(' ');
-    return pns || person.get('legal_name');
-  }
-
 }
 
 export default connect(
