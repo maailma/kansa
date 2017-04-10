@@ -18,7 +18,7 @@ export default function(state = defaultState, action) {
       const { data } = action;
       Object.keys(data).forEach(category => {
         const cd = data[category];
-        cd.types = OrderedMap(cd.types.map(td => [td.key, fromJS(td)]));
+        cd.types = OrderedMap(cd.types ? cd.types.map(td => [td.key, fromJS(td)]) : []);
       });
       return state.set('data', fromJS(data));
 

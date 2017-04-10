@@ -57,7 +57,9 @@ const DataField = ({ field, name, onChange, value }) => {
 export default class PurchaseForm extends React.Component {
 
   render() {
-    const { onChange, people, purchase, shape } = this.props;
+    const { disabled, onChange, people, purchase, shape } = this.props;
+    const showComments = !disabled || !disabled.includes('comments');
+    const showInvoice = !disabled || !disabled.includes('invoice');
     return (
       <form>
         <Row>
@@ -72,7 +74,7 @@ export default class PurchaseForm extends React.Component {
             />
           </Col>
         </Row>
-        {shape.entrySeq().map(([name, field]) => (
+        {shape && shape.entrySeq().map(([name, field]) => (
           <DataField
             key={name}
             field={field}
@@ -81,29 +83,32 @@ export default class PurchaseForm extends React.Component {
             value={purchase.getIn(['data', name]) || ''}
           />
         ))}
-        <PurchaseTextField
-          label="Invoice number"
-          name="invoice"
-          onChange={ev => onChange({ invoice: ev.target.value })}
-          value={purchase.get('invoice')}
-        />
-        <div style={{
-          color: 'rgba(0, 0, 0, 0.3)',
-          fontSize: 12,
-          marginTop: -4,
-          textAlign: 'right'
-        }}>
-          If you've received an invoice from Worldcon 75, please include its
-          invoice number here.
-        </div>
-        <PurchaseTextField
+        {showInvoice && [
+          <PurchaseTextField
+            key="ii"
+            label="Invoice number"
+            name="invoice"
+            onChange={ev => onChange({ invoice: ev.target.value })}
+            value={purchase.get('invoice')}
+          />,
+        <div key="ih" style={{
+            color: 'rgba(0, 0, 0, 0.3)',
+            fontSize: 12,
+            marginTop: -4,
+            textAlign: 'right'
+          }}>
+            If you've received an invoice from Worldcon 75, please include its
+            invoice number here.
+          </div>
+        ]}
+        {showComments && <PurchaseTextField
           label="Comments"
           multiLine={true}
           name="comments"
           onChange={ev => onChange({ comments: ev.target.value })}
           rows={2}
           value={purchase.get('comments')}
-        />
+        />}
       </form>
     );
   }

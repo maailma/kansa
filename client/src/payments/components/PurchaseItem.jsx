@@ -75,7 +75,7 @@ class PurchaseItem extends React.Component {
   get dataShape() {
     const { purchaseData } = this.props;
     const { category } = this.state;
-    return purchaseData.getIn([category, 'shape']);
+    return purchaseData.getIn([category, 'shape'], Map()).filter(s => !s.get('generated'));
   }
 
   get disabledCheckout() {
@@ -108,6 +108,10 @@ class PurchaseItem extends React.Component {
     const { params: { type }, people, purchaseData } = this.props;
     if (!purchaseData) return null;
     const { amount, category, purchase, sent } = this.state;
+    const title = this.title;
+    const subtitle = category && category !== title ? category : '';
+    const description = purchaseData.getIn([category, 'description']);
+    const variableAmount = purchaseData.getIn([category, 'variableAmount']);
     return (
       <Row>
         <Col
@@ -116,10 +120,11 @@ class PurchaseItem extends React.Component {
           lg={6} lgOffset={3}
         >
           <Card>
-            <CardHeader title={this.title} subtitle={category} />
+            <CardHeader title={title} subtitle={subtitle} />
             <CardText>
+              {description && <div style={{ marginBottom: 32, marginTop: -16 }}>{description}</div>}
               <PurchaseForm
-                amount={amount}
+                disabled={purchaseData.getIn([category, 'disabled'])}
                 onChange={(update) => this.setState({ purchase: purchase.merge(update) })}
                 people={people}
                 purchase={purchase}
@@ -130,21 +135,25 @@ class PurchaseItem extends React.Component {
               <div style={{ flexGrow: 1 }}>
                 Amount:
                 <span style={{ paddingLeft: 8, paddingRight: 8 }}>€</span>
-                <TextField
-                  name="amount"
-                  onChange={(ev, value) => {
-                    const amount = value ? Math.floor(value * 100) : 0;
-                    this.setState({ amount });
-                  }}
-                  style={{ width: 80 }}
-                  type="number"
-                  value={amount > 0 ? (amount / 100).toFixed(2) : ''}
-                />
+                {variableAmount ? (
+                  <TextField
+                    name="amount"
+                    onChange={(ev, value) => {
+                      const amount = value ? Math.floor(value * 100) : 0;
+                      this.setState({ amount });
+                    }}
+                    style={{ width: 80 }}
+                    type="number"
+                    value={amount > 0 ? (amount / 100).toFixed(2) : ''}
+                  />
+                ) : (
+                  <span>{(amount / 100).toFixed(2)}</span>
+                )}
               </div>
               <StripeCheckout
                 amount={amount}
                 currency='EUR'
-                description={this.title}
+                description={title}
                 email={purchase.get('email')}
                 name={TITLE}
                 stripeKey={STRIPE_KEY}

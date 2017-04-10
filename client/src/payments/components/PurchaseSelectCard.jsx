@@ -6,6 +6,7 @@ import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import { List, ListItem } from 'material-ui/List'
 
 const PurchaseSelectCard = ({ data, label, onSelect, title }) => {
+  const description = data.get('description');
   const items = data.get('types').entrySeq().map(([key, typeData]) => {
     const amount = typeData.get('amount');
     const label = typeData.get('label');
@@ -24,6 +25,7 @@ const PurchaseSelectCard = ({ data, label, onSelect, title }) => {
       style={{ fontWeight: 600 }}
       title={title}
     />}
+    {description && <CardText>{description}</CardText>}
     <CardActions style={{ paddingLeft: 16 }}>
       <List>{ items.toJS() }</List>
     </CardActions>

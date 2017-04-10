@@ -9,13 +9,14 @@ const PurchaseItemCard = ({ label, purchase, shape }) => {
   const {
     amount, category, comments, data, invoice, paid, payment_email, stripe_charge_id
   } = purchase.toJS();
+  const subtitle = category !== label ? category : '';
   return <Card
     style={{ marginBottom: 18 }}
   >
     <CardHeader
       style={{ display: 'flex', fontWeight: 600 }}
       title={label}
-      subtitle={category}
+      subtitle={subtitle}
     >
       <div style={{ flexGrow: 1, textAlign: 'right' }}>
         <div
@@ -47,7 +48,7 @@ const PurchaseItemCard = ({ label, purchase, shape }) => {
         </tr> : null}
         {Object.keys(data).map((key) => (
           <tr key={key}>
-            <td>{shape.getIn([key, 'label']) || key}:</td>
+            <td>{shape && shape.getIn([key, 'label']) || key}:</td>
             <td>{data[key]}</td>
           </tr>
         ))}
@@ -63,7 +64,7 @@ const PurchaseItemCard = ({ label, purchase, shape }) => {
 PurchaseItemCard.propTypes = {
   label: PropTypes.string.isRequired,
   purchase: PurchasePropTypes.purchase.isRequired,
-  shape: PurchasePropTypes.shape.isRequired
+  shape: PurchasePropTypes.shape
 }
 
 export default PurchaseItemCard;
