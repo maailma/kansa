@@ -22,7 +22,6 @@ class PurchaseItem extends React.Component {
     email: PropTypes.string,
     getPurchaseData: PropTypes.func.isRequired,
     params: PropTypes.shape({
-      category: PropTypes.string.isRequired,
       type: PropTypes.string.isRequired
     }).isRequired,
     people: ImmutablePropTypes.list,
@@ -38,6 +37,7 @@ class PurchaseItem extends React.Component {
     const { email = '', people } = props;
     this.state = {
       amount: 0,
+      category: null,
       purchase: Map({
         comments: '',
         data: Map(),
@@ -50,10 +50,11 @@ class PurchaseItem extends React.Component {
     };
   }
 
-  init({ params: { category, type }, purchaseData, replace, showMessage }) {
+  init({ params: { type }, purchaseData, replace, showMessage }) {
+    const category = purchaseData.findKey(cd => cd.get('types').has(type));
     const typeData = purchaseData.getIn([category, 'types', type]);
     if (typeData) {
-      this.setState({ amount: typeData.get('amount') });
+      this.setState({ amount: typeData.get('amount'), category });
     } else {
       showMessage(`Unknown purchase type "${category}/${type}"`)
       replace('/pay');
@@ -72,8 +73,9 @@ class PurchaseItem extends React.Component {
   }
 
   get dataShape() {
-    const { params: { category }, purchaseData } = this.props;
-    return purchaseData.getIn([category, 'shape'])
+    const { purchaseData } = this.props;
+    const { category } = this.state;
+    return purchaseData.getIn([category, 'shape']);
   }
 
   get disabledCheckout() {
@@ -86,14 +88,15 @@ class PurchaseItem extends React.Component {
   }
 
   get title() {
-    const { params: { category, type }, purchaseData } = this.props;
+    const { params: { type }, purchaseData } = this.props;
+    const { category } = this.state;
     return purchaseData.getIn([category, 'types', type, 'label']);
   }
 
   onCheckout = (token) => {
-    const { buyOther, params, push, showMessage } = this.props;
-    const { amount, purchase } = this.state;
-    const item = purchase.merge(params).set('amount', amount).filter(v => v).toJS();
+    const { buyOther, params: { type }, push, showMessage } = this.props;
+    const { amount, category, purchase } = this.state;
+    const item = purchase.merge({ amount, category, type }).filter(v => v).toJS();
     showMessage(`Charging ${purchase.get('email')} EUR ${amount / 100}...`);
     buyOther(token, [item], () => {
       showMessage('Payment successful!');
@@ -102,9 +105,9 @@ class PurchaseItem extends React.Component {
   }
 
   render() {
-    const { params: { category, type }, people, purchaseData } = this.props;
+    const { params: { type }, people, purchaseData } = this.props;
     if (!purchaseData) return null;
-    const { amount, purchase, sent } = this.state;
+    const { amount, category, purchase, sent } = this.state;
     return (
       <Row>
         <Col

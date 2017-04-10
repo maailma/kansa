@@ -100,8 +100,7 @@ ReactDOM.render(
             <Route path="exhibition/:id" component={ExhibitRegistration} />
             <Route path="pay">
               <IndexRoute component={PurchaseIndex} />
-              <Redirect from=":category" to="/pay" />
-              <Route path=":category/:type" component={PurchaseItem} />
+              <Route path=":type" component={PurchaseItem} />
             </Route>
             <Route path="upgrade">
               <IndexRoute component={Upgrade} />

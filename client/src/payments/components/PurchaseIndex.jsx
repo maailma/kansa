@@ -36,7 +36,7 @@ class PurchaseIndex extends React.Component {
           data={data}
           key={category}
           label={category}
-          onSelect={(type) => push(`/pay/${category}/${type}`)}
+          onSelect={(type) => push(`/pay/${type}`)}
           title={`New ${category}`}
         />
       ));
