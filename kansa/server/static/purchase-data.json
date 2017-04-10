@@ -1,4 +1,22 @@
 {
+  "Site Selection Token": {
+    "account": "worldcon77",
+    "description": "A token indicating payment of the Voting Fee for the Worldcon Site Selection. You, and anyone else you pay for, will receive a voting token to be entered on the site selection ballot as proof of payment, which will allow you to submit a vote for where the 77th Worldcon will be held in 2019. (You can vote in advance by postal mail or in person at Worldcon 75). Your ballot will NOT be counted unless you provide this proof of payment of the Voting Fee for the Worldcon Site Selection.",
+    "disabled": ["invoice", "comments"],
+    "shape": {
+      "token": {
+        "generated": true,
+        "label": "Token",
+        "required": true,
+        "type": "string"
+      }
+    },
+    "types": [{
+      "key": "ss-token",
+      "amount": 4000,
+      "label": "Site Selection Token"
+    }]
+  },
   "New membership": {
     "allow_new_email": true,
     "shape": {
@@ -116,7 +134,8 @@
         "amount": 50000,
         "label": "Craft lounge"
       }
-    ]
+    ],
+    "variableAmount": true
   },
   "Upgrade membership": {
     "shape": {
@@ -135,6 +154,7 @@
         "label": "Upgrade"
       }
     ],
-    "unlisted": true
+    "unlisted": true,
+    "variableAmount": true
   }
 }

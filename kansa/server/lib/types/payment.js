@@ -1,8 +1,14 @@
 const Promise = require('bluebird');
+const randomstring = require('randomstring');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_APIKEY);
 
 const InputError = require('./inputerror');
 const purchaseData = require('../../static/purchase-data.json');
+
+const generateToken = () => randomstring.generate({
+  length: 6,
+  charset: 'ABCDEFHJKLMNPQRTUVWXY0123456789'
+});
 
 function checkData(category, data) {
   const { shape = {} } = purchaseData[category];
@@ -43,6 +49,11 @@ function validateItem(item, currency) {
   }
   const typeErrors = checkType(item.category, item.type);
   if (typeErrors) throw new InputError('Supported types: ' + JSON.stringify(typeErrors));
+  switch (item.type) {
+    case 'ss-token':
+      item.data = { token: generateToken() }
+      break;
+  }
   const dataErrors = checkData(item.category, item.data);
   if (dataErrors) throw new InputError('Bad data: ' + JSON.stringify(dataErrors));
 }
