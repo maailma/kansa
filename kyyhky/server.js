@@ -35,6 +35,7 @@ queue.on('job failed', (id, result) => {
   'hugo-update-email',
   'kansa-add-paper-pubs',
   'kansa-new-member',
+  'kansa-new-payment',
   'kansa-set-key',
   'kansa-upgrade-person'
 ].forEach(type => (

@@ -5,6 +5,8 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_APIKEY);
 const InputError = require('./inputerror');
 const purchaseData = require('../../static/purchase-data.json');
 
+const CUSTOM_EMAIL_CATEGORIES = ['New membership', 'Paper publications', 'Upgrade membership'];
+
 const generateToken = () => randomstring.generate({
   length: 6,
   charset: 'ABCDEFHJKLMNPQRTUVWXY0123456789'
@@ -84,6 +86,7 @@ class Payment {
       amount: Number(item.amount),
       currency: item.currency || 'eur',
       paid: null,
+      person_email: null,
       person_id: Number(item.person_id) || null,
       person_name: item.person_name || null,
       category: item.category,
@@ -106,6 +109,26 @@ class Payment {
       this.items.forEach(item => validateItem(item, currency));
       resolve();
     })
+      .then(() => {
+        const ids = Object.keys(this.items.reduce((set, item) => {
+          const id = Number(item.person_id);
+          if (id > 0 && CUSTOM_EMAIL_CATEGORIES.indexOf(item.category) === -1) set[id] = true;
+          return set;
+        }, {}));
+        return ids.length === 0 ? null
+          : this.db.many(`
+              SELECT id, email, preferred_name(p) as name
+                FROM People p
+               WHERE id in ($1:csv)`, [ids]
+            ).then(data => this.items.forEach(item => {
+              const id = item.person_id;
+              const pd = id && data.find(d => d.id === id);
+              if (pd) {
+                item.person_email = pd.email;
+                if (!item.person_name) item.person_name = pd.name;
+              }
+            }));
+      })
       .then(() => (this.items.every(item => purchaseData[item.category].allow_new_email)
         ? Promise.resolve()
         : this.db.many(`SELECT id FROM People WHERE email=$1`, this.token.email)

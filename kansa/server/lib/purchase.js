@@ -165,11 +165,22 @@ class Purchase {
   makeOtherPurchase(req, res, next) {
     new Payment(this.pgp, this.db, req.body.token, req.body.items)
       .process()
-      .then(items => res.status(200).json({
-        status: 'success',
-        email: items[0].payment_email,
-        stripe_charge_id: items[0].stripe_charge_id
-      }))
+      .then(items => (
+        Promise.all(items.map(item => {
+          const { shape, types } = purchaseData[item.category];
+          const typeData = types.find(td => td.key === item.type);
+          return sendEmail('kansa-new-payment', Object.assign({
+            email: item.person_email || item.payment_email,
+            name: item.person_name || null,
+            shape,
+            typeLabel: typeData && typeData.label || item.type
+          }, item));
+        }))
+          .then(() => res.status(200).json({
+            status: 'success',
+            charge_id: items[0].stripe_charge_id
+          }))
+      ))
       .catch(next);
   }
 }

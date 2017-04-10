@@ -24,6 +24,15 @@ function nominationsString(data) {
   }).join('\n\n');
 }
 
+function paymentDataString(data, shape) {
+  if (!data) return '';
+  const label = (key) => shape && shape[key] && shape[key].label || key;
+  return Object.keys(data)
+    .filter(key => key && data[key])
+    .map(key => `${label(key)}: ${data[key]}`)
+    .join('\n');
+}
+
 function votesString(data) {
   return data
     .map(({ category, finalists }) => ({
@@ -97,6 +106,14 @@ class Mailer {
 
       case 'hugo-update-votes':
         tmplData.votes = votesString(data.votes);
+        break;
+
+      case 'kansa-new-payment':
+        if (data.type === 'ss-token') {
+          tmplName = 'kansa-new-siteselection-token';
+        }
+        tmplData.data = paymentDataString(data.data, data.shape);
+        tmplData.strAmount = data.currency.toUpperCase() + ' ' + (data.amount / 100).toFixed(2);
         break;
 
       case 'kansa-upgrade-person':

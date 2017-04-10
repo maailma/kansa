@@ -339,13 +339,13 @@ Using the `token` received from Stripe, make a charge of `amount` on the card
 (once verified against the server-side calculated sum from the items) and add
 the `new_members` to the database as well as applying the specified `upgrades`.
 For new members, generate a login key and include it in the welcome email sent
-to each address. Send the receipt of the purchase to the `email` address.
+to each address. Sends an info message to each new or upgraded member.
 
 #### Response
 ```
 {
   status: 'success',
-  emails: ['address@example.com', ...]
+  charge_id
 }
 ```
 
@@ -391,9 +391,9 @@ parameter (requires `member_admin` access).
     stripe_charge_id: '...',
     category: 'Sponsorship',
     type: 'bench',
-    email: '...',
-    name: '...',
+    payment_email: '...',
     person_id: 456,
+    person_name: '...',
     data: { sponsor: '...' },
     comments: '...',
     invoice: '456'
@@ -407,13 +407,14 @@ Parameters:
 - `token: { id, email }`: Received from Stripe, used to make the charge
 - `items`: Array of payment objects, each consisting of:
   - `amount`, `currency`: The charge amount, in integer cents of `currency`
-  - `person_id`: The beneficiary of the payment (optional)
+  - `person_id`, `person_name`: The beneficiary of the payment (optional)
   - `category`, `type`, `data`: Required to match entries returned by
     [`GET /api/kansa/purchase/data`](#get-apikansapurchasedata)
   - `comments`, `invoice`: Optional strings
 
 Using the `token` received from Stripe, make a charge on the card and adds
-entries to the `Payments` table for each item.
+entries to the `Payments` table for each item. Sends an info email to each
+item's beneficiary.
 
 #### Request
 ```
@@ -427,7 +428,7 @@ entries to the `Payments` table for each item.
       type: 'bench',
       data: { sponsor: '...' },
       person_id: 123,
-      name: '...',
+      person_name: '...',
       comments: '...',
       invoice: '456'
     }
@@ -439,8 +440,7 @@ entries to the `Payments` table for each item.
 ```
 {
   status: 'success',
-  emails: ['...'],
-  stripe_charge_id: '...'
+  charge_id: '...'
 }
 ```
 

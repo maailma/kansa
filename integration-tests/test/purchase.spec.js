@@ -313,10 +313,7 @@ describe('Other purchases', () => {
           })
           .expect(200)
           .expect(({ body }) => {
-            if (
-              !body || body.status !== 'success' || !body.stripe_charge_id ||
-              body.email !== `${testName}@example.com`
-            ) throw new Error(
+            if (!body || body.status !== 'success' || !body.charge_id) throw new Error(
               `Bad response! ${JSON.stringify(body)}`
             );
           })
