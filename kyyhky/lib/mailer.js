@@ -4,6 +4,8 @@ const SendGrid  = require('sendgrid');
 const tfm = require('tiny-frontmatter');
 const wrap = require('wordwrap');
 
+const WRAP_WIDTH = 78;
+
 function loginUri(email, key, id) {
   const root = process.env.LOGIN_URI_ROOT;
   const parts = [root, email, key];
@@ -16,7 +18,7 @@ function nominationsString(data) {
     const ct = category.charAt(0) + category.slice(1).replace(/[A-Z]/g, ' $&');
     const cn = nominations.map(n => {
       const ns = Object.keys(n).map(k => n[k]).join('; ');
-      return '  - ' + wrap(68)(ns).replace(/\n/g, '\n    ');
+      return '  - ' + wrap(WRAP_WIDTH - 4)(ns).replace(/\n/g, '\n    ');
     });
     return `${ct}:\n${cn.join('\n')}`;
   }).join('\n\n');
@@ -27,7 +29,7 @@ function votesString(data) {
     .map(({ category, finalists }) => ({
       title: category.charAt(0) + category.slice(1).replace(/[A-Z]/g, ' $&'),
       votes: finalists && finalists.filter(finalist => finalist).map((finalist, i) => {
-        return `  ${i+1}. ` + wrap(68)(finalist).replace(/\n/g, '\n     ');
+        return `  ${i+1}. ` + wrap(WRAP_WIDTH - 4)(finalist).replace(/\n/g, '\n     ');
       })
     }))
     .filter(({ votes }) => votes && votes.length > 0)
@@ -44,10 +46,10 @@ class Mailer {
     } else {
       this.sendgrid = {
         emptyRequest: (request) => request,
-        API: ({ body: { content, from, personalizations: [recipient], subject }, method, path }, callback) => {
+        API: ({ body: { content, from, personalizations, subject }, method, path }, callback) => {
           console.log('MOCK SendGrid request', method, path);
           console.log('FROM:', JSON.stringify(from.name), `<${from.email}>`);
-          console.log('TO:', JSON.stringify(recipient.name), `<${recipient.email}>`);
+          console.log('TO:', JSON.stringify(personalizations[0].to[0]));
           console.log('SUBJECT:', subject);
           console.log('--------\n', content[0] && content[0].value, '\n--------');
           callback(null, null);
@@ -62,7 +64,7 @@ class Mailer {
   }
 
   sgRequest(msgTemplate, data) {
-    const { attributes: { from, fromname, recipient, subject }, body } = tfm(msgTemplate);
+    const { attributes: { from, fromname, subject }, body } = tfm(msgTemplate);
     const to = [{ email: data.email }];
     if (data.name) to[0].name = data.name;
     return this.sendgrid.emptyRequest({
@@ -77,7 +79,7 @@ class Mailer {
         subject: mustache.render(subject, data),
         content: [{
           type: 'text/plain',
-          value: wrap(72)(mustache.render(body, data))
+          value: wrap(WRAP_WIDTH)(mustache.render(body, data))
         }]
       }
     });
