@@ -16,9 +16,8 @@ const MemberAvatar = ({ member, single=false, size=40, style={}, ...props }) => 
     title={name}
     {...props}
   >
-    { single ? <Gravatar default="wavatar" email={member.get('email')} size={size} /> : initials(name) }
+    { single ? <Gravatar default="identicon" email={member.get('email')} size={size} /> : initials(name) }
   </Avatar>;
 }
 
 export default MemberAvatar;
-
