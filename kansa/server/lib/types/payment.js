@@ -62,7 +62,8 @@ function validateItem(item, currency) {
 class Payment {
   static get fields() { return [
     'payment_email', 'stripe_charge_id', 'stripe_token', 'amount', 'currency',
-    'paid', 'person_id', 'category', 'type', 'data', 'invoice', 'comments'
+    'paid', 'person_id', 'person_name', 'category', 'type', 'data',
+    'invoice', 'comments'
   ]}
 
   // https://stripe.com/docs/api/node#create_charge-statement_descriptor
@@ -84,6 +85,7 @@ class Payment {
       currency: item.currency || 'eur',
       paid: null,
       person_id: Number(item.person_id) || null,
+      person_name: item.person_name || null,
       category: item.category,
       type: item.type,
       data: item.data || null,

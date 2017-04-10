@@ -91,7 +91,7 @@ describe('Membership purchases', () => {
           })
           .expect((res) => {
             if (res.status !== 200) throw new Error(`Purchase failed! ${JSON.stringify(res.body)}`);
-            if (res.body.emails.length !== 1 || res.body.emails[0] !== `${testName}@example.com`) {
+            if (!res.body.charge_id) {
               throw new Error(`Bad response! ${JSON.stringify(res.body)}`)
             }
           })
@@ -139,7 +139,7 @@ describe('Membership purchases', () => {
           })
           .expect((res) => {
             if (res.status !== 200) throw new Error(`Upgrade failed! ${JSON.stringify(res.body)}`);
-            if (res.body.emails.length !== 1 || res.body.emails[0] !== `${testName}@example.com`) {
+            if (!res.body.charge_id) {
               throw new Error(`Bad response! ${JSON.stringify(res.body)}`)
             }
           })

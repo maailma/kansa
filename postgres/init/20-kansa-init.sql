@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS Payments (
     amount integer NOT NULL,
     currency text NOT NULL,
     person_id integer REFERENCES People,
+    person_name text,
     category text NOT NULL,
     type text,
     data jsonb,

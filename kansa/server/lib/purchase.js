@@ -100,14 +100,14 @@ class Purchase {
     if (newMembers.length === 0 && reqUpgrades.length === 0) return next(
       new InputError('Non-empty new_members or upgrades is required')
     );
-    const sentEmails = {};
-    let charge_id, upgrades;
+    let charge_id, paymentItems, upgrades;
     this.checkUpgrades(reqUpgrades).then(_upgrades => {
       upgrades = _upgrades;
       const newMemberPaymentItems = newMembers.map(p => ({
         amount: p.priceAsNewMember,
         currency: 'eur',
         category: 'New membership',
+        person_name: p.preferredName,
         type: p.data.membership,
         data: p.data
       }));
@@ -115,6 +115,7 @@ class Purchase {
         amount: u.amount,
         currency: 'eur',
         person_id: u.id,
+        person_name: u.name,
         category: 'Upgrade membership',
         type: 'upgrade',
         data: { membership: u.membership, paper_pubs: u.paper_pubs || undefined },
@@ -124,8 +125,9 @@ class Purchase {
       if (amount !== calcAmount) throw new InputError(`Amount mismatch: in request ${amount}, calculated ${calcAmount}`);
       return new Payment(this.pgp, this.db, { id: token, email }, items)
         .process()
-    }).then(items => {
-      charge_id = items[0].stripe_charge_id;
+    }).then(_items => {
+      paymentItems = _items;
+      charge_id = _items[0].stripe_charge_id;
       return Promise.all(upgrades.map(u => (
         upgradePerson(req, this.db, u)
           .then(({ member_number }) => {
@@ -137,7 +139,6 @@ class Purchase {
               ? 'kansa-add-paper-pubs' : 'kansa-upgrade-person',
             Object.assign({ charge_id, key }, u)
           ))
-          .then(() => sentEmails[u.email] = true)
       )));
     }).then(() => Promise.all(
       newMembers.map(m => (
@@ -145,16 +146,19 @@ class Purchase {
           .then(({ id, member_number }) => {
             m.data.id = id;
             m.data.member_number = member_number;
-            return getKeyChecked(req, m.data.email);
+            const pi = paymentItems.find(item => item.data === m.data);
+            return pi && this.db.none(
+              `UPDATE ${Payment.table} SET person_id=$1 WHERE id=$2`, [id, pi.id]
+            );
           })
+          .then(() => getKeyChecked(req, m.data.email))
           .then(({ key }) => sendEmail(
             'kansa-new-member',
             Object.assign({ charge_id, key, name: m.preferredName }, m.data)
           ))
-          .then(() => sentEmails[m.data.email] = true)
       ))
     )).then(() => {
-      res.status(200).json({ status: 'success', emails: Object.keys(sentEmails) });
+      res.status(200).json({ status: 'success', charge_id });
     }).catch(next);
   }
 
