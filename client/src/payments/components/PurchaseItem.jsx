@@ -122,7 +122,11 @@ class PurchaseItem extends React.Component {
           <Card>
             <CardHeader title={title} subtitle={subtitle} />
             <CardText>
-              {description && <div style={{ marginBottom: 32, marginTop: -16 }}>{description}</div>}
+              {description && <div
+                className="html-container"
+                style={{ marginBottom: 32, marginTop: -16 }}
+                dangerouslySetInnerHTML={{ __html: description }}
+              />}
               <PurchaseForm
                 disabled={purchaseData.getIn([category, 'disabled'])}
                 onChange={(update) => this.setState({ purchase: purchase.merge(update) })}

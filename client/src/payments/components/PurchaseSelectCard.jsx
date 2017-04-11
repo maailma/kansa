@@ -23,9 +23,13 @@ const PurchaseSelectCard = ({ data, label, onSelect, title }) => {
     {title && <CardHeader
       className="action-head"
       style={{ fontWeight: 600 }}
+      textStyle={{ paddingRight: 0 }}
       title={title}
     />}
-    {description && <CardText>{description}</CardText>}
+    {description && <CardText
+      className="html-container"
+      dangerouslySetInnerHTML={{ __html: description }}
+    />}
     <CardActions style={{ paddingLeft: 16 }}>
       <List>{ items.toJS() }</List>
     </CardActions>

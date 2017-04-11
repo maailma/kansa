@@ -45,8 +45,9 @@ class PurchaseIndex extends React.Component {
   get prevPurchaseCards() {
     const { purchaseData, purchaseList } = this.props;
     return purchaseList.map((purchase, i) => {
-      const categoryData = purchaseData.get(purchase.get('category'));
+      const category = purchase.get('category');
       const type = purchase.get('type');
+      const categoryData = this.purchaseCategoryData(category, type);
       return (
         <PurchaseItemCard
           key={i}
@@ -56,6 +57,12 @@ class PurchaseIndex extends React.Component {
         />
       );
     });
+  }
+
+  purchaseCategoryData(category, type) {
+    const { purchaseData } = this.props;
+    return purchaseData.get(category) ||
+      purchaseData.find(cd => cd.get('types').some(td => td.get('key') === type))
   }
 
   render() {

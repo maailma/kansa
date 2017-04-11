@@ -66,6 +66,15 @@ a:hover { text-decoration: underline }
   padding: 5px 15px;
 }
 
+.html-container > :first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+.html-container > :last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
 div.upload {
 	min-height: 100px;
 	display: block;
