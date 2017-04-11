@@ -14,7 +14,7 @@ function verifyPeopleAccess(req, res, next) {
   const id = parseInt(req.params.id);
   const user = req.session.user;
   if (isNaN(id) || id < 0) res.status(400).json({ status: 'error', message: 'Bad id number' });
-  else if (user.member_admin) next();
+  else if (user.member_admin || (req.method === 'GET' && user.member_list)) next();
   else req.app.locals.db.oneOrNone('SELECT email FROM People WHERE id = $1', id)
     .then(data => {
       if (data && user.email === data.email) next();

@@ -123,7 +123,9 @@ function getMemberPaperPubs(req, res, next) {
 }
 
 function getPeople(req, res, next) {
-  if (!req.session.user.member_admin) return res.status(401).json({ status: 'unauthorized' });
+  if (!req.session.user.member_admin && !req.session.user.member_list) {
+    return res.status(401).json({ status: 'unauthorized' });
+  }
   if (Object.keys(req.query).length > 0) getPeopleQuery(req, res, next);
   else req.app.locals.db.any('SELECT * FROM People')
     .then(data => {

@@ -179,7 +179,7 @@ log entries with `author` set to the given email address.
 ## Member info
 
 ### `GET /api/kansa/people`
-- Requires authentication and `member_admin` authority
+- Requires authentication and `member_admin` or `member_list` authority
 - Parameters: `since`, `name`, and all person fields
 
 List member data. If no query parameters are present, the response array
@@ -223,7 +223,7 @@ be generated.
 - Requires authentication
 
 Find the person matching `id`. If its email address does not match the session
-data, `member_admin` authority is required.
+data, `member_admin` or `member_list` authority is required.
 
 #### Response
 ```
@@ -240,7 +240,7 @@ data, `member_admin` authority is required.
 - Requires authentication
 
 Find the log entries for the person matching `id`. If its email address does not
-match the session data, `member_admin` authority is required.
+match the session data, `member_admin` or `member_list` authority is required.
 
 #### Response
 ```
