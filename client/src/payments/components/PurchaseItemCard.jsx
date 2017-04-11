@@ -2,12 +2,13 @@ import React, { PropTypes } from 'react'
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
+import Divider from 'material-ui/Divider'
 
 import * as PurchasePropTypes from '../proptypes'
 
 const PurchaseItemCard = ({ label, purchase, shape }) => {
   const {
-    amount, category, comments, data, invoice, paid, payment_email, stripe_charge_id
+    amount, category, comments, data, invoice, paid, payment_email, person_name, stripe_charge_id
   } = purchase.toJS();
   const subtitle = category !== label ? category : '';
   return <Card
@@ -39,6 +40,10 @@ const PurchaseItemCard = ({ label, purchase, shape }) => {
           <td>{payment_email}</td>
         </tr>
         <tr>
+          <td>Payment for:</td>
+          <td>{person_name}</td>
+        </tr>
+        <tr>
           <td>Charge id:</td>
           <td style={{ fontFamily: 'monospace' }}>{stripe_charge_id}</td>
         </tr>
@@ -46,7 +51,8 @@ const PurchaseItemCard = ({ label, purchase, shape }) => {
           <td>Invoice:</td>
           <td>{invoice}</td>
         </tr> : null}
-        {Object.keys(data).map((key) => (
+        <tr><td colSpan="2" style={{ paddingTop: 6, paddingBottom: 4 }}><Divider /></td></tr>
+        {Object.keys(data).filter(key => data[key]).map((key) => (
           <tr key={key}>
             <td>{shape && shape.getIn([key, 'label']) || key}:</td>
             <td>{data[key]}</td>
