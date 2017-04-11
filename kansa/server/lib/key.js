@@ -15,7 +15,7 @@ function setKeyChecked(req, email) {
         ON CONFLICT (email) DO UPDATE SET key = EXCLUDED.key`, { email, key }),
     tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
   ]))
-    .then(() => ({ email, key }));
+    .then(() => ({ email, key, set: true }));
 }
 
 function getKeyChecked(req, email) {

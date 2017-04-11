@@ -100,6 +100,7 @@ class Purchase {
     if (newMembers.length === 0 && reqUpgrades.length === 0) return next(
       new InputError('Non-empty new_members or upgrades is required')
     );
+    const newEmailAddresses = {};
     let charge_id, paymentItems, upgrades;
     this.checkUpgrades(reqUpgrades).then(_upgrades => {
       upgrades = _upgrades;
@@ -152,12 +153,19 @@ class Purchase {
             );
           })
           .then(() => getKeyChecked(req, m.data.email))
-          .then(({ key }) => sendEmail(
-            'kansa-new-member',
-            Object.assign({ charge_id, key, name: m.preferredName }, m.data)
-          ))
+          .then(({ key, set }) => {
+            if (set) newEmailAddresses[m.data.email] = true;
+            return sendEmail(
+              'kansa-new-member',
+              Object.assign({ charge_id, key, name: m.preferredName }, m.data)
+            );
+          })
       ))
     )).then(() => {
+      if (!req.session.user) {
+        const nea = Object.keys(newEmailAddresses);
+        if (nea.length >= 1) req.session.user = { email: nea[0], roles: {} };
+      }
       res.status(200).json({ status: 'success', charge_id });
     }).catch(next);
   }
