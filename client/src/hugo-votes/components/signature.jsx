@@ -21,13 +21,10 @@ export default class VoteSignature extends React.Component {
     const { name } = this.state;
     return (
       <div style={{ padding: '16px' }}>
-        <CardHeader
-          textStyle={{ paddingRight: 0 }}
-          title={`${preferredName} <${person.get('email')}>`}
-          subtitle={`Member #${person.get('member_number')}`}
-        />
         <CardText>
-          By entering your name, you are confirming that the above information is correct.
+          To start voting, please enter your name here to confirm that you are
+          {' '}<b>{preferredName}</b> ({person.get('email')}), Worldcon 75
+          member <b>#{person.get('member_number')}</b>:
           <form onSubmit={ev => {
             ev.preventDefault();
             setSignature(name);
