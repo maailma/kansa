@@ -18,8 +18,10 @@ export default ({ dispatch }) => (next) => (action) => {
         token: token.id,
         new_members: [member]
       })
-        .then(() => api.GET('kansa/user'))
-        .then(user => dispatch(memberSet(user)))
+        .then(() => api.GET('kansa/user')
+          .then(user => dispatch(memberSet(user)))
+          .catch(() => {/* isgnore auth error */})
+        )
         .then(() => callback && callback())
         .catch(handleError);
     } return;
