@@ -8,7 +8,7 @@ stop:
 	docker-compose stop
 
 prod: prod-check
-	docker-compose -f $(BASE_CFG) -f $(PROD_CFG) up -d
+	docker-compose -f $(BASE_CFG) -f $(PROD_CFG) up -d --build
 
 prod-check:
 	@grep '^\s\+[A-Z_]\+:\s*$$' $(PROD_CFG) ;\
