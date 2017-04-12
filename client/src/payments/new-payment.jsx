@@ -1,13 +1,14 @@
 import { Map } from 'immutable'
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
+import { Link } from 'react-router'
 import { push, replace } from 'react-router-redux'
 const { Col, Row } = require('react-flexbox-grid');
 const ImmutablePropTypes = require('react-immutable-proptypes');
 import StripeCheckout from 'react-stripe-checkout'
 
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
-import FlatButton from 'material-ui/FlatButton'
+import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
 
 import { setScene, showMessage } from '../app/actions/app'
@@ -134,27 +135,10 @@ class NewPayment extends React.Component {
                 shape={this.dataShape}
               />
             </CardText>
-            <CardActions style={{ alignItems: 'center', display: 'flex', paddingLeft: 16, paddingRight: 16 }}>
-              <div style={{ flexGrow: 1 }}>
-                Amount:
-                <span style={{ paddingLeft: 8, paddingRight: 8 }}>€</span>
-                {variableAmount ? (
-                  <TextField
-                    name="amount"
-                    onChange={(ev, value) => {
-                      const amount = value ? Math.floor(value * 100) : 0;
-                      this.setState({ amount });
-                    }}
-                    style={{ width: 80 }}
-                    type="number"
-                    value={amount > 0 ? (amount / 100).toFixed(2) : ''}
-                  />
-                ) : (
-                  <span>{(amount / 100).toFixed(2)}</span>
-                )}
-              </div>
+            <CardActions style={{ alignItems: 'center', display: 'flex', flexWrap: 'wrap', padding: 16 }}>
               <StripeCheckout
                 amount={amount}
+                closed={() => this.setState({ sent: false })}
                 currency='EUR'
                 description={title}
                 email={purchase.get('email')}
@@ -164,15 +148,40 @@ class NewPayment extends React.Component {
                 triggerEvent='onTouchTap'
                 zipCode={true}
               >
-                <FlatButton
+                <RaisedButton
                   label={ sent ? 'Working...' : 'Pay by card' }
                   disabled={this.disabledCheckout}
-                  onTouchTap={ () => this.setState({ sent: true }) }
-                  style={{ flexShrink: 0 }}
+                  onTouchTap={() => this.setState({ sent: true })}
+                  primary={true}
+                  style={{ marginRight: 16 }}
                 />
               </StripeCheckout>
+              <div>
+                Amount:
+                <span style={{ paddingLeft: 8, paddingRight: 8 }}>€</span>
+                {variableAmount ? (
+                  <TextField
+                    name="amount"
+                    onChange={(ev, value) => {
+                      const amount = value ? Math.floor(value * 100) : 0;
+                      this.setState({ amount });
+                    }}
+                    style={{ height: 36, width: 80 }}
+                    type="number"
+                    value={amount > 0 ? (amount / 100).toFixed(2) : ''}
+                  />
+                ) : (
+                  <span>{(amount / 100).toFixed(2)}</span>
+                )}
+              </div>
             </CardActions>
           </Card>
+          <Link to="/pay"
+            style={{
+              display: 'block', fontSize: 14, marginLeft: 16, marginTop: 16,
+              maxWidth: '45%', position: 'absolute'
+            }}
+          >&laquo; Return to the main payments page</Link>
         </Col>
       </Row>
     );

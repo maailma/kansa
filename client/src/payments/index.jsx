@@ -8,7 +8,7 @@ import { setScene } from '../app/actions/app'
 import { getPurchaseData, getPurchaseList } from './actions'
 import * as PaymentPropTypes from './proptypes'
 import PaymentCard from './components/payment-card'
-import SelectNewPaymentCard from './components/select-new-payment'
+import SelectNewPaymentCard from './components/select-new-payment-card'
 
 class PaymentsIndex extends React.Component {
   static propTypes = {
@@ -69,7 +69,7 @@ class PaymentsIndex extends React.Component {
     const { purchaseData, purchaseList } = this.props;
     if (!purchaseData) return null;
     const ppOk = purchaseList && purchaseList.size > 0;
-    return <Row>
+    return <Row style={{ marginBottom: -16 }}>
       {ppOk ? (
         <Col xs={12} sm={6} lg={4} lgOffset={2}>
           {this.prevPurchaseCards}

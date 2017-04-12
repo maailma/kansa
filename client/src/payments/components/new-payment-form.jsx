@@ -5,47 +5,39 @@ const { Col, Row } = require('react-flexbox-grid');
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import { List, ListItem } from 'material-ui/List'
 import Paper from 'material-ui/Paper'
-import TextField from 'material-ui/TextField'
 
+import { TextInput } from '../../membership/components/form-components'
 import MemberLookupSelector from '../../membership/components/MemberLookupSelector'
-
-const PaymentTextField = ({ label, onChange, required, value, ...props }) => {
-  return <TextField
-    floatingLabelText={label}
-    floatingLabelFixed={true}
-    fullWidth={true}
-    value={value}
-    errorStyle={{ color: 'rgba(0, 0, 0, 0.5)' }}
-    errorText={ !required || value ? '' : 'Required' }
-    onChange={onChange}
-    { ...props }
-  />;
-}
 
 const DataField = ({ field, name, onChange, value }) => {
   switch (field.get('type')) {
 
     case 'number':
-      return <PaymentTextField
+      return <TextInput
+        getDefaultValue={() => value}
+        getValue={() => value}
         label={field.get('label')}
         name={name}
         onChange={onChange}
+        path={[]}
         required={field.get('required')}
-        value={value}
         type="number"
       />;
 
     case 'string':
-      return <PaymentTextField
+      return <TextInput
+        getDefaultValue={() => value}
+        getValue={() => value}
         label={field.get('label')}
         name={name}
         onChange={onChange}
+        path={[]}
         required={field.get('required')}
-        value={value}
       />;
 
     case 'boolean':
-      // checkbox
+      console.warn('checkbox data field not implemented!');
+      // fallthrough
 
     default:
       // select(values)
@@ -79,17 +71,19 @@ export default class NewPaymentForm extends React.Component {
             key={name}
             field={field}
             name={name}
-            onChange={(ev, value) => onChange({ data: purchase.get('data').set(name, value) })}
+            onChange={(_, value) => onChange({ data: purchase.get('data').set(name, value) })}
             value={purchase.getIn(['data', name]) || ''}
           />
         ))}
         {showInvoice && [
-          <PaymentTextField
+          <TextInput
+            getDefaultValue={() => purchase.get('invoice')}
+            getValue={() => purchase.get('invoice')}
             key="ii"
             label="Invoice number"
             name="invoice"
-            onChange={ev => onChange({ invoice: ev.target.value })}
-            value={purchase.get('invoice')}
+            onChange={(_, invoice) => onChange({ invoice })}
+            path={[]}
           />,
         <div key="ih" style={{
             color: 'rgba(0, 0, 0, 0.3)',
@@ -101,13 +95,15 @@ export default class NewPaymentForm extends React.Component {
             invoice number here.
           </div>
         ]}
-        {showComments && <PaymentTextField
+        {showComments && <TextInput
+          getDefaultValue={() => purchase.get('comments')}
+          getValue={() => purchase.get('comments')}
           label="Comments"
           multiLine={true}
           name="comments"
-          onChange={ev => onChange({ comments: ev.target.value })}
+          onChange={(_, comments) => onChange({ comments })}
+          path={[]}
           rows={2}
-          value={purchase.get('comments')}
         />}
       </form>
     );
