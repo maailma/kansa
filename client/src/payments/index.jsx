@@ -4,18 +4,18 @@ import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 const { Col, Row } = require('react-flexbox-grid');
 
-import { setScene } from '../../app/actions/app'
-import { getPurchaseData, getPurchaseList } from '../actions'
-import * as PurchasePropTypes from '../proptypes'
-import PurchaseItemCard from './PurchaseItemCard'
-import PurchaseSelectCard from './PurchaseSelectCard'
+import { setScene } from '../app/actions/app'
+import { getPurchaseData, getPurchaseList } from './actions'
+import * as PaymentPropTypes from './proptypes'
+import PaymentCard from './components/payment-card'
+import SelectNewPaymentCard from './components/select-new-payment'
 
-class PurchaseIndex extends React.Component {
+class PaymentsIndex extends React.Component {
   static propTypes = {
     getPurchaseData: PropTypes.func.isRequired,
     getPurchaseList: PropTypes.func.isRequired,
-    purchaseData: PurchasePropTypes.data,
-    purchaseList: PurchasePropTypes.list,
+    purchaseData: PaymentPropTypes.data,
+    purchaseList: PaymentPropTypes.list,
     push: PropTypes.func.isRequired,
     setScene: PropTypes.func.isRequired,
   }
@@ -32,7 +32,7 @@ class PurchaseIndex extends React.Component {
     return purchaseData.entrySeq()
       .filter(([category, data]) => !data.get('unlisted'))
       .map(([category, data]) => (
-        <PurchaseSelectCard
+        <SelectNewPaymentCard
           data={data}
           key={category}
           label={category}
@@ -49,7 +49,7 @@ class PurchaseIndex extends React.Component {
       const type = purchase.get('type');
       const categoryData = this.purchaseCategoryData(category, type);
       return (
-        <PurchaseItemCard
+        <PaymentCard
           key={i}
           label={categoryData.getIn(['types', type, 'label']) || type}
           purchase={purchase}
@@ -96,4 +96,4 @@ export default connect(
     push,
     setScene,
   }
-)(PurchaseIndex);
+)(PaymentsIndex);

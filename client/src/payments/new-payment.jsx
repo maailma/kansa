@@ -10,13 +10,12 @@ import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
 import TextField from 'material-ui/TextField'
 
-import { setScene, showMessage } from '../../app/actions/app'
-import { buyOther, getPurchaseData } from '../actions'
-import * as PurchasePropTypes from '../proptypes'
-import PurchaseForm from './PurchaseForm'
-import PurchaseSelectCard from './PurchaseSelectCard'
+import { setScene, showMessage } from '../app/actions/app'
+import { buyOther, getPurchaseData } from './actions'
+import * as PaymentPropTypes from './proptypes'
+import NewPaymentForm from './components/new-payment-form'
 
-class PurchaseItem extends React.Component {
+class NewPayment extends React.Component {
   static propTypes = {
     buyOther: PropTypes.func.isRequired,
     email: PropTypes.string,
@@ -25,7 +24,7 @@ class PurchaseItem extends React.Component {
       type: PropTypes.string.isRequired
     }).isRequired,
     people: ImmutablePropTypes.list,
-    purchaseData: PurchasePropTypes.data,
+    purchaseData: PaymentPropTypes.data,
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
     setScene: PropTypes.func.isRequired,
@@ -127,7 +126,7 @@ class PurchaseItem extends React.Component {
                 style={{ marginBottom: 32, marginTop: -16 }}
                 dangerouslySetInnerHTML={{ __html: description }}
               />}
-              <PurchaseForm
+              <NewPaymentForm
                 disabled={purchaseData.getIn([category, 'disabled'])}
                 onChange={(update) => this.setState({ purchase: purchase.merge(update) })}
                 people={people}
@@ -193,4 +192,4 @@ export default connect(
     setScene,
     showMessage
   }
-)(PurchaseItem);
+)(NewPayment);

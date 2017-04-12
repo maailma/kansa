@@ -19,8 +19,8 @@ import Index from './app/components/Index'
 import NewMemberForm from './membership/components/NewMemberForm'
 import NewMemberIndex from './membership/components/NewMemberIndex'
 import Upgrade from './membership/components/Upgrade'
-import PurchaseIndex from './payments/components/PurchaseIndex'
-import PurchaseItem from './payments/components/PurchaseItem'
+import Payments from './payments'
+import NewPayment from './payments/new-payment'
 import Canon from './hugo-admin/components/Canon'
 import Nominate from './hugo-nominations/components/Nominate'
 import Vote from './hugo-votes'
@@ -99,8 +99,8 @@ ReactDOM.render(
           <Route onEnter={requireAuth}>
             <Route path="exhibition/:id" component={ExhibitRegistration} />
             <Route path="pay">
-              <IndexRoute component={PurchaseIndex} />
-              <Route path=":type" component={PurchaseItem} />
+              <IndexRoute component={Payments} />
+              <Route path=":type" component={NewPayment} />
             </Route>
             <Route path="upgrade">
               <IndexRoute component={Upgrade} />

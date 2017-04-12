@@ -5,7 +5,7 @@ const ImmutablePropTypes = require('react-immutable-proptypes');
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import { List, ListItem } from 'material-ui/List'
 
-const PurchaseSelectCard = ({ data, label, onSelect, title }) => {
+const SelectNewPaymentCard = ({ data, label, onSelect, title }) => {
   const description = data.get('description');
   const items = data.get('types').entrySeq().map(([key, typeData]) => {
     const amount = typeData.get('amount');
@@ -36,4 +36,4 @@ const PurchaseSelectCard = ({ data, label, onSelect, title }) => {
   </Card>;
 };
 
-export default PurchaseSelectCard;
+export default SelectNewPaymentCard;

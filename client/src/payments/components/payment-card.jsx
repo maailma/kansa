@@ -4,9 +4,9 @@ const ImmutablePropTypes = require('react-immutable-proptypes');
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import Divider from 'material-ui/Divider'
 
-import * as PurchasePropTypes from '../proptypes'
+import * as PaymentPropTypes from '../proptypes'
 
-const PurchaseItemCard = ({ label, purchase, shape }) => {
+const PaymentCard = ({ label, purchase, shape }) => {
   const {
     amount, category, comments, data, invoice, paid, payment_email, person_name, stripe_charge_id
   } = purchase.toJS();
@@ -67,10 +67,10 @@ const PurchaseItemCard = ({ label, purchase, shape }) => {
   </Card>;
 };
 
-PurchaseItemCard.propTypes = {
+PaymentCard.propTypes = {
   label: PropTypes.string.isRequired,
-  purchase: PurchasePropTypes.purchase.isRequired,
-  shape: PurchasePropTypes.shape
+  purchase: PaymentPropTypes.purchase.isRequired,
+  shape: PaymentPropTypes.shape
 }
 
-export default PurchaseItemCard;
+export default PaymentCard;

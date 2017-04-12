@@ -9,7 +9,7 @@ import TextField from 'material-ui/TextField'
 
 import MemberLookupSelector from '../../membership/components/MemberLookupSelector'
 
-const PurchaseTextField = ({ label, onChange, required, value, ...props }) => {
+const PaymentTextField = ({ label, onChange, required, value, ...props }) => {
   return <TextField
     floatingLabelText={label}
     floatingLabelFixed={true}
@@ -26,7 +26,7 @@ const DataField = ({ field, name, onChange, value }) => {
   switch (field.get('type')) {
 
     case 'number':
-      return <PurchaseTextField
+      return <PaymentTextField
         label={field.get('label')}
         name={name}
         onChange={onChange}
@@ -36,7 +36,7 @@ const DataField = ({ field, name, onChange, value }) => {
       />;
 
     case 'string':
-      return <PurchaseTextField
+      return <PaymentTextField
         label={field.get('label')}
         name={name}
         onChange={onChange}
@@ -54,7 +54,7 @@ const DataField = ({ field, name, onChange, value }) => {
   }
 }
 
-export default class PurchaseForm extends React.Component {
+export default class NewPaymentForm extends React.Component {
 
   render() {
     const { disabled, onChange, people, purchase, shape } = this.props;
@@ -84,7 +84,7 @@ export default class PurchaseForm extends React.Component {
           />
         ))}
         {showInvoice && [
-          <PurchaseTextField
+          <PaymentTextField
             key="ii"
             label="Invoice number"
             name="invoice"
@@ -101,7 +101,7 @@ export default class PurchaseForm extends React.Component {
             invoice number here.
           </div>
         ]}
-        {showComments && <PurchaseTextField
+        {showComments && <PaymentTextField
           label="Comments"
           multiLine={true}
           name="comments"
