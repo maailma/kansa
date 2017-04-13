@@ -117,6 +117,7 @@
     "unlisted": true
   },
   "Sponsorship": {
+    "description": "The problem with travelling is the waiting. The long wait for a space elevator capsule or dragon caravan (or for that programme item you really want to see) can get quite dull. Why not sponsor a craft lounge to help con-goers pass the time? Or sponsor a bench, and give weary convention members somewhere to put their feet up when they've spent too long wandering around the halls.",
     "shape": {
       "sponsor": {
         "label": "Sponsor name",
@@ -127,11 +128,13 @@
     "types": [
       {
         "key": "bench",
-        "amount": 20000,
-        "label": "Sponsored bench"
+        "amount": 6000,
+        "description": "<p>Following the deeply ingrained Fannish Tradition of two previous Worldcons, we are offering the opportunity to sponsor benches in the Exhibits Hall. Give weary convention members somewhere to put their feet up when they've spent too long wandering around the halls. Memorialise a friend, advertise your convention, or hide the secret of your success in a coded message.</p><p>Each bench comes with a plaque to hold a message with four lines of text, 20-25 characters per line. After the convention you get to keep the plaque, and the bench if you would like (or we can find a good cause to donate it to).</p><p>For queries, contact <a href=\"mailto:exhibits@worldcon.fi\">exhibits@worldcon.fi</a>. If your sponsorship is received in time, it will be acknowledged on the Worldcon75 website and in the programme book.</p>",
+        "label": "Sponsored bench plaque"
       }, {
         "key": "lounge",
         "amount": 50000,
+        "description": "<p>The problem with travelling is the waiting. The long wait for a space elevator capsule or dragon caravan (or for that programme item you really want to see) can get quite dull. Why not sponsor a craft lounge to help con-goers pass the time? Origami, knitting, coloring pages, paper constructions—we have a long list of suggestions and we’re open to other ideas too.</p><p>Craft space sponsorships include a sign and a set of themed posters for you to keep. You’re also welcome to keep any left-over craft supplies if you would like (or we will donate them to a good cause).</p><p>For queries, contact <a href=\"mailto:exhibits@worldcon.fi\">exhibits@worldcon.fi</a>. If your sponsorship is received in time, it will be acknowledged on the Worldcon75 website and in the programme book.</p>",
         "label": "Craft lounge"
       }
     ],
