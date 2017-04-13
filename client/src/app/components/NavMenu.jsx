@@ -83,6 +83,12 @@ const NavMenu = ({ currentMember, handleNav, otherMembers }) => {
       style={{ fontSize: 14 }}
       value="/upgrade"
     />
+    <ListItem
+      leftIcon={<EuroSymbol/>}
+      primaryText="Payments"
+      style={{ fontSize: 14 }}
+      value="/pay"
+    />
   </SelectableList>;
 };
 
