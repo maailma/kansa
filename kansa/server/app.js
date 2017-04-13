@@ -13,6 +13,8 @@ require('pg-monitor').attach(pgOptions);
 const db = pgp(process.env.DATABASE_URL);
 
 const admin = require('./lib/admin');
+const Ballot = require('./lib/ballot');
+const ballot = new Ballot(db);
 const key = require('./lib/key');
 const log = require('./lib/log');
 const people = require('./lib/people');
@@ -59,6 +61,7 @@ router.post('/people/lookup', people.lookupPerson);
 router.all('/people/:id*', user.verifyPeopleAccess);
 router.get('/people/:id', people.getPerson);
 router.post('/people/:id', people.updatePerson);
+router.get('/people/:id/ballot', ballot.getBallot);
 router.get('/people/:id/log', log.getPersonLog);
 router.post('/people/:id/upgrade', upgrade.authUpgradePerson);
 
