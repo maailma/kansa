@@ -4,6 +4,14 @@ const ImmutablePropTypes = require('react-immutable-proptypes');
 
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import { List, ListItem } from 'material-ui/List'
+import LocationCity from 'material-ui/svg-icons/social/location-city'
+
+const icon = (key) => {
+  switch (key) {
+    case 'ss-token': return <LocationCity />;
+    default: return null;
+  }
+}
 
 const SelectNewPaymentCard = ({ data, label, onSelect, title }) => {
   const description = data.get('description');
@@ -13,6 +21,7 @@ const SelectNewPaymentCard = ({ data, label, onSelect, title }) => {
     const primary = label + (amount > 0 ? ` (€${amount / 100})` : '');
     return <ListItem
       key={key}
+      leftIcon={icon(key)}
       onTouchTap={() => onSelect(key)}
       primaryText={primary}
     />;
