@@ -154,17 +154,19 @@ class Payment {
   charge() {
     const amount = this.items.reduce((sum, item) => sum + item.amount, 0);
     const currency = this.items[0].currency;
-    const types = this.items.reduce((set, item) => {
-      set[item] = (set[item] || 0) + 1;
+    const labels = this.items.reduce((set, item) => {
+      const typeData = purchaseData[item.category].types.find(type => type.key === item.type);
+      const label = typeData && typeData.label || item.type;
+      set[label] = (set[label] || 0) + 1;
       return set;
     }, {});
-    const typeDesc = Object.keys(types)
-      .map(type => types[type] > 1 ? `${types[type]}*${type}` : type)
+    const itemsDesc = Object.keys(labels)
+      .map(label => labels[label] > 1 ? `${labels[label]}*${label}` : label)
       .join(', ');
     return stripe.charges.create({
       amount,
       currency,
-      description: `Charge of €${amount/100} by ${this.token.email} for ${typeDesc}`,
+      description: `Charge of €${amount/100} by ${this.token.email} for ${itemsDesc}`,
       metadata: { items: this.items.map(item => item.id).join(',') },
       receipt_email: this.token.email,
       source: this.token.id,
