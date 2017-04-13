@@ -110,7 +110,8 @@ class NewPayment extends React.Component {
     const { amount, category, purchase, sent } = this.state;
     const title = this.title;
     const subtitle = category && category !== title ? category : '';
-    const description = purchaseData.getIn([category, 'description']);
+    const description = purchaseData.getIn([category, 'types', type, 'description']) ||
+      purchaseData.getIn([category, 'description']);
     const variableAmount = purchaseData.getIn([category, 'variableAmount']);
     return (
       <Row>

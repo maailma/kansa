@@ -29,6 +29,7 @@ const DataField = ({ field, name, onChange, value }) => {
         getDefaultValue={() => value}
         getValue={() => value}
         label={field.get('label')}
+        multiLine={true}
         name={name}
         onChange={onChange}
         path={[]}
