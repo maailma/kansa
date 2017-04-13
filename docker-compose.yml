@@ -32,6 +32,7 @@ services:
     links:
       - kyyhky
       - postgres
+      - tuohi
     expose:
       - "3000"
 
@@ -42,6 +43,15 @@ services:
       - postgres
     expose:
       - "3000"
+
+  tuohi:
+    image: eeemeli/pdf-form-fill
+    expose:
+      - "3000"
+    environment:
+      PDF_TEMPLATE_DIR: /templates
+    volumes:
+      - ./tuohi/templates:/templates:ro
 
   kyyhky:
     build: ./kyyhky
