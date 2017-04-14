@@ -43,7 +43,7 @@ class PaymentsIndex extends React.Component {
   }
 
   get prevPurchaseCards() {
-    const { purchaseData, purchaseList } = this.props;
+    const { purchaseData, purchaseList, userIds } = this.props;
     return purchaseList.map((purchase, i) => {
       const category = purchase.get('category');
       const type = purchase.get('type');
@@ -54,6 +54,7 @@ class PaymentsIndex extends React.Component {
           label={categoryData.getIn(['types', type, 'label']) || type}
           purchase={purchase}
           shape={categoryData.get('shape')}
+          userIds={userIds}
         />
       );
     });
@@ -87,9 +88,10 @@ class PaymentsIndex extends React.Component {
 }
 
 export default connect(
-  ({ purchase }) => ({
+  ({ purchase, user }) => ({
     purchaseData: purchase.get('data'),
-    purchaseList: purchase.get('list')
+    purchaseList: purchase.get('list'),
+    userIds: user.get('people').map(p => p.get('id'))
   }), {
     getPurchaseData,
     getPurchaseList,

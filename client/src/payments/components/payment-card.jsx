@@ -2,13 +2,32 @@ import React, { PropTypes } from 'react'
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
+import FlatButton from 'material-ui/FlatButton'
 import Divider from 'material-ui/Divider'
 
+import { API_ROOT } from '../../constants'
 import * as PaymentPropTypes from '../proptypes'
 
-const PaymentCard = ({ label, purchase, shape }) => {
+const PaymentActions = ({ person_id, type, userIds }) => {
+  switch (type) {
+    case 'ss-token':
+      return person_id && userIds && userIds.includes(person_id) ? (
+        <CardActions style={{ display: 'flex' }}>
+          <FlatButton
+            href={`${API_ROOT}kansa/people/${person_id}/ballot`}
+            label="Download personal ballot"
+            primary={true}
+            target="_blank"
+          />
+        </CardActions>
+      ) : null;
+  }
+}
+
+const PaymentCard = ({ label, purchase, shape, userIds }) => {
   const {
-    amount, category, comments, data, invoice, paid, payment_email, person_name, stripe_charge_id
+    amount, category, comments, data, invoice, paid, payment_email,
+    person_id, person_name, stripe_charge_id, type
   } = purchase.toJS();
   const subtitle = category !== label ? category : '';
   return <Card
@@ -64,13 +83,15 @@ const PaymentCard = ({ label, purchase, shape }) => {
         </tr> : null}
       </tbody></table>
     </CardText>
+    <PaymentActions person_id={person_id} type={type} userIds={userIds} />
   </Card>;
 };
 
 PaymentCard.propTypes = {
   label: PropTypes.string.isRequired,
   purchase: PaymentPropTypes.purchase.isRequired,
-  shape: PaymentPropTypes.shape
+  shape: PaymentPropTypes.shape,
+  userIds: ImmutablePropTypes.listOf(PropTypes.number)
 }
 
 export default PaymentCard;
