@@ -1,6 +1,6 @@
 const prices = require('../static/prices.json');
 const purchaseData = require('../static/purchase-data.json');
-const { InputError } = require('./errors');
+const { AuthError, InputError } = require('./errors');
 const Payment = require('./types/payment');
 const Person = require('./types/person');
 const { getKeyChecked } = require('./key');
@@ -32,6 +32,7 @@ class Purchase {
 
   getPurchases(req, res, next) {
     const email = req.session.user.member_admin && req.query.email || req.session.user.email;
+    if (!email) return next(new AuthError());
     this.db.any(`
       SELECT *
         FROM Payments

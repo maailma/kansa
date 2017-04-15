@@ -170,4 +170,17 @@ describe('Key request', () => {
         .end(done);
     });
   });
+
+  context('Account creation', () => {
+    const agent = request.agent(host, { ca });
+    const testName = 'test-' + (Math.random().toString(36)+'00000000000000000').slice(2, 7);
+    const testEmail = testName + '@example.com';
+
+    it('Should create non-member accounts', (done) => {
+      agent.post('/api/kansa/key')
+        .send({ email: testEmail, name: testName })
+        .expect(200, { status: 'success', email: testEmail })
+        .end(done);
+    });
+  });
 });

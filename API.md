@@ -84,21 +84,19 @@ returns results as csv rather than json format.
 ## Authentication
 
 ### `POST /api/kansa/key`
-- Parameters: `email`, `reset`
+- Parameters: `email`, `name`, `path`, `reset`
 
 If `email` matches (case-insensitively) a known address, send a login link to
-that address. If no key exists or `reset` is true-ish, generate a new key.
+that address. If no key exists or `reset` is true-ish, generate a new key. If
+no match is found for `email` and `name` is set, create a new non-member account
+and login key, and send a login link to `email`. If `path` is set, it will be
+included in the login link as the value of the `next` query parameter.
 
 #### Response
 ```
 {
   status: 'success',
-  email: {
-    to: 'bob@example.com',
-    from: 'registration@worldcon.fi',
-    fromname: 'Worldcon 75 Registration',
-    subject: 'Worldcon 75 Access Key'
-  }
+  email: 'address@example.com'
 }
 ```
 

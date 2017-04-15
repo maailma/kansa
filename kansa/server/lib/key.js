@@ -1,6 +1,6 @@
 const randomstring = require('randomstring');
 
-const { InputError } = require('./errors');
+const { InputError, isNoDataError } = require('./errors');
 const sendEmail = require('./kyyhky-send-email');
 const LogEntry = require('./types/logentry');
 
@@ -24,20 +24,31 @@ function getKeyChecked(req, email) {
 }
 
 function setKey(req, res, next) {
-  if (!req.body || !req.body.email) return next(new InputError('An email address is required for setting its key!'));
-  const reset = req.body.reset;
-  req.app.locals.db.many('SELECT email FROM People WHERE email ILIKE $1', req.body.email)
+  const { email, name, path, reset } = req.body;
+  if (!email) return next(new InputError('An email address is required for setting its key!'));
+  const db = req.app.locals.db;
+  db.many('SELECT email FROM People WHERE email ILIKE $1', email)
     .then(data => reset
       ? setKeyChecked(req, data[0].email)
       : getKeyChecked(req, data[0].email))
-    .then(data => sendEmail('kansa-set-key', data)
-      .then(() => res.status(200).json({ status: 'success', email: data.email }))
+    .then(({ email, key, set }) => sendEmail('kansa-set-key', { email, key, path, set })
+      .then(() => res.json({ status: 'success', email }))
     )
     .catch(error => {
-      next(error.name === 'QueryResultError' && error.message === 'No data returned from the query.'
-        ? new InputError('Email address ' + JSON.stringify(req.body.email) + ' not found')
-        : error
-      );
+      if (!isNoDataError(error)) return next(error);
+      if (!name) return next(new InputError(
+        'Email address ' + JSON.stringify(email) + ' not found'
+      ));
+      db.one(`
+        INSERT INTO People (membership, legal_name, email)
+             VALUES ('NonMember', $(name), $(email))
+          RETURNING email`, { email, name }
+      )
+        .then(({ email }) => setKeyChecked(req, email))
+        .then(({ email, key }) => sendEmail('kansa-create-account', { email, key, name, path })
+          .then(() => res.json({ status: 'success', email }))
+        )
+        .catch(next)
     });
 }
 
