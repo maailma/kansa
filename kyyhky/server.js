@@ -34,6 +34,7 @@ queue.on('job failed', (id, result) => {
 [
   'hugo-update-email',
   'kansa-add-paper-pubs',
+  'kansa-create-account',
   'kansa-new-member',
   'kansa-new-payment',
   'kansa-set-key',

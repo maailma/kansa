@@ -6,11 +6,13 @@ const wrap = require('wordwrap');
 
 const WRAP_WIDTH = 78;
 
-function loginUri(email, key, id) {
+function loginUri({ email, key, memberId, path }) {
   const root = process.env.LOGIN_URI_ROOT;
   const parts = [root, email, key];
-  if (id) parts.push(id);
-  return encodeURI(parts.join('/'));
+  if (memberId) parts.push(memberId);
+  let uri = parts.join('/')
+  if (!memberId && path && path !== '/') uri += '?next=' + path;
+  return encodeURI(uri);
 }
 
 function nominationsString(data) {
@@ -95,9 +97,7 @@ class Mailer {
   }
 
   sendEmail(tmplName, data, done) {
-    let tmplData = Object.assign({
-      login_uri: loginUri(data.email, data.key, data.memberId)
-    }, data);
+    let tmplData = Object.assign({ login_uri: loginUri(data) }, data);
     switch (tmplName) {
 
       case 'hugo-update-nominations':
