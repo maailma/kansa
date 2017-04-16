@@ -1,10 +1,16 @@
 import { Map } from 'immutable'
 
-export const fields = [ 'membership', 'legal_name', 'email', 'public_first_name', 'public_last_name',
-  'country', 'state', 'city', 'paper_pubs' ];
+export const fields = [
+  'membership', 'legal_name', 'email', 'public_first_name', 'public_last_name',
+  'country', 'state', 'city', 'paper_pubs'
+]
 
-export const membershipTypes = [ 'NonMember', 'Supporter', 'KidInTow', 'Child', 'Youth', 'FirstWorldcon', 'Adult' ];
+export const membershipTypes = [ 'NonMember', 'Supporter', 'KidInTow', 'Child', 'Youth', 'FirstWorldcon', 'Adult' ]
 
-export const emptyPaperPubsMap = Map({ name: '', address: '', country: '' });
+export const emptyPaperPubsMap = Map({ name: '', address: '', country: '' })
 
-export const isFullMemberType = (type) => ['Youth', 'FirstWorldcon', 'Adult'].indexOf(type) !== -1;
+export const isWSFSMember = (member) => {
+  const types = ['Supporter', 'Youth', 'FirstWorldcon', 'Adult']
+  const membership = typeof member === 'string' ? member : member.get('membership')
+  return types.indexOf(membership) !== -1
+}
