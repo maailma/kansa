@@ -5,9 +5,10 @@ export const keyLogin = (email, key, path) => ({
   path
 });
 
-export const keyRequest = (email) => ({
+export const keyRequest = (email, name) => ({
   type: 'KEY_REQUEST',
-  email
+  email,
+  name
 });
 
 export const tryLogin = (callback) => ({
@@ -18,4 +19,3 @@ export const tryLogin = (callback) => ({
 export const logout = () => ({
   type: 'LOGOUT'
 });
-

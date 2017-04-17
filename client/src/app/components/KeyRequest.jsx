@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { Card, CardHeader, CardText } from 'material-ui/Card'
 import RaisedButton from 'material-ui/RaisedButton'
@@ -9,53 +9,67 @@ import { keyRequest } from '../actions/auth'
 class KeyRequest extends React.Component {
 
   static propTypes = {
-    keyRequest: React.PropTypes.func.isRequired,
+    allowCreate: PropTypes.bool,
+    cardStyle: PropTypes.object,
+    keyRequest: PropTypes.func.isRequired,
   }
 
   state = {
-    email: ''
-  }
-
-  componentDidMount() {
-    this.focusRef && this.focusRef.focus();
+    email: '',
+    name: ''
   }
 
   render() {
-    const { keyRequest } = this.props;
-    const { email } = this.state;
+    const { allowCreate, cardStyle, keyRequest } = this.props;
+    const { email, name } = this.state;
     const validEmail = email && /.@.*\../.test(email);
 
     return <div>
-      <Card>
+      <Card style={cardStyle}>
         <CardHeader
           title="Request login link"
           style={{ fontWeight: 600 }}
         />
-        <CardText>
-          <div>
-            To access our services, you'll need to use a login link sent to you
-            via email. To request a new login link, please enter your email
-            address below, and it'll be sent to you. The address you enter will
-            need to match the one we have in our database for you; it's the one
-            that you provided when signing up, and at which you've previously
-            received messages from us.
+        <CardText style={{ marginTop: -16 }}>
+          <div className="html-container">
+            <p>
+              To access our services, you'll need to use a login link sent to you
+              via email. To request a new login link, please enter your email
+              address below, and it'll be sent to you. The address you enter will
+              need to match the one we have in our database for you; it's the one
+              that you provided when signing up, and at which you've previously
+              received messages from us.
+            </p>
+            {allowCreate && <p>
+              If you don't yet have an account, please enter your name as well,
+              and an account will be created for you. You will then receive a
+              confirmation email with a link back to this page.
+            </p>}
           </div>
-          <TextField
-            id="email"
-            fullWidth={true}
-            floatingLabelText="Email"
-            ref={ ref => this.focusRef = ref }
-            value={email}
-            onChange={ev => this.setState({ email: ev.target.value })}
-          />
-          <RaisedButton
-            label="Send login link"
-            fullWidth={true}
-            primary={true}
-            disabled={!validEmail}
-            style={{ marginTop: 12 }}
-            onTouchTap={() => keyRequest(email)}
-          />
+          <form onSubmit={() => keyRequest(email, name)}>
+            <TextField
+              autoFocus={true}
+              id="email"
+              fullWidth={true}
+              floatingLabelText="Email"
+              value={email}
+              onChange={(_, email) => this.setState({ email })}
+            />
+            {allowCreate && <TextField
+              fullWidth={true}
+              floatingLabelText="Name"
+              value={name}
+              onChange={(_, name) => this.setState({ name })}
+            />}
+            <RaisedButton
+              label={name ? 'Create Account' : 'Send login link'}
+              fullWidth={true}
+              primary={true}
+              disabled={!validEmail}
+              style={{ marginTop: 12 }}
+              onTouchTap={() => keyRequest(email, name)}
+            />
+          </form>
         </CardText>
       </Card>
       <div className="bg-text" style={{ fontSize: 14, marginBottom: 20, padding: '0 16px' }}>

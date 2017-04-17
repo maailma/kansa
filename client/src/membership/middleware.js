@@ -14,9 +14,10 @@ export default ({ dispatch }) => (next) => (action) => {
   if (!action.error) switch (action.type) {
 
     case 'KEY_REQUEST': {
-      const { email } = action;
+      const { email, name } = action;
       if (!email) return next({ ...action, error: 'Email missing for key request' });
-      api.POST('kansa/key', { email })
+      const { pathname, search, hash } = window.location;
+      api.POST('kansa/key', { email, name, path: pathname + search + hash })
         .then(() => next(action))
         .catch(handleError);
       dispatch(showMessage('Sending login key and link to ' + action.email));
