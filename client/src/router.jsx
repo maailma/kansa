@@ -82,19 +82,15 @@ export default class AppRouter extends Route {
           <IndexRoute component={Index} />
           <Redirect from="login" to="/" />
           <Redirect from="profile" to="/" />
+          <Route path="exhibition/:id" component={ExhibitRegistration} onEnter={this.requireAuth} />
+          {hugoRoutes('hugo', this.requireAuth)}
           <Route path="new" component={NewMemberIndex} />
           <Route path="new/:membership" component={NewMemberForm} />
-          {hugoRoutes('hugo', this.requireAuth)}
-          <Route onEnter={this.requireAuth}>
-            <Route path="exhibition/:id" component={ExhibitRegistration} />
-            <Route path="pay">
-              <IndexRoute component={Payments} />
-              <Route path=":type" component={NewPayment} />
-            </Route>
-            <Route path="upgrade">
-              <IndexRoute component={Upgrade} />
-              <Route path=":id" component={Upgrade} />
-            </Route>
+          <Route path="pay" component={Payments} />
+          <Route path="pay/:type" component={NewPayment} />
+          <Route path="upgrade" onEnter={this.requireAuth}>
+            <IndexRoute component={Upgrade} />
+            <Route path=":id" component={Upgrade} />
           </Route>
         </Route>
       </Router>

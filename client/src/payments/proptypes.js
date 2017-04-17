@@ -37,6 +37,7 @@ export const purchase = ImmutablePropTypes.mapContains({
   amount: PropTypes.number.isRequired,
   currency: PropTypes.string.isRequired,
   person_id: PropTypes.number,
+  person_name: PropTypes.string,
   category: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   data: ImmutablePropTypes.map,

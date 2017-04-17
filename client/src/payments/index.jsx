@@ -1,6 +1,7 @@
 import { List } from 'immutable'
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
+import { Link } from 'react-router'
 import { push } from 'react-router-redux'
 const { Col, Row } = require('react-flexbox-grid');
 
@@ -21,9 +22,9 @@ class PaymentsIndex extends React.Component {
   }
 
   componentDidMount() {
-    const { getPurchaseData, getPurchaseList, purchaseData, purchaseList, setScene } = this.props;
+    const { getPurchaseData, getPurchaseList, purchaseData, purchaseList, setScene, userIds } = this.props;
     if (!purchaseData) getPurchaseData();
-    if (!purchaseList) getPurchaseList();
+    if (!purchaseList && userIds.size > 0) getPurchaseList();
     setScene({ title: 'Payments', dockSidebar: false });
   }
 
@@ -82,6 +83,12 @@ class PaymentsIndex extends React.Component {
         lg={4} lgOffset={ppOk ? 0 : 4}
       >
         {this.nextPurchaseCards}
+        <div className="bg-text" style={{
+          display: 'block', fontSize: 14, marginLeft: 16, marginTop: 16,
+          maxWidth: '45%', position: 'absolute'
+        }}>
+          <Link to="/">&laquo; Return to the memberships page</Link>
+        </div>
       </Col>
     </Row>;
   }
@@ -91,7 +98,7 @@ export default connect(
   ({ purchase, user }) => ({
     purchaseData: purchase.get('data'),
     purchaseList: purchase.get('list'),
-    userIds: user.get('people').map(p => p.get('id'))
+    userIds: user.get('people', List()).map(p => p.get('id'))
   }), {
     getPurchaseData,
     getPurchaseList,

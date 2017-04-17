@@ -12,6 +12,7 @@ import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
 
 import { setScene, showMessage } from '../app/actions/app'
+import KeyRequest from '../app/components/KeyRequest'
 import { buyOther, getPurchaseData } from './actions'
 import * as PaymentPropTypes from './proptypes'
 import NewPaymentForm from './components/new-payment-form'
@@ -44,7 +45,7 @@ class NewPayment extends React.Component {
         email,
         invoice: '',
         name: '',
-        person_id: people.first().get('id'),
+        person_id: people ? people.first().get('id') : null,
       }),
       sent: false,
     };
@@ -87,12 +88,6 @@ class NewPayment extends React.Component {
     );
   }
 
-  get title() {
-    const { params: { type }, purchaseData } = this.props;
-    const { category } = this.state;
-    return purchaseData.getIn([category, 'types', type, 'label']);
-  }
-
   onCheckout = (token) => {
     const { buyOther, params: { type }, push, showMessage } = this.props;
     const { amount, category, purchase } = this.state;
@@ -106,13 +101,12 @@ class NewPayment extends React.Component {
 
   render() {
     const { params: { type }, people, purchaseData } = this.props;
-    if (!purchaseData) return null;
     const { amount, category, purchase, sent } = this.state;
-    const title = this.title;
+    const cd = purchaseData && purchaseData.get(category);
+    if (!cd) return null;
+    const title = cd.getIn(['types', type, 'label']);
     const subtitle = category && category !== title ? category : '';
-    const description = purchaseData.getIn([category, 'types', type, 'description']) ||
-      purchaseData.getIn([category, 'description']);
-    const variableAmount = purchaseData.getIn([category, 'variableAmount']);
+    const description = cd.getIn(['types', type, 'description']) || cd.get('description');
     return (
       <Row>
         <Col
@@ -121,7 +115,11 @@ class NewPayment extends React.Component {
           lg={6} lgOffset={3}
         >
           <Card>
-            <CardHeader title={title} subtitle={subtitle} />
+            <CardHeader
+              title={title}
+              subtitle={subtitle}
+              style={{ fontWeight: 600 }}
+            />
             <CardText>
               {description && <div
                 className="html-container"
@@ -129,7 +127,7 @@ class NewPayment extends React.Component {
                 dangerouslySetInnerHTML={{ __html: description }}
               />}
               <NewPaymentForm
-                disabled={purchaseData.getIn([category, 'disabled'])}
+                disabled={cd.get('disabled')}
                 onChange={(update) => this.setState({ purchase: purchase.merge(update) })}
                 people={people}
                 purchase={purchase}
@@ -160,7 +158,7 @@ class NewPayment extends React.Component {
               <div>
                 Amount:
                 <span style={{ paddingLeft: 8, paddingRight: 8 }}>€</span>
-                {variableAmount ? (
+                {cd.get('variableAmount') ? (
                   <TextField
                     name="amount"
                     onChange={(ev, value) => {
@@ -177,12 +175,16 @@ class NewPayment extends React.Component {
               </div>
             </CardActions>
           </Card>
-          <Link to="/pay"
-            style={{
-              display: 'block', fontSize: 14, marginLeft: 16, marginTop: 16,
-              maxWidth: '45%', position: 'absolute'
-            }}
-          >&laquo; Return to the main payments page</Link>
+          {!people && <KeyRequest
+            allowCreate={cd.get('allowCreate')}
+            cardStyle={{ marginTop: 20 }}
+          />}
+          <div className="bg-text" style={{
+            display: 'block', fontSize: 14, marginLeft: 16, marginTop: 16,
+            maxWidth: '45%', position: 'absolute'
+          }}>
+            <Link to="/pay">&laquo; Return to the main payments page</Link>
+          </div>
         </Col>
       </Row>
     );
