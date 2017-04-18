@@ -2,17 +2,9 @@ const fs = require('fs');
 const mustache = require('mustache');
 const tfm = require('tiny-frontmatter');
 const wrap = require('wordwrap');
+const loginUri = require('./login-uri');
 
 const WRAP_WIDTH = 78;
-
-function loginUri({ email, key, memberId, path }) {
-  const root = process.env.LOGIN_URI_ROOT;
-  const parts = [root, email, key];
-  if (memberId) parts.push(memberId);
-  let uri = parts.join('/')
-  if (!memberId && path && path !== '/') uri += '?next=' + path;
-  return encodeURI(uri);
-}
 
 function nominationsString(data) {
   return data.map(({ category, nominations }) => {
