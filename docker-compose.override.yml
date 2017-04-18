@@ -49,6 +49,11 @@ services:
       DEBUG: kyyhky:*,sendgrid
       LOGIN_URI_ROOT: https://localhost:4430/#/login
       SENDGRID_APIKEY:
+  voltti:
+    environment:
+      CORS_ORIGIN: http://localhost:8080
+      DATABASE_URL: postgres://voltti:pwd@postgres:5432/api
+      SESSION_SECRET: dev secret
 
   postgres:
     environment:
@@ -56,6 +61,7 @@ services:
       KANSA_PG_PASSWORD: pwd
       HUGO_PG_PASSWORD: pwd
       RAAMI_PG_PASSWORD: pwd
+      VOLTTI_PG_PASSWORD: pwd
     volumes:
       - ./postgres/init/90-dev-people-init.sql:/docker-entrypoint-initdb.d/90-dev-people-init.sql:ro
       - ./postgres/init/95-hugo-finalists-worldcon75.sql:/docker-entrypoint-initdb.d/95-hugo-finalists-worldcon75.sql:ro
