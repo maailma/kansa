@@ -4,7 +4,7 @@ const { AuthError, InputError } = require('./errors');
 const Payment = require('./types/payment');
 const Person = require('./types/person');
 const { getKeyChecked } = require('./key');
-const sendEmail = require('./kyyhky-send-email');
+const { mailTask } = require('./mail');
 const { addPerson } = require('./people');
 const { upgradePerson } = require('./upgrade');
 
@@ -136,7 +136,7 @@ class Purchase {
             u.member_number = member_number;
             return getKeyChecked(req, u.email);
           })
-          .then(({ key }) => sendEmail(
+          .then(({ key }) => mailTask(
             ((!u.membership || u.membership === u.prev_membership) && u.paper_pubs)
               ? 'kansa-add-paper-pubs' : 'kansa-upgrade-person',
             Object.assign({ charge_id, key }, u)
@@ -156,7 +156,7 @@ class Purchase {
           .then(() => getKeyChecked(req, m.data.email))
           .then(({ key, set }) => {
             if (set) newEmailAddresses[m.data.email] = true;
-            return sendEmail(
+            return mailTask(
               'kansa-new-member',
               Object.assign({ charge_id, key, name: m.preferredName }, m.data)
             );
@@ -178,7 +178,7 @@ class Purchase {
         Promise.all(items.map(item => {
           const { shape, types } = purchaseData[item.category];
           const typeData = types.find(td => td.key === item.type);
-          return sendEmail('kansa-new-payment', Object.assign({
+          return mailTask('kansa-new-payment', Object.assign({
             email: item.person_email || item.payment_email,
             name: item.person_name || null,
             shape,

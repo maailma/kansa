@@ -1,7 +1,7 @@
 const randomstring = require('randomstring');
 
 const { InputError, isNoDataError } = require('./errors');
-const sendEmail = require('./kyyhky-send-email');
+const { mailTask } = require('./mail');
 const LogEntry = require('./types/logentry');
 
 module.exports = { getKeyChecked, setKeyChecked, setKey, setAllKeys };
@@ -31,7 +31,7 @@ function setKey(req, res, next) {
     .then(data => reset
       ? setKeyChecked(req, data[0].email)
       : getKeyChecked(req, data[0].email))
-    .then(({ email, key, set }) => sendEmail('kansa-set-key', { email, key, path, set })
+    .then(({ email, key, set }) => mailTask('kansa-set-key', { email, key, path, set })
       .then(() => res.json({ status: 'success', email }))
     )
     .catch(error => {
@@ -45,7 +45,7 @@ function setKey(req, res, next) {
           RETURNING email`, { email, name }
       )
         .then(({ email }) => setKeyChecked(req, email))
-        .then(({ email, key }) => sendEmail('kansa-create-account', { email, key, name, path })
+        .then(({ email, key }) => mailTask('kansa-create-account', { email, key, name, path })
           .then(() => res.json({ status: 'success', email }))
         )
         .catch(next)

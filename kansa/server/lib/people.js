@@ -1,7 +1,7 @@
 const { setKeyChecked } = require('./key');
-const sendEmail = require('./kyyhky-send-email');
-const LogEntry = require('./types/logentry');
 const { AuthError, InputError } = require('./errors');
+const { mailTask } = require('./mail');
+const LogEntry = require('./types/logentry');
 const Person = require('./types/person');
 
 module.exports = {
@@ -221,7 +221,7 @@ function updatePerson(req, res, next) {
       const name = [public_first_name, public_last_name].filter(n => n).join(' ').trim() || legal_name;
       return key ? { key: key.key, name } : setKeyChecked(req, data.email).then(({ key }) => ({ key, name }));
     })
-    .then(({ key, name }) => !!(key && sendEmail('hugo-update-email', {
+    .then(({ key, name }) => !!(key && mailTask('hugo-update-email', {
       email: data.email,
       key,
       memberId: data.id,
