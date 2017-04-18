@@ -47,7 +47,7 @@ const DataField = ({ field, name, onChange, value }) => {
   }
 }
 
-const NewPaymentForm = ({ disabled, onChange, people, purchase, shape }) => {
+const NewPaymentForm = ({ disabled, onChange, people, purchase, requireMembership, shape }) => {
   if (!people || people.size === 0) return null;
   const showComments = !disabled || !disabled.includes('comments');
   const showInvoice = !disabled || !disabled.includes('invoice');
@@ -61,6 +61,7 @@ const NewPaymentForm = ({ disabled, onChange, people, purchase, shape }) => {
           <MemberLookupSelector
             onChange={onChange}
             people={people}
+            requireMembership={requireMembership}
             selectedPersonId={purchase.get('person_id')}
           />
         </Col>

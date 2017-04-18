@@ -131,6 +131,7 @@ class NewPayment extends React.Component {
                 onChange={(update) => this.setState({ purchase: purchase.merge(update) })}
                 people={people}
                 purchase={purchase}
+                requireMembership={cd.get('requireMembership')}
                 shape={this.dataShape}
               />
             </CardText>
