@@ -1,6 +1,5 @@
 const fs = require('fs');
 const mustache = require('mustache');
-const SendGrid  = require('sendgrid');
 const tfm = require('tiny-frontmatter');
 const wrap = require('wordwrap');
 
@@ -49,25 +48,10 @@ function votesString(data) {
 }
 
 class Mailer {
-  constructor(tmplDir, tmplSuffix, sendgridApiKey) {
+  constructor(tmplDir, tmplSuffix, sendgrid) {
+    this.sendgrid = sendgrid;
     this.tmplDir = tmplDir;
     this.tmplSuffix = tmplSuffix;
-    if (sendgridApiKey) {
-      this.sendgrid = SendGrid(sendgridApiKey);
-    } else {
-      this.sendgrid = {
-        emptyRequest: (request) => request,
-        API: ({ body: { content, from, personalizations, subject }, method, path }, callback) => {
-          console.log('MOCK SendGrid request', method, path);
-          console.log('FROM:', JSON.stringify(from.name), `<${from.email}>`);
-          console.log('TO:', JSON.stringify(personalizations[0].to[0]));
-          console.log('SUBJECT:', subject);
-          console.log('--------\n', content[0] && content[0].value, '\n--------');
-          callback(null, null);
-        }
-      };
-      console.warn('Using MOCK SendGrid instance -> emails will not be sent!');
-    }
   }
 
   tmplFileName(tmplName) {
@@ -125,14 +109,12 @@ class Mailer {
       if (err) return done(err);
       try {
         const request = this.sgRequest(msgTemplate, tmplData);
-        this.sendgrid.API(request, (err, response) => {
-          if (err) {
+        this.sendgrid.API(request)
+          .then(() => done(null, { to: data.email }))
+          .catch(err => {
             console.warn('SendGrid error', response);
-            done(err, response);
-          } else {
-            done(null, { to: data.email });
-          }
-        });
+            done(err);
+          })
       } catch (err) {
         done(err);
       }
