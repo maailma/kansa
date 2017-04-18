@@ -1,4 +1,5 @@
 var ContactImporter = require('sendgrid/lib/helpers/contact-importer/contact-importer')
+const loginUri = require('./login-uri');
 
 const recipient = (src) => {
   const rx = { email: src.email }
@@ -12,6 +13,7 @@ class ContactSync {
     this.contactImporter = new ContactImporter(sendgrid)
     this.fetching = false
     this.queue = null
+    this.recipientIds = null
     this.recipients = null
   }
 
@@ -27,7 +29,7 @@ class ContactSync {
     })
     let recipients = []
     const onSuccess = (response) => {
-      recipients = recipients.concat(response.recipients.map(recipient))
+      recipients = recipients.concat(response.recipients)
       request.page += 1
       return this.sendgrid.API(request).then(onSuccess)
     }
@@ -35,7 +37,11 @@ class ContactSync {
       .catch(err => {
         this.fetching = false
         if (err.response.statusCode === 404) {
-          return this.recipients = recipients
+          this.recipientIds = recipients.reduce((map, r) => {
+            map[r.email] = r.id
+            return map
+          }, {})
+          return this.recipients = recipients.map(recipient)
         } else {
           throw err
         }
@@ -49,14 +55,28 @@ class ContactSync {
           data = this.queue.concat(data)
           this.queue = null
         }
+        const deletes = []
         const updates = data.filter(rx => {
           if (!rx) return false
-          const keys = Object.keys(rx)
+          if (rx.delete) {
+            const id = this.recipientIds[rx.email]
+            if (id) {
+              deletes.push(id)
+              const prevIdx = recipients.findIndex(r => r.email === rx.email)
+              if (prevIdx !== -1) delete recipients[prevIdx]
+            }
+            return false
+          }
+          rx.login_url = loginUri(rx)
+          rx.hugo_login_url = rx.hugo_id ? loginUri(Object.assign({ memberId: rx.hugo_id }, rx)) : ''
+          delete rx.hugo_id
+          delete rx.key
           const prev = recipients.find(r => r.email === rx.email)
           if (!prev) {
             recipients.push(rx)
             return true
           }
+          const keys = Object.keys(rx)
           if (
             keys.length !== Object.keys(prev).length ||
             keys.some(key => a[key] !== b[key])
@@ -67,6 +87,14 @@ class ContactSync {
           }
         })
         if (updates.length) this.contactImporter.push(updates)
+        if (deletes.length) {
+          const request = this.sendgrid.emptyRequest({
+            method: 'DELETE',
+            path: '/v3/contactdb/recipients',
+            body: deletes
+          })
+          return this.sendgrid.API(request)
+        }
       })
       .catch(err => {
         if (err.message === 'fetching') {
