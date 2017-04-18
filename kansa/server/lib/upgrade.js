@@ -1,6 +1,7 @@
 const LogEntry = require('./types/logentry');
 const Person = require('./types/person');
 const InputError = require('./types/inputerror');
+const { updateMailRecipient } = require('./mail');
 
 module.exports = { authUpgradePerson, upgradePerson };
 
@@ -48,7 +49,7 @@ function upgradePaperPubs(req, db, data) {
 
 function upgradeMembership(req, db, data) {
   const set = [ 'membership=$(membership)' ];
-  let member_number;
+  let email, member_number;
   return db.tx(tx => tx.sequence((i, prev) => { switch (i) {
 
     case 0:
@@ -68,14 +69,18 @@ function upgradeMembership(req, db, data) {
            UPDATE People
               SET ${set.join(', ')}
             WHERE id=$(id)
-        RETURNING member_number`, data);
+        RETURNING email, member_number`, data);
 
     case 2:
+      email = prev.email;
       member_number = prev.member_number;
       const log = new LogEntry(req, `Upgrade to ${data.membership}`);
       if (data.paper_pubs) log.description += ' and add paper pubs';
       log.subject = data.id;
       return tx.none(`INSERT INTO Log ${log.sqlValues}`, log);
+
+    case 3:
+      updateMailRecipient(tx, email);
 
   }}))
     .then(() => ({

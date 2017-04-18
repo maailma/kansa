@@ -1,6 +1,6 @@
 const { setKeyChecked } = require('./key');
 const { AuthError, InputError } = require('./errors');
-const { mailTask } = require('./mail');
+const { mailTask, updateMailRecipient } = require('./mail')
 const LogEntry = require('./types/logentry');
 const Person = require('./types/person');
 
@@ -205,20 +205,21 @@ function updatePerson(req, res, next) {
   const sqlFields = fields.map(fn => `${fn}=$(${fn})`).join(', ');
   const log = new LogEntry(req, 'Update fields: ' + fields.join(', '));
   data.id = log.subject = parseInt(req.params.id);
-  req.app.locals.db.tx(tx => tx.batch([
+  const db = req.app.locals.db;
+  db.tx(tx => tx.batch([
     tx.one(`
            WITH prev AS (SELECT email FROM People WHERE id=$(id))
-         UPDATE People
+         UPDATE People p
             SET ${sqlFields}
           WHERE id=$(id) ${ppCond}
-      RETURNING (SELECT email AS prev_email FROM prev), can_hugo_nominate, legal_name, public_first_name, public_last_name`,
+      RETURNING (SELECT email AS prev_email FROM prev), can_hugo_nominate, can_hugo_vote, preferred_name(p) as name`,
       data),
     data.email ? tx.oneOrNone(`SELECT key FROM Keys WHERE email=$(email)`, data) : {},
     tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
   ]))
-    .then(([{ can_hugo_nominate, prev_email, legal_name, public_first_name, public_last_name }, key]) => {
-      if (!data.email || data.email === prev_email || !can_hugo_nominate) return {};
-      const name = [public_first_name, public_last_name].filter(n => n).join(' ').trim() || legal_name;
+    .then(([{ can_hugo_nominate, can_hugo_vote, prev_email, name }, key]) => {
+      if (prev_email && prev_email !== data.email) updateMailRecipient(db, prev_email);
+      if (!data.email || data.email === prev_email || !(can_hugo_nominate && can_hugo_vote)) return {};
       return key ? { key: key.key, name } : setKeyChecked(req, data.email).then(({ key }) => ({ key, name }));
     })
     .then(({ key, name }) => !!(key && mailTask('hugo-update-email', {
@@ -227,7 +228,10 @@ function updatePerson(req, res, next) {
       memberId: data.id,
       name
     })))
-    .then(key_sent => res.status(200).json({ status: 'success', updated: fields, key_sent }))
+    .then(key_sent => {
+      res.json({ status: 'success', updated: fields, key_sent });
+      updateMailRecipient(db, data.email);
+    })
     .catch(err => (ppCond && !err[0].success && err[0].result.message == 'No data returned from the query.')
       ? res.status(402).json({ status: 'error', message: 'Paper publications have not been enabled for this person' })
       : next(err));

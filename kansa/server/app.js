@@ -17,6 +17,7 @@ const Ballot = require('./lib/ballot');
 const ballot = new Ballot(db);
 const key = require('./lib/key');
 const log = require('./lib/log');
+const { setAllMailRecipients } = require('./lib/mail');
 const people = require('./lib/people');
 const PeopleStream = require('./lib/PeopleStream');
 const Purchase = require('./lib/purchase');
@@ -72,6 +73,7 @@ router.all('/admin*', admin.isAdminAdmin);
 router.get('/admin', admin.getAdmins);
 router.post('/admin', admin.setAdmin);
 router.post('/admin/set-keys', key.setAllKeys);
+router.post('/admin/set-recipients', setAllMailRecipients);
 
 app.locals.db = db;
 app.use(logger('dev'));
