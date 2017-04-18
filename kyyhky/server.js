@@ -17,7 +17,7 @@ if (process.env.SENDGRID_APIKEY) {
   sendgrid = SendGrid(process.env.SENDGRID_APIKEY)
 } else {
   sendgrid = {
-    emptyRequest: (request) => request,
+    emptyRequest: (request) => request || {},
     API: ({ body, method, path }) => {
       console.log('MOCK SendGrid request', method, path)
       switch (path) {
@@ -27,15 +27,27 @@ if (process.env.SENDGRID_APIKEY) {
           console.log('TO:', JSON.stringify(personalizations[0].to[0]))
           console.log('SUBJECT:', subject)
           console.log('--------\n', content[0] && content[0].value, '\n--------')
-          return new Promise.resolve(null)
+          return Promise.resolve(null)
         }
+        case '/v3/contactdb/recipients':
+          if (method === 'GET') return Promise.reject({ response: { statusCode: 404 } })
+          console.log(body, '\n--------')
+          return Promise.resolve({ body: '{}' })
         default:
-          return new Promise.reject(new Error('Unmocked path!'))
+          return Promise.reject(new Error('Unmocked path!'))
       }
     }
   };
   console.warn('Using MOCK SendGrid instance -> emails will not be sent!')
 }
+
+
+const ContactSync = require('./lib/contact-sync')
+const contactSync = new ContactSync(sendgrid)
+
+queue.process('update-recipients', (job, done) => {
+  contactSync.sync(job.data, done)
+})
 
 
 const Mailer = require('./lib/mailer')
