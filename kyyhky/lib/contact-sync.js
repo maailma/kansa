@@ -18,26 +18,52 @@ class ContactSync {
     this.recipients = null
   }
 
+  sgThrottleAPI(request, response = {}) {
+    const throttle = ({ headers }) => {
+      if (!headers || headers['x-ratelimit-remaining']) return Promise.resolve()
+      const nextTime = headers['x-ratelimit-reset'] * 1000
+      const nowTime = new Date(headers.date).getTime()
+      const delay = Math.max(nextTime - nowTime + 100, 1000)
+      debug('sgThrottleAPI delay', delay)
+      return new Promise(resolve => setTimeout(resolve, delay))
+    }
+    let next
+    const onError = (err) => {
+      if (err.response && err.response.statusCode === 429) {
+        return throttle(err.response).then(next)
+      } else {
+        throw err
+      }
+    }
+    next = () => this.sendgrid.API(request).catch(onError)
+    return throttle(response).then(next)
+  }
+
   getRecipients() {
-    if (this.fetching) return new Promise.reject(new Error('fetching'))
-    if (this.recipients) return new Promise.resolve(this.recipients)
+    if (this.fetching) return Promise.reject(new Error('fetching'))
+    if (this.recipients) return Promise.resolve(this.recipients)
     this.fetching = true
     const request = this.sendgrid.emptyRequest({
       method: 'GET',
       path: '/v3/contactdb/recipients',
-      page: 1,
-      page_size: 1000
+      queryParams: {
+        page: 1,
+        page_size: 1000
+      }
     })
     let recipients = []
     const onSuccess = (response) => {
-      recipients = recipients.concat(response.recipients)
-      request.page += 1
-      return this.sendgrid.API(request).then(onSuccess)
+      debug('getRecipients request', request.queryParams.page, response.body)
+      recipients = recipients.concat(JSON.parse(response.body).recipients)
+      request.queryParams.page += 1
+      return this.sgThrottleAPI(request, response)
+        .then(onSuccess)
     }
-    return this.sendgrid.API(request).then(onSuccess)
-      .catch(err => {
+    return this.sgThrottleAPI(request)
+      .then(onSuccess)
+      .catch((err) => {
         this.fetching = false
-        if (err.response.statusCode === 404) {
+        if (err.response && err.response.statusCode === 404) {
           this.recipientIds = recipients.reduce((map, r) => {
             map[r.email] = r.id
             return map
@@ -72,7 +98,7 @@ class ContactSync {
             return false
           }
           rx.login_url = loginUri(rx)
-          rx.hugo_login_url = rx.hugo_id ? loginUri(Object.assign({ memberId: rx.hugo_id }, rx)) : ''
+          rx.hugo_login_url = rx.hugo_id ? loginUri(Object.assign({ memberId: rx.hugo_id }, rx)) : null
           delete rx.hugo_id
           delete rx.key
           const prev = recipients.find(r => r.email === rx.email)
@@ -83,7 +109,7 @@ class ContactSync {
           const keys = Object.keys(rx)
           if (
             keys.length !== Object.keys(prev).length ||
-            keys.some(key => a[key] !== b[key])
+            keys.some(key => rx[key] !== prev[key])
           ) {
             Object.keys(prev).forEach(key => delete prev[key])
             Object.assign(prev, rx)
