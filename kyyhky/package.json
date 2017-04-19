@@ -1,7 +1,7 @@
 {
   "name": "kyyhky",
   "version": "0.1.0",
-  "description": "Email queuing service for hugo/server & kansa/server",
+  "description": "Email queuing service for the hugo & kansa servers",
   "author": "",
   "license": "Apache-2.0",
   "repository": {

@@ -1,8 +1,7 @@
 # Kyyhky
 
-An internal mailing service for hugo/server & kansa/server, built on [Kue] and
-its built-in REST API. Jobs are automatically removed on completion, and added
-by:
+An internal mailing service for hugo & kansa, built on [Kue] and its built-in
+REST API. Jobs are automatically removed on completion, and added by:
 
 ```
 POST /job HTTP/1.1
