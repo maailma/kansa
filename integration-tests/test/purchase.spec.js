@@ -4,7 +4,7 @@ const fs = require('fs');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_APIKEY || 'sk_test_zq022Drx7npYPVEtXAVMaOJT');
 
 const cert = fs.readFileSync('../nginx/ssl/localhost.cert', 'utf8');
-const prices = require('../../kansa/server/static/prices.json');
+const prices = require('../../kansa/static/prices.json');
 const host = 'https://localhost:4430';
 const adminLoginParams = { email: 'admin@example.com', key: 'key' };
 

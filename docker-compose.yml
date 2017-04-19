@@ -27,7 +27,7 @@ services:
       - "3000"
 
   kansa:
-    build: ./kansa/server
+    build: ./kansa
     entrypoint: ./wait-for-it.sh postgres:5432 -- npm start
     links:
       - kyyhky
