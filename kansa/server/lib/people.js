@@ -206,31 +206,35 @@ function updatePerson(req, res, next) {
   const log = new LogEntry(req, 'Update fields: ' + fields.join(', '));
   data.id = log.subject = parseInt(req.params.id);
   const db = req.app.locals.db;
+  let email = data.email;
   db.tx(tx => tx.batch([
     tx.one(`
            WITH prev AS (SELECT email FROM People WHERE id=$(id))
          UPDATE People p
             SET ${sqlFields}
           WHERE id=$(id) ${ppCond}
-      RETURNING (SELECT email AS prev_email FROM prev), can_hugo_nominate, can_hugo_vote, preferred_name(p) as name`,
+      RETURNING email AS next_email, (SELECT email AS prev_email FROM prev), can_hugo_nominate, can_hugo_vote, preferred_name(p) as name`,
       data),
     data.email ? tx.oneOrNone(`SELECT key FROM Keys WHERE email=$(email)`, data) : {},
     tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
   ]))
-    .then(([{ can_hugo_nominate, can_hugo_vote, prev_email, name }, key]) => {
-      if (prev_email && prev_email !== data.email) updateMailRecipient(db, prev_email);
-      if (!data.email || data.email === prev_email || !(can_hugo_nominate && can_hugo_vote)) return {};
-      return key ? { key: key.key, name } : setKeyChecked(req, db, data.email).then(({ key }) => ({ key, name }));
+    .then(([{ can_hugo_nominate, can_hugo_vote, next_email, prev_email, name }, key]) => {
+      email = next_email;
+      if (next_email === prev_email) return {}
+      updateMailRecipient(db, prev_email);
+      return !can_hugo_nominate && !can_hugo_vote ? {}
+        : key ? { key: key.key, name }
+        : setKeyChecked(req, db, data.email).then(({ key }) => ({ key, name }));
     })
     .then(({ key, name }) => !!(key && mailTask('hugo-update-email', {
-      email: data.email,
+      email,
       key,
       memberId: data.id,
       name
     })))
     .then(key_sent => {
       res.json({ status: 'success', updated: fields, key_sent });
-      updateMailRecipient(db, data.email);
+      updateMailRecipient(db, email);
     })
     .catch(err => (ppCond && !err[0].success && err[0].result.message == 'No data returned from the query.')
       ? res.status(402).json({ status: 'error', message: 'Paper publications have not been enabled for this person' })
