@@ -19,7 +19,7 @@ services:
     command: /bin/bash -c "envsubst '$$API_SERVER_NAME $$API_SSL_CERTIFICATE $$API_SSL_CERTIFICATE_KEY' < /nginx.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 
   hugo:
-    build: ./hugo/server
+    build: ./hugo
     entrypoint: ./wait-for-it.sh postgres:5432 -- npm start
     links:
       - postgres
