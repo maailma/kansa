@@ -53,7 +53,7 @@ class ContactSync {
     })
     let recipients = []
     const onSuccess = (response) => {
-      debug('getRecipients request', request.queryParams.page, response.body)
+      debug('getRecipients request', request.queryParams.page)
       recipients = recipients.concat(JSON.parse(response.body).recipients)
       request.queryParams.page += 1
       return this.sgThrottleAPI(request, response)
@@ -68,7 +68,7 @@ class ContactSync {
             map[r.email] = r.id
             return map
           }, {})
-          debug('getRecipients done', this.recipientIds)
+          debug('getRecipients done', this.recipientIds.length)
           return this.recipients = recipients.map(recipient)
         } else {
           debug('getRecipients error', err, err.response)
@@ -116,8 +116,7 @@ class ContactSync {
             return true
           }
         })
-        debug('sync updates', updates)
-        debug('sync deletes', deletes)
+        debug('update', updates.length, 'and delete', deletes.length)
         if (updates.length) this.contactImporter.push(updates)
         if (deletes.length) {
           const request = this.sendgrid.emptyRequest({
@@ -131,7 +130,7 @@ class ContactSync {
       .then(done)
       .catch(err => {
         if (err.message === 'fetching') {
-          debug('sync fetching, queued', data)
+          debug('sync fetching, queued', data && data.length)
           this.queue = this.queue ? this.queue.concat(data) : data
           done()
         } else {
