@@ -1,4 +1,5 @@
 var ContactImporter = require('sendgrid/lib/helpers/contact-importer/contact-importer')
+const debug = require('debug')('kyyhky:sync')
 const loginUri = require('./login-uri');
 
 const recipient = (src) => {
@@ -41,14 +42,17 @@ class ContactSync {
             map[r.email] = r.id
             return map
           }, {})
+          debug('getRecipients done', this.recipientIds)
           return this.recipients = recipients.map(recipient)
         } else {
+          debug('getRecipients error', err, err.response)
           throw err
         }
       })
   }
 
   sync(data, done) {
+    debug('sync', data && data.length)
     this.getRecipients()
       .then(recipients => {
         if (this.queue) {
@@ -86,6 +90,8 @@ class ContactSync {
             return true
           }
         })
+        debug('sync updates', updates)
+        debug('sync deletes', deletes)
         if (updates.length) this.contactImporter.push(updates)
         if (deletes.length) {
           const request = this.sendgrid.emptyRequest({
@@ -96,11 +102,14 @@ class ContactSync {
           return this.sendgrid.API(request)
         }
       })
+      .then(done)
       .catch(err => {
         if (err.message === 'fetching') {
+          debug('sync fetching, queued', data)
           this.queue = this.queue ? this.queue.concat(data) : data
+          done()
         } else {
-          console.error(err)
+          done(err)
         }
       })
   }

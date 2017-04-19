@@ -99,17 +99,10 @@ class Mailer {
     }
     fs.readFile(this.tmplFileName(tmplName), 'utf8', (err, msgTemplate) => {
       if (err) return done(err);
-      try {
-        const request = this.sgRequest(msgTemplate, tmplData);
-        this.sendgrid.API(request)
-          .then(() => done(null, { to: data.email }))
-          .catch(err => {
-            console.warn('SendGrid error', response);
-            done(err);
-          })
-      } catch (err) {
-        done(err);
-      }
+      const request = this.sgRequest(msgTemplate, tmplData);
+      this.sendgrid.API(request)
+        .then(() => done(null, { to: data.email }))
+        .catch(done)
     });
   }
 }

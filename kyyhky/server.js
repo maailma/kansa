@@ -1,3 +1,4 @@
+const debug = require('debug')('kyyhky:server')
 const kue = require('kue')
 const queue = kue.createQueue({
   disableSearch: false,
@@ -19,19 +20,19 @@ if (process.env.SENDGRID_APIKEY) {
   sendgrid = {
     emptyRequest: (request) => request || {},
     API: ({ body, method, path }) => {
-      console.log('MOCK SendGrid request', method, path)
+      debug('MOCK SendGrid request', method, path)
       switch (path) {
         case '/v3/mail/send': {
           const { content, from, personalizations, subject } = body
-          console.log('FROM:', JSON.stringify(from.name), `<${from.email}>`)
-          console.log('TO:', JSON.stringify(personalizations[0].to[0]))
-          console.log('SUBJECT:', subject)
-          console.log('--------\n', content[0] && content[0].value, '\n--------')
+          debug('FROM:', JSON.stringify(from.name), `<${from.email}>`)
+          debug('TO:', JSON.stringify(personalizations[0].to[0]))
+          debug('SUBJECT:', subject)
+          debug('--------\n', content[0] && content[0].value, '\n--------')
           return Promise.resolve(null)
         }
         case '/v3/contactdb/recipients':
           if (method === 'GET') return Promise.reject({ response: { statusCode: 404 } })
-          console.log(body, '\n--------')
+          debug(body, '\n--------')
           return Promise.resolve({ body: '{}' })
         default:
           return Promise.reject(new Error('Unmocked path!'))
@@ -58,9 +59,9 @@ queue.on('job complete', (id, result) => {
     if (!err) job.remove((err) => {
       if (err) throw err
       if (result && result.to) {
-        console.log('Job #%d: Sent %s to %s', job.id, job.type, result.to)
+        debug('Job #%d: Sent %s to %s', job.id, job.type, result.to)
       } else if (job.data.email) {
-        console.log('Job #%d: Skipped %s for %s', job.id, job.type, job.data.email)
+        debug('Job #%d: Skipped %s for %s', job.id, job.type, job.data.email)
       }
     })
   })
