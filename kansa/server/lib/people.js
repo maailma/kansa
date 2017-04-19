@@ -220,7 +220,7 @@ function updatePerson(req, res, next) {
     .then(([{ can_hugo_nominate, can_hugo_vote, prev_email, name }, key]) => {
       if (prev_email && prev_email !== data.email) updateMailRecipient(db, prev_email);
       if (!data.email || data.email === prev_email || !(can_hugo_nominate && can_hugo_vote)) return {};
-      return key ? { key: key.key, name } : setKeyChecked(req, data.email).then(({ key }) => ({ key, name }));
+      return key ? { key: key.key, name } : setKeyChecked(req, db, data.email).then(({ key }) => ({ key, name }));
     })
     .then(({ key, name }) => !!(key && mailTask('hugo-update-email', {
       email: data.email,

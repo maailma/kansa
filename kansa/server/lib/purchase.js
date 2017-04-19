@@ -134,7 +134,7 @@ class Purchase {
         upgradePerson(req, this.db, u)
           .then(({ member_number }) => {
             u.member_number = member_number;
-            return getKeyChecked(req, u.email);
+            return getKeyChecked(req, this.db, u.email);
           })
           .then(({ key }) => mailTask(
             ((!u.membership || u.membership === u.prev_membership) && u.paper_pubs)
@@ -153,7 +153,7 @@ class Purchase {
               `UPDATE ${Payment.table} SET person_id=$1 WHERE id=$2`, [id, pi.id]
             );
           })
-          .then(() => getKeyChecked(req, m.data.email))
+          .then(() => getKeyChecked(req, this.db, m.data.email))
           .then(({ key, set }) => {
             if (set) newEmailAddresses[m.data.email] = true;
             return mailTask(
