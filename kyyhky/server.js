@@ -1,3 +1,12 @@
+// patch JSON body-parser used by kue
+const bodyParser = require('body-parser')
+const origJsonParser = bodyParser.json
+Object.defineProperty(bodyParser, 'json', {
+  configurable: true,
+  enumerable: true,
+  get: () => (opts = {}) => origJsonParser(Object.assign({ limit: '50mb' }, opts))
+})
+
 const debug = require('debug')('kyyhky:server')
 const kue = require('kue')
 const queue = kue.createQueue({
