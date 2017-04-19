@@ -35,7 +35,8 @@ variable is unset, Kyyhky will mock the SendGrid API internally.
 Furthermore, you should set up your account there with the following
 [custom fields], all of type `text` (These may then be used to define segments
 of the membership for mailings):
-- `membership`, `name`, `login_url`, `hugo_name`, `hugo_login_url`
+- `membership`, `name`, `login_url`
+- `hugo_name_#`, `hugo_login_url_#` with `#` replaced by each of `1`, `2`, `3`, `4`
 
 All SendGrid API calls are properly throttled. Updates are pushed with the
 following API, with the data keyed to be unique to each email address. To
@@ -52,8 +53,10 @@ Content-Type: application/json
   "data": [
     {
       "email": "member@example.com",
-      "hugo_id": null,
-      "hugo_name": "Member",
+      "hugo_members": [
+        { "id": 123, "name": "Member" },
+        { "id": 456, "name": "Other Member" }
+      ],
       "key": "abc123def456",
       "membership": "Adult",
       "name": "Member and Other Member"

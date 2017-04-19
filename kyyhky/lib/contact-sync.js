@@ -2,6 +2,8 @@ var ContactImporter = require('sendgrid/lib/helpers/contact-importer/contact-imp
 const debug = require('debug')('kyyhky:sync')
 const loginUri = require('./login-uri');
 
+const MAX_HUGO_MEMBERS = process.env.MAX_HUGO_MEMBERS || 4
+
 const recipient = (src) => {
   const rx = { email: src.email }
   src.custom_fields.forEach(cf => rx[cf.name] = cf.value)
@@ -98,8 +100,13 @@ class ContactSync {
             return false
           }
           rx.login_url = loginUri(rx)
-          rx.hugo_login_url = rx.hugo_id ? loginUri(Object.assign({ memberId: rx.hugo_id }, rx)) : null
-          delete rx.hugo_id
+          if (!rx.hugo_members || rx.hugo_members.length > MAX_HUGO_MEMBERS) rx.hugo_members = []
+          for (let i = 1; i <= MAX_HUGO_MEMBERS; ++i) {
+            const { id, name } = rx.hugo_members[i - 1] || {}
+            rx[`hugo_login_url_${i}`] = id ? loginUri(Object.assign({ memberId: id }, rx)) : null
+            rx[`hugo_name_${i}`] = name || null
+          }
+          delete rx.hugo_members
           delete rx.key
           const prev = recipients.find(r => r.email === rx.email)
           if (!prev) {

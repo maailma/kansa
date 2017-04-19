@@ -21,10 +21,12 @@ const mailRecipient = (email, res) => {
       names[last] = 'and ' + names[last]
       name = names.join(', ')
   }
+  const hugo_members = res
+    .filter(r => r.can_hugo_nominate || r.can_hugo_vote)
+    .map(({ id, name }) => ({ id, name }))
   return {
     email: res[0].email,
-    hugo_id: res.length === 1 && (res[0].can_hugo_nominate || res[0].can_hugo_vote) ? res[0].id : null,
-    hugo_name: res[0].name,
+    hugo_members,
     key: res[0].key,
     membership: mt[mi],
     name
