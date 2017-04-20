@@ -12,7 +12,7 @@ module.exports = {
 
 function getPublicPeople(req, res, next) {
   req.app.locals.db.any(`
-      SELECT country, membership,
+      SELECT country(country), membership,
              public_last_name AS last_name,
              public_first_name AS first_name
         FROM People
@@ -32,9 +32,9 @@ function getPublicPeople(req, res, next) {
 }
 
 function getPublicStats(req, res, next) {
-  req.app.locals.db.any(`SELECT country, membership, COUNT(*)
+  req.app.locals.db.any(`SELECT country(country), membership, COUNT(*)
       FROM People WHERE membership != 'NonMember'
-      GROUP BY CUBE(country, membership)`)
+      GROUP BY CUBE(country(country), membership)`)
     .then(data => {
       const csv = !!(req.query.csv);
       if (csv) {
