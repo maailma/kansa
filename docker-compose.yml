@@ -84,6 +84,6 @@ services:
       - ./postgres/damm/damm--1.0.sql:/usr/share/postgresql/9.5/extension/damm--1.0.sql:ro
       - ./postgres/init/10-admin-init.sql:/docker-entrypoint-initdb.d/10-admin-init.sql:ro
       - ./postgres/init/20-kansa-init.sql:/docker-entrypoint-initdb.d/20-kansa-init.sql:ro
-      - ./postgres/init/25-country-spellings.sql:/docker-entrypoint-initdb.d/25-country-spellings.sql:ro
+      - ./postgres/init/25-public-data.sql:/docker-entrypoint-initdb.d/25-public-data.sql:ro
       - ./postgres/init/30-hugo-init.sql:/docker-entrypoint-initdb.d/30-hugo-init.sql:ro
       - ./postgres/init/40-raami-init.sql:/docker-entrypoint-initdb.d/40-raami-init.sql:ro

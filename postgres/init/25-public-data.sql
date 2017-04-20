@@ -1,3 +1,5 @@
+CREATE EXTENSION tablefunc WITH SCHEMA public;
+
 SET ROLE kansa;
 
 CREATE TABLE IF NOT EXISTS countries (
@@ -45,3 +47,31 @@ BEGIN
     RETURN coalesce(ct, cn);
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE FUNCTION public_name(p people) RETURNS varchar AS $$
+BEGIN
+    RETURN nullif(trim(both from concat_ws(' ', p.public_first_name, p.public_last_name)), '');
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE VIEW country_stats AS SELECT * FROM crosstab(
+   'SELECT coalesce(country(country),''=''),
+           coalesce(membership::text,''=''),
+           count(*)
+      FROM People WHERE membership != ''NonMember''
+  GROUP BY CUBE(country(country), membership)',
+  $$VALUES ('Adult'), ('FirstWorldcon'), ('Youth'), ('Child'), ('KidInTow'), ('Supporter'), ('=') $$
+) AS ct (
+  country text,
+  "Adult" int, "FirstWorldcon" int, "Youth" int, "Child" int, "KidInTow" int, "Supporter" int,
+  "=" int
+);
+
+CREATE VIEW public_members AS
+     SELECT country(country), membership,
+            public_last_name AS last_name,
+            public_first_name AS first_name
+       FROM people
+      WHERE membership != 'NonMember' AND
+            (public_first_name != '' OR public_last_name != '')
+   ORDER BY last_name, first_name, country;

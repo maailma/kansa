@@ -20,6 +20,7 @@ const log = require('./lib/log');
 const { setAllMailRecipients } = require('./lib/mail');
 const people = require('./lib/people');
 const PeopleStream = require('./lib/PeopleStream');
+const publicData = require('./lib/public');
 const Purchase = require('./lib/purchase');
 const purchase = new Purchase(pgp, db);
 const upgrade = require('./lib/upgrade');
@@ -32,8 +33,8 @@ const router = express.Router();
 const peopleStream = new PeopleStream(db);
 
 // these are accessible without authentication
-router.get('/public/people', cors({ origin: '*' }), people.getPublicPeople);
-router.get('/public/stats', cors({ origin: '*' }), people.getPublicStats);
+router.get('/public/people', cors({ origin: '*' }), publicData.getPublicPeople);
+router.get('/public/stats', cors({ origin: '*' }), publicData.getPublicStats);
 
 router.post('/key', key.setKey);
 router.all('/login', user.login);
@@ -57,7 +58,7 @@ router.get('/members/paperpubs', people.getMemberPaperPubs);
 
 router.get('/people', people.getPeople);
 router.post('/people', people.authAddPerson);
-router.post('/people/lookup', people.lookupPerson);
+router.post('/people/lookup', publicData.lookupPerson);
 
 router.all('/people/:id*', user.verifyPeopleAccess);
 router.get('/people/:id', people.getPerson);

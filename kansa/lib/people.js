@@ -5,53 +5,9 @@ const LogEntry = require('./types/logentry');
 const Person = require('./types/person');
 
 module.exports = {
-  getPublicPeople, getPublicStats,
   getMemberEmails, getMemberPaperPubs, getPeople,
-  getPerson, addPerson, authAddPerson, updatePerson, lookupPerson
+  getPerson, addPerson, authAddPerson, updatePerson
 };
-
-function getPublicPeople(req, res, next) {
-  req.app.locals.db.any(`
-      SELECT country(country), membership,
-             public_last_name AS last_name,
-             public_first_name AS first_name
-        FROM People
-       WHERE membership != 'NonMember' AND
-             (public_first_name != '' OR public_last_name != '')
-    ORDER BY last_name, first_name, country`
-  )
-    .then(data => {
-      const csv = !!(req.query.csv);
-      if (csv) {
-        res.status(200).csv(data, true);
-      } else {
-        res.status(200).json(data);
-      }
-    })
-    .catch(err => next(err));
-}
-
-function getPublicStats(req, res, next) {
-  req.app.locals.db.any(`SELECT country(country), membership, COUNT(*)
-      FROM People WHERE membership != 'NonMember'
-      GROUP BY CUBE(country(country), membership)`)
-    .then(data => {
-      const csv = !!(req.query.csv);
-      if (csv) {
-        res.status(200).csv(data, true);
-      } else {
-        const members = data.reduce((stats, d) => {
-          const c = d.country || '';
-          const m = d.membership || 'total'
-          if (!stats[c]) stats[c] = {};
-          stats[c][m] = parseInt(d.count);
-          return stats;
-        }, {});
-        res.status(200).json(members);
-      }
-    })
-    .catch(err => next(err));
-}
 
 function getPeopleQuery(req, res, next) {
   const cond = Object.keys(req.query).map(fn => { switch(fn) {
@@ -239,40 +195,4 @@ function updatePerson(req, res, next) {
     .catch(err => (ppCond && !err[0].success && err[0].result.message == 'No data returned from the query.')
       ? res.status(402).json({ status: 'error', message: 'Paper publications have not been enabled for this person' })
       : next(err));
-}
-
-function lookupPerson(req, res, next) {
-  if (!req.session || !req.session.user || !req.session.user.email) return next(new AuthError());
-  const { email, member_number, name } = req.body;
-  const queryParts = [];
-  const queryValues = {};
-  if (email && /.@./.test(email)) {
-    queryParts.push('lower(email) = $(email)');
-    queryValues.email = email.trim().toLowerCase();
-  }
-  if (member_number > 0) {
-    queryParts.push('(member_number = $(number) OR id = $(number))');
-    queryValues.number = Number(member_number);
-  }
-  if (name) {
-    queryParts.push('(lower(legal_name) = $(name) OR lower(public_name(p)) = $(name))');
-    queryValues.name = name.trim().toLowerCase();
-  }
-  if (queryParts.length === 0 || (queryParts.length === 1 && queryValues.number)) {
-    return next(new InputError('No valid parameters'));
-  }
-  req.app.locals.db.any(`
-    SELECT id, membership, preferred_name(p) AS name
-      FROM people p
-     WHERE ${queryParts.join(' AND ')}
-           AND membership NOT IN ('Child', 'KidInTow')`, queryValues
-  )
-    .then(results => {
-      switch (results.length) {
-        case 0: return res.status(200).json({ status: 'not found' });
-        case 1: return res.status(200).json(Object.assign({ status: 'success' }, results[0]));
-        default: return res.status(200).json({ status: 'multiple' });
-      }
-    })
-    .catch(next);
 }
