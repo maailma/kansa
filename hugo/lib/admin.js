@@ -125,9 +125,7 @@ class Admin {
         nomination => ({ category, nomination, canon_id })
       );
       const cs = new this.pgp.helpers.ColumnSet([
-        'category',
-        { name: 'nomination', mod: ':json' },
-        'canon_id'
+        'category', 'nomination:json', 'canon_id'
       ], {
         table: 'classification'
       });
