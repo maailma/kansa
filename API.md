@@ -31,6 +31,7 @@ some relevant data and/or a `message` field.
 * [Purchases](#purchases)
   * [`POST /api/kansa/purchase`](#post-apikansapurchase)
   * [`GET /api/kansa/purchase/data`](#get-apikansapurchasedata)
+  * [`GET /api/kansa/purchase/keys`](#get-apikansapurchasekeys)
   * [`GET /api/kansa/purchase/list`](#get-apikansapurchaselist)
   * [`POST /api/kansa/purchase/other`](#post-apikansapurchaseother)
   * [`GET /api/kansa/purchase/prices`](#get-apikansapurchaseprices)
@@ -329,7 +330,7 @@ events to signal `'Unauthorized'` and `'Not Found'` (respectively) to the client
 ## Purchases
 
 ### `POST /api/kansa/purchase`
-- Parameters: `amount`, `email`, `token`,
+- Parameters: `account`, `amount`, `email`, `token`,
   `new_members: [ { membership, email, legal_name, public_first_name, public_last_name, city, state, country, paper_pubs }, ... ]`,
   `upgrades: [ { id, membership, paper_pubs }, ... ]`
 
@@ -373,6 +374,20 @@ request.
 }
 ```
 
+### `GET /api/kansa/purchase/keys`
+
+Current public Stripe keys. Includes at least the `default` key. If a non-default
+key is used, its name should be passed to `POST` purchase calls as the value of
+`account`.
+
+#### Response
+```
+{
+  default: 'pk_test_...',
+  ...
+}
+```
+
 ### `GET /api/kansa/purchase/list`
 
 Purchases made using this account's `email` address, or one set as a query
@@ -402,6 +417,7 @@ parameter (requires `member_admin` access).
 
 ### `POST /api/kansa/purchase/other`
 Parameters:
+- `account`: Optional, used to set indicate an alternative Stripe account name
 - `token: { id, email }`: Received from Stripe, used to make the charge
 - `items`: Array of payment objects, each consisting of:
   - `amount`, `currency`: The charge amount, in integer cents of `currency`

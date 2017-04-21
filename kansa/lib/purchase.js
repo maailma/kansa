@@ -16,18 +16,28 @@ class Purchase {
     this.getPrices = this.getPrices.bind(this);
     this.getPurchaseData = this.getPurchaseData.bind(this);
     this.getPurchases = this.getPurchases.bind(this);
+    this.getStripeKeys = this.getStripeKeys.bind(this);
     this.makeMembershipPurchase = this.makeMembershipPurchase.bind(this);
     this.makeOtherPurchase = this.makeOtherPurchase.bind(this);
   }
 
   getPrices(req, res, next) {
     if (!prices) next(new Error('Missing membership prices!?'));
-    res.status(200).json(prices);
+    res.json(prices);
   }
 
   getPurchaseData(req, res, next) {
     if (!purchaseData) next(new Error('Missing purchase data!?'));
-    res.status(200).json(purchaseData);
+    res.json(purchaseData);
+  }
+
+  getStripeKeys(req, res, next) {
+    const type = 'pk_' + process.env.STRIPE_SECRET_APIKEY.slice(3,7)
+    this.db.any(`SELECT name, key FROM stripe_keys WHERE type = $1`, type)
+      .then(data => data.reduce((keys, { name, key }) => {
+        keys[name] = key
+        return keys
+      }, {}))
   }
 
   getPurchases(req, res, next) {
@@ -91,8 +101,7 @@ class Purchase {
 
   makeMembershipPurchase(req, res, next) {
     const amount = Number(req.body.amount);
-    const email = req.body.email;
-    const token = req.body.token;
+    const { account, email, token } = req.body;
     if (!amount || !email || !token) return next(
       new InputError('Required parameters: amount, email, token')
     );
@@ -125,7 +134,7 @@ class Purchase {
       const items = newMemberPaymentItems.concat(upgradePaymentItems);
       const calcAmount = items.reduce((sum, item) => sum + item.amount, 0);
       if (amount !== calcAmount) throw new InputError(`Amount mismatch: in request ${amount}, calculated ${calcAmount}`);
-      return new Payment(this.pgp, this.db, { id: token, email }, items)
+      return new Payment(this.pgp, this.db, account, { id: token, email }, items)
         .process()
     }).then(_items => {
       paymentItems = _items;
@@ -172,7 +181,8 @@ class Purchase {
   }
 
   makeOtherPurchase(req, res, next) {
-    new Payment(this.pgp, this.db, req.body.token, req.body.items)
+    const { account, items, token } = req.body;
+    new Payment(this.pgp, this.db, account, token, items)
       .process()
       .then(items => (
         Promise.all(items.map(item => {

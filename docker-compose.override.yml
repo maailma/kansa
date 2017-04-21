@@ -25,6 +25,7 @@ services:
       DATABASE_URL: postgres://kansa:pwd@postgres:5432/api
       SESSION_SECRET: dev secret
       STRIPE_SECRET_APIKEY: sk_test_zq022Drx7npYPVEtXAVMaOJT
+      STRIPE_SECRET_APIKEY_worldcon77: sk_test_35SiP34s6qovtenwPPLguIyY
 
   raami:
     environment:

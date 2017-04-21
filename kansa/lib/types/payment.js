@@ -1,6 +1,6 @@
 const Promise = require('bluebird');
 const randomstring = require('randomstring');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_APIKEY);
+const Stripe = require('stripe');
 
 const InputError = require('./inputerror');
 const purchaseData = require('../../static/purchase-data.json');
@@ -74,9 +74,10 @@ class Payment {
 
   static get table() { return 'payments'; }
 
-  constructor(pgp, db, token, items) {
+  constructor(pgp, db, account, token, items) {
     this.pgp = pgp;
     this.db = db;
+    this.account = account || 'default';
     this.token = token;
     this.items = items.map(item => ({
       id: null,
@@ -95,6 +96,13 @@ class Payment {
       invoice: item.invoice || null,
       comments: item.comments || null,
     }));
+  }
+
+  get stripe() {
+    let keyvar = 'STRIPE_SECRET_APIKEY'
+    if (this.account !== 'default') keyvar += '_' + this.account
+    const key = process.env[keyvar]
+    return new Stripe(key)
   }
 
   validate() {
@@ -163,7 +171,7 @@ class Payment {
     const itemsDesc = Object.keys(labels)
       .map(label => labels[label] > 1 ? `${labels[label]}*${label}` : label)
       .join(', ');
-    return stripe.charges.create({
+    return this.stripe.charges.create({
       amount,
       currency,
       description: `Charge of €${amount/100} by ${this.token.email} for ${itemsDesc}`,

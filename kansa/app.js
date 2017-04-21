@@ -45,6 +45,7 @@ router.get('/favicon.ico', (req, res, next) => {
 
 router.post('/purchase', purchase.makeMembershipPurchase);
 router.get('/purchase/data', purchase.getPurchaseData);
+router.get('/purchase/keys', purchase.getStripeKeys);
 router.get('/purchase/list', purchase.getPurchases);
 router.post('/purchase/other', purchase.makeOtherPurchase);
 router.get('/purchase/prices', purchase.getPrices);
