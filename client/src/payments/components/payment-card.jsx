@@ -22,6 +22,7 @@ const PaymentActions = ({ person_id, type, userIds }) => {
         </CardActions>
       ) : null;
   }
+  return null;
 }
 
 const PaymentCard = ({ label, purchase, shape, userIds }) => {
