@@ -24,6 +24,7 @@ CREATE TABLE Nominations (
 CREATE TABLE Finalists (
     id SERIAL PRIMARY KEY,
     category Category NOT NULL,
+    sortindex int,
     title text NOT NULL,
     subtitle text
 );

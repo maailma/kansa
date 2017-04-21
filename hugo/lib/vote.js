@@ -36,7 +36,7 @@ class Vote {
   }
 
   getFinalists(req, res, next) {
-    this.db.any(`SELECT category, id, title, subtitle FROM Finalists ORDER BY id`)
+    this.db.any(`SELECT category, id, title, subtitle FROM Finalists ORDER BY sortindex, id`)
       .then(data => res.status(200).json(data.reduce((res, { category, id, title, subtitle }) => {
         const finalist = { id, title, subtitle: subtitle || undefined };
         if (res[category]) res[category].push(finalist);
