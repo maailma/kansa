@@ -38,7 +38,7 @@ const VoteIntroText = () => (
       for first place, “2” for second place, and so on.
     </p>
     <p>
-      You are not required to rank all the finalists in any category, and we recommend avoid voting in any category
+      You are not required to rank all the finalists in any category, and we recommend you avoid voting in any category
       where you are unfamiliar with most of the finalists. If you decide not to vote in any given category, leave it
       blank.
     </p>
@@ -55,7 +55,7 @@ const VoteIntroText = () => (
     </p>
     <p>
       Please note that second and further preferences play no part in the vote unless and until your first choice is
-      eliminated. This is not a point system where the second choices of many voters can overwhelm the first choice
+      eliminated. This is not a points system where the second choices of many voters can overwhelm the first choice
       of a few voters. We suggest that after marking your first choice, you proceed by imagining that it has
       disappeared from the ballot, and then give the second place to the next finalist you prefer, and so on. This
       mimics the way the ballots are actually counted. Thus, even if your heart is set on one finalist, don’t
@@ -63,8 +63,8 @@ const VoteIntroText = () => (
     </p>
     <p>
       Choose all your preferences carefully! If your top choices are eliminated early, your lower preferences could
-      be the tiebreaker between the remaining finalists. No matter how much you dislike a finalist, if you rank it,
-      the vote will be counted if all your previous choices are eliminated.
+      be the tiebreaker between the remaining finalists. Even if you don't think a finalist is worthy of the award, if
+      you rank it, the vote will be counted if all your previous choices are eliminated.
     </p>
 
     <h3>How to Vote Online</h3>
@@ -88,7 +88,7 @@ const VoteIntroText = () => (
       A will move to 2 in the ranking.
     </p>
     <p>
-      You can make as many changes as you like up to your ballot until the deadline. Your changes are automatically
+      You can make as many changes as you like to your ballot until the deadline. Your changes are automatically
       saved. Your current ballot will be emailed to you 30 minutes after you finish modifying it.
     </p>
     <p>
