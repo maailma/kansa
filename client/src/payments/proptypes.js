@@ -26,6 +26,8 @@ export const categoryData = ImmutablePropTypes.mapContains({ shape, types });
 
 export const data = ImmutablePropTypes.mapOf(categoryData, PropTypes.string);
 
+export const keys = ImmutablePropTypes.mapOf(PropTypes.string);
+
 export const purchase = ImmutablePropTypes.mapContains({
   id: PropTypes.number.isRequired,
   created: PropTypes.string.isRequired,

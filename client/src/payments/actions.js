@@ -41,3 +41,8 @@ export const getPurchaseList = () => ({
   module: 'kansa',
   type: 'GET_PURCHASE_LIST'
 });
+
+export const getStripeKeys = () => ({
+  module: 'kansa',
+  type: 'GET_STRIPE_KEYS'
+});

@@ -2,6 +2,7 @@ import { fromJS, Map, OrderedMap } from 'immutable'
 
 const defaultState = Map({
   data: null,
+  keys: null,
   list: null,
   prices: null,
 });
@@ -25,6 +26,10 @@ export default function(state = defaultState, action) {
     case 'GET_PURCHASE_LIST':
       const { list } = action;
       return state.set('list', fromJS(list).sortBy(p => p.get('paid')).reverse());
+
+    case 'GET_STRIPE_KEYS':
+      const { keys } = action;
+      return state.set('keys', Map(keys));
 
   }
   return state;

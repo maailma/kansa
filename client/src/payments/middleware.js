@@ -55,25 +55,25 @@ export default ({ dispatch }) => (next) => (action) => {
 
     case 'GET_PRICES': {
       api.GET('kansa/purchase/prices')
-        .then(prices => {
-          next({ ...action, prices });
-        })
+        .then(prices => next({ ...action, prices }))
         .catch(handleError);
     } return;
 
     case 'GET_PURCHASE_DATA': {
       api.GET('kansa/purchase/data')
-        .then(data => {
-          next({ ...action, data });
-        })
+        .then(data => next({ ...action, data }))
         .catch(handleError);
     } return;
 
     case 'GET_PURCHASE_LIST': {
       api.GET('kansa/purchase/list')
-        .then(list => {
-          next({ ...action, list });
-        })
+        .then(list => next({ ...action, list }))
+        .catch(handleError);
+    } return;
+
+    case 'GET_STRIPE_KEYS': {
+      api.GET('kansa/purchase/keys')
+        .then(keys => next({ ...action, keys }))
         .catch(handleError);
     } return;
 
