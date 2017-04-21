@@ -34,10 +34,10 @@ class Purchase {
   getStripeKeys(req, res, next) {
     const type = 'pk_' + process.env.STRIPE_SECRET_APIKEY.slice(3,7)
     this.db.any(`SELECT name, key FROM stripe_keys WHERE type = $1`, type)
-      .then(data => data.reduce((keys, { name, key }) => {
+      .then(data => res.json(data.reduce((keys, { name, key }) => {
         keys[name] = key
         return keys
-      }, {}))
+      }, {})))
   }
 
   getPurchases(req, res, next) {

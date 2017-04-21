@@ -50,7 +50,7 @@ describe('Country statistics', () => {
     unlogged.get('/api/kansa/public/stats')
       .expect((res) => {
         if (
-          res.status !== 200 || !res.body || !res.body[''].hasOwnProperty('total')
+          res.status !== 200 || !res.body || !res.body['='].hasOwnProperty('=')
         ) {
           throw new Error(`Fail! ${JSON.stringify(res.body)}`);
         }
