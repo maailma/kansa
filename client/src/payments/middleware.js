@@ -27,8 +27,9 @@ export default ({ dispatch }) => (next) => (action) => {
     } return;
 
     case 'BUY_OTHER': {
-      const { callback, items, token: { email, id } } = action;
+      const { account, callback, items, token: { email, id } } = action;
       api.POST('kansa/purchase/other', {
+        account,
         token: { email, id },
         items: items.toJS ? items.toJS() : items
       })

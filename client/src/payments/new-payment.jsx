@@ -5,7 +5,6 @@ import { Link } from 'react-router'
 import { push, replace } from 'react-router-redux'
 const { Col, Row } = require('react-flexbox-grid');
 const ImmutablePropTypes = require('react-immutable-proptypes');
-import StripeCheckout from 'react-stripe-checkout'
 
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import RaisedButton from 'material-ui/RaisedButton'
@@ -16,6 +15,7 @@ import KeyRequest from '../app/components/KeyRequest'
 import { buyOther, getPurchaseData } from './actions'
 import * as PaymentPropTypes from './proptypes'
 import NewPaymentForm from './components/new-payment-form'
+import StripeCheckout from './components/stripe-checkout'
 
 class NewPayment extends React.Component {
   static propTypes = {
@@ -89,11 +89,12 @@ class NewPayment extends React.Component {
   }
 
   onCheckout = (token) => {
-    const { buyOther, params: { type }, push, showMessage } = this.props;
+    const { buyOther, params: { type }, purchaseData, push, showMessage } = this.props;
     const { amount, category, purchase } = this.state;
+    const account = purchaseData.getIn([category, 'account'], 'default');
     const item = purchase.merge({ amount, category, type }).filter(v => v).toJS();
     showMessage(`Charging ${purchase.get('email')} EUR ${amount / 100}...`);
-    buyOther(token, [item], () => {
+    buyOther(account, token, [item], () => {
       showMessage('Payment successful!');
       push('/pay');
     });
@@ -137,16 +138,13 @@ class NewPayment extends React.Component {
             </CardText>
             <CardActions style={{ alignItems: 'center', display: 'flex', flexWrap: 'wrap', padding: 16 }}>
               <StripeCheckout
+                account={cd.get('account')}
                 amount={amount}
-                closed={() => this.setState({ sent: false })}
                 currency='EUR'
                 description={title}
                 email={purchase.get('email')}
-                name={TITLE}
-                stripeKey={STRIPE_KEY}
-                token={this.onCheckout}
-                triggerEvent='onTouchTap'
-                zipCode={true}
+                onCheckout={this.onCheckout}
+                onClose={() => this.setState({ sent: false })}
               >
                 <RaisedButton
                   label={ sent ? 'Working...' : 'Pay by card' }

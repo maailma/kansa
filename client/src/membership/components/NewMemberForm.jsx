@@ -5,11 +5,11 @@ import { push, replace } from 'react-router-redux'
 import { Card, CardActions, CardText } from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
 const { Col, Row } = require('react-flexbox-grid');
-import StripeCheckout from 'react-stripe-checkout'
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
 import { setScene, showMessage } from '../../app/actions/app'
 import { buyMembership, getPrices } from '../../payments/actions'
+import StripeCheckout from '../../payments/components/stripe-checkout'
 import { MembershipSelect } from './form-components'
 import MemberForm from './MemberForm'
 
@@ -115,15 +115,11 @@ class NewMemberForm extends React.Component {
             </div>
             <StripeCheckout
               amount={this.price}
-              closed={() => this.setState({ sent: false })}
-              currency='EUR'
+              currency="EUR"
               description={this.description}
               email={member.get('email')}
-              name={TITLE}
-              stripeKey={STRIPE_KEY}
-              token={this.onCheckout}
-              triggerEvent='onTouchTap'
-              zipCode={true}
+              onCheckout={this.onCheckout}
+              onClose={() => this.setState({ sent: false })}
             >
               <FlatButton
                 label={ sent ? 'Working...' : 'Pay by card' }

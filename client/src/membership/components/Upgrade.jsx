@@ -5,11 +5,11 @@ import { Card, CardActions, CardText } from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
 import Subheader from 'material-ui/Subheader'
 const { Col, Row } = require('react-flexbox-grid')
-import StripeCheckout from 'react-stripe-checkout'
 const ImmutablePropTypes = require('react-immutable-proptypes')
 
 import { setScene, showMessage } from '../../app/actions/app'
 import { buyUpgrade, getPrices } from '../../payments/actions'
+import StripeCheckout from '../../payments/components/stripe-checkout'
 import * as PaymentPropTypes from '../../payments/proptypes'
 import * as MemberPropTypes from '../proptypes'
 import MemberLookupSelector from './MemberLookupSelector'
@@ -150,15 +150,11 @@ class Upgrade extends React.Component {
         </div>
         <StripeCheckout
           amount={amount}
-          closed={() => this.setState({ sent: false })}
           currency="EUR"
           description={this.description}
           email={this.props.email}
-          name={TITLE}
-          stripeKey={STRIPE_KEY}
-          token={(token) => this.onPurchase(amount, token)}
-          triggerEvent="onTouchTap"
-          zipCode={true}
+          onCheckout={(token) => this.onPurchase(amount, token)}
+          onClose={() => this.setState({ sent: false })}
         >
           <FlatButton
             label={sent ? 'Working...' : 'Pay by card'}
