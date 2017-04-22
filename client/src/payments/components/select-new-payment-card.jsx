@@ -4,11 +4,15 @@ const ImmutablePropTypes = require('react-immutable-proptypes');
 
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import { List, ListItem } from 'material-ui/List'
-import LocationCity from 'material-ui/svg-icons/social/location-city'
+import LoungeIcon from 'material-ui/svg-icons/editor/border-color'
+import BenchIcon from 'material-ui/svg-icons/content/weekend'
+import TokenIcon from 'material-ui/svg-icons/social/location-city'
 
 const icon = (key) => {
   switch (key) {
-    case 'ss-token': return <LocationCity />;
+    case 'bench': return <BenchIcon />;
+    case 'lounge': return <LoungeIcon />;
+    case 'ss-token': return <TokenIcon />;
     default: return null;
   }
 }
