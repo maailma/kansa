@@ -29,9 +29,8 @@ const memberActions = (member, push, showHugoActions) => {
   const id = member.get('id')
   const infoStyle = { color: 'rgba(0, 0, 0, 0.870588)' }
   const actions = [
-    <MemberEdit member={member}>
+    <MemberEdit key="ed" member={member}>
       <ListItem
-        key="ed"
         innerDivStyle={{ paddingLeft: 60 }}
         leftIcon={<ContentCreate style={{ top: 12 }}/>}
         primaryText="Edit personal information"
@@ -88,7 +87,7 @@ const memberActions = (member, push, showHugoActions) => {
   return actions
 }
 
-const Member = ({ member, push, showHugoActions }) => {
+const MemberCard = ({ member, push, showHugoActions }) => {
   if (!member) return null
   const membership = member.get('membership', 'NonMember')
 
@@ -108,7 +107,7 @@ const Member = ({ member, push, showHugoActions }) => {
   </Card>
 }
 
-Member.propTypes = {
+MemberCard.propTypes = {
   member: ImmutablePropTypes.mapContains({
     paper_pubs: ImmutablePropTypes.map
   }),
@@ -116,4 +115,4 @@ Member.propTypes = {
   showHugoActions: React.PropTypes.bool
 }
 
-export default Member
+export default MemberCard
