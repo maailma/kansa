@@ -22,6 +22,10 @@ class Person {
     return [ 'can_hugo_nominate', 'can_hugo_vote', 'can_site_select' ];
   }
 
+  static hugoVoterType(membership) {
+    return [ 'Supporter', 'Youth', 'FirstWorldcon', 'Adult' ].indexOf(membership) !== -1
+  }
+
   static get userModFields() {
     return [ 'legal_name', 'public_first_name', 'public_last_name', 'city', 'state', 'country', 'paper_pubs' ];
   }
@@ -58,6 +62,10 @@ class Person {
     util.forceInt(this.data, 'member_number');
     if (this.data.membership === 'NonMember') this.data.member_number = null;
     this.data.paper_pubs = Person.cleanPaperPubs(this.data.paper_pubs);
+  }
+
+  get hugoVoterType() {
+    return Person.hugoVoterType(this.data.membership)
   }
 
   get preferredName() {
