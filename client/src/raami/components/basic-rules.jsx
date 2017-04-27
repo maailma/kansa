@@ -69,20 +69,24 @@ export const BasicRules = () => <div>
     is at the show.
   </p><p>
     <b>Display system:</b><br/>
-    The art show will be built using Messukeskus’s own display wall system.
-    Standard wall elements are made of white hardboard. Artwork items can be
-    attached using adhesives, screws or nails. Size of wall element is 100 × 250
-    cm. Therefore, the basic unit of space will be one square metre (m2) for
-    both walls and tables.
-  </p><p>
-    The digital gallery will have an attending fee per artist, as it will only
-    be for displaying artworks without the possibility to purchase any of
-    them.
+    The art show will be built using Messukeskus’s own display wall system. 
+    Standard wall panels are made of white hardboard. 
+    Artwork items can be attached using adhesives, screws or nails. 
+    The wall panels are 100 × 250 cm (of which 100 x 150 cm is optimally usable). 
+    The tables are 70 x 200 cm and we are selling them in half-table units (70 x 100 cm). 
+    The digital gallery will have an attending fee per artist, as it will only be for 
+    displaying artworks without the possibility to purchase any of them.
+    </p><p>
+    <b>Entry Fees and Commission</b><br/>
+    Please note that all fees are inclusive of VAT.</p>
     <ul>
-      <li>Auction gallery: €20 / m2, wall or table</li>
-      <li>Print shop: €10 / m2, wall or table</li>
-      <li>Digital gallery: €20 / artist (maximum 20 pictures/artist)</li>
+    <li>€30 per full size panel (100 x 250 cm, of which 100 x 150 cm is optimally usable) (maximum of 4 per artist)</li>
+    <li>€15 per half-table (A half-table is 100cm x 70cm.) (Maximum of 8 half-tables per artist)</li>
+    <li>Print Shop fee is €1 per item (not per different image)</li>
+    <li>Projected Art: €20 per artist (maximum 20 images)</li>
     </ul>
+    <p>
+    There will be a €20 handling fee, in addition to the cost of postage, for mailing unsold art back to the artist
   </p><p>
     <b>Mail-in artwork:</b><br/>
     space fee + return postage + €20. This also applies to attending artists
