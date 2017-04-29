@@ -17,6 +17,7 @@ class Purchase {
     this.getPurchaseData = this.getPurchaseData.bind(this);
     this.getPurchases = this.getPurchases.bind(this);
     this.getStripeKeys = this.getStripeKeys.bind(this);
+    this.handleStripeWebhook = this.handleStripeWebhook.bind(this);
     this.makeMembershipPurchase = this.makeMembershipPurchase.bind(this);
     this.makeOtherPurchase = this.makeOtherPurchase.bind(this);
   }
@@ -51,6 +52,11 @@ class Purchase {
                SELECT id FROM People WHERE email=$1
              )`, email)
       .then(data => res.status(200).json(data));
+  }
+
+  handleStripeWebhook(req, res, next) {
+    console.log('stripe webhook', req.body)
+    res.status(200).end()
   }
 
   checkUpgrades(reqUpgrades) {
