@@ -16,6 +16,7 @@ import { buyOther, getPurchaseData } from './actions'
 import * as PaymentPropTypes from './proptypes'
 import NewPaymentForm from './components/new-payment-form'
 import StripeCheckout from './components/stripe-checkout'
+import StripeDirectDebitForm from './components/stripe-direct-debit-form'
 
 class NewPayment extends React.Component {
   static propTypes = {
@@ -39,6 +40,7 @@ class NewPayment extends React.Component {
     this.state = {
       amount: 0,
       category: null,
+      directDebit: false,
       purchase: Map({
         comments: '',
         data: Map(),
@@ -88,6 +90,13 @@ class NewPayment extends React.Component {
     );
   }
 
+  get person() {
+    const { people } = this.props
+    const { purchase } = this.state
+    const id = purchase.get('person_id')
+    return people && id && people.find(p => p.get('id') === id) || null
+  }
+
   onCheckout = (token) => {
     const { buyOther, params: { type }, purchaseData, push, showMessage } = this.props;
     const { amount, category, purchase } = this.state;
@@ -102,12 +111,13 @@ class NewPayment extends React.Component {
 
   render() {
     const { params: { type }, people, purchaseData } = this.props;
-    const { amount, category, purchase, sent } = this.state;
+    const { amount, category, directDebit, purchase, sent } = this.state;
     const cd = purchaseData && purchaseData.get(category);
     if (!cd) return null;
     const title = cd.getIn(['types', type, 'label']);
     const subtitle = category && category !== title ? category : '';
     const description = cd.getIn(['types', type, 'description']) || cd.get('description');
+    const account = cd.get('account') || 'default'
     return (
       <Row>
         <Col
@@ -138,7 +148,7 @@ class NewPayment extends React.Component {
             </CardText>
             <CardActions style={{ alignItems: 'center', display: 'flex', flexWrap: 'wrap', padding: 16 }}>
               <StripeCheckout
-                account={cd.get('account')}
+                account={account}
                 amount={amount}
                 currency='EUR'
                 description={title}
@@ -154,6 +164,16 @@ class NewPayment extends React.Component {
                   style={{ marginRight: 16 }}
                 />
               </StripeCheckout>
+              {account === 'default' ? (
+                  <RaisedButton
+                    label="Pay by direct debit"
+                    disabled={this.disabledCheckout}
+                    onTouchTap={() => this.setState({ directDebit: !directDebit })}
+                    primary={!directDebit}
+                    secondary={directDebit}
+                    style={{ marginRight: 16 }}
+                  />
+              ) : null}
               <div>
                 Amount:
                 <span style={{ paddingLeft: 8, paddingRight: 8 }}>€</span>
@@ -173,6 +193,16 @@ class NewPayment extends React.Component {
                 )}
               </div>
             </CardActions>
+            <CardText style={{ display: directDebit ? 'block' : 'none' }}>
+              <StripeDirectDebitForm
+                amount={amount}
+                onCharge={source => {
+                  console.error(`TODO: charge ${amount/100} EUR from ${source.id}`)
+                  console.log(source)
+                }}
+                person={this.person}
+              />
+            </CardText>
           </Card>
           {!people && <KeyRequest
             allowCreate={cd.get('allowCreate')}
