@@ -6,7 +6,7 @@ import TextField from 'material-ui/TextField';
 import { midGray, orange } from '../../theme'
 import { emptyPaperPubsMap, membershipTypes} from '../constants'
 
-export const TextInput = ({ getDefaultValue, getValue, inputRef, label, onChange, path, required, style = {}, ...props }) => {
+export const TextInput = ({ getDefaultValue, getValue, inputRef, label, onChange, path = [], required, style = {}, ...props }) => {
   if (!Array.isArray(path)) path = [ path ];
   const value = getValue(path);
   if (value === null) return null;
@@ -19,7 +19,7 @@ export const TextInput = ({ getDefaultValue, getValue, inputRef, label, onChange
   if (required && !value) {
     ulStyle.borderBottomWidth = 2;
     ulStyle.borderColor = midGray;
-  } else if (value !== getDefaultValue(path)) {
+  } else if (getDefaultValue && value !== getDefaultValue(path)) {
     ulStyle.borderColor = orange;
   }
   return <TextField
@@ -32,13 +32,13 @@ export const TextInput = ({ getDefaultValue, getValue, inputRef, label, onChange
     underlineStyle={ulStyle}
     underlineFocusStyle={ulStyle}
     value={value}
-    onChange={ ev => onChange(path, ev.target.value) }
+    onChange={(ev, value) => onChange(path, value)}
     ref={ inputRef || (() => {}) }
     { ...props }
   />;
 }
 TextInput.propTypes = {
-  getDefaultValue: React.PropTypes.func.isRequired,
+  getDefaultValue: React.PropTypes.func,
   getValue: React.PropTypes.func.isRequired,
   onChange: React.PropTypes.func.isRequired
 };
