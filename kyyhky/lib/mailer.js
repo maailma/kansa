@@ -85,7 +85,8 @@ class Mailer {
         break;
 
       case 'kansa-new-payment':
-        if (data.type === 'ss-token') {
+      case 'kansa-update-payment':
+        if (data.type === 'ss-token' && data.status === 'succeeded') {
           tmplName = 'kansa-new-siteselection-token';
         }
         tmplData.data = paymentDataString(data.data, data.shape);

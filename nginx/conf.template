@@ -57,7 +57,6 @@ server {
   location /api/raami/ {
     proxy_pass               http://raami/;
     client_max_body_size     0;
-
   }
 
   location /api/hugo/ {
@@ -88,6 +87,19 @@ server {
     proxy_cache_use_stale    error timeout http_500 http_502 http_503 http_504;
     proxy_cache_valid        1h;
     proxy_pass               http://kansa/public;
+  }
+
+  location /api/kansa/webhook/stripe {
+    proxy_pass               http://kansa/webhook/stripe;
+
+    # from https://stripe.com/docs/ips
+    allow                    54.187.174.169;
+    allow                    54.187.205.235;
+    allow                    54.187.216.72;
+    allow                    54.241.31.99;
+    allow                    54.241.31.102;
+    allow                    54.241.34.107;
+    deny                     all;
   }
 
   location / {

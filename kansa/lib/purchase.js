@@ -55,8 +55,33 @@ class Purchase {
   }
 
   handleStripeWebhook(req, res, next) {
-    console.log('stripe webhook', req.body)
-    res.status(200).end()
+    const updated = new Date(req.body.created * 1000)
+    const { id, object, status } = req.body.data.object
+    if (isNaN(updated) || !id || !status || object !== 'charge') {
+      res.status(400).end()
+      console.error('Error: Unexpected Stripe webhook data', req.body)
+    } else {
+      this.db.any(`
+           UPDATE payments
+              SET updated=$(updated), status=$(status)
+            WHERE stripe_charge_id=$(id)
+        RETURNING *`, { id, status, updated }
+      )
+        .then(items => {
+          res.status(200).end()
+          items.forEach(item => {
+            const { shape, types } = purchaseData[item.category];
+            const typeData = types.find(td => td.key === item.type);
+            return mailTask('kansa-update-payment', Object.assign({
+              email: item.person_email || item.payment_email,
+              name: item.person_name || null,
+              shape,
+              typeLabel: typeData && typeData.label || item.type
+            }, item));
+          })
+        })
+        .catch(() => res.status(500).end())
+    }
   }
 
   checkUpgrades(reqUpgrades) {
