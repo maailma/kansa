@@ -63,8 +63,9 @@ function validateItem(item, currency) {
 
 class Payment {
   static get fields() { return [
-    'payment_email', 'stripe_charge_id', 'stripe_token', 'amount', 'currency',
-    'paid', 'person_id', 'person_name', 'category', 'type', 'data',
+    'updated', 'payment_email', 'status', 'amount', 'currency',
+    'stripe_charge_id', 'stripe_receipt', 'stripe_token',
+    'person_id', 'person_name', 'category', 'type', 'data',
     'invoice', 'comments'
   ]}
 
@@ -81,12 +82,14 @@ class Payment {
     this.token = token;
     this.items = items.map(item => ({
       id: null,
+      updated: null,
       payment_email: token.email,
+      status: 'chargeable',
       stripe_charge_id: null,
+      stripe_receipt: null,
       stripe_token: token.id,
       amount: Number(item.amount),
       currency: item.currency || 'eur',
-      paid: null,
       person_email: null,
       person_id: Number(item.person_id) || null,
       person_name: item.person_name || null,
@@ -180,18 +183,22 @@ class Payment {
       source: this.token.id,
       statement_descriptor: Payment.statement_descriptor
     }).then(charge => {
-      if (!charge.paid) throw new Error(`Charge not paid!? ${JSON.stringify(charge)}`);
-      const paid = new Date(charge.created * 1000);
-      const stripe_charge_id = charge.receipt_number || charge.id;
-      const ids = this.items.map(item => {
-        item.paid = paid;
-        item.stripe_charge_id = stripe_charge_id;
+      const _charge = {
+        updated: new Date(charge.created * 1000),
+        status: charge.status,
+        stripe_receipt: charge.receipt_number,
+        stripe_charge_id: charge.id
+      }
+      _charge.items = this.items.map(item => {
+        Object.assign(item, _charge);
         return item.id;
       });
       return this.db.none(`
         UPDATE ${Payment.table}
-           SET paid=$(paid), stripe_charge_id=$(stripe_charge_id)
-         WHERE id IN ($(ids:csv))`, { ids, paid, stripe_charge_id });
+           SET updated=$(updated), status=$(status),
+               stripe_charge_id=$(stripe_charge_id),
+               stripe_receipt=$(stripe_receipt)
+         WHERE id IN ($(items:csv))`, _charge);
     });
   }
 

@@ -328,7 +328,7 @@ describe('Other purchases', () => {
           if (res.status !== 200) throw new Error(`Listing purchases failed! ${JSON.stringify(res.body)}`);
           const purchase = res.body.find(p => p.data.sponsor === testName);
           if (!purchase) throw new Error(`Purchase for "${testName}" not in results! ${JSON.stringify(res.body)}`);
-          if (!purchase.paid || !purchase.stripe_charge_id) {
+          if (!purchase.updated || !purchase.stripe_charge_id || purchase.status !== 'succeeded') {
             throw new Error(`Purchase not completed! ${JSON.stringify(purchase)}`);
           }
         })
