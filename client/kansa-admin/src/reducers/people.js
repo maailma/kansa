@@ -17,6 +17,12 @@ export default function(state = List(), action) {
         console.warn(`${action.type} expects positive integer id`, action.data);
         return state;
       }
+      [
+        'legal_name', 'email', 'public_first_name', 'public_last_name',
+        'city', 'state', 'country'
+      ].forEach(key => {
+        if (!action.data[key]) action.data[key] = '';
+      })
       return state.set(id, fromJS(action.data));
 
     case 'LOGOUT':
