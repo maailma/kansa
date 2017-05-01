@@ -97,13 +97,14 @@ class NewPayment extends React.Component {
     return people && id && people.find(p => p.get('id') === id) || null
   }
 
-  onCheckout = (token) => {
+  onCheckout = (source) => {
     const { buyOther, params: { type }, purchaseData, push, showMessage } = this.props;
     const { amount, category, purchase } = this.state;
     const account = purchaseData.getIn([category, 'account'], 'default');
+    const email = purchase.get('email');
     const item = purchase.merge({ amount, category, type }).filter(v => v).toJS();
     showMessage(`Charging ${purchase.get('email')} EUR ${amount / 100}...`);
-    buyOther(account, token, [item], () => {
+    buyOther(account, email, source, [item], () => {
       showMessage('Payment successful!');
       push('/pay');
     });
@@ -196,10 +197,7 @@ class NewPayment extends React.Component {
             <CardText style={{ display: directDebit ? 'block' : 'none' }}>
               <StripeDirectDebitForm
                 amount={amount}
-                onCharge={source => {
-                  console.error(`TODO: charge ${amount/100} EUR from ${source.id}`)
-                  console.log(source)
-                }}
+                onCharge={this.onCheckout}
                 person={this.person}
               />
             </CardText>

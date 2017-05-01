@@ -25,7 +25,7 @@ export default function(state = defaultState, action) {
 
     case 'GET_PURCHASE_LIST':
       const { list } = action;
-      return state.set('list', fromJS(list).sortBy(p => p.get('paid')).reverse());
+      return state.set('list', fromJS(list).sortBy(p => p.get('updated')).reverse());
 
     case 'GET_STRIPE_KEYS':
       const { keys } = action;

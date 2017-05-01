@@ -31,9 +31,11 @@ export const keys = ImmutablePropTypes.mapOf(PropTypes.string);
 export const purchase = ImmutablePropTypes.mapContains({
   id: PropTypes.number.isRequired,
   created: PropTypes.string.isRequired,
-  paid: PropTypes.string,
+  updated: PropTypes.string,
   payment_email: PropTypes.string.isRequired,
+  status: PropTypes.string,
   stripe_charge_id: PropTypes.string,
+  stripe_receipt: PropTypes.string,
   stripe_token: PropTypes.string,
   error: PropTypes.string,
   amount: PropTypes.number.isRequired,

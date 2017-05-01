@@ -27,10 +27,11 @@ export default ({ dispatch }) => (next) => (action) => {
     } return;
 
     case 'BUY_OTHER': {
-      const { account, callback, items, token: { email, id } } = action;
+      const { account, callback, email, items, source } = action;
       api.POST('kansa/purchase/other', {
         account,
-        token: { email, id },
+        email,
+        source,
         items: items.toJS ? items.toJS() : items
       })
         .then(() => {
