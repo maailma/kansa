@@ -14,10 +14,11 @@ import './styles/app.css';
 
 import API from './api';
 import App from './components/App';
+import payments from './reducers/payments';
 import people from './reducers/people';
 import user from './reducers/user';
 
-const store = createStore(combineReducers({ people, user }));
+const store = createStore(combineReducers({ payments, people, user }));
 const api = new API(API_HOST ? `https://${API_HOST}/api/kansa/` : '/api/kansa/');
 api.GET('user')
   .then(data => store.dispatch({ type: 'LOGIN', data }))
@@ -32,6 +33,8 @@ api.GET('user')
     ws.onclose = ev => console.warn('WebSocket closed', ev);
     ws.onerror = ev => console.error('WebSocket error!', ws, ev);
   })
+  .then(() => api.GET('purchase/list', { all: 1 }))
+  .then(data => store.dispatch({ type: 'INIT PAYMENTS', data }))
   .catch(e => console.error(e));
 
 const orange = '#fc7c39';
