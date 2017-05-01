@@ -11,6 +11,7 @@ import { HelpDialog } from './Help';
 import Member from './Member';
 import MemberTable from './MemberTable';
 import NewMember from './NewMember';
+import PaymentTable from './PaymentTable';
 import Toolbar from './Toolbar';
 
 class App extends React.Component {
@@ -50,7 +51,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { title, api, people, user } = this.props
+    const { title, api, payments, people, user } = this.props
     const { filter, helpOpen, member, scene } = this.state
     return <div>
       <Toolbar
@@ -84,7 +85,13 @@ class App extends React.Component {
             <ContentAdd />
           </FloatingActionButton>
         </NewMember>
-      ] : null}
+      ] : [
+        <PaymentTable
+          key="table"
+          list={filterPeople(payments, filter)}
+          onPaymentSelect={payment => console.log('payment', payment.toJS())}
+        />
+      ]}
 
       <HelpDialog
         open={helpOpen}
