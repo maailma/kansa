@@ -133,7 +133,7 @@ export default class Member extends React.Component {
               .catch(e => console.error(e));  // TODO: report errors better
           }} />
       ]}
-      title={<div>
+      title={<div title={'ID: ' + member.get('id')}>
         <div style={{
           color: 'rgba(0, 0, 0, 0.3)',
           float: 'right',

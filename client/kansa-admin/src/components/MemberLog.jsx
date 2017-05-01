@@ -6,6 +6,33 @@ import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 
+const LogCell = ({ entry, field }) => {
+  let title = null, text = null
+  switch (field) {
+    case 'time':
+      title = entry.timestamp
+      text = title.slice(0, title.indexOf('T'))
+      break
+    case 'ID':
+      text = entry.subject
+      title = 'Log entry ' + entry.id
+      break
+    case 'author':
+      title = entry.client_ua
+      text = entry.author || ''
+      break
+    case 'description':
+      text = entry.description || entry.action
+      title = entry.action
+      if (entry.parameters) title += '\n' + JSON.stringify(entry.parameters)
+      break
+    case 'parameters':
+      text = JSON.stringify(entry.parameters || null)
+      break
+  }
+  return <td title={title}>{text}</td>
+}
+
 export default class MemberLog extends React.Component {
   static propTypes = {
     getLog: React.PropTypes.func.isRequired,
@@ -31,14 +58,14 @@ export default class MemberLog extends React.Component {
   handleClose = () => { this.setState({ open: false }) }
 
   render() {
-    // TODO: FIXME Replace ugly <table> with custom <LogList>
-    const button = React.Children.only(this.props.children);
-    const log = this.state.log || [];
-    const columns = Object.keys(log[0] || {});
+    const button = React.Children.only(this.props.children)
+    const log = this.state.log || []
+    const columns = ['time', 'ID', 'author', 'description']
     return (
       <div>
         { React.cloneElement(button, { onTouchTap: this.handleOpen }) }
         <Dialog
+          contentStyle={{ width: '95%', maxWidth: 'none' }}
           open={this.state.open}
           autoScrollBodyContent={true}
           onRequestClose={this.handleClose}
@@ -47,19 +74,23 @@ export default class MemberLog extends React.Component {
           ]}
         >
           <table style={{ width: '100%' }}>
-            <thead><tr>
+            <thead><tr style={{ textAlign: 'left', textTransform: 'capitalize' }}>
               { columns.map(col => <th key={col}>{col}</th>) }
             </tr></thead>
             <tbody>
               {
                 log.map((entry, idx) => <tr key={idx}>{
-                  columns.map((col, idx) => <td key={idx}>{ JSON.stringify(entry[col]) }</td>)
+                  columns.map((field, idx) => <LogCell
+                    entry={entry}
+                    field={field}
+                    key={idx}
+                  />)
                 }</tr>)
               }
             </tbody>
           </table>
         </Dialog>
       </div>
-    );
+    )
   }
 }
