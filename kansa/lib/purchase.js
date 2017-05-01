@@ -64,12 +64,13 @@ class Purchase {
       this.db.any(`
            UPDATE payments
               SET updated=$(updated), status=$(status)
-            WHERE stripe_charge_id=$(id)
+            WHERE stripe_charge_id=$(id) and status!=$(status)
         RETURNING *`, { id, status, updated }
       )
         .then(items => {
           res.status(200).end()
           items.forEach(item => {
+            console.log('Updated payment', item.id, 'status to', status);
             const { shape, types } = purchaseData[item.category];
             const typeData = types.find(td => td.key === item.type);
             return mailTask('kansa-update-payment', Object.assign({
