@@ -34,9 +34,36 @@ api.GET('user')
   })
   .catch(e => console.error(e));
 
+const orange = '#fc7c39';
+const lightBlue = '#3da9d4';
+const darkBlue = '#005383';
+const midGray = '#808080';
+
+const theme = getMuiTheme({
+  fontFamily: '"Open Sans", sans-serif',
+  card: {
+    titleColor: orange,
+    subtitleColor: midGray
+  },
+  palette: {
+    primary1Color: lightBlue,
+    primary2Color: darkBlue,
+    accent1Color: orange,
+    disabledColor: midGray
+  },
+  tabs: {
+    backgroundColor: 'transparent',
+    selectedTextColor: 'rgba(0,0,0,0.6)',
+    textColor: 'rgba(0,0,0,0.4)'
+  },
+  textField: {
+    errorColor: orange
+  }
+});
+
 render(
   <Provider store={store}>
-    <MuiThemeProvider muiTheme={getMuiTheme()}>
+    <MuiThemeProvider muiTheme={theme}>
       <App api={api} title={TITLE} />
     </MuiThemeProvider>
   </Provider>,

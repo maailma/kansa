@@ -28,7 +28,8 @@ class App extends React.Component {
   state = {
     filter: '',
     helpOpen: false,
-    member: null
+    member: null,
+    scene: 'people'
   }
 
   constructor(props) {
@@ -49,44 +50,47 @@ class App extends React.Component {
   }
 
   render() {
-    const { title, api, people, user } = this.props;
-    const { filter, helpOpen, member } = this.state;
-    const list = filterPeople(people, filter);
+    const { title, api, people, user } = this.props
+    const { filter, helpOpen, member, scene } = this.state
     return <div>
       <Toolbar
         title={title}
         filter={filter}
         user={user}
-        onFilterChange={ filter => this.setState({ filter }) }
-        onHelp={ () => this.setState({ helpOpen: true }) }
-        onLogout={ () => api.GET('logout')
+        onFilterChange={filter => this.setState({ filter })}
+        onHelp={() => this.setState({ helpOpen: true })}
+        onLogout={() => api.GET('logout')
           .then(res => location.reload())
           .catch(e => console.error('Logout failed', e))
         }
+        onSceneChange={scene => this.setState({ scene })}
+        scene={scene}
       />
 
-      <MemberTable
-        list={list}
-        onMemberSelect={ member => this.setState({ member }) }
-      />
-
-      <Member
-        api={api}
-        handleClose={ () => this.setState({ member: null }) }
-        member={member}
-      />
-
-      <NewMember add={ member => api.POST('people', member.toJS()) }>
-        <FloatingActionButton style={{ position: 'fixed', bottom: '24px', right: '24px' }} >
-          <ContentAdd />
-        </FloatingActionButton>
-      </NewMember>
+      {scene === 'people' ? [
+        <MemberTable
+          key="table"
+          list={filterPeople(people, filter)}
+          onMemberSelect={member => this.setState({ member })}
+        />,
+        <Member
+          key="dialog"
+          api={api}
+          handleClose={() => this.setState({ member: null })}
+          member={member}
+        />,
+        <NewMember key="new" add={member => api.POST('people', member.toJS())}>
+          <FloatingActionButton style={{ position: 'fixed', bottom: '24px', right: '24px' }}>
+            <ContentAdd />
+          </FloatingActionButton>
+        </NewMember>
+      ] : null}
 
       <HelpDialog
         open={helpOpen}
-        handleClose={ () => this.setState({ helpOpen: false }) }
+        handleClose={() => this.setState({ helpOpen: false })}
       />
-    </div>;
+    </div>
   }
 }
 

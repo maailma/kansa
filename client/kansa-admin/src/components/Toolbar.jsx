@@ -5,19 +5,32 @@ import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
 import IconButton from 'material-ui/IconButton/IconButton';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
+import { Tabs, Tab } from 'material-ui/Tabs';
 import TextField from 'material-ui/TextField';
 
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import ActionSearch from 'material-ui/svg-icons/action/search';
-import ContentClear from 'material-ui/svg-icons/content/clear';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
+import PaymentsIcon from 'material-ui/svg-icons/action/euro-symbol'
+import ActionSearch from 'material-ui/svg-icons/action/search'
+import ContentClear from 'material-ui/svg-icons/content/clear'
+import PeopleIcon from 'material-ui/svg-icons/social/people'
 
 let searchField = null;
 
-const KansaToolbar = ({ title, filter, user, onFilterChange, onHelp, onLogout }) => <Toolbar
+const KansaToolbar = ({ title, filter, user, onFilterChange, onHelp, onLogout, onSceneChange, scene }) => <Toolbar
   style={{ position: 'fixed', zIndex: 1, height: 48, width: '100%', backgroundColor: 'rgb(221, 236, 148)' }}
 >
   <ToolbarGroup firstChild={true}>
-    <ToolbarTitle text={title} style={{ lineHeight: '48px', marginLeft: 16, paddingRight: 32 }} />
+    <ToolbarTitle text={title} style={{ lineHeight: '48px', marginLeft: 16, paddingRight: 16 }} />
+  </ToolbarGroup>
+  <ToolbarGroup>
+    <Tabs
+      inkBarStyle={{ position: 'absolute', bottom: 'auto', marginTop: 0, top: 0 }}
+      onChange={onSceneChange}
+      value={scene}
+    >
+      <Tab buttonStyle={{ color: 'rgba(0,0,0,0.4)', padding: '0 16px' }} icon={<PeopleIcon/>} style={{ color: 'rgba(0,0,0,0.4)' }} title="People" value="people" />
+      <Tab buttonStyle={{ padding: '0 16px' }} icon={<PaymentsIcon/>} title="Payments" value="payments" />
+    </Tabs>
   </ToolbarGroup>
   <ToolbarGroup style={{ flexGrow: 1 }}>
     <IconButton
