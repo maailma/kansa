@@ -75,19 +75,20 @@ class Payment {
 
   static get table() { return 'payments'; }
 
-  constructor(pgp, db, account, token, items) {
+  constructor(pgp, db, account, email, source, items) {
     this.pgp = pgp;
     this.db = db;
     this.account = account || 'default';
-    this.token = token;
+    this.email = email;
+    this.source = source;
     this.items = items.map(item => ({
       id: null,
       updated: null,
-      payment_email: token.email,
+      payment_email: email,
       status: 'chargeable',
       stripe_charge_id: null,
       stripe_receipt: null,
-      stripe_token: token.id,
+      stripe_token: source.id,
       amount: Number(item.amount),
       currency: item.currency || 'eur',
       person_email: null,
@@ -110,15 +111,17 @@ class Payment {
 
   validate() {
     return new Promise((resolve, reject) => {
-      if (!this.token || !this.token.id || !this.token.email) {
-        reject(new InputError('A valid token is required'));
-      }
-      if (!this.items || this.items.length === 0) {
+      if (!this.email) {
+        reject(new InputError('A valid email is required'));
+      } else if (!this.source || !this.source.id) {
+        reject(new InputError('A valid source is required'));
+      } else if (!this.items || this.items.length === 0) {
         reject(new InputError('At least one item is required'));
+      } else {
+        const currency = this.items[0].currency;
+        this.items.forEach(item => validateItem(item, currency));
+        resolve();
       }
-      const currency = this.items[0].currency;
-      this.items.forEach(item => validateItem(item, currency));
-      resolve();
     })
       .then(() => {
         const ids = Object.keys(this.items.reduce((set, item) => {
@@ -142,9 +145,9 @@ class Payment {
       })
       .then(() => (this.items.every(item => purchaseData[item.category].allow_new_email)
         ? Promise.resolve()
-        : this.db.many(`SELECT id FROM People WHERE email=$1`, this.token.email)
+        : this.db.many(`SELECT id FROM People WHERE email=$1`, this.email)
             .catch((error) => Promise.reject(error.message === 'No data returned from the query.'
-              ? new InputError('Not a known email address: ' + JSON.stringify(this.token.email))
+              ? new InputError('Not a known email address: ' + JSON.stringify(this.email))
               : error
             ))
       ));
@@ -177,10 +180,10 @@ class Payment {
     return this.stripe.charges.create({
       amount,
       currency,
-      description: `Charge of €${amount/100} by ${this.token.email} for ${itemsDesc}`,
+      description: `Charge of €${amount/100} by ${this.email} for ${itemsDesc}`,
       metadata: { items: this.items.map(item => item.id).join(',') },
-      receipt_email: this.token.email,
-      source: this.token.id,
+      receipt_email: this.email,
+      source: this.source.id,
       statement_descriptor: Payment.statement_descriptor
     }).then(charge => {
       const _charge = {

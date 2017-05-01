@@ -182,7 +182,8 @@ describe('Other purchases', () => {
     it('should require required parameters', (done) => {
       agent.post('/api/kansa/purchase/other')
         .send({
-          token: { id: 'x', email: 'nonesuch@example.com' },
+          email: 'nonesuch@example.com',
+          source: { id: 'x' },
           items: [{ amount: 0, category: 'x', type: 'y' }]
         })
         .expect((res) => {
@@ -196,7 +197,8 @@ describe('Other purchases', () => {
     it('should require a valid category', (done) => {
       agent.post('/api/kansa/purchase/other')
         .send({
-          token: { id: 'x', email: 'nonesuch@example.com' },
+          email: 'nonesuch@example.com',
+          source: { id: 'x' },
           items: [{ amount: 1, category: 'x', type: 'y' }]
         })
         .expect((res) => {
@@ -210,7 +212,8 @@ describe('Other purchases', () => {
     it('should require custom data', (done) => {
       agent.post('/api/kansa/purchase/other')
         .send({
-          token: { id: 'x', email: 'nonesuch@example.com' },
+          email: 'nonesuch@example.com',
+          source: { id: 'x' },
           items: [{ amount: 1, category: 'Sponsorship', type: 'bench', data: {} }]
         })
         .expect((res) => {
@@ -228,7 +231,8 @@ describe('Other purchases', () => {
     it('should require a known email address', (done) => {
       agent.post('/api/kansa/purchase/other')
         .send({
-          token: { id: 'x', email: 'nonesuch@example.com' },
+          email: 'nonesuch@example.com',
+          source: { id: 'x' },
           items: [{ amount: 1, category: 'Sponsorship', type: 'bench', data: { sponsor: 'y' } }]
         })
         .expect((res) => {
@@ -242,7 +246,8 @@ describe('Other purchases', () => {
     it('should require person_id to be valid if not null', (done) => {
       agent.post('/api/kansa/purchase/other')
         .send({
-          token: { id: 'x', email: 'admin@example.com' },
+          email: 'admin@example.com',
+          source: { id: 'x' },
           items: [{ amount: 1, person_id: -1, category: 'Sponsorship', type: 'bench', data: { sponsor: 'y' } }]
         })
         .expect((res) => {
@@ -303,7 +308,8 @@ describe('Other purchases', () => {
       }).then(testToken => {
         agent.post('/api/kansa/purchase/other')
           .send({
-            token: { id: testToken.id, email: `${testName}@example.com` },
+            email: `${testName}@example.com`,
+            source: testToken,
             items: [{
               amount: 4200,
               category: 'Sponsorship',
@@ -313,7 +319,7 @@ describe('Other purchases', () => {
           })
           .expect(200)
           .expect(({ body }) => {
-            if (!body || body.status !== 'success' || !body.charge_id) throw new Error(
+            if (!body || body.status !== 'succeeded' || !body.charge_id) throw new Error(
               `Bad response! ${JSON.stringify(body)}`
             );
           })

@@ -165,7 +165,7 @@ class Purchase {
       const items = newMemberPaymentItems.concat(upgradePaymentItems);
       const calcAmount = items.reduce((sum, item) => sum + item.amount, 0);
       if (amount !== calcAmount) throw new InputError(`Amount mismatch: in request ${amount}, calculated ${calcAmount}`);
-      return new Payment(this.pgp, this.db, account, { id: token, email }, items)
+      return new Payment(this.pgp, this.db, account, email, { id: token }, items)
         .process()
     }).then(_items => {
       paymentItems = _items;
@@ -212,8 +212,8 @@ class Purchase {
   }
 
   makeOtherPurchase(req, res, next) {
-    const { account, items, token } = req.body;
-    new Payment(this.pgp, this.db, account, token, items)
+    const { account, email, items, source } = req.body;
+    new Payment(this.pgp, this.db, account, email, source, items)
       .process()
       .then(items => (
         Promise.all(items.map(item => {
@@ -227,8 +227,8 @@ class Purchase {
           }, item));
         }))
           .then(() => res.status(200).json({
-            status: 'success',
-            charge_id: items[0].stripe_charge_id
+            status: items[0].status,
+            charge_id: items[0].stripe_receipt || items[0].stripe_charge_id
           }))
       ))
       .catch(next);

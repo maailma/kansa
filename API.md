@@ -418,7 +418,8 @@ parameter (requires `member_admin` access).
 ### `POST /api/kansa/purchase/other`
 Parameters:
 - `account`: Optional, used to set indicate an alternative Stripe account name
-- `token: { id, email }`: Received from Stripe, used to make the charge
+- `email`: They payer's email address
+- `source: { id, ... }`: Received from Stripe, used to make the charge
 - `items`: Array of payment objects, each consisting of:
   - `amount`, `currency`: The charge amount, in integer cents of `currency`
   - `person_id`, `person_name`: The beneficiary of the payment (optional)
@@ -426,14 +427,15 @@ Parameters:
     [`GET /api/kansa/purchase/data`](#get-apikansapurchasedata)
   - `comments`, `invoice`: Optional strings
 
-Using the `token` received from Stripe, make a charge on the card and adds
-entries to the `Payments` table for each item. Sends an info email to each
-item's beneficiary.
+Using the `source` received from Stripe, make a charge on the card or account
+and adds entries to the `Payments` table for each item. Sends an info email to
+each item's beneficiary.
 
 #### Request
 ```
 {
-  token: { id: '...', email: '...' },
+  email: '...',
+  source: { id: '...' },
   items: [
     {
       amount: 200000,
@@ -453,7 +455,7 @@ item's beneficiary.
 #### Response
 ```
 {
-  status: 'success',
+  status: 'succeeded' || 'pending' || 'failed',
   charge_id: '...'
 }
 ```
