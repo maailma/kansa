@@ -42,8 +42,16 @@ class Purchase {
   }
 
   getPurchases(req, res, next) {
-    const email = req.session.user.member_admin && req.query.email || req.session.user.email;
-    if (!email) return next(new AuthError());
+    let email = req.session.user.email
+    if (req.session.user.member_admin) {
+      if (req.query.email) {
+        email = req.query.email
+      } else if (req.query.all) {
+        return this.db.any(`SELECT * FROM Payments`)
+          .then(data => res.json(data))
+      }
+    }
+    if (!email) return next(new AuthError())
     this.db.any(`
       SELECT *
         FROM Payments
@@ -51,7 +59,7 @@ class Purchase {
              person_id IN (
                SELECT id FROM People WHERE email=$1
              )`, email)
-      .then(data => res.status(200).json(data));
+      .then(data => res.json(data))
   }
 
   handleStripeWebhook(req, res, next) {
