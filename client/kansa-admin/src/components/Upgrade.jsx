@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 import Checkbox from 'material-ui/Checkbox';
 import Dialog from 'material-ui/Dialog';
@@ -19,14 +20,14 @@ function getIn(obj, path, unset) {
 
 export default class Upgrade extends React.Component {
   static propTypes = {
-    membership: React.PropTypes.string.isRequired,
+    membership: PropTypes.string.isRequired,
     paper_pubs: ImmutablePropTypes.mapContains({
-      name: React.PropTypes.string.isRequired,
-      address: React.PropTypes.string.isRequired,
-      country: React.PropTypes.string.isRequired
+      name: PropTypes.string.isRequired,
+      address: PropTypes.string.isRequired,
+      country: PropTypes.string.isRequired
     }),
-    name: React.PropTypes.string.isRequired,
-    upgrade: React.PropTypes.func.isRequired
+    name: PropTypes.string.isRequired,
+    upgrade: PropTypes.func.isRequired
   }
 
   state = {

@@ -1,5 +1,5 @@
 import { Map } from 'immutable';
-
+import PropTypes from 'prop-types'
 import React from 'react'
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import Dialog from 'material-ui/Dialog';
@@ -11,7 +11,7 @@ import Member from './Member';
 
 export default class NewMember extends React.Component {
   static propTypes = {
-    add: React.PropTypes.func.isRequired
+    add: PropTypes.func.isRequired
   }
 
   state = {

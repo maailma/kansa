@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
@@ -49,6 +50,6 @@ export const HelpDialog = ({ open, handleClose }) => (
 );
 
 HelpDialog.propTypes = {
-  open: React.PropTypes.bool.isRequired,
-  handleClose: React.PropTypes.func.isRequired
+  open: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired
 }

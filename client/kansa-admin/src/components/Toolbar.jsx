@@ -1,6 +1,6 @@
 import { Map } from 'immutable';
+import PropTypes from 'prop-types';
 import React from 'react';
-
 import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
 import IconButton from 'material-ui/IconButton/IconButton';
 import IconMenu from 'material-ui/IconMenu';
@@ -55,12 +55,12 @@ const KansaToolbar = ({ title, filter, user, onFilterChange, onHelp, onLogout })
 </Toolbar>;
 
 KansaToolbar.propTypes = {
-  title: React.PropTypes.string.isRequired,
-  filter: React.PropTypes.string.isRequired,
-  user: React.PropTypes.instanceOf(Map).isRequired,
-  onFilterChange: React.PropTypes.func.isRequired,
-  onHelp: React.PropTypes.func.isRequired,
-  onLogout: React.PropTypes.func.isRequired
+  title: PropTypes.string.isRequired,
+  filter: PropTypes.string.isRequired,
+  user: PropTypes.instanceOf(Map).isRequired,
+  onFilterChange: PropTypes.func.isRequired,
+  onHelp: PropTypes.func.isRequired,
+  onLogout: PropTypes.func.isRequired
 }
 
 export default KansaToolbar;

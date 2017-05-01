@@ -1,4 +1,5 @@
 import { Map } from 'immutable'
+import PropTypes from 'prop-types'
 import React from 'react'
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
@@ -11,20 +12,20 @@ import Upgrade from './Upgrade';
 
 export default class Member extends React.Component {
   static propTypes = {
-    api: React.PropTypes.object.isRequired,
-    handleClose: React.PropTypes.func.isRequired,
+    api: PropTypes.object.isRequired,
+    handleClose: PropTypes.func.isRequired,
     member: ImmutablePropTypes.mapContains({
-      legal_name: React.PropTypes.string,
-      email: React.PropTypes.string,
-      public_first_name: React.PropTypes.string,
-      public_last_name: React.PropTypes.string,
-      country: React.PropTypes.string,
-      state: React.PropTypes.string,
-      city: React.PropTypes.string,
+      legal_name: PropTypes.string,
+      email: PropTypes.string,
+      public_first_name: PropTypes.string,
+      public_last_name: PropTypes.string,
+      country: PropTypes.string,
+      state: PropTypes.string,
+      city: PropTypes.string,
       paper_pubs: ImmutablePropTypes.mapContains({
-        name: React.PropTypes.string.isRequired,
-        address: React.PropTypes.string.isRequired,
-        country: React.PropTypes.string.isRequired
+        name: PropTypes.string.isRequired,
+        address: PropTypes.string.isRequired,
+        country: PropTypes.string.isRequired
       })
     })
   }

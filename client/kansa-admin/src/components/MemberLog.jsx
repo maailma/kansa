@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 import Checkbox from 'material-ui/Checkbox';
 import Dialog from 'material-ui/Dialog';
@@ -35,8 +36,8 @@ const LogCell = ({ entry, field }) => {
 
 export default class MemberLog extends React.Component {
   static propTypes = {
-    getLog: React.PropTypes.func.isRequired,
-    id: React.PropTypes.number.isRequired
+    getLog: PropTypes.func.isRequired,
+    id: PropTypes.number.isRequired
   }
 
   state = {

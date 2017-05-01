@@ -1,4 +1,5 @@
 import { List, Map } from 'immutable';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -14,10 +15,10 @@ import Toolbar from './Toolbar';
 
 class App extends React.Component {
   static propTypes = {
-    title: React.PropTypes.string,
-    api: React.PropTypes.object.isRequired,
-    people: React.PropTypes.instanceOf(List).isRequired,
-    user: React.PropTypes.instanceOf(Map).isRequired
+    title: PropTypes.string,
+    api: PropTypes.object.isRequired,
+    people: PropTypes.instanceOf(List).isRequired,
+    user: PropTypes.instanceOf(Map).isRequired
   }
 
   static defaultProps = {

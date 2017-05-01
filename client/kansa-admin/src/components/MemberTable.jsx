@@ -1,4 +1,5 @@
 import { List } from 'immutable'
+import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { AutoSizer, FlexTable, FlexColumn, SortDirection } from 'react-virtualized'
@@ -28,8 +29,8 @@ const noRowsRenderer = () => (
 
 export default class MemberTable extends React.Component {
   static propTypes = {
-    list: React.PropTypes.instanceOf(List).isRequired,
-    onMemberSelect: React.PropTypes.func.isRequired
+    list: PropTypes.instanceOf(List).isRequired,
+    onMemberSelect: PropTypes.func.isRequired
   }
 
   state = {

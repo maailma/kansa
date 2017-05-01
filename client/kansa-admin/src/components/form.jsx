@@ -1,4 +1,5 @@
 import { Map } from 'immutable'
+import PropTypes from 'prop-types'
 import React from 'react'
 import Checkbox from 'material-ui/Checkbox';
 import MenuItem from 'material-ui/MenuItem';
@@ -16,9 +17,9 @@ const styles = {
 }
 
 const basePropTypes = {
-  getDefaultValue: React.PropTypes.func.isRequired,
-  getValue: React.PropTypes.func.isRequired,
-  onChange: React.PropTypes.func.isRequired
+  getDefaultValue: PropTypes.func.isRequired,
+  getValue: PropTypes.func.isRequired,
+  onChange: PropTypes.func.isRequired
 };
 
 function label(path) {
@@ -80,8 +81,8 @@ export const CommentField = (props) => (<TextInput
   getDefaultValue={ () => '' }
 />);
 CommentField.propTypes = {
-  getValue: React.PropTypes.func.isRequired,
-  onChange: React.PropTypes.func.isRequired
+  getValue: PropTypes.func.isRequired,
+  onChange: PropTypes.func.isRequired
 };
 
 const MembershipSelect = ({ getDefaultValue, getValue, onChange }) => {
