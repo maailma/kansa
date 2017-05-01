@@ -222,6 +222,7 @@ class Purchase {
           return mailTask('kansa-new-payment', Object.assign({
             email: item.person_email || item.payment_email,
             name: item.person_name || null,
+            mandate_url: source.sepa_debit && source.sepa_debit.mandate_url || null,
             shape,
             typeLabel: typeData && typeData.label || item.type
           }, item));

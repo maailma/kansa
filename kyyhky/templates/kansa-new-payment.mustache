@@ -11,8 +11,12 @@ We've just processed a new {{&strAmount}} {{&typeLabel}} payment for you from {{
 
 {{&data}}
 
+{{#mandate_url}}
+As this payment was made using SEPA Direct Debit, it will show up as "pending" until completed, which may take up to 14 business days. You may see the mandate you've accepted for this transaction at the following page:
 
-Our charge ID for this transaction was {{&stripe_charge_id}}.
+{{&mandate_url}}{{/mandate_url}}
+
+Our charge ID for this transaction is {{&stripe_charge_id}}.
 
 
 Worldcon 75
