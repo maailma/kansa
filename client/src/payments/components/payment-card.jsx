@@ -6,6 +6,7 @@ import FlatButton from 'material-ui/FlatButton'
 import Divider from 'material-ui/Divider'
 
 import { API_ROOT } from '../../constants'
+import { orange, lightBlue } from '../../theme'
 import * as PaymentPropTypes from '../proptypes'
 
 const PaymentActions = ({ person_id, type, userIds }) => {
@@ -25,12 +26,24 @@ const PaymentActions = ({ person_id, type, userIds }) => {
   return null;
 }
 
+const PaymentStatus = ({ status, updated }) => {
+  const style = { fontSize: 14, textTransform: 'uppercase' }
+  const title = updated ? `Payment ${status} on ${updated}` : null
+  if (status === 'succeeded') {
+    style.color = 'rgba(0, 0, 0, 0.541176)'
+    if (updated) status = updated.slice(0, updated.indexOf('T'))
+  } else {
+    style.color = status === 'failed' ? orange : lightBlue
+  }
+  return <div style={style} title={title}>{status}</div>
+}
+
 const PaymentCard = ({ label, purchase, shape, userIds }) => {
   const {
-    amount, category, comments, data, invoice, paid, payment_email,
-    person_id, person_name, stripe_charge_id, type
-  } = purchase.toJS();
-  const subtitle = category !== label ? category : '';
+    amount, category, comments, data, error, invoice, payment_email, person_id,
+    person_name, status, stripe_charge_id, stripe_receipt, type, updated
+  } = purchase.toJS()
+  const subtitle = category !== label ? category : ''
   return <Card
     style={{ marginBottom: 18 }}
   >
@@ -45,16 +58,15 @@ const PaymentCard = ({ label, purchase, shape, userIds }) => {
         >
           €{amount / 100}<br/>
         </div>
-        {paid ? <div
-          style={{ color: 'rgba(0, 0, 0, 0.541176)', fontSize: 14 }}
-          title={paid}
-        >
-          {paid.slice(0, paid.indexOf('T'))}
-        </div> : null}
+        <PaymentStatus status={status} updated={updated} />
       </div>
     </CardHeader>
     <CardText style={{ paddingTop: 0 }}>
       <table style={{ margin: 0, width: '100%' }}><tbody>
+        {error ? <tr>
+          <td>Error:</td>
+          <td style={{ color: orange, fontWeight: 'bold' }}>{error}</td>
+        </tr> : null}
         <tr>
           <td>Payment from:</td>
           <td>{payment_email}</td>
@@ -65,7 +77,7 @@ const PaymentCard = ({ label, purchase, shape, userIds }) => {
         </tr>
         <tr>
           <td>Charge id:</td>
-          <td style={{ fontFamily: 'monospace' }}>{stripe_charge_id}</td>
+          <td style={{ fontFamily: 'monospace' }}>{stripe_receipt || stripe_charge_id}</td>
         </tr>
         {invoice ? <tr>
           <td>Invoice:</td>
@@ -85,8 +97,8 @@ const PaymentCard = ({ label, purchase, shape, userIds }) => {
       </tbody></table>
     </CardText>
     <PaymentActions person_id={person_id} type={type} userIds={userIds} />
-  </Card>;
-};
+  </Card>
+}
 
 PaymentCard.propTypes = {
   label: PropTypes.string.isRequired,
