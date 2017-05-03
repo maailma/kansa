@@ -14,9 +14,9 @@ describe('Membership purchases', () => {
   context('Parameters', () => {
     it('should require required parameters', (done) => {
       agent.post('/api/kansa/purchase')
-        .send({ amount: 0, email: '@', token: 'x' })
+        .send({ amount: 0, email: '@', source: { id: 'x' } })
         .expect((res) => {
-          const exp = { status: 400, message: 'Required parameters: amount, email, token' };
+          const exp = { status: 400, message: 'Required parameters: amount, email, source' };
           if (res.status !== exp.status) throw new Error(`Bad status: got ${res.status}, expected ${exp.status}`);
           if (res.body.message !== exp.message) throw new Error(`Bad reply: ${JSON.stringify(res.body)}`);
         })
@@ -25,7 +25,7 @@ describe('Membership purchases', () => {
 
     it('should require at least one optional parameter', (done) => {
       agent.post('/api/kansa/purchase')
-        .send({ amount: 1, email: '@', token: 'x' })
+        .send({ amount: 1, email: '@', source: { id: 'x' } })
         .expect((res) => {
           const exp = { status: 400, message: 'Non-empty new_members or upgrades is required' };
           if (res.status !== exp.status) throw new Error(`Bad status: got ${res.status}, expected ${exp.status}`);
@@ -36,7 +36,7 @@ describe('Membership purchases', () => {
 
     it('should require a correct amount', (done) => {
       agent.post('/api/kansa/purchase')
-        .send({ amount: 1, email: '@', token: 'x', new_members: [{ membership: 'Adult', email: '@', legal_name: 'x' }] })
+        .send({ amount: 1, email: '@', source: { id: 'x' }, new_members: [{ membership: 'Adult', email: '@', legal_name: 'x' }] })
         .expect((res) => {
           const exp = { status: 400, message: `Amount mismatch: in request 1, calculated ${prices.memberships.Adult.amount}` };
           if (res.status !== exp.status) throw new Error(`Bad status: got ${res.status}, expected ${exp.status}: ${JSON.stringify(res.body)}`);
@@ -77,12 +77,12 @@ describe('Membership purchases', () => {
           exp_year: 2020,
           cvc: '123'
         }
-      }).then(testToken => {
+      }).then(source => {
         agent.post('/api/kansa/purchase')
           .send({
             amount: prices.memberships.Supporter.amount + prices.memberships.Adult.amount + prices.PaperPubs.amount,
             email: `${testName}@example.com`,
-            token: testToken.id,
+            source,
             new_members: [
               { membership: 'Supporter', email: `${testName}@example.com`, legal_name: `s-${testName}` },
               { membership: 'Adult', email: `${testName}@example.com`, legal_name: `a-${testName}`,
@@ -129,12 +129,12 @@ describe('Membership purchases', () => {
           exp_year: 2020,
           cvc: '123'
         }
-      }).then(testToken => {
+      }).then(source => {
         agent.post('/api/kansa/purchase')
           .send({
             amount: prices.memberships.Adult.amount - prices.memberships.Supporter.amount,
             email: `${testName}@example.com`,
-            token: testToken.id,
+            source,
             upgrades: [{ id: testId, membership: 'Adult' }]
           })
           .expect((res) => {
@@ -155,12 +155,12 @@ describe('Membership purchases', () => {
           exp_year: 2020,
           cvc: '123'
         }
-      }).then(testToken => {
+      }).then(source => {
         agent.post('/api/kansa/purchase')
           .send({
             amount: prices.PaperPubs.amount,
             email: `${testName}@example.com`,
-            token: testToken.id,
+            source,
             upgrades: [{ id: testId, paper_pubs: { name: 'name', address: 'multi\n-line\n-address', country: 'land'} }]
           })
           .expect((res) => {
@@ -305,11 +305,11 @@ describe('Other purchases', () => {
           exp_year: 2020,
           cvc: '123'
         }
-      }).then(testToken => {
+      }).then(source => {
         agent.post('/api/kansa/purchase/other')
           .send({
             email: `${testName}@example.com`,
-            source: testToken,
+            source,
             items: [{
               amount: 4200,
               category: 'Sponsorship',

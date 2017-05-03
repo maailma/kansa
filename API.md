@@ -330,15 +330,16 @@ events to signal `'Unauthorized'` and `'Not Found'` (respectively) to the client
 ## Purchases
 
 ### `POST /api/kansa/purchase`
-- Parameters: `account`, `amount`, `email`, `token`,
+- Parameters: `account`, `amount`, `email`, `source`,
   `new_members: [ { membership, email, legal_name, public_first_name, public_last_name, city, state, country, paper_pubs }, ... ]`,
   `upgrades: [ { id, membership, paper_pubs }, ... ]`
 
-Using the `token` received from Stripe, make a charge of `amount` on the card
-(once verified against the server-side calculated sum from the items) and add
-the `new_members` to the database as well as applying the specified `upgrades`.
-For new members, generate a login key and include it in the welcome email sent
-to each address. Sends an info message to each new or upgraded member.
+Using the `source` (or token) object received from Stripe, make a charge of
+`amount` on the card (once verified against the server-side calculated sum from
+the items) and add the `new_members` to the database as well as applying the
+specified `upgrades`. For new members, generate a login key and include it in
+the welcome email sent to each address. Sends an info message to each new or
+upgraded member.
 
 #### Response
 ```

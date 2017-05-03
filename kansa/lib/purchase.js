@@ -141,9 +141,9 @@ class Purchase {
 
   makeMembershipPurchase(req, res, next) {
     const amount = Number(req.body.amount);
-    const { account, email, token } = req.body;
-    if (!amount || !email || !token) return next(
-      new InputError('Required parameters: amount, email, token')
+    const { account, email, source } = req.body;
+    if (!amount || !email || !source) return next(
+      new InputError('Required parameters: amount, email, source')
     );
     const newMembers = (req.body.new_members || []).map(src => new Person(src));
     const reqUpgrades = req.body.upgrades || [];
@@ -174,7 +174,7 @@ class Purchase {
       const items = newMemberPaymentItems.concat(upgradePaymentItems);
       const calcAmount = items.reduce((sum, item) => sum + item.amount, 0);
       if (amount !== calcAmount) throw new InputError(`Amount mismatch: in request ${amount}, calculated ${calcAmount}`);
-      return new Payment(this.pgp, this.db, account, email, { id: token }, items)
+      return new Payment(this.pgp, this.db, account, email, source, items)
         .process()
     }).then(_items => {
       paymentItems = _items;
