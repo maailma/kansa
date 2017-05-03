@@ -3,9 +3,6 @@ const request = require('supertest');
 const assert = require('assert');
 const fs = require('fs');
 
-// For now test data is empty.
-const memberlist = [];
-
 // Create agent for unlogged and admin sessions
 const ca = fs.readFileSync('../nginx/ssl/localhost.cert','utf8');
 const unlogged = request.agent(host, { ca });
@@ -37,27 +34,27 @@ describe('Check that API services are up', function() {
   });
 });
 
-describe('Member list', () => {
-  it('Returns `success` as status and test data member list.', (done) => {
+describe('Public data', () => {
+  it('Member list is an array', (done) => {
     unlogged.get('/api/kansa/public/people')
-      .expect(200, memberlist)
-      .end(done);
-    })
-});
-
-describe('Country statistics', () => {
-  it('Returns country statistics', (done) => {
-    unlogged.get('/api/kansa/public/stats')
       .expect((res) => {
-        if (
-          res.status !== 200 || !res.body || !res.body['='].hasOwnProperty('=')
-        ) {
-          throw new Error(`Fail! ${JSON.stringify(res.body)}`);
+        if (res.status !== 200 || !Array.isArray(res.body)) {
+          throw new Error(`Fail! ${JSON.stringify(res.body)}`)
         }
       })
-      .end(done);
-  });
-});
+      .end(done)
+  })
+
+  it('Country statistics includes totals', (done) => {
+    unlogged.get('/api/kansa/public/stats')
+      .expect((res) => {
+        if (res.status !== 200 || !res.body || !res.body['='].hasOwnProperty('=')) {
+          throw new Error(`Fail! ${JSON.stringify(res.body)}`)
+        }
+      })
+      .end(done)
+  })
+})
 
 describe('Login', () => {
   context('Successful login', () => {
