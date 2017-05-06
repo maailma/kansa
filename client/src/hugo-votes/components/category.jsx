@@ -3,42 +3,38 @@ import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
-import RaisedButton from 'material-ui/RaisedButton'
-import ListCheck from 'material-ui/svg-icons/av/playlist-add-check'
-import ContentUndo from 'material-ui/svg-icons/content/undo'
-const { Col, Row } = require('react-flexbox-grid');
+const { Col, Row } = require('react-flexbox-grid')
 
 import time_diff from '../../lib/time_diff'
 import { categoryInfo, nominationFields } from '../../hugo-nominations/constants'
-import { setVotes } from '../actions'
+import { setPacketFormat, setVotes } from '../actions'
 import { categories } from '../constants'
 import * as VotePropTypes from '../proptypes'
 
 import CategoryList from './category-list'
-
-const demoFinalists = (category) => {
-  const labels = categoryInfo[category].nominationFieldLabels;
-  return ['A', 'B', 'C', 'D', 'E', 'F']
-    .map(x => Object.keys(labels).reduce((data, field) => {
-      data[field] = labels[field] + ' ' + x;
-      return data;
-    }, {}));
-}
+import Packet from './packet'
 
 class VoteCategory extends React.Component {
   static propTypes = {
     category: PropTypes.oneOf(categories),
     finalists: VotePropTypes.categoryFinalists,
+    packetFormat: PropTypes.string,
     preference: VotePropTypes.categoryVotes,
+    setPacketFormat: PropTypes.func.isRequired,
     setVotes: PropTypes.func.isRequired
   }
 
   render() {
-    const { category, finalists, preference, setVotes } = this.props;
-    const { title } = categoryInfo[category];
-
+    const { category, finalists, packetFormat, preference, setPacketFormat, setVotes } = this.props
+    const { title } = categoryInfo[category]
     return <Card className='body-card'>
       <CardHeader
+        style={{
+          alignItems: 'center',
+          display: 'flex',
+          flexWrap: 'wrap',
+          paddingBottom: 0
+        }}
         textStyle={{
           display: 'block',
           padding: 0
@@ -47,10 +43,16 @@ class VoteCategory extends React.Component {
         titleStyle={{
           fontSize: 24,
           fontWeight: 400,
-          textAlign: 'center',
-          width: '100%'
+          textAlign: 'left'
         }}
-      />
+      >
+        <Packet
+          epub={ImmutableMap({ label: 'EPUB, 3MB', url: '/packet/epub.zip' })}
+          pdf={ImmutableMap({ label: 'PDF, 5MB', url: '/packet/pdf.zip' })}
+          format={packetFormat}
+          onSelectFormat={setPacketFormat}
+        />
+      </CardHeader>
       <CardText>
         <CategoryList
           finalists={finalists}
@@ -67,10 +69,12 @@ class VoteCategory extends React.Component {
 export default connect(
   ({ hugoVotes }, { category }) => ({
     finalists: hugoVotes.getIn(['finalists', category]) || ImmutableMap(),
+    packetFormat: hugoVotes.get('packetFormat'),
     preference: hugoVotes.getIn(['clientVotes',category]) ||
       hugoVotes.getIn(['serverVotes', category]) ||
       ImmutableList(),
   }), {
+    setPacketFormat,
     setVotes
   }
-)(VoteCategory);
+)(VoteCategory)
