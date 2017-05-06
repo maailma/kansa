@@ -36,3 +36,8 @@ export const hugoVotes = ImmutablePropTypes.mapContains({
   serverVotes: votes.isRequired,
   signature: PropTypes.string
 });
+
+export const packet = ImmutablePropTypes.mapContains({
+  label: PropTypes.string.isRequired,
+  url: PropTypes.string.isRequired
+})
