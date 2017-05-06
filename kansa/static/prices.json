@@ -1,4 +1,18 @@
 {
+  "discounts": {
+    "TEK-Adult": {
+      "amount": 100,
+      "description": "TEK Adult"
+    },
+    "TEK-FirstWorldcon": {
+      "amount": 100,
+      "description": "TEK First Worldcon"
+    },
+    "TEK-Youth": {
+      "amount": 100,
+      "description": "TEK Youth"
+    }
+  },
   "memberships": {
     "Supporter": {
       "amount": 3500,

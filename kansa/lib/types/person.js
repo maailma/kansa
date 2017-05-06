@@ -74,9 +74,10 @@ class Person {
   }
 
   get priceAsNewMember() {
-    const ms = prices.memberships[this.data.membership];
-    const pp = this.data.paper_pubs ? prices.PaperPubs.amount : 0;
-    return (ms && ms.amount || 0) + pp;
+    const ms = prices.memberships[this.data.membership]
+    const pp = this.data.paper_pubs ? prices.PaperPubs.amount : 0
+    const da = this.data.discount ? this.data.discount.amount : 0
+    return (ms && ms.amount || 0) + pp - da
   }
 
   get sqlValues() {
