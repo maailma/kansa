@@ -7,6 +7,7 @@ const defaultState = Map({
   finalists: Map(),
   id: null,
   isSaving: false,
+  packetFormat: 'pdf',
   serverTime: null,
   serverVotes: Map(),
   signature: null
@@ -27,6 +28,9 @@ export default (state = defaultState, action) => {
 
     case 'GET_VOTES':
       return state.set('clientVotes', Map());
+
+    case 'SET_PACKET_FORMAT':
+      return state.set('packetFormat', action.format);
 
     case 'SET_SERVER_DATA': {
       const { time, votes } = action;
