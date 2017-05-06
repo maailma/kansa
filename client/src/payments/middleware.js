@@ -11,11 +11,11 @@ export default ({ dispatch }) => (next) => (action) => {
   if (!action.error) switch (action.type) {
 
     case 'BUY_MEMBERSHIP': {
-      const { amount, callback, member, token } = action;
+      const { amount, callback, email, member, source } = action;
       api.POST('kansa/purchase', {
         amount,
-        email: token.email,
-        token: token.id,
+        email,
+        source,
         new_members: [member]
       })
         .then(() => api.GET('kansa/user')
@@ -42,11 +42,11 @@ export default ({ dispatch }) => (next) => (action) => {
     } return;
 
     case 'BUY_UPGRADE': {
-      const { amount, callback, id, membership, paper_pubs, token } = action;
+      const { amount, callback, email, id, membership, paper_pubs, source } = action;
       api.POST('kansa/purchase', {
         amount,
-        email: token.email,
-        token: token.id,
+        email,
+        source,
         upgrades: [{ id, membership, paper_pubs }]
       })
         .then(() => api.GET('kansa/user'))

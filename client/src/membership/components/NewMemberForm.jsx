@@ -54,8 +54,9 @@ class NewMemberForm extends React.Component {
   onCheckout = (token) => {
     const { buyMembership, push, showMessage } = this.props;
     const { member } = this.state;
-    showMessage(`Charging ${token.email} EUR ${this.price/100} ...`);
-    buyMembership(member, this.price, token, () => {
+    const email = member.get('email');
+    showMessage(`Charging ${email} EUR ${this.price/100} ...`);
+    buyMembership(member, this.price, email, token, () => {
       showMessage('Charge completed; new member registered!');
       push('/');
     });
