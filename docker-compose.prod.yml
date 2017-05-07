@@ -6,10 +6,11 @@ version: '2'
 
 services:
   nginx:
-    environment:
-      API_SERVER_NAME:
-      API_SSL_CERTIFICATE:
-      API_SSL_CERTIFICATE_KEY:
+    build:
+      args:
+        SERVER_NAME:
+        SSL_CERTIFICATE:
+        SSL_CERTIFICATE_KEY:
     ports:
       - "80:80"
       - "443:443"

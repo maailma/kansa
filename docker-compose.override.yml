@@ -4,10 +4,11 @@ version: '2'
 
 services:
   nginx:
-    environment:
-      API_SERVER_NAME: localhost
-      API_SSL_CERTIFICATE: /ssl/localhost.cert
-      API_SSL_CERTIFICATE_KEY: /ssl/localhost.key
+    build:
+      args:
+        SERVER_NAME: localhost
+        SSL_CERTIFICATE: /ssl/localhost.cert
+        SSL_CERTIFICATE_KEY: /ssl/localhost.key
     ports:
       - "4430:443"
     volumes:
