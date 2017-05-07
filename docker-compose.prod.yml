@@ -11,6 +11,8 @@ services:
         SERVER_NAME:
         SSL_CERTIFICATE:
         SSL_CERTIFICATE_KEY:
+    environment:
+      JWT_SECRET:
     ports:
       - "80:80"
       - "443:443"
@@ -19,6 +21,7 @@ services:
   hugo:
     environment:
       DATABASE_URL:
+      JWT_SECRET:
       SESSION_SECRET:
     restart: always
 

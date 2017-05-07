@@ -9,15 +9,19 @@ services:
         SERVER_NAME: localhost
         SSL_CERTIFICATE: /ssl/localhost.cert
         SSL_CERTIFICATE_KEY: /ssl/localhost.key
+    environment:
+      JWT_SECRET: dev secret
     ports:
       - "4430:443"
     volumes:
+      - ./nginx/hugo-packet:/srv/hugo-packet:ro
       - ./nginx/ssl:/ssl:ro
 
   hugo:
     environment:
       CORS_ORIGIN: http://localhost:8080
       DATABASE_URL: postgres://hugo:pwd@postgres:5432/api
+      JWT_SECRET: dev secret
       SESSION_SECRET: dev secret
 
   kansa:

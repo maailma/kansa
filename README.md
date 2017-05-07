@@ -8,7 +8,7 @@ These are the back-end services used by [members.worldcon.fi](https://members.wo
 - **`hugo`** - An express.js app providing the `/api/hugo/` parts of [this API](API.md)
 - **`kansa`** - An express.js app providing the `/api/kansa/` parts of [this API](API.md)
 - **`kyyhky`** - Internal mailing service for hugo & kansa, using [Kue](http://automattic.github.io/kue/)
-- **`nginx`** - An SSL-terminating reverse proxy for Kansa
+- **`nginx`** - An SSL-terminating reverse proxy & file server, using [OpenResty](https://openresty.org/)
 - **`postgres`** - Configuration & schemas for our database
 - **`raami`** - Art show management
 - **`tools`** - Semi-automated tools for importing data, and for other tasks
@@ -69,7 +69,7 @@ base config will instead need to be overridden by [docker-compose.prod.yml](dock
 
 For the most part, services are configured using environment variables, some of which need to match
 across services:
-  - `SESSION_SECRET` allows the servers to share authenticated sessions
+  - `JWT_SECRET` and `SESSION_SECRET` allow the servers to share authenticated sessions
   - `DATABASE_URL` and `*_PG_PASSWORD` are required for the services' database connections
 
 
