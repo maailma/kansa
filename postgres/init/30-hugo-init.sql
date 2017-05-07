@@ -40,6 +40,13 @@ CREATE TABLE Votes (
     votes integer[] NOT NULL
 );
 
+CREATE TABLE Packet (
+    category Category NOT NULL,
+    filename text NOT NULL,
+    filesize integer,
+    format text NOT NULL
+);
+
 CREATE TABLE Canon (
     id SERIAL PRIMARY KEY,
     category Category NOT NULL,

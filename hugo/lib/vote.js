@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const jwt = require('jsonwebtoken');
 const AuthError = require('./errors').AuthError;
 const InputError = require('./errors').InputError;
 const sendEmail = require('./kyyhky-send-email');
@@ -7,6 +8,7 @@ class Vote {
   constructor(pgp, db) {
     this.db = db;
     this.getFinalists = this.getFinalists.bind(this);
+    this.getPacket = this.getPacket.bind(this);
     this.getVotes = this.getVotes.bind(this);
     this.setVotes = this.setVotes.bind(this);
 
@@ -46,6 +48,40 @@ class Vote {
       .catch(next);
   }
 
+  getPacket(req, res, next) {
+    const options = { httpOnly: true, path: '/hugo-packet', secure: true };
+    this.access(req)
+      .then(({ id, voter }) => new Promise((resolve, reject) => {
+        if (!voter) return reject(new AuthError('Not a Hugo voter'));
+        jwt.sign({ scope: 'wsfs' }, process.env.JWT_SECRET, {
+          expiresIn: 120 * 60,
+          subject: String(id)
+        }, (err, token) => {
+          if (err) reject(err);
+          else resolve(token);
+        });
+      }))
+      .then(token => {
+        res.cookie('packet', token, options);
+        return this.db.any(`SELECT * FROM Packet ORDER BY category, format`)
+      })
+      .then(data => res.json(data.reduce((set, { category, filename, filesize, format }) => {
+        const ss = filesize < 800*1024 ? `${(filesize / 10240).toFixed(0)}0kB`
+          : `${(filesize / (1024*1024)).toFixed(0)}MB`;
+        const obj = {
+          label: `${format.toUpperCase()}, ${ss}`,
+          url: `${options.path}/${filename}`
+        }
+        if (set[category]) set[category][format] = obj;
+        else set[category] = { [format]: obj };
+        return set;
+      }, {})))
+      .catch(error => {
+        res.clearCookie('packet', options);
+        next(error);
+      })
+  }
+
   getVotes(req, res, next) {
     this.access(req)
       .then(({ id }) => this.db.any(`
@@ -54,10 +90,12 @@ class Vote {
            WHERE person_id = $1
         ORDER BY category, time DESC`, id)
       )
-      .then(data => res.status(200).json(data.reduce((set, { category, time, votes }) => {
-        set[category] = { time, votes };
-        return set;
-      }, {})))
+      .then(data => res.json(
+        data.reduce((set, { category, time, votes }) => {
+          set[category] = { time, votes };
+          return set;
+        }, {})
+      ))
       .catch(next);
   }
 
