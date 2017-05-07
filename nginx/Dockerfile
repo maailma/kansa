@@ -1,4 +1,9 @@
-FROM nginx:stable
+FROM openresty/openresty:jessie
+
+RUN apt-get update && \
+  apt-get install --no-install-recommends --no-install-suggests -y \
+    gettext-base \
+	&& rm -rf /var/lib/apt/lists/*
 
 ARG SERVER_NAME
 ARG SSL_CERTIFICATE
@@ -7,7 +12,7 @@ ARG SSL_CERTIFICATE_KEY
 COPY nginx.conf /nginx.conf.template
 RUN envsubst '$$SERVER_NAME $$SSL_CERTIFICATE $$SSL_CERTIFICATE_KEY' \
   < /nginx.conf.template \
-  > /etc/nginx/conf.d/default.conf
+  > /usr/local/openresty/nginx/conf/nginx.conf
 
-COPY admin.html /usr/share/nginx/html/client/
-COPY index.html /usr/share/nginx/html/client/
+COPY admin.html /srv/client/
+COPY index.html /srv/client/
