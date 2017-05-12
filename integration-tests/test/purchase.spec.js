@@ -13,7 +13,7 @@ describe('Membership purchases', () => {
 
   context('Parameters', () => {
     it('should require required parameters', (done) => {
-      agent.post('/api/kansa/purchase')
+      agent.post('/api/purchase')
         .send({ amount: 0, email: '@', source: { id: 'x' } })
         .expect((res) => {
           const exp = { status: 400, message: 'Required parameters: amount, email, source' };
@@ -24,7 +24,7 @@ describe('Membership purchases', () => {
     });
 
     it('should require at least one optional parameter', (done) => {
-      agent.post('/api/kansa/purchase')
+      agent.post('/api/purchase')
         .send({ amount: 1, email: '@', source: { id: 'x' } })
         .expect((res) => {
           const exp = { status: 400, message: 'Non-empty new_members or upgrades is required' };
@@ -35,7 +35,7 @@ describe('Membership purchases', () => {
     });
 
     it('should require a correct amount', (done) => {
-      agent.post('/api/kansa/purchase')
+      agent.post('/api/purchase')
         .send({ amount: 1, email: '@', source: { id: 'x' }, new_members: [{ membership: 'Adult', email: '@', legal_name: 'x' }] })
         .expect((res) => {
           const exp = { status: 400, message: `Amount mismatch: in request 1, calculated ${prices.memberships.Adult.amount}` };
@@ -50,7 +50,7 @@ describe('Membership purchases', () => {
     const agent = request.agent(host, { ca: cert });
 
     it('should get prices', (done) => {
-      agent.get('/api/kansa/purchase/prices')
+      agent.get('/api/purchase/prices')
         .expect(200)
         .expect(({ body }) => {
           if (
@@ -78,7 +78,7 @@ describe('Membership purchases', () => {
           cvc: '123'
         }
       }).then(source => {
-        agent.post('/api/kansa/purchase')
+        agent.post('/api/purchase')
           .send({
             amount: prices.memberships.Supporter.amount + prices.memberships.Adult.amount + prices.PaperPubs.amount,
             email: `${testName}@example.com`,
@@ -108,10 +108,10 @@ describe('Membership purchases', () => {
     let testId;
 
     before((done) => {
-      admin.get('/api/kansa/login')
+      admin.get('/api/login')
         .query(adminLoginParams)
         .end(() => {
-          admin.post('/api/kansa/people')
+          admin.post('/api/people')
             .send({ membership: 'Supporter', email: `${testName}@example.com`, legal_name: testName })
             .expect((res) => {
               if (res.status !== 200) throw new Error(`Member init failed! ${JSON.stringify(res.body)}`);
@@ -130,7 +130,7 @@ describe('Membership purchases', () => {
           cvc: '123'
         }
       }).then(source => {
-        agent.post('/api/kansa/purchase')
+        agent.post('/api/purchase')
           .send({
             amount: prices.memberships.Adult.amount - prices.memberships.Supporter.amount,
             email: `${testName}@example.com`,
@@ -156,7 +156,7 @@ describe('Membership purchases', () => {
           cvc: '123'
         }
       }).then(source => {
-        agent.post('/api/kansa/purchase')
+        agent.post('/api/purchase')
           .send({
             amount: prices.PaperPubs.amount,
             email: `${testName}@example.com`,
@@ -180,7 +180,7 @@ describe('Other purchases', () => {
 
   context('Parameters', () => {
     it('should require required parameters', (done) => {
-      agent.post('/api/kansa/purchase/other')
+      agent.post('/api/purchase/other')
         .send({
           email: 'nonesuch@example.com',
           source: { id: 'x' },
@@ -195,7 +195,7 @@ describe('Other purchases', () => {
     });
 
     it('should require a valid category', (done) => {
-      agent.post('/api/kansa/purchase/other')
+      agent.post('/api/purchase/other')
         .send({
           email: 'nonesuch@example.com',
           source: { id: 'x' },
@@ -210,7 +210,7 @@ describe('Other purchases', () => {
     });
 
     it('should require custom data', (done) => {
-      agent.post('/api/kansa/purchase/other')
+      agent.post('/api/purchase/other')
         .send({
           email: 'nonesuch@example.com',
           source: { id: 'x' },
@@ -229,7 +229,7 @@ describe('Other purchases', () => {
     });
 
     it('should require a known email address', (done) => {
-      agent.post('/api/kansa/purchase/other')
+      agent.post('/api/purchase/other')
         .send({
           email: 'nonesuch@example.com',
           source: { id: 'x' },
@@ -244,7 +244,7 @@ describe('Other purchases', () => {
     });
 
     it('should require person_id to be valid if not null', (done) => {
-      agent.post('/api/kansa/purchase/other')
+      agent.post('/api/purchase/other')
         .send({
           email: 'admin@example.com',
           source: { id: 'x' },
@@ -263,7 +263,7 @@ describe('Other purchases', () => {
     const agent = request.agent(host, { ca: cert });
 
     it('should get data', (done) => {
-      agent.get('/api/kansa/purchase/data')
+      agent.get('/api/purchase/data')
         .expect(200)
         .expect(({ body }) => {
           if (
@@ -284,10 +284,10 @@ describe('Other purchases', () => {
     const testName = 'test-' + (Math.random().toString(36)+'00000000000000000').slice(2, 7);
 
     before((done) => {
-      admin.get('/api/kansa/login')
+      admin.get('/api/login')
         .query(adminLoginParams)
         .end(() => {
-          admin.post('/api/kansa/people')
+          admin.post('/api/people')
             .send({ membership: 'Supporter', email: `${testName}@example.com`, legal_name: testName })
             .expect((res) => {
               if (res.status !== 200) throw new Error(`Member init failed! ${JSON.stringify(res.body)}`);
@@ -306,7 +306,7 @@ describe('Other purchases', () => {
           cvc: '123'
         }
       }).then(source => {
-        agent.post('/api/kansa/purchase/other')
+        agent.post('/api/purchase/other')
           .send({
             email: `${testName}@example.com`,
             source,
@@ -328,7 +328,7 @@ describe('Other purchases', () => {
     });
 
     it('should be listed', (done) => {
-      admin.get('/api/kansa/purchase/list')
+      admin.get('/api/purchase/list')
         .query({ email: `${testName}@example.com` })
         .expect((res) => {
           if (res.status !== 200) throw new Error(`Listing purchases failed! ${JSON.stringify(res.body)}`);

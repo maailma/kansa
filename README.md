@@ -12,7 +12,7 @@ These are the back-end services used by [members.worldcon.fi](https://members.wo
 - **`postgres`** - Configuration & schemas for our database
 - **`raami`** - An express.js app providing the Art show management part of the [REST API](docs/index.md)
 - **`tools`** - Semi-automated tools for importing data, and for other tasks
-- **`tuohi`** - Fills out a PDF form, for `kansa/people/:id/ballot`
+- **`tuohi`** - Fills out a PDF form, for `people/:id/ballot`
 
 [Kansa](https://en.wiktionary.org/wiki/kansa#Finnish) is Finnish for "people" or "tribe", and it's
 the name for our member registry. The [Hugo Awards](http://www.thehugoawards.org/) are awards that
@@ -54,7 +54,7 @@ The development server is bootstrapped with an admin account `admin@example.com`
 `key`, which you may login as by visiting either of the addresses
 [`https://localhost:4430/login/admin@example.com/key`](https://localhost:4430/login/admin@example.com/key)
 (for smooth browser redicretion) or
-[`https://localhost:4430/api/kansa/login?email=admin@example.com&key=key`](`https://localhost:4430/api/kansa/login?email=admin@example.com&key=key`)
+[`https://localhost:4430/api/login?email=admin@example.com&key=key`](`https://localhost:4430/api/login?email=admin@example.com&key=key`)
 (direct login, with JSON response).
 
 

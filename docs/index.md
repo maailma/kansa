@@ -1,5 +1,10 @@
 # Member Services API
 
+All API requests need to be made using secure connections, i.e. with `https` or
+`wss` protocols, and their paths should be prefixed by `/api/`. Requests for
+`/api/hugo/...` will be handled by the [`hugo`](../hugo/) server,
+`/api/raami/...` by [`raami`](../raami/), and all others by [`kansa`](../kansa/).
+
 Some GET paths include query parameters. POST body parameters may be included
 either as `application/x-www-form-urlencoded` or as `application/json`. All
 server responses will be formatted as JSON.
@@ -10,51 +15,51 @@ the contents `"error"` or `"unauthorized"`, as appropriate, possibly along with
 some relevant data and/or a `message` field.
 
 * [Public information](#public-information)
-  * [`GET /api/kansa/public/people`](#get-apikansapublicpeople)
-  * [`GET /api/kansa/public/stats`](#get-apikansapublicstats)
+  * [`GET public/people`](#get-publicpeople)
+  * [`GET public/stats`](#get-publicstats)
 * [Authentication](#authentication)
-  * [`POST /api/kansa/key`](#post-apikansakey)
-  * [`GET/POST /api/kansa/login`](#getpost-apikansalogin)
-  * [`GET/POST /api/kansa/logout`](#getpost-apikansalogout)
+  * [`POST key`](#post-key)
+  * [`GET/POST login`](#getpost-login)
+  * [`GET/POST logout`](#getpost-logout)
 * [User info](#user-info)
-  * [`GET /api/kansa/user`](#get-apikansauser)
-  * [`GET /api/kansa/user/log`](#get-apikansauserlog)
+  * [`GET user`](#get-user)
+  * [`GET user/log`](#get-userlog)
 * [Member info](#member-info)
-  * [`GET /api/kansa/people`](#get-apikansapeople)
-  * [`POST /api/kansa/people`](#post-apikansapeople)
-  * [`GET /api/kansa/people/:id`](#get-apikansapeopleid)
-  * [`GET /api/kansa/people/:id/log`](#get-apikansapeopleidlog)
-  * [`POST /api/kansa/people/:id`](#post-apikansapeopleid)
-  * [`POST /api/kansa/people/:id/upgrade`](#post-apikansapeopleidupgrade)
-  * [`POST /api/kansa/people/lookup`](#post-apikansapeoplelookup)
-  * [WebSocket: `wss://server/api/kansa/people/updates`](#websocket-wssserverapikansapeopleupdates)
+  * [`GET people`](#get-people)
+  * [`POST people`](#post-people)
+  * [`GET people/:id`](#get-peopleid)
+  * [`GET people/:id/log`](#get-peopleidlog)
+  * [`POST people/:id`](#post-peopleid)
+  * [`POST people/:id/upgrade`](#post-peopleidupgrade)
+  * [`POST people/lookup`](#post-peoplelookup)
+  * [WebSocket: `people/updates`](#websocket-peopleupdates)
 * [Purchases](#purchases)
-  * [`POST /api/kansa/purchase`](#post-apikansapurchase)
-  * [`GET /api/kansa/purchase/data`](#get-apikansapurchasedata)
-  * [`GET /api/kansa/purchase/keys`](#get-apikansapurchasekeys)
-  * [`GET /api/kansa/purchase/list`](#get-apikansapurchaselist)
-  * [`POST /api/kansa/purchase/other`](#post-apikansapurchaseother)
-  * [`GET /api/kansa/purchase/prices`](#get-apikansapurchaseprices)
+  * [`POST purchase`](#post-purchase)
+  * [`GET purchase/data`](#get-purchasedata)
+  * [`GET purchase/keys`](#get-purchasekeys)
+  * [`GET purchase/list`](#get-purchaselist)
+  * [`POST purchase/other`](#post-purchaseother)
+  * [`GET purchase/prices`](#get-purchaseprices)
 * [Slack](#slack)
-  * [`POST /api/kansa/slack/invite`](#post-apikansaslackinvite)
+  * [`POST slack/invite`](#post-slackinvite)
 * [Hugo Nominations](#hugo-nominations)
-  * [`GET /api/hugo/:id/nominations`](#get-apihugoidnominations)
-  * [`POST /api/hugo/:id/nominate`](#post-apihugoidnominate)
+  * [`GET hugo/:id/nominations`](#get-hugoidnominations)
+  * [`POST hugo/:id/nominate`](#post-hugoidnominate)
 * [Hugo Admin](#hugo-admin)
-  * [`GET /api/hugo/admin/ballots`](#get-apihugoadminballots)
-  * [`GET /api/hugo/admin/ballots/:category`](#get-apihugoadminballotscategory)
-  * [`GET /api/hugo/admin/canon`](#get-apihugoadmincanon)
-  * [`POST /api/hugo/admin/canon/:id`](#post-apihugoadmincanonid)
-  * [WebSocket: `wss://server/api/hugo/admin/canon-updates`](#websocket-wssserverapihugoadmincanonupdates)
-  * [`POST /api/hugo/admin/classify`](#post-apihugoadminclassify)
-  * [`GET /api/hugo/admin/nominations`](#get-apihugoadminnominations)
+  * [`GET hugo/admin/ballots`](#get-hugoadminballots)
+  * [`GET hugo/admin/ballots/:category`](#get-hugoadminballotscategory)
+  * [`GET hugo/admin/canon`](#get-hugoadmincanon)
+  * [`POST hugo/admin/canon/:id`](#post-hugoadmincanonid)
+  * [WebSocket: `hugo/admin/canon-updates`](#websocket-hugoadmincanonupdates)
+  * [`POST hugo/admin/classify`](#post-hugoadminclassify)
+  * [`GET hugo/admin/nominations`](#get-hugoadminnominations)
 * [Raami exhibitions](#raami)
 
 ----
 
 ## Public information
 
-### `GET /api/kansa/public/people`
+### `GET public/people`
 - Parameters: `csv`
 
 List of members who have opted to have their info in public. If the query
@@ -69,7 +74,7 @@ parameter `csv` is true-ish, returns results as csv rather than json format.
 ```
 
 
-### `GET /api/kansa/public/stats`
+### `GET public/stats`
 - Parameters: `csv`
 
 Membership statistics by country. If the query parameter `csv` is true-ish,
@@ -86,7 +91,7 @@ returns results as csv rather than json format.
 
 ## Authentication
 
-### `POST /api/kansa/key`
+### `POST key`
 - Parameters: `email`, `name`, `path`, `reset`
 
 If `email` matches (case-insensitively) a known address, send a login link to
@@ -104,7 +109,7 @@ included in the login link as the value of the `next` query parameter.
 ```
 
 
-### `GET/POST /api/kansa/login`
+### `GET/POST login`
 - Parameters: `email`, `key`
 
 If the pair `key`, `email` matches known values, create a new session object
@@ -120,7 +125,7 @@ Set-Cookie: w75=sessionId
 ```
 
 
-### `GET/POST /api/kansa/logout`
+### `GET/POST logout`
 - Requires authentication
 - Parameters: `all`, `reset`, `email` (`admin_admin` only)
 
@@ -143,7 +148,7 @@ re-requested.
 
 ## User info
 
-### `GET /api/kansa/user`
+### `GET user`
 - Requires authentication
 - Parameters: `email` (`member_admin` only)
 
@@ -161,7 +166,7 @@ memberships matching the given email address, and the roles (e.g.
 ```
 
 
-### `GET /api/kansa/user/log`
+### `GET user/log`
 - Requires authentication
 - Parameters: `email` (`member_admin` only)
 
@@ -179,7 +184,7 @@ log entries with `author` set to the given email address.
 
 ## Member info
 
-### `GET /api/kansa/people`
+### `GET people`
 - Requires authentication and `member_admin` or `member_list` authority
 - Parameters: `since`, `name`, and all person fields
 
@@ -202,7 +207,7 @@ uses `_` for single-character wildcards and `%` for multiple characters.
 ```
 
 
-### `POST /api/kansa/people`
+### `POST people`
 - Requires authentication and `member_admin` authority
 - Parameters: `membership`, `legal_name`, `email`, `public_first_name`,
   `public_last_name`, `city`, `state`, `country`, `paper_pubs`
@@ -220,7 +225,7 @@ be generated.
 ```
 
 
-### `GET /api/kansa/people/:id`
+### `GET people/:id`
 - Requires authentication
 
 Find the person matching `id`. If its email address does not match the session
@@ -237,7 +242,7 @@ data, `member_admin` or `member_list` authority is required.
 ```
 
 
-### `GET /api/kansa/people/:id/log`
+### `GET people/:id/log`
 - Requires authentication
 
 Find the log entries for the person matching `id`. If its email address does not
@@ -252,7 +257,7 @@ match the session data, `member_admin` or `member_list` authority is required.
 ```
 
 
-### `POST /api/kansa/people/:id`
+### `POST people/:id`
 - Requires authentication
 - Parameters: `membership` (`member_admin` only), `email` (`member_admin` only),
   `legal_name`, `public_first_name`, `public_last_name`, `city`, `state`,
@@ -275,7 +280,7 @@ non-null value.
 ```
 
 
-### `POST /api/kansa/people/:id/upgrade`
+### `POST people/:id/upgrade`
 - Requires authentication and `member_admin` authority
 - Parameters: `membership`, `member_number` (`admin_admin` only), `paper_pubs`
 
@@ -293,7 +298,7 @@ from membership changes.
 ```
 
 
-### `POST /api/kansa/people/lookup`
+### `POST people/lookup`
 - Parameters: `email`, `member_number`, `name`
 
 Finds a person's `id`, `membership` and `name` based on a slightly fuzzy lookup
@@ -313,7 +318,7 @@ included in the results.
 ```
 
 
-### WebSocket: `wss://server/api/kansa/people/updates`
+### WebSocket: `people/updates`
 - Requires authentication and `member_admin` authority
 
 WebSocket connection endpoint. The server won't listen to any messages sent to
@@ -331,7 +336,7 @@ events to signal `'Unauthorized'` and `'Not Found'` (respectively) to the client
 
 ## Purchases
 
-### `POST /api/kansa/purchase`
+### `POST purchase`
 - Parameters: `account`, `amount`, `email`, `source`,
   `new_members: [ { membership, email, legal_name, public_first_name, public_last_name, city, state, country, paper_pubs }, ... ]`,
   `upgrades: [ { id, membership, paper_pubs }, ... ]`
@@ -351,7 +356,7 @@ upgraded member.
 }
 ```
 
-### `GET /api/kansa/purchase/data`
+### `GET purchase/data`
 
 Current purchase data for non-membership purchases. Top-level keys correspond to
 pre-defined payment categories and their `types`. `shape` values define the
@@ -377,7 +382,7 @@ request.
 }
 ```
 
-### `GET /api/kansa/purchase/keys`
+### `GET purchase/keys`
 
 Current public Stripe keys. Includes at least the `default` key. If a non-default
 key is used, its name should be passed to `POST` purchase calls as the value of
@@ -391,7 +396,7 @@ key is used, its name should be passed to `POST` purchase calls as the value of
 }
 ```
 
-### `GET /api/kansa/purchase/list`
+### `GET purchase/list`
 
 Purchases made using this account's `email` address, or one set as a query
 parameter (requires `member_admin` access).
@@ -418,7 +423,7 @@ parameter (requires `member_admin` access).
 ]
 ```
 
-### `POST /api/kansa/purchase/other`
+### `POST purchase/other`
 Parameters:
 - `account`: Optional, used to set indicate an alternative Stripe account name
 - `email`: They payer's email address
@@ -427,7 +432,7 @@ Parameters:
   - `amount`, `currency`: The charge amount, in integer cents of `currency`
   - `person_id`, `person_name`: The beneficiary of the payment (optional)
   - `category`, `type`, `data`: Required to match entries returned by
-    [`GET /api/kansa/purchase/data`](#get-apikansapurchasedata)
+    [`GET purchase/data`](#get-purchasedata)
   - `comments`, `invoice`: Optional strings
 
 Using the `source` received from Stripe, make a charge on the card or account
@@ -463,7 +468,7 @@ each item's beneficiary.
 }
 ```
 
-### `GET /api/kansa/purchase/prices`
+### `GET purchase/prices`
 
 Current membership and paper publications prices, with `amount` in EUR cents.
 
@@ -482,7 +487,7 @@ Current membership and paper publications prices, with `amount` in EUR cents.
 
 ## Slack
 
-### `POST /api/kansa/slack/invite`
+### `POST slack/invite`
 
 Send the user an invitation via email to join the organisation's Slack. Requires
 the env vars `SLACK_ORG` and `SLACK_TOKEN` to be set, with the token having both
@@ -500,7 +505,7 @@ invitation will return an error.
 
 ## Hugo Nominations
 
-### `GET /api/hugo/:id/nominations`
+### `GET hugo/:id/nominations`
 - Requires authentication
 - Parameter: `all`
 
@@ -560,7 +565,7 @@ nomination.
 ```
 
 
-### `POST /api/hugo/:id/nominate`
+### `POST hugo/:id/nominate`
 - Requires authentication
 - Parameters: `signature`, `category`, `nominations`
 
@@ -599,7 +604,7 @@ the award categories included [here](postgres/init/30-hugo-init.sql).
 
 ## Hugo Admin
 
-### `GET /api/hugo/admin/ballots`
+### `GET hugo/admin/ballots`
 - Requires authentication and `hugo_admin` authority
 
 Fetch all current uncanonicalised ballots. Results are sorted by category, and
@@ -623,7 +628,7 @@ different categories are from the same nominator.
 ```
 
 
-### `GET /api/hugo/admin/ballots/:category`
+### `GET hugo/admin/ballots/:category`
 - Requires authentication and `hugo_admin` authority
 
 Fetch the current uncanonicalised ballots for `category`. Results are expressed
@@ -640,7 +645,7 @@ categories are from the same nominator.
 ```
 
 
-### `GET /api/hugo/admin/canon`
+### `GET hugo/admin/canon`
 - Requires authentication and `hugo_admin` authority
 
 Fetch the set of canonical nominations. Results are sorted by category, and
@@ -662,7 +667,7 @@ expressed as `{ id, data, disqualified, relocated }` objects.
 ```
 
 
-### `POST /api/hugo/admin/canon/:id`
+### `POST hugo/admin/canon/:id`
 - Requires authentication and `hugo_admin` authority
 - Parameters: `category` (required), `nomination` (required), `disqualified`, `relocated`
 
@@ -674,7 +679,7 @@ Sets all the fields for the canonical nomination `id`.
 ```
 
 
-### `GET /api/hugo/admin/nominations`
+### `GET hugo/admin/nominations`
 - Requires authentication and `hugo_admin` authority
 
 Fetch all unique nomination entries. Results are sorted by category, and
@@ -698,7 +703,7 @@ nomination's canonical form, if such has been assigned.
 ```
 
 
-### `POST /api/hugo/admin/classify`
+### `POST hugo/admin/classify`
 - Requires authentication and `hugo_admin` authority
 - Parameters: `category` (required), `nominations` (required), `canon_id`, `canon_nom`
 
@@ -724,7 +729,7 @@ canonicalisations are removed.
 ```
 
 
-### WebSocket: `wss://server/api/hugo/admin/canon-updates`
+### WebSocket: `hugo/admin/canon-updates`
 - Requires authentication and `hugo_admin` authority
 
 WebSocket connection endpoint. The server won't listen to any messages sent to
@@ -754,7 +759,7 @@ router.delete('/:id/works/:work', db.removeWork);
 
 ```
 
-### `GET /api/raami/:id/artist/`
+### `GET raami/:id/artist/`
 
 - Requires authentication
 - Parameters: `id` (required)
@@ -783,7 +788,7 @@ Full details for singular artist connected to member with `id`.
         … }
 ```
 
-### `POST /api/raami/:id/artist`
+### `POST raami/:id/artist`
 
 - Requires authentication
 - Parameters: `id` (required)
@@ -800,7 +805,7 @@ Update or insert artist's details for this member.
 ```
 
 
-### `GET /api/raami/:id/works`
+### `GET raami/:id/works`
 
 - Requires authentication
 - Parameters: `id` (required) artists id
@@ -816,7 +821,7 @@ Get details for works by artist with this member id.
 ```
 
 
-### `GET /api/raami/:id/work/:work`
+### `GET raami/:id/work/:work`
 
 - Requires authentication
 - Parameters: `id` (required) member id, `work` (required) work id
@@ -829,7 +834,7 @@ Full details for singular work.
 
 ```
 
-### `POST /api/raami/:id/work`
+### `POST raami/:id/work`
 
 - Requires authentication
 - Parameters: `people_id` as id (required) , `title`, `width`, `height`, `depth`, `gallery`,`orientation`, `technique`, `filename`, `filedata`, `year`, `price`
@@ -844,7 +849,7 @@ Insert works's details for this member id.
 }
 ```
 
-### `PUT /api/raami/:id/work/:work`
+### `PUT raami/:id/work/:work`
 
 - Requires authentication
 - Parameters: `work`(required) as `id` , `id` (required) as `people_id`, `title`, `width`, `height`, `depth`, `gallery`,`orientation`, `technique`, `filename`, `filedata`, `year`, `price`
@@ -858,7 +863,7 @@ Update works's details.
 }
 ```
 
-### `DELETE /api/raami/:id/work/:work`
+### `DELETE raami/:id/work/:work`
 
 - Requires authentication
 - Patameters: `id` (required), `work` (required)

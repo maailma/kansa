@@ -12,7 +12,7 @@ if (loginUrl.indexOf('/login') === -1) {
   console.error('Usage: node import.js \'https://api.server/login?...\' data.csv > errors.json');
   process.exit(1);
 }
-const apiRoot = loginUrl.slice(0, loginUrl.indexOf('/kansa/login'));
+const apiRoot = loginUrl.slice(0, loginUrl.indexOf('/login'));
 
 const csvFn = process.argv[3];
 const csv = fs.readFileSync(csvFn, { encoding: 'utf8' });
