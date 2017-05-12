@@ -1,13 +1,13 @@
 {
   "name": "api-client",
   "version": "0.1.0",
-  "description": "Client for kansa/server & hugo/server",
+  "description": "Client for worldcon75/api",
   "author": "",
   "license": "Apache-2.0",
   "main": "src/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/worldcon75/api.git"
+    "url": "https://github.com/worldcon75/client.git"
   },
   "scripts": {
     "start": "webpack-dev-server -d --hot --progress --colors",

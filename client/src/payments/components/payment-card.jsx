@@ -15,7 +15,7 @@ const PaymentActions = ({ person_id, status, type, userIds }) => {
       return person_id && (status === 'succeeded') && userIds && userIds.includes(person_id) ? (
         <CardActions style={{ display: 'flex' }}>
           <FlatButton
-            href={`${API_ROOT}kansa/people/${person_id}/ballot`}
+            href={`${API_ROOT}people/${person_id}/ballot`}
             label="Download personal ballot"
             primary={true}
             target="_blank"

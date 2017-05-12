@@ -17,7 +17,7 @@ export default ({ dispatch }) => (next) => (action) => {
       const { email, name } = action;
       if (!email) return next({ ...action, error: 'Email missing for key request' });
       const { pathname, search, hash } = window.location;
-      api.POST('kansa/key', { email, name, path: pathname + search + hash })
+      api.POST('key', { email, name, path: pathname + search + hash })
         .then(() => next(action))
         .catch(handleError);
       dispatch(showMessage('Sending login key and link to ' + action.email));
@@ -26,8 +26,8 @@ export default ({ dispatch }) => (next) => (action) => {
     case 'KEY_LOGIN': {
       const { email, key, path } = action;
       if (!email || !key) return handleError('Missing parameters for key login');
-      api.POST('kansa/login', { email, key })
-        .then(() => api.GET('kansa/user'))
+      api.POST('login', { email, key })
+        .then(() => api.GET('user'))
         .then(user => {
           dispatch(memberSet(user));
           dispatch(replace(path || '/'));
@@ -40,7 +40,7 @@ export default ({ dispatch }) => (next) => (action) => {
 
     case 'TRY_LOGIN': {
       const { callback } = action;
-      api.GET('kansa/user')
+      api.GET('user')
         .then(user => {
           dispatch(memberSet(user));
           callback();
@@ -52,7 +52,7 @@ export default ({ dispatch }) => (next) => (action) => {
     } return;
 
     case 'LOGOUT': {
-      api.GET('kansa/logout')
+      api.GET('logout')
         .then(() => {
           next(action);
           dispatch(push('/'));
@@ -62,7 +62,7 @@ export default ({ dispatch }) => (next) => (action) => {
 
     case 'MEMBER_LOOKUP': {
       const { query } = action;
-      api.POST(`kansa/people/lookup`, query.toJS())
+      api.POST(`people/lookup`, query.toJS())
         .then((results) => next({ ...action, results }))
         .catch(handleError);
     } return;
@@ -72,7 +72,7 @@ export default ({ dispatch }) => (next) => (action) => {
       if (!id || !Map.isMap(changes) || changes.isEmpty()) {
         return handleError(`Bad parameters for member update: ${JSON.stringify(action)}`);
       }
-      api.POST(`kansa/people/${id}`, changes.toJS())
+      api.POST(`people/${id}`, changes.toJS())
         .then(() => next(action))
         .catch(handleError);
     } return;

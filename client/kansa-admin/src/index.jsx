@@ -19,13 +19,13 @@ import people from './reducers/people';
 import user from './reducers/user';
 
 const store = createStore(combineReducers({ payments, people, user }));
-const api = new API(API_HOST ? `https://${API_HOST}/api/kansa/` : '/api/kansa/');
+const api = new API(API_HOST ? `https://${API_HOST}/api/` : '/api/');
 api.GET('user')
   .then(data => store.dispatch({ type: 'LOGIN', data }))
   .then(() => api.GET('people'))
   .then(data => store.dispatch({ type: 'INIT PEOPLE', data }))
   .then(() => {
-    const ws = new WebSocket(`wss://${API_HOST || location.host}/api/kansa/people/updates`);
+    const ws = new WebSocket(`wss://${API_HOST || location.host}/api/people/updates`);
     ws.onmessage = msg => {
       const data = JSON.parse(msg.data);
       store.dispatch({ type: 'SET PERSON', data });

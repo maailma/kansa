@@ -1,4 +1,4 @@
-# kansa/admin
+# kansa-admin
 
 #### To build locally
 
@@ -29,7 +29,7 @@ docker run --rm -v ${PWD}/dist:/usr/src/app/dist kansa-admin-build`
 
 Both procedures should output a file `dist/build.js`, after which the `dist/`
 directory may be served in a read-only file system; the member data will be read
-and written to using the [kansa/server](../server) API.
+and written to using the [server API](https://github.com/worldcon75/api).
 
 For development, `npm start` will build the app and run the webpack-dev-server
 at <http://localhost:8080/webpack-dev-server/>.

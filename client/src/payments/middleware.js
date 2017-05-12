@@ -12,13 +12,13 @@ export default ({ dispatch }) => (next) => (action) => {
 
     case 'BUY_MEMBERSHIP': {
       const { amount, callback, email, member, source } = action;
-      api.POST('kansa/purchase', {
+      api.POST('purchase', {
         amount,
         email,
         source,
         new_members: [member]
       })
-        .then(() => api.GET('kansa/user')
+        .then(() => api.GET('user')
           .then(user => dispatch(memberSet(user)))
           .catch(() => {/* isgnore auth error */})
         )
@@ -28,7 +28,7 @@ export default ({ dispatch }) => (next) => (action) => {
 
     case 'BUY_OTHER': {
       const { account, callback, email, items, source } = action;
-      api.POST('kansa/purchase/other', {
+      api.POST('purchase/other', {
         account,
         email,
         source,
@@ -43,38 +43,38 @@ export default ({ dispatch }) => (next) => (action) => {
 
     case 'BUY_UPGRADE': {
       const { amount, callback, email, id, membership, paper_pubs, source } = action;
-      api.POST('kansa/purchase', {
+      api.POST('purchase', {
         amount,
         email,
         source,
         upgrades: [{ id, membership, paper_pubs }]
       })
-        .then(() => api.GET('kansa/user'))
+        .then(() => api.GET('user'))
         .then(user => dispatch(memberSet(user)))
         .then(() => callback && callback())
         .catch(handleError);
     } return;
 
     case 'GET_PRICES': {
-      api.GET('kansa/purchase/prices')
+      api.GET('purchase/prices')
         .then(prices => next({ ...action, prices }))
         .catch(handleError);
     } return;
 
     case 'GET_PURCHASE_DATA': {
-      api.GET('kansa/purchase/data')
+      api.GET('purchase/data')
         .then(data => next({ ...action, data }))
         .catch(handleError);
     } return;
 
     case 'GET_PURCHASE_LIST': {
-      api.GET('kansa/purchase/list')
+      api.GET('purchase/list')
         .then(list => next({ ...action, list }))
         .catch(handleError);
     } return;
 
     case 'GET_STRIPE_KEYS': {
-      api.GET('kansa/purchase/keys')
+      api.GET('purchase/keys')
         .then(keys => next({ ...action, keys }))
         .catch(handleError);
     } return;

@@ -48,5 +48,4 @@ warning you navigate to your actual client development version, at `http://local
  For development, both use the same server address `http://localhost:8080/` so the back-end CORS
  settings should not need to be updated and authentication cookies can be shared. To use it, it may
  be easier to login first using `client`, or by visiting the API endpoint
- `https://localhost:4430/api/kansa/login?email=admin@example.com&key=key` to set the proper auth
- cookie.
+ `https://localhost:4430/api/login?email=admin@example.com&key=key` to set the proper auth cookie.
