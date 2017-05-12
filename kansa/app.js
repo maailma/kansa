@@ -23,6 +23,7 @@ const PeopleStream = require('./lib/PeopleStream');
 const publicData = require('./lib/public');
 const Purchase = require('./lib/purchase');
 const purchase = new Purchase(pgp, db);
+const slack = require('./lib/slack');
 const upgrade = require('./lib/upgrade');
 const user = require('./lib/user');
 
@@ -68,6 +69,8 @@ router.post('/people/:id', people.updatePerson);
 router.get('/people/:id/ballot', ballot.getBallot);
 router.get('/people/:id/log', log.getPersonLog);
 router.post('/people/:id/upgrade', upgrade.authUpgradePerson);
+
+router.post('/slack/invite', slack.invite);
 
 router.get('/user', user.getInfo);
 router.get('/user/log', log.getUserLog);

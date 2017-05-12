@@ -35,6 +35,8 @@ some relevant data and/or a `message` field.
   * [`GET /api/kansa/purchase/list`](#get-apikansapurchaselist)
   * [`POST /api/kansa/purchase/other`](#post-apikansapurchaseother)
   * [`GET /api/kansa/purchase/prices`](#get-apikansapurchaseprices)
+* [Slack](#slack)
+  * [`POST /api/kansa/slack/invite`](#post-apikansaslackinvite)
 * [Hugo Nominations](#hugo-nominations)
   * [`GET /api/hugo/:id/nominations`](#get-apihugoidnominations)
   * [`POST /api/hugo/:id/nominate`](#post-apihugoidnominate)
@@ -474,6 +476,24 @@ Current membership and paper publications prices, with `amount` in EUR cents.
     Adult: { amount: 12000, description: 'Adult' },
   },
   PaperPubs: { amount: 1000, description: 'Paper publications' }
+}
+```
+
+
+## Slack
+
+### `POST /api/kansa/slack/invite`
+
+Send the user an invitation via email to join the organisation's Slack. Requires
+the env vars `SLACK_ORG` and `SLACK_TOKEN` to be set, with the token having both
+the `client` and `admin` permission scopes granted. Attempting to re-send an
+invitation will return an error.
+
+#### Response
+```
+{
+  success: true,
+  email
 }
 ```
 
