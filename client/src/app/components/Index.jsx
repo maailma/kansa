@@ -27,15 +27,14 @@ class Index extends React.Component {
   }
 
   get memberCards() {
-    const { people, push } = this.props;
+    const { people } = this.props;
     const hugoCount = people.reduce((sum, m) => (
       sum + (m.get('can_hugo_nominate') || m.get('can_hugo_vote') ? 1 : 0)
     ), 0);
-    return people.map(member => (
+    return people.map((member, key) => (
       <MemberCard
-        key={member.get('id')}
+        key={key}
         member={member}
-        push={push}
         showHugoActions={hugoCount === 1}
       />
     ));
