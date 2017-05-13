@@ -125,9 +125,10 @@ class App extends React.Component {
             {children}
           </main>
           <Snackbar
-            open={!!message}
+            bodyStyle={{ height: 'auto', lineHeight: '22px' , paddingBottom: 13, paddingTop: 13 }}
             message={message}
             onRequestClose={hideMessage}
+            open={!!message}
           />
         </div>
       </EventListener>
