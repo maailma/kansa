@@ -28,6 +28,7 @@ services:
   kansa:
     environment:
       DATABASE_URL:
+      DEBUG: kansa:errors
       SESSION_SECRET:
       STRIPE_SECRET_APIKEY:
     restart: always
