@@ -12,6 +12,7 @@ const ImmutablePropTypes = require('react-immutable-proptypes')
 
 import Rocket from '../../lib/rocket-icon'
 import SlackIcon from '../../lib/slack-icon'
+import { requestSlackInvite } from '../actions'
 import { isWSFSMember } from '../constants'
 import MemberEdit from './MemberEdit'
 
@@ -42,11 +43,12 @@ class MemberCard extends React.Component {
       paper_pubs: ImmutablePropTypes.map
     }),
     push: React.PropTypes.func.isRequired,
+    requestSlackInvite: React.PropTypes.func.isRequired,
     showHugoActions: React.PropTypes.bool
   }
 
   get actions() {
-    const { member, push, showHugoActions } = this.props
+    const { member, push, requestSlackInvite, showHugoActions } = this.props
     const id = member.get('id')
     const infoStyle = { color: 'rgba(0, 0, 0, 0.870588)' }
     const actions = [
@@ -105,6 +107,15 @@ class MemberCard extends React.Component {
         primaryText="Register for the Art Show"
       />
     )
+    if (member.get('membership', 'NonMember') !== 'NonMember') actions.push(
+      <Action
+        key="slack"
+        innerDivStyle={{ paddingLeft: 60 }}
+        leftIcon={<SlackIcon />}
+        onTouchTap={requestSlackInvite}
+        primaryText="Request Slack invite"
+      />
+    )
     return actions
   }
 
@@ -130,5 +141,6 @@ class MemberCard extends React.Component {
 }
 
 export default connect(null, {
-  push
+  push,
+  requestSlackInvite
 })(MemberCard)

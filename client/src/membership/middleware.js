@@ -77,6 +77,12 @@ export default ({ dispatch }) => (next) => (action) => {
         .catch(handleError);
     } return;
 
+    case 'REQUEST_SLACK_INVITE': {
+      api.POST(`slack/invite`)
+        .then(({ email }) => dispatch(showMessage(`Slack invite sent to ${JSON.stringify(email)}.`)))
+        .catch(handleError);
+    } return;
+
   }
   return next(action);
 }
