@@ -7,7 +7,7 @@ const { Col, Row } = require('react-flexbox-grid')
 
 import time_diff from '../../lib/time_diff'
 import { categoryInfo, nominationFields } from '../../hugo-nominations/constants'
-import { setPacketFormat, setVotes } from '../actions'
+import { setVotes } from '../actions'
 import { categories } from '../constants'
 import * as VotePropTypes from '../proptypes'
 
@@ -20,17 +20,16 @@ class VoteCategory extends React.Component {
     finalists: VotePropTypes.categoryFinalists,
     packetFormat: PropTypes.string,
     preference: VotePropTypes.categoryVotes,
-    setPacketFormat: PropTypes.func.isRequired,
     setVotes: PropTypes.func.isRequired
   }
 
   render() {
-    const { category, finalists, packetFormat, preference, setPacketFormat, setVotes } = this.props
+    const { category, finalists, packetFormat, preference, setVotes } = this.props
     const { title } = categoryInfo[category]
     return <Card className='body-card'>
       <CardHeader
         style={{
-          alignItems: 'center',
+          alignItems: 'flex-start',
           display: 'flex',
           flexWrap: 'wrap',
           paddingBottom: 0
@@ -47,10 +46,11 @@ class VoteCategory extends React.Component {
         }}
       >
         <Packet
-          epub={ImmutableMap({ label: 'EPUB, 3MB', url: '/packet/epub.zip' })}
-          pdf={ImmutableMap({ label: 'PDF, 5MB', url: '/packet/pdf.zip' })}
-          format={packetFormat}
-          onSelectFormat={setPacketFormat}
+          formats={[
+            ImmutableMap({ label: 'EPUB, 3MB', url: '/packet/epub.zip' }),
+            ImmutableMap({ label: 'MOBI, 444MB', url: '/packet/mobi.zip' }),
+            ImmutableMap({ label: 'PDF, 5MB', url: '/packet/pdf.zip' })
+          ]}
         />
       </CardHeader>
       <CardText>
@@ -74,7 +74,6 @@ export default connect(
       hugoVotes.getIn(['serverVotes', category]) ||
       ImmutableList(),
   }), {
-    setPacketFormat,
     setVotes
   }
 )(VoteCategory)
