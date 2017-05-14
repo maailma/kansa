@@ -7,6 +7,7 @@ const defaultState = Map({
   finalists: Map(),
   id: null,
   isSaving: false,
+  packet: Map(),
   serverTime: null,
   serverVotes: Map(),
   signature: null
@@ -27,6 +28,9 @@ export default (state = defaultState, action) => {
 
     case 'GET_VOTES':
       return state.set('clientVotes', Map());
+
+    case 'SET_PACKET':
+      return state.set('packet', fromJS(action.packet || {}));
 
     case 'SET_SERVER_DATA': {
       const { time, votes } = action;

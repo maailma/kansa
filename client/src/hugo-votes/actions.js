@@ -8,6 +8,12 @@ export const getVotes = () => ({
   type: 'GET_VOTES'
 });
 
+export const setPacket = (packet) => ({
+  module: 'hugo-votes',
+  type: 'SET_PACKET',
+  packet
+});
+
 export const setServerData = (votes, time) => ({
   module: 'hugo-votes',
   type: 'SET_SERVER_DATA',

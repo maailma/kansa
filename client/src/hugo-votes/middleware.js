@@ -1,5 +1,5 @@
 import { showMessage } from '../app/actions/app'
-import { getVotes, setServerData, submitVotes } from './actions'
+import { getVotes, setPacket, setServerData, submitVotes } from './actions'
 import { API_ROOT } from '../constants'
 import API from '../lib/api'
 const api = new API(API_ROOT);
@@ -77,8 +77,14 @@ export default ({ dispatch, getState }) => (next) => (action) => {
       break;
 
     case 'SET_VOTER':
-      if (action.id) api.GET(`hugo/${action.id}/votes`)
-        .then(data => handleReceiveVotes(dispatch, data));
+      if (action.id && action.signature) {
+        api.GET(`hugo/${action.id}/votes`)
+          .then(data => handleReceiveVotes(dispatch, data));
+        api.GET(`hugo/${action.id}/packet`)
+          .then(packet => dispatch(setPacket(packet)));
+      } else {
+        dispatch(setPacket(null));
+      }
       break;
 
     case 'SET_VOTES':

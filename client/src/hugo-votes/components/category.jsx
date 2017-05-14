@@ -17,14 +17,14 @@ import Packet from './packet'
 class VoteCategory extends React.Component {
   static propTypes = {
     category: PropTypes.oneOf(categories),
-    finalists: VotePropTypes.categoryFinalists,
-    packetFormat: PropTypes.string,
-    preference: VotePropTypes.categoryVotes,
+    finalists: VotePropTypes.categoryFinalists.isRequired,
+    packet: VotePropTypes.categoryPacket.isRequired,
+    preference: VotePropTypes.categoryVotes.isRequired,
     setVotes: PropTypes.func.isRequired
   }
 
   render() {
-    const { category, finalists, packetFormat, preference, setVotes } = this.props
+    const { category, finalists, packet, preference, setVotes } = this.props
     const { title } = categoryInfo[category]
     return <Card className='body-card'>
       <CardHeader
@@ -45,13 +45,7 @@ class VoteCategory extends React.Component {
           textAlign: 'left'
         }}
       >
-        <Packet
-          formats={[
-            ImmutableMap({ label: 'EPUB, 3MB', url: '/packet/epub.zip' }),
-            ImmutableMap({ label: 'MOBI, 444MB', url: '/packet/mobi.zip' }),
-            ImmutableMap({ label: 'PDF, 5MB', url: '/packet/pdf.zip' })
-          ]}
-        />
+        <Packet formats={packet} />
       </CardHeader>
       <CardText>
         <CategoryList
@@ -69,7 +63,7 @@ class VoteCategory extends React.Component {
 export default connect(
   ({ hugoVotes }, { category }) => ({
     finalists: hugoVotes.getIn(['finalists', category]) || ImmutableMap(),
-    packetFormat: hugoVotes.get('packetFormat'),
+    packet: hugoVotes.getIn(['packet', category]) || ImmutableMap(),
     preference: hugoVotes.getIn(['clientVotes',category]) ||
       hugoVotes.getIn(['serverVotes', category]) ||
       ImmutableList(),

@@ -2,24 +2,23 @@ import React, { PropTypes } from 'react'
 import FlatButton from 'material-ui/FlatButton'
 
 import { midGray } from '../../theme'
-import { packet as packetPropType } from '../proptypes'
+import { categoryPacket } from '../proptypes'
 
 const Packet = ({ formats }) => {
-  if (!formats || formats.length === 0) return null
-  const first = formats.shift()
+  if (!formats || formats.size === 0) return null
   return (
     <div style={{
       display: 'flex', flexDirection: 'column', flexGrow: 1
     }}>
-      <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'flex-end' }}>
-        <div style={{ color: midGray, marginRight: 12 }}>Download packet</div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <div style={{ color: midGray, fontSize: 14, marginRight: 8, marginTop: 8 }}>Download packet</div>
         <FlatButton
-          download href={first.get('url')}
-          label={first.get('label')}
+          download href={formats.first().get('url')}
+          label={formats.first().get('label')}
           style={{ lineHeight: '33px' }}
         />
       </div>
-      {formats.map((fmt, idx) => (
+      {formats.rest().valueSeq().map((fmt, idx) => (
         <div key={idx} style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <FlatButton
             download href={fmt.get('url')}
@@ -33,7 +32,7 @@ const Packet = ({ formats }) => {
 }
 
 Packet.propTypes = {
-  formats: PropTypes.arrayOf(packetPropType)
+  formats: categoryPacket
 }
 
 export default Packet

@@ -37,7 +37,18 @@ export const hugoVotes = ImmutablePropTypes.mapContains({
   signature: PropTypes.string
 });
 
-export const packet = ImmutablePropTypes.mapContains({
+export const packetFormat = ImmutablePropTypes.mapContains({
   label: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired
 })
+
+export const categoryPacket = ImmutablePropTypes.mapContains({
+  epub: packetFormat,
+  mobi: packetFormat,
+  pdf: packetFormat
+})
+
+export const packet = ImmutablePropTypes.mapOf(
+  categoryPacket,
+  PropTypes.oneOf(categories)
+)
