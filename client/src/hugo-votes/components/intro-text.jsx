@@ -43,8 +43,8 @@ const VoteIntroText = () => (
       blank.
     </p>
     <p>
-      Note that “No Award” is not an abstention; it means that none of the finalists should be given the award in
-      question.
+      Note that “No Award” is not an abstention; it means that none of the finalists ranked below it, or not ranked at
+      all, should be given the award in question.
     </p>
     <p>
       When the ballots are counted, all the first place votes will be tabulated. If no finalist receives more than
@@ -93,6 +93,30 @@ const VoteIntroText = () => (
     </p>
     <p>
       If you have questions regarding the ballot, please contact <a href="mailto:hugohelp@worldcon.fi">hugohelp@worldcon.fi</a>.
+    </p>
+
+    <h3>Hugo Voter Packet</h3>
+
+    <p>
+      Thanks to the generosity of publishers, authors, artists, editors, and other creators, we are able to provide a
+      number of downloads of works on the final ballot and created by or edited by individual finalists, in order for
+      Hugo voters to familiarise themselves with the works on the ballot. The download links for each category are
+      included in each of the relevant sections on the ballot below.
+    </p>
+    <p>
+      In most ballot categories there are separate downloads for each of the three most common e-book formats (EPUB,
+      MOBI, and PDF). In the few cases where a publisher has provided only a PDF version of a work, the PDF has been
+      included in each of the different format packets so that you will not have to do extra downloading. The
+      exceptions to this are the Dramatic Presentation, Artist, Graphic Story, Fancast, and Editor Long Form
+      categories, where there is only a PDF download.
+    </p>
+    <p>
+      The Hugo Voter Packet will be available for download until the voting deadline specified above. Again, if you
+      have any questions regarding the packet, please contact <a href="mailto:hugohelp@worldcon.fi">hugohelp@worldcon.fi</a>.
+    </p>
+    <p>
+      We ask that voters honor publishers’ and creators’ request that they reserve these copies for their personal use
+      only, and that they do not share these works with non-members of Worldcon 75.
     </p>
   </CardText>
 );
