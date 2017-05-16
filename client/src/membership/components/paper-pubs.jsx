@@ -9,6 +9,7 @@ const { Col, Row } = require('react-flexbox-grid');
 const ImmutablePropTypes = require('react-immutable-proptypes');
 
 import { emptyPaperPubsMap } from '../constants'
+import messages from '../messages'
 import { hintStyle } from './MemberForm'
 
 export const paperPubsIsValid = (pp) => (
@@ -32,7 +33,7 @@ const AddressField = ({ autoFocus, field, hintText, multiLine=false, onChange, t
   />;
 }
 
-const PaperPubsFields = ({ autoFocus, getDefaultValue, getValue, onChange, tabIndex }) => {
+const PaperPubsFields = ({ autoFocus, getDefaultValue, getValue, onChange, ppMsg, tabIndex }) => {
   const pp = getValue(['paper_pubs']);
   if (!Map.isMap(pp)) return null;
   const changed = !pp.equals(getDefaultValue && getDefaultValue(['paper_pubs']));
@@ -44,7 +45,7 @@ const PaperPubsFields = ({ autoFocus, getDefaultValue, getValue, onChange, tabIn
     <AddressField
       autoFocus={autoFocus}
       field="name"
-      hintText="Paper pubs name"
+      hintText={ppMsg.name()}
       onChange={onChange}
       tabIndex={tabIndex}
       value={pp.get('name')}
@@ -52,7 +53,7 @@ const PaperPubsFields = ({ autoFocus, getDefaultValue, getValue, onChange, tabIn
     <Divider />
     <AddressField
       field="address"
-      hintText="Paper pubs address"
+      hintText={ppMsg.address()}
       multiLine={true}
       onChange={onChange}
       tabIndex={tabIndex}
@@ -61,7 +62,7 @@ const PaperPubsFields = ({ autoFocus, getDefaultValue, getValue, onChange, tabIn
     <Divider />
     <AddressField
       field="country"
-      hintText="Paper pubs country"
+      hintText={ppMsg.country()}
       onChange={onChange}
       tabIndex={tabIndex}
       value={pp.get('country')}
@@ -69,20 +70,11 @@ const PaperPubsFields = ({ autoFocus, getDefaultValue, getValue, onChange, tabIn
   </Paper>;
 }
 
-const PaperPubsCheckbox = ({ eurAmount, getValue, onChange, ...props }) => (
-  <Checkbox
-    checkedIcon={<ContentMail />}
-    label={`Add paper publications (€${eurAmount})`}
-    checked={!!getValue(['paper_pubs'])}
-    onCheck={ (ev, checked) => onChange(['paper_pubs'], checked ? emptyPaperPubsMap : null) }
-    {...props}
-  />
-);
-
-export const AddPaperPubs = ({ getDefaultValue, getValue, onChange, prices, ...inputProps }) => {
-  const amount = prices && prices.getIn(['PaperPubs', 'amount'], 0);
-  const label = 'Add paper publications' + (amount ? ` (€${amount / 100})` : '');
-  const hasPaperPubs = !!getValue(['paper_pubs']);
+export const AddPaperPubs = ({ getDefaultValue, getValue, lc = 'en', onChange, prices, ...inputProps }) => {
+  const ppMsg = messages[lc].paper_pubs
+  const amount = prices && prices.getIn(['PaperPubs', 'amount'], 0)
+  const label = ppMsg.label({ amount: amount / 100 })
+  const hasPaperPubs = !!getValue(['paper_pubs'])
   return (
     <Row style={{ paddingTop: 16 }}>
       <Col xs={12} sm={6}>
@@ -95,19 +87,8 @@ export const AddPaperPubs = ({ getDefaultValue, getValue, onChange, prices, ...i
             style={{ marginBottom: 4 }}
             { ...inputProps }
           />
-          <div style={hintStyle}>
-            By default, we'll be in touch with you electronically to let you
-            know how our preparations are progressing. If you'd prefer to
-            receive our progress reports and other publications by post, select
-            this option (note the additional fee).
-          </div>
-          {hasPaperPubs ? (
-            <div style={hintStyle}>
-              We'll need to know where to send your mail. Please enter your
-              address details here as you'd wish them to be printed onto a
-              postal label.
-            </div>
-          ) : null }
+        <div style={hintStyle}>{ppMsg.new_hint()}</div>
+          {hasPaperPubs ? <div style={hintStyle}>{ppMsg.new_hint2()}</div> : null }
       </Col>
       {hasPaperPubs ? (
         <Col xs={12} sm={6}>
@@ -115,23 +96,22 @@ export const AddPaperPubs = ({ getDefaultValue, getValue, onChange, prices, ...i
             autoFocus={true}
             getValue={getValue}
             onChange={onChange}
+            ppMsg={ppMsg}
             { ...inputProps }
           />
         </Col>
       ) : null}
     </Row>
-  );
+  )
 }
 
-export const EditPaperPubs = (inputProps) => (
+export const EditPaperPubs = ({ lc = 'en', ...inputProps }) => (
   <Row style={{ paddingTop: 16 }}>
     <Col xs={12} sm={6}>
-      <PaperPubsFields {...inputProps} />
+      <PaperPubsFields ppMsg={messages[lc].paper_pubs} {...inputProps} />
     </Col>
     <Col xs={12} sm={6} style={hintStyle}>
-      For paper publications, we'll need to know where to send your mail.
-      Please enter your address details here as you'd wish them to be
-      printed onto a postal label.
+      {messages[lc].paper_pubs.edit_hint()}
     </Col>
   </Row>
-);
+)

@@ -1,0 +1,27 @@
+{
+  "legal_name": "Legal Name",
+  "legal_name_hint": "We'll need to check this against an official ID at the con, but otherwise it'll stay confidential.",
+  "email": "Email",
+  "new_email_hint": "How we'll get in touch with you before the con, and where we'll send important information about the Hugo Awards and Worldcon Site Selection.",
+  "edit_email_hint": "To change the email address associated with this membership, please get in touch with us at <a href=\"mailto:registration@worldcon.fi\">registration@worldcon.fi</a>",
+  "public_first_name": "Public First Name",
+  "public_last_name": "Public Last Name",
+  "public_name_hint": "How shall we list you in public? Leave these fields blank if you'd prefer we don't list you at all on our website or elsewhere. If you give us two names, we'll use the second for alphabetization (either can contain spaces). A few months before the con, you'll be able to separately customize the text of your badge.",
+  "city": "City",
+  "state": "State/province",
+  "country": "Country",
+  "location_hint": "Where you're from. Not strictly speaking necessary, but we'd love to know how much world is coming to our Worldcon. Be as specific as you wish; not all fields will apply to everyone.",
+  "paper_pubs": {
+    "name": "Paper pubs name",
+    "address": "Paper pubs address",
+    "country": "Paper pubs country",
+    "label": "Add paper publications (€{amount})",
+    "new_hint": "By default, we'll be in touch with you electronically to let you know how our preparations are progressing. If you'd prefer to receive our progress reports and other publications by post, select this option (note the additional fee).",
+    "new_hint2": "We'll need to know where to send your mail. Please enter your address details here as you'd wish them to be printed onto a postal label.",
+    "edit_hint": "For paper publications, we'll need to know where to send your mail. Please enter your address details here as you'd wish them to be printed onto a postal label."
+  },
+  "membership_type": "Membership type",
+  "required": "Required",
+  "total": "Total",
+  "pay_by_card": "Pay by card"
+}
