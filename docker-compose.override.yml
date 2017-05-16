@@ -4,13 +4,11 @@ version: '2'
 
 services:
   nginx:
-    build:
-      args:
-        SERVER_NAME: localhost
-        SSL_CERTIFICATE: /ssl/localhost.cert
-        SSL_CERTIFICATE_KEY: /ssl/localhost.key
     environment:
       JWT_SECRET: dev secret
+      SERVER_NAME: localhost
+      SSL_CERTIFICATE: /ssl/localhost.cert
+      SSL_CERTIFICATE_KEY: /ssl/localhost.key
     ports:
       - "4430:443"
     volumes:
