@@ -16,7 +16,6 @@ import { buyOther, getPurchaseData } from './actions'
 import * as PaymentPropTypes from './proptypes'
 import NewPaymentForm from './components/new-payment-form'
 import StripeCheckout from './components/stripe-checkout'
-import StripeDirectDebitForm from './components/stripe-direct-debit-form'
 
 class NewPayment extends React.Component {
   static propTypes = {
@@ -40,7 +39,6 @@ class NewPayment extends React.Component {
     this.state = {
       amount: 0,
       category: null,
-      directDebit: false,
       purchase: Map({
         comments: '',
         data: Map(),
@@ -112,7 +110,7 @@ class NewPayment extends React.Component {
 
   render() {
     const { params: { type }, people, purchaseData } = this.props;
-    const { amount, category, directDebit, purchase, sent } = this.state;
+    const { amount, category, purchase, sent } = this.state;
     const cd = purchaseData && purchaseData.get(category);
     if (!cd) return null;
     const title = cd.getIn(['types', type, 'label']);
@@ -165,16 +163,6 @@ class NewPayment extends React.Component {
                   style={{ marginRight: 16 }}
                 />
               </StripeCheckout>
-              {account === 'default' ? (
-                  <RaisedButton
-                    label="Pay by direct debit"
-                    disabled={this.disabledCheckout}
-                    onTouchTap={() => this.setState({ directDebit: !directDebit })}
-                    primary={!directDebit}
-                    secondary={directDebit}
-                    style={{ marginRight: 16 }}
-                  />
-              ) : null}
               <div>
                 Amount:
                 <span style={{ paddingLeft: 8, paddingRight: 8 }}>€</span>
@@ -194,13 +182,6 @@ class NewPayment extends React.Component {
                 )}
               </div>
             </CardActions>
-            <CardText style={{ display: directDebit ? 'block' : 'none' }}>
-              <StripeDirectDebitForm
-                amount={amount}
-                onCharge={this.onCheckout}
-                person={this.person}
-              />
-            </CardText>
           </Card>
           {!people && <KeyRequest
             allowCreate={cd.get('allowCreate')}
