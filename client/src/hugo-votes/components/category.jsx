@@ -12,7 +12,6 @@ import { categories } from '../constants'
 import * as VotePropTypes from '../proptypes'
 
 import CategoryList from './category-list'
-import Packet from './packet'
 
 class VoteCategory extends React.Component {
   static propTypes = {
@@ -45,7 +44,6 @@ class VoteCategory extends React.Component {
           textAlign: 'left'
         }}
       >
-        <Packet formats={packet} />
       </CardHeader>
       <CardText>
         <CategoryList
