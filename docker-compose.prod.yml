@@ -7,9 +7,10 @@ version: '2'
 services:
   nginx:
     environment:
-      API_SERVER_NAME:
-      API_SSL_CERTIFICATE:
-      API_SSL_CERTIFICATE_KEY:
+      JWT_SECRET:
+      SERVER_NAME:
+      SSL_CERTIFICATE:
+      SSL_CERTIFICATE_KEY:
     ports:
       - "80:80"
       - "443:443"
@@ -18,12 +19,14 @@ services:
   hugo:
     environment:
       DATABASE_URL:
+      JWT_SECRET:
       SESSION_SECRET:
     restart: always
 
   kansa:
     environment:
       DATABASE_URL:
+      DEBUG: kansa:errors
       SESSION_SECRET:
       STRIPE_SECRET_APIKEY:
     restart: always

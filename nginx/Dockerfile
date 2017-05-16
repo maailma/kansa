@@ -1,5 +1,10 @@
-FROM nginx:stable
+FROM openresty/openresty:jessie
 
-COPY conf.template /nginx.conf.template
-COPY admin.html /usr/share/nginx/html/client/
-COPY index.html /usr/share/nginx/html/client/
+RUN apt-get update && \
+  apt-get install --no-install-recommends --no-install-suggests -y \
+    gettext-base \
+	&& rm -rf /var/lib/apt/lists/*
+
+RUN /usr/local/openresty/luajit/bin/luarocks install lua-resty-jwt
+
+COPY hugo-packet.lua /

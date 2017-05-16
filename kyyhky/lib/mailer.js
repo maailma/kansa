@@ -17,11 +17,11 @@ function nominationsString(data) {
   }).join('\n\n');
 }
 
-function paymentDataString(data, shape) {
+function paymentDataString(data, shape, ignored) {
   if (!data) return '';
   const label = (key) => shape && shape[key] && shape[key].label || key;
   return Object.keys(data)
-    .filter(key => key && data[key])
+    .filter(key => key && data[key] && !ignored[key])
     .map(key => `${label(key)}: ${data[key]}`)
     .join('\n');
 }
@@ -85,10 +85,11 @@ class Mailer {
         break;
 
       case 'kansa-new-payment':
-        if (data.type === 'ss-token') {
+      case 'kansa-update-payment':
+        if (data.type === 'ss-token' && data.status === 'succeeded') {
           tmplName = 'kansa-new-siteselection-token';
         }
-        tmplData.data = paymentDataString(data.data, data.shape);
+        tmplData.data = paymentDataString(data.data, data.shape, { mandate_url: true });
         tmplData.strAmount = data.currency.toUpperCase() + ' ' + (data.amount / 100).toFixed(2);
         break;
 

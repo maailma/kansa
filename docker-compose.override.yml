@@ -5,25 +5,32 @@ version: '2'
 services:
   nginx:
     environment:
-      API_SERVER_NAME: localhost
-      API_SSL_CERTIFICATE: /ssl/localhost.cert
-      API_SSL_CERTIFICATE_KEY: /ssl/localhost.key
+      JWT_SECRET: dev secret
+      SERVER_NAME: localhost
+      SSL_CERTIFICATE: /ssl/localhost.cert
+      SSL_CERTIFICATE_KEY: /ssl/localhost.key
     ports:
       - "4430:443"
     volumes:
+      - ./nginx/hugo-packet:/srv/hugo-packet:ro
       - ./nginx/ssl:/ssl:ro
 
   hugo:
     environment:
       CORS_ORIGIN: http://localhost:8080
       DATABASE_URL: postgres://hugo:pwd@postgres:5432/api
+      JWT_SECRET: dev secret
       SESSION_SECRET: dev secret
 
   kansa:
     environment:
       CORS_ORIGIN: http://localhost:8080
       DATABASE_URL: postgres://kansa:pwd@postgres:5432/api
+      DEBUG: kansa:*
       SESSION_SECRET: dev secret
+      SLACK_ORG: worldcon75
+      SLACK_REQ_MEMBER: 'true'
+      SLACK_TOKEN:
       STRIPE_SECRET_APIKEY: sk_test_zq022Drx7npYPVEtXAVMaOJT
       STRIPE_SECRET_APIKEY_worldcon77: sk_test_35SiP34s6qovtenwPPLguIyY
 

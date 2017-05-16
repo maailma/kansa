@@ -58,6 +58,7 @@ router.get('/:id/nominations', nominate.getNominations);
 router.post('/:id/nominate', nominate.nominate);
 
 router.get('/finalists', vote.getFinalists);
+router.get('/:id/packet', vote.getPacket);
 router.get('/:id/votes', vote.getVotes);
 router.post('/:id/vote', vote.setVotes);
 

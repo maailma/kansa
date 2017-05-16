@@ -63,8 +63,9 @@ function validateItem(item, currency) {
 
 class Payment {
   static get fields() { return [
-    'payment_email', 'stripe_charge_id', 'stripe_token', 'amount', 'currency',
-    'paid', 'person_id', 'person_name', 'category', 'type', 'data',
+    'updated', 'payment_email', 'status', 'amount', 'currency',
+    'stripe_charge_id', 'stripe_receipt', 'stripe_token',
+    'person_id', 'person_name', 'category', 'type', 'data',
     'invoice', 'comments'
   ]}
 
@@ -74,19 +75,22 @@ class Payment {
 
   static get table() { return 'payments'; }
 
-  constructor(pgp, db, account, token, items) {
+  constructor(pgp, db, account, email, source, items) {
     this.pgp = pgp;
     this.db = db;
     this.account = account || 'default';
-    this.token = token;
+    this.email = email;
+    this.source = source;
     this.items = items.map(item => ({
       id: null,
-      payment_email: token.email,
+      updated: null,
+      payment_email: email,
+      status: 'chargeable',
       stripe_charge_id: null,
-      stripe_token: token.id,
+      stripe_receipt: null,
+      stripe_token: source.id,
       amount: Number(item.amount),
       currency: item.currency || 'eur',
-      paid: null,
       person_email: null,
       person_id: Number(item.person_id) || null,
       person_name: item.person_name || null,
@@ -107,15 +111,17 @@ class Payment {
 
   validate() {
     return new Promise((resolve, reject) => {
-      if (!this.token || !this.token.id || !this.token.email) {
-        reject(new InputError('A valid token is required'));
-      }
-      if (!this.items || this.items.length === 0) {
+      if (!this.email) {
+        reject(new InputError('A valid email is required'));
+      } else if (!this.source || !this.source.id) {
+        reject(new InputError('A valid source is required'));
+      } else if (!this.items || this.items.length === 0) {
         reject(new InputError('At least one item is required'));
+      } else {
+        const currency = this.items[0].currency;
+        this.items.forEach(item => validateItem(item, currency));
+        resolve();
       }
-      const currency = this.items[0].currency;
-      this.items.forEach(item => validateItem(item, currency));
-      resolve();
     })
       .then(() => {
         const ids = Object.keys(this.items.reduce((set, item) => {
@@ -139,9 +145,9 @@ class Payment {
       })
       .then(() => (this.items.every(item => purchaseData[item.category].allow_new_email)
         ? Promise.resolve()
-        : this.db.many(`SELECT id FROM People WHERE email=$1`, this.token.email)
+        : this.db.many(`SELECT id FROM People WHERE email=$1`, this.email)
             .catch((error) => Promise.reject(error.message === 'No data returned from the query.'
-              ? new InputError('Not a known email address: ' + JSON.stringify(this.token.email))
+              ? new InputError('Not a known email address: ' + JSON.stringify(this.email))
               : error
             ))
       ));
@@ -174,24 +180,28 @@ class Payment {
     return this.stripe.charges.create({
       amount,
       currency,
-      description: `Charge of €${amount/100} by ${this.token.email} for ${itemsDesc}`,
+      description: `Charge of €${amount/100} by ${this.email} for ${itemsDesc}`,
       metadata: { items: this.items.map(item => item.id).join(',') },
-      receipt_email: this.token.email,
-      source: this.token.id,
+      receipt_email: this.email,
+      source: this.source.id,
       statement_descriptor: Payment.statement_descriptor
     }).then(charge => {
-      if (!charge.paid) throw new Error(`Charge not paid!? ${JSON.stringify(charge)}`);
-      const paid = new Date(charge.created * 1000);
-      const stripe_charge_id = charge.receipt_number || charge.id;
-      const ids = this.items.map(item => {
-        item.paid = paid;
-        item.stripe_charge_id = stripe_charge_id;
+      const _charge = {
+        updated: new Date(charge.created * 1000),
+        status: charge.status,
+        stripe_receipt: charge.receipt_number,
+        stripe_charge_id: charge.id
+      }
+      _charge.items = this.items.map(item => {
+        Object.assign(item, _charge);
         return item.id;
       });
       return this.db.none(`
         UPDATE ${Payment.table}
-           SET paid=$(paid), stripe_charge_id=$(stripe_charge_id)
-         WHERE id IN ($(ids:csv))`, { ids, paid, stripe_charge_id });
+           SET updated=$(updated), status=$(status),
+               stripe_charge_id=$(stripe_charge_id),
+               stripe_receipt=$(stripe_receipt)
+         WHERE id IN ($(items:csv))`, _charge);
     });
   }
 

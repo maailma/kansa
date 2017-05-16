@@ -87,6 +87,7 @@ queue.on('job failed', (id, result) => {
   'kansa-new-member',
   'kansa-new-payment',
   'kansa-set-key',
+  'kansa-update-payment',
   'kansa-upgrade-person'
 ].forEach(type => (
   queue.process(type, (job, done) => {

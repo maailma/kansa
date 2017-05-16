@@ -1,15 +1,20 @@
+const debug = require('debug')
+const debugErrors = debug('kansa:errors')
+
 const cors = require('cors');
 const csv = require('csv-express');
 const express = require('express');
 const http = require('http');
-const logger = require('morgan');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 
 const pgSession = require('connect-pg-simple')(session);
 const pgOptions = { promiseLib: require('bluebird') };
 const pgp = require('pg-promise')(pgOptions);
-require('pg-monitor').attach(pgOptions);
+if (debug.enabled('kansa:db')) {
+  const pgMonitor = require('pg-monitor');
+  pgMonitor.attach(pgOptions);
+}
 const db = pgp(process.env.DATABASE_URL);
 
 const admin = require('./lib/admin');
@@ -23,6 +28,7 @@ const PeopleStream = require('./lib/PeopleStream');
 const publicData = require('./lib/public');
 const Purchase = require('./lib/purchase');
 const purchase = new Purchase(pgp, db);
+const slack = require('./lib/slack');
 const upgrade = require('./lib/upgrade');
 const user = require('./lib/user');
 
@@ -49,6 +55,7 @@ router.get('/purchase/keys', purchase.getStripeKeys);
 router.get('/purchase/list', purchase.getPurchases);
 router.post('/purchase/other', purchase.makeOtherPurchase);
 router.get('/purchase/prices', purchase.getPrices);
+router.post('/webhook/stripe', purchase.handleStripeWebhook)
 
 // subsequent routes require authentication
 router.use(user.authenticate);
@@ -68,6 +75,8 @@ router.get('/people/:id/ballot', ballot.getBallot);
 router.get('/people/:id/log', log.getPersonLog);
 router.post('/people/:id/upgrade', upgrade.authUpgradePerson);
 
+router.post('/slack/invite', slack.invite);
+
 router.get('/user', user.getInfo);
 router.get('/user/log', log.getUserLog);
 
@@ -78,7 +87,10 @@ router.post('/admin/set-keys', key.setAllKeys);
 router.post('/admin/set-recipients', setAllMailRecipients);
 
 app.locals.db = db;
-app.use(logger('dev'));
+if (debug.enabled('kansa:http')) {
+  const logger = require('morgan');
+  app.use(logger('dev'));
+}
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 const corsOrigins = process.env.CORS_ORIGIN;
@@ -117,6 +129,7 @@ app.use((req, res, next) => {
 const isDevEnv = (app.get('env') === 'development');
 app.use((err, req, res, next) => {
   const error = err.error || err;
+  debugErrors(error instanceof Error ? error : err)
   const data = { status: 'error', message: error.message };
   if (isDevEnv) data.error = err;
   const status = err.status || error.status || error.name == 'InputError' && 400 || 500;

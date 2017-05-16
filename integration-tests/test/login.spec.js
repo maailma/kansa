@@ -3,9 +3,6 @@ const request = require('supertest');
 const assert = require('assert');
 const fs = require('fs');
 
-// For now test data is empty.
-const memberlist = [];
-
 // Create agent for unlogged and admin sessions
 const ca = fs.readFileSync('../nginx/ssl/localhost.cert','utf8');
 const unlogged = request.agent(host, { ca });
@@ -24,8 +21,8 @@ describe('Check that API services are up', function() {
     }
   });
 
-  it('Should respond with json on api/kansa/', (done) => {
-    unlogged.get('/api/kansa/')
+  it('Should respond with json on api/', (done) => {
+    unlogged.get('/api/')
       .expect('Content-Type', /json/)
       .end(done);
   });
@@ -37,32 +34,32 @@ describe('Check that API services are up', function() {
   });
 });
 
-describe('Member list', () => {
-  it('Returns `success` as status and test data member list.', (done) => {
-    unlogged.get('/api/kansa/public/people')
-      .expect(200, memberlist)
-      .end(done);
-    })
-});
-
-describe('Country statistics', () => {
-  it('Returns country statistics', (done) => {
-    unlogged.get('/api/kansa/public/stats')
+describe('Public data', () => {
+  it('Member list is an array', (done) => {
+    unlogged.get('/api/public/people')
       .expect((res) => {
-        if (
-          res.status !== 200 || !res.body || !res.body['='].hasOwnProperty('=')
-        ) {
-          throw new Error(`Fail! ${JSON.stringify(res.body)}`);
+        if (res.status !== 200 || !Array.isArray(res.body)) {
+          throw new Error(`Fail! ${JSON.stringify(res.body)}`)
         }
       })
-      .end(done);
-  });
-});
+      .end(done)
+  })
+
+  it('Country statistics includes totals', (done) => {
+    unlogged.get('/api/public/stats')
+      .expect((res) => {
+        if (res.status !== 200 || !res.body || !res.body['='].hasOwnProperty('=')) {
+          throw new Error(`Fail! ${JSON.stringify(res.body)}`)
+        }
+      })
+      .end(done)
+  })
+})
 
 describe('Login', () => {
   context('Successful login', () => {
     it('gets a session cookie or it gets the hose again.', (done) => {
-      admin.get('/api/kansa/login')
+      admin.get('/api/login')
         .query(loginparams)
         .expect('set-cookie',/w75/)
         .expect(200, { status:'success', email: loginparams.email })
@@ -70,7 +67,7 @@ describe('Login', () => {
     });
 
     it('gets user information', (done) => {
-      admin.get('/api/kansa/user')
+      admin.get('/api/user')
         .expect(200)
         .end(done);
     });
@@ -78,14 +75,14 @@ describe('Login', () => {
 
   context('Login with wrong email', () => {
     it('gets 401 response', (done) => {
-      unlogged.get('/api/kansa/login')
+      unlogged.get('/api/login')
         .query({ email: 'foo@doo.com', key: loginparams.key })
         .expect(401)
         .end(done);
     });
 
-    it('gets unauthorized from /api/kansa/usr', (done) => {
-      unlogged.get('/api/kansa/user')
+    it('gets unauthorized from /api/usr', (done) => {
+      unlogged.get('/api/user')
         .expect(401, { status: 'unauthorized' })
         .end(done)
     });
@@ -93,14 +90,14 @@ describe('Login', () => {
 
   context('Login with wrong key', () => {
     it('gets 401 response', (done) => {
-      unlogged.get('/api/kansa/login')
+      unlogged.get('/api/login')
         .query({ email: loginparams.email, key: 'foo' })
         .expect(401)
         .end(done);
     });
 
-    it('gets unauthorized from /api/kansa/usr', (done) => {
-      unlogged.get('/api/kansa/user')
+    it('gets unauthorized from /api/usr', (done) => {
+      unlogged.get('/api/user')
         .expect(401,{status:'unauthorized'})
         .end(done);
     });
@@ -111,7 +108,7 @@ describe('Logout', () => {
   const testagent = request.agent(host, { ca });
 
   before((done) => {
-    testagent.get('/api/kansa/login')
+    testagent.get('/api/login')
       .query(loginparams)
       .expect('set-cookie',/w75/)
       .expect(200, { status: 'success', email: loginparams.email })
@@ -120,13 +117,13 @@ describe('Logout', () => {
 
   context('Successful logout', () => {
     it('should be successful', (done) => {
-      testagent.get('/api/kansa/logout')
+      testagent.get('/api/logout')
         .expect(200, { status: 'success', email: loginparams.email })
         .end(done);
     });
 
-    it('gets unauthorized from /api/kansa/user', (done) => {
-      testagent.get('/api/kansa/user')
+    it('gets unauthorized from /api/user', (done) => {
+      testagent.get('/api/user')
         .expect(401, { status: 'unauthorized' })
         .end(done);
     });
@@ -134,13 +131,13 @@ describe('Logout', () => {
 
   context('Not logged in', () => {
     it('logout should be unauthorized', (done) => {
-      unlogged.get('/api/kansa/logout')
+      unlogged.get('/api/logout')
         .expect(401, { status: 'unauthorized' })
         .end(done);
     });
 
-    it('gets unauthorized from /api/kansa/user', (done) => {
-      testagent.get('/api/kansa/user')
+    it('gets unauthorized from /api/user', (done) => {
+      testagent.get('/api/user')
         .expect(401, { status: 'unauthorized' })
         .end(done);
     });
@@ -149,21 +146,21 @@ describe('Logout', () => {
 
 describe('Key request', () => {
   before((done) => {
-    admin.get('/api/kansa/logout')
+    admin.get('/api/logout')
       .expect(200, { status: 'success', email: loginparams.email })
       .end(done);
   });
 
   context('Should not reset by default', () => {
     it('should be successful', (done) => {
-      admin.post('/api/kansa/key')
+      admin.post('/api/key')
         .send({ email: loginparams.email })
         .expect(200, { status: 'success', email: loginparams.email })
         .end(done);
     });
 
     it('should still be able to login', (done) => {
-      admin.get('/api/kansa/login')
+      admin.get('/api/login')
         .query(loginparams)
         .expect('set-cookie',/w75/)
         .expect(200, { status: 'success', email: loginparams.email })
@@ -177,7 +174,7 @@ describe('Key request', () => {
     const testEmail = testName + '@example.com';
 
     it('Should create non-member accounts', (done) => {
-      agent.post('/api/kansa/key')
+      agent.post('/api/key')
         .send({ email: testEmail, name: testName })
         .expect(200, { status: 'success', email: testEmail })
         .end(done);

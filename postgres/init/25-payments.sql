@@ -3,9 +3,11 @@ SET ROLE kansa;
 CREATE TABLE payments (
     id SERIAL PRIMARY KEY,
     created timestamptz NOT NULL DEFAULT now(),
-    paid timestamptz,
+    updated timestamptz,
     payment_email text,
+    status text,
     stripe_charge_id text,
+    stripe_receipt text,
     stripe_token text,
     error text,
     amount integer NOT NULL,

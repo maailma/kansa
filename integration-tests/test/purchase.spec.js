@@ -13,10 +13,10 @@ describe('Membership purchases', () => {
 
   context('Parameters', () => {
     it('should require required parameters', (done) => {
-      agent.post('/api/kansa/purchase')
-        .send({ amount: 0, email: '@', token: 'x' })
+      agent.post('/api/purchase')
+        .send({ amount: 0, email: '@', source: { id: 'x' } })
         .expect((res) => {
-          const exp = { status: 400, message: 'Required parameters: amount, email, token' };
+          const exp = { status: 400, message: 'Required parameters: amount, email, source' };
           if (res.status !== exp.status) throw new Error(`Bad status: got ${res.status}, expected ${exp.status}`);
           if (res.body.message !== exp.message) throw new Error(`Bad reply: ${JSON.stringify(res.body)}`);
         })
@@ -24,8 +24,8 @@ describe('Membership purchases', () => {
     });
 
     it('should require at least one optional parameter', (done) => {
-      agent.post('/api/kansa/purchase')
-        .send({ amount: 1, email: '@', token: 'x' })
+      agent.post('/api/purchase')
+        .send({ amount: 1, email: '@', source: { id: 'x' } })
         .expect((res) => {
           const exp = { status: 400, message: 'Non-empty new_members or upgrades is required' };
           if (res.status !== exp.status) throw new Error(`Bad status: got ${res.status}, expected ${exp.status}`);
@@ -35,8 +35,8 @@ describe('Membership purchases', () => {
     });
 
     it('should require a correct amount', (done) => {
-      agent.post('/api/kansa/purchase')
-        .send({ amount: 1, email: '@', token: 'x', new_members: [{ membership: 'Adult', email: '@', legal_name: 'x' }] })
+      agent.post('/api/purchase')
+        .send({ amount: 1, email: '@', source: { id: 'x' }, new_members: [{ membership: 'Adult', email: '@', legal_name: 'x' }] })
         .expect((res) => {
           const exp = { status: 400, message: `Amount mismatch: in request 1, calculated ${prices.memberships.Adult.amount}` };
           if (res.status !== exp.status) throw new Error(`Bad status: got ${res.status}, expected ${exp.status}: ${JSON.stringify(res.body)}`);
@@ -50,7 +50,7 @@ describe('Membership purchases', () => {
     const agent = request.agent(host, { ca: cert });
 
     it('should get prices', (done) => {
-      agent.get('/api/kansa/purchase/prices')
+      agent.get('/api/purchase/prices')
         .expect(200)
         .expect(({ body }) => {
           if (
@@ -77,12 +77,12 @@ describe('Membership purchases', () => {
           exp_year: 2020,
           cvc: '123'
         }
-      }).then(testToken => {
-        agent.post('/api/kansa/purchase')
+      }).then(source => {
+        agent.post('/api/purchase')
           .send({
             amount: prices.memberships.Supporter.amount + prices.memberships.Adult.amount + prices.PaperPubs.amount,
             email: `${testName}@example.com`,
-            token: testToken.id,
+            source,
             new_members: [
               { membership: 'Supporter', email: `${testName}@example.com`, legal_name: `s-${testName}` },
               { membership: 'Adult', email: `${testName}@example.com`, legal_name: `a-${testName}`,
@@ -108,10 +108,10 @@ describe('Membership purchases', () => {
     let testId;
 
     before((done) => {
-      admin.get('/api/kansa/login')
+      admin.get('/api/login')
         .query(adminLoginParams)
         .end(() => {
-          admin.post('/api/kansa/people')
+          admin.post('/api/people')
             .send({ membership: 'Supporter', email: `${testName}@example.com`, legal_name: testName })
             .expect((res) => {
               if (res.status !== 200) throw new Error(`Member init failed! ${JSON.stringify(res.body)}`);
@@ -129,12 +129,12 @@ describe('Membership purchases', () => {
           exp_year: 2020,
           cvc: '123'
         }
-      }).then(testToken => {
-        agent.post('/api/kansa/purchase')
+      }).then(source => {
+        agent.post('/api/purchase')
           .send({
             amount: prices.memberships.Adult.amount - prices.memberships.Supporter.amount,
             email: `${testName}@example.com`,
-            token: testToken.id,
+            source,
             upgrades: [{ id: testId, membership: 'Adult' }]
           })
           .expect((res) => {
@@ -155,12 +155,12 @@ describe('Membership purchases', () => {
           exp_year: 2020,
           cvc: '123'
         }
-      }).then(testToken => {
-        agent.post('/api/kansa/purchase')
+      }).then(source => {
+        agent.post('/api/purchase')
           .send({
             amount: prices.PaperPubs.amount,
             email: `${testName}@example.com`,
-            token: testToken.id,
+            source,
             upgrades: [{ id: testId, paper_pubs: { name: 'name', address: 'multi\n-line\n-address', country: 'land'} }]
           })
           .expect((res) => {
@@ -180,9 +180,10 @@ describe('Other purchases', () => {
 
   context('Parameters', () => {
     it('should require required parameters', (done) => {
-      agent.post('/api/kansa/purchase/other')
+      agent.post('/api/purchase/other')
         .send({
-          token: { id: 'x', email: 'nonesuch@example.com' },
+          email: 'nonesuch@example.com',
+          source: { id: 'x' },
           items: [{ amount: 0, category: 'x', type: 'y' }]
         })
         .expect((res) => {
@@ -194,9 +195,10 @@ describe('Other purchases', () => {
     });
 
     it('should require a valid category', (done) => {
-      agent.post('/api/kansa/purchase/other')
+      agent.post('/api/purchase/other')
         .send({
-          token: { id: 'x', email: 'nonesuch@example.com' },
+          email: 'nonesuch@example.com',
+          source: { id: 'x' },
           items: [{ amount: 1, category: 'x', type: 'y' }]
         })
         .expect((res) => {
@@ -208,9 +210,10 @@ describe('Other purchases', () => {
     });
 
     it('should require custom data', (done) => {
-      agent.post('/api/kansa/purchase/other')
+      agent.post('/api/purchase/other')
         .send({
-          token: { id: 'x', email: 'nonesuch@example.com' },
+          email: 'nonesuch@example.com',
+          source: { id: 'x' },
           items: [{ amount: 1, category: 'Sponsorship', type: 'bench', data: {} }]
         })
         .expect((res) => {
@@ -226,9 +229,10 @@ describe('Other purchases', () => {
     });
 
     it('should require a known email address', (done) => {
-      agent.post('/api/kansa/purchase/other')
+      agent.post('/api/purchase/other')
         .send({
-          token: { id: 'x', email: 'nonesuch@example.com' },
+          email: 'nonesuch@example.com',
+          source: { id: 'x' },
           items: [{ amount: 1, category: 'Sponsorship', type: 'bench', data: { sponsor: 'y' } }]
         })
         .expect((res) => {
@@ -240,9 +244,10 @@ describe('Other purchases', () => {
     });
 
     it('should require person_id to be valid if not null', (done) => {
-      agent.post('/api/kansa/purchase/other')
+      agent.post('/api/purchase/other')
         .send({
-          token: { id: 'x', email: 'admin@example.com' },
+          email: 'admin@example.com',
+          source: { id: 'x' },
           items: [{ amount: 1, person_id: -1, category: 'Sponsorship', type: 'bench', data: { sponsor: 'y' } }]
         })
         .expect((res) => {
@@ -258,7 +263,7 @@ describe('Other purchases', () => {
     const agent = request.agent(host, { ca: cert });
 
     it('should get data', (done) => {
-      agent.get('/api/kansa/purchase/data')
+      agent.get('/api/purchase/data')
         .expect(200)
         .expect(({ body }) => {
           if (
@@ -279,10 +284,10 @@ describe('Other purchases', () => {
     const testName = 'test-' + (Math.random().toString(36)+'00000000000000000').slice(2, 7);
 
     before((done) => {
-      admin.get('/api/kansa/login')
+      admin.get('/api/login')
         .query(adminLoginParams)
         .end(() => {
-          admin.post('/api/kansa/people')
+          admin.post('/api/people')
             .send({ membership: 'Supporter', email: `${testName}@example.com`, legal_name: testName })
             .expect((res) => {
               if (res.status !== 200) throw new Error(`Member init failed! ${JSON.stringify(res.body)}`);
@@ -300,10 +305,11 @@ describe('Other purchases', () => {
           exp_year: 2020,
           cvc: '123'
         }
-      }).then(testToken => {
-        agent.post('/api/kansa/purchase/other')
+      }).then(source => {
+        agent.post('/api/purchase/other')
           .send({
-            token: { id: testToken.id, email: `${testName}@example.com` },
+            email: `${testName}@example.com`,
+            source,
             items: [{
               amount: 4200,
               category: 'Sponsorship',
@@ -313,7 +319,7 @@ describe('Other purchases', () => {
           })
           .expect(200)
           .expect(({ body }) => {
-            if (!body || body.status !== 'success' || !body.charge_id) throw new Error(
+            if (!body || body.status !== 'succeeded' || !body.charge_id) throw new Error(
               `Bad response! ${JSON.stringify(body)}`
             );
           })
@@ -322,13 +328,13 @@ describe('Other purchases', () => {
     });
 
     it('should be listed', (done) => {
-      admin.get('/api/kansa/purchase/list')
+      admin.get('/api/purchase/list')
         .query({ email: `${testName}@example.com` })
         .expect((res) => {
           if (res.status !== 200) throw new Error(`Listing purchases failed! ${JSON.stringify(res.body)}`);
           const purchase = res.body.find(p => p.data.sponsor === testName);
           if (!purchase) throw new Error(`Purchase for "${testName}" not in results! ${JSON.stringify(res.body)}`);
-          if (!purchase.paid || !purchase.stripe_charge_id) {
+          if (!purchase.updated || !purchase.stripe_charge_id || purchase.status !== 'succeeded') {
             throw new Error(`Purchase not completed! ${JSON.stringify(purchase)}`);
           }
         })
