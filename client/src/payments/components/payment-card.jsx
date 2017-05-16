@@ -101,12 +101,18 @@ const PaymentCard = ({ label, purchase, shape, userIds }) => {
           <td>{invoice}</td>
         </tr> : null}
         <tr><td colSpan="2" style={{ paddingTop: 6, paddingBottom: 4 }}><Divider /></td></tr>
-        {Object.keys(data).filter(key => data[key]).map((key) => (
-          <tr key={key}>
-            <td>{shape && shape.getIn([key, 'label']) || key}:</td>
-            <td>{data[key]}</td>
-          </tr>
-        ))}
+        {Object.keys(data).filter(key => data[key]).map((key) => {
+          let val = data[key]
+          if (val && typeof data[key] === 'object') {
+            val = Object.keys(val).map(k => `${k}: ${val[k]}`).join(', ')
+          }
+          return (
+            <tr key={key}>
+              <td>{shape && shape.getIn([key, 'label']) || key}:</td>
+              <td>{val}</td>
+            </tr>
+          )
+        })}
         {comments ? <tr>
           <td>Comments:</td>
           <td>{comments}</td>
