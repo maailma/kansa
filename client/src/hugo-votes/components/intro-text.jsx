@@ -101,11 +101,12 @@ const VoteIntroText = () => (
       Thanks to the generosity of publishers, authors, artists, editors, and other creators, we are able to provide a
       number of downloads of works on the final ballot and created by or edited by individual finalists, in order for
       Hugo voters to familiarise themselves with the works on the ballot. The download links for each category are
-      included in each of the relevant sections on the ballot below.
+      included in each of the relevant sections on the ballot below; you will see them when you sign in.
     </p>
     <p>
       In most ballot categories there are separate downloads for each of the three most common e-book formats (EPUB,
-      MOBI, and PDF). In the few cases where a publisher has provided only a PDF version of a work, the PDF has been
+      MOBI, and PDF). These downloads are zipped archives so you will need to use unzipping software to read them. In
+      the few cases where a publisher has provided only a PDF version of a work, the PDF has been
       included in each of the different format packets so that you will not have to do extra downloading. The
       exceptions to this are the Dramatic Presentation, Artist, Graphic Story, Fancast, and Editor Long Form
       categories, where there is only a PDF download.
