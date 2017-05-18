@@ -47,28 +47,28 @@ class TekMemberTypeList extends React.Component {
           innerDivStyle={{ paddingLeft: 60 }}
           leftIcon={<StarTicket/>}
           primaryText={`${messages.fi.FirstWorldcon()} (${this.getAmount('FirstWorldcon')/100}€)`}
-          secondaryText="TEK:n jäsen joka ei ole koskaan ollut minkään aiemman Worldconin jäsen"
+          secondaryText="TEKin jäsen, joka ei aiemmin ole ollut yhdenkään Worldconin jäsen"
           value="FirstWorldcon"
         />
         <ListItem
           innerDivStyle={{ paddingLeft: 60 }}
           leftIcon={<DirectionsWalk/>}
           primaryText={`${messages.fi.Adult()} (${this.getAmount('Adult')/100}€)`}
-          secondaryText="TEK:n jäsen"
+          secondaryText="TEKin jäsen"
           value="Adult"
         />
         <ListItem
           innerDivStyle={{ paddingLeft: 60 }}
           leftIcon={<DirectionsRun/>}
           primaryText={`${messages.fi.Youth()} (${this.getAmount('Youth')/100}€)`}
-          secondaryText="TEK:n jäsen joka on syntynyt 10.8.1991 tai sen jälkeen"
+          secondaryText="TEKin jäsen, joka on syntynyt 10.8.1991 tai sen jälkeen"
           value="Youth"
         />
         <ListItem
           innerDivStyle={{ paddingLeft: 60 }}
           leftIcon={<SmilingFace/>}
           primaryText={`${messages.fi.Child()} (${this.getAmount('Child')/100}€)`}
-          secondaryText="TEK:n jäsenen lapsi joka on syntynyt 10.8.2001 tai sen jälkeen"
+          secondaryText="TEKin jäsenen lapsi, joka on syntynyt 10.8.2001 tai sen jälkeen. Alle 5-vuotiaat lapset pääsevät vanhempien seurassa ilmaiseksi."
           value="Child"
         />
         <Divider style={{ marginTop: 8, marginBottom: 8, marginLeft: 60 }} />
@@ -117,11 +117,12 @@ class TekMemberIndex extends React.Component {
           <CardHeader
             className="action-head"
             textStyle={{ paddingRight: 0 }}
-            title="TEK-jäsenhinnat"
+            title="Worldcon 75 tapahtuman jäsenhinnat TEKin jäsenille"
             style={{ fontWeight: 600, marginBottom: 16 }}
           />
           <CardText style={{ paddingTop: 0 }}>
-            <p>Worldcon 75 tarjoaa TEK:n jäsenille alennettuja jäsenhintoja:</p>
+            <p>Worldcon 75 tarjoaa tapahtumaan alennettuja hintoja TEKin jäsenille.</p>
+            <p>Täysjäsenyys sisältää mm. pääsyn tapahtumaan kaikkina tapahtuman päivinä ja oikeuden äänestää Hugo-äänestyksessä. Lisätietoa jäsenyyksien eroista löytyy tapahtuman sivuilta osoitteesta <a href="http://worldcon.fi/">worldcon.fi</a></p>
           </CardText>
           <CardActions style={{ marginLeft: 8, paddingTop: 0 }}>
             <TekMemberTypeList

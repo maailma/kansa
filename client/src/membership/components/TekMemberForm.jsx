@@ -66,7 +66,7 @@ class TekMemberForm extends React.Component {
     const { prices } = this.props;
     const { member } = this.state;
     const msDesc = prices && prices.getIn(['memberships', member.get('membership'), 'description']);
-    const parts = [`New ${msDesc} member`];
+    const parts = [`New TEK ${msDesc} member`];
     if (member.get('paper_pubs')) parts.push(prices.getIn(['PaperPubs', 'description']));
     return parts.join(' + ')
   }
