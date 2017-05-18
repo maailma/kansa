@@ -21,12 +21,12 @@
     "edit_hint": ""
   },
   "membership_type": "Jäsenyyden tyyppi",
-  "Supporter": "Tukijäsenyys",
-  "KidInTow": "Alle kouluikäisen täysjäsenyys",
-  "Child": "Lapsen täysjäsenyys",
-  "Youth": "Nuoren täysjäsenyys",
-  "FirstWorldcon": "Ensikertalaisen täysjäsenyys",
-  "Adult": "Aikuisen täysjäsenyys",
+  "Supporter": "Worldcon-tukijäsenyys",
+  "KidInTow": "Alle kouluikäisen Worldcon-jäsenyys",
+  "Child": "Lapsen Worldcon-jäsenyys",
+  "Youth": "Nuoren Worldcon-täysjäsenyys",
+  "FirstWorldcon": "Ensikertalaisen Worldcon-täysjäsenyys",
+  "Adult": "Aikuisen Worldcon-täysjäsenyys",
   "required": "pakollinen",
   "total": "Summa",
   "pay_by_card": "Maksa kortilla"
