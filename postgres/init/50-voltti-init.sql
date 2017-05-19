@@ -18,6 +18,6 @@ CREATE TABLE IF NOT EXISTS Volunteer (
     firstaid text,
     languages text,
     tshirt text,
-    allergies integer,
+    allergies text
     );
 
