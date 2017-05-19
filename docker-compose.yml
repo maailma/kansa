@@ -97,3 +97,4 @@ services:
       - ./postgres/init/25-public-data.sql:/docker-entrypoint-initdb.d/25-public-data.sql:ro
       - ./postgres/init/30-hugo-init.sql:/docker-entrypoint-initdb.d/30-hugo-init.sql:ro
       - ./postgres/init/40-raami-init.sql:/docker-entrypoint-initdb.d/40-raami-init.sql:ro
+      - ./postgres/init/50-voltti-init.sql:/docker-entrypoint-initdb.d/50-voltti-init.sql:ro
