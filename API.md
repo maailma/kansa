@@ -726,7 +726,6 @@ Full details for singular artist connected to member with `id`.
 
 #### Response
 ```
-<<<<<<< HEAD
   { continent: 'Europe',
     url: 'http://www.example.com',
     filename: 'portfolio.pdf',
@@ -738,8 +737,6 @@ Full details for singular artist connected to member with `id`.
     }
   …
 ```
-=======
->>>>>>> daddb57... raami api up to date
 
 {people_id:1, title:'title', width:10, height:10, depth:10, gallery:'Print',
         orientation:'vertical', technique:'3D', filename:'image.jpg', filedata:'base64...', year:2016, price:100,
