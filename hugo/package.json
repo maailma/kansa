@@ -1,0 +1,30 @@
+{
+  "name": "hugo-server",
+  "version": "0.1.0",
+  "description": "API for Hugo nominations & votes",
+  "author": "",
+  "private": true,
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/worldcon75/api.git"
+  },
+  "scripts": {
+    "start": "node server"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "body-parser": "^1.17.1",
+    "connect-pg-simple": "^3.1.2",
+    "cors": "^2.8.1",
+    "debug": "^2.6.3",
+    "express": "~4.14.0",
+    "express-session": "^1.15.1",
+    "express-ws": "^2.0.0",
+    "jsonwebtoken": "^7.4.0",
+    "morgan": "~1.8.1",
+    "node-fetch": "^1.6.3",
+    "pg-monitor": "^0.7.1",
+    "pg-promise": "^5.6.4"
+  }
+}

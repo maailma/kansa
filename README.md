@@ -4,18 +4,20 @@
 
 These are the back-end services used by [members.worldcon.fi](https://members.worldcon.fi/):
 
-- **`docker-compose*.yml`** - Service configuration
-- **`hakkapeliitta`** - A deprecated Scala webshop implementation, due to be ported to node.js
-- **`hugo/server`** - An express.js app providing the `/api/hugo/` parts of [this API](API.md)
-- **`kansa/server`** - An express.js app providing the `/api/kansa/` parts of [this API](API.md)
-- **`kansa/importer`** - A tool for importing CSV & JSON data from our prior registry format
+- **`docker-compose.*`** - Service configuration
+- **`hugo`** - An express.js app providing the Hugo Nominations and Awards parts of the [REST API](docs/index.md)
+- **`kansa`** - An express.js app providing the core parts of the [REST API](docs/index.md)
 - **`kyyhky`** - Internal mailing service for hugo & kansa, using [Kue](http://automattic.github.io/kue/)
-- **`nginx`** - An SSL-terminating reverse proxy for Kansa
+- **`nginx`** - An SSL-terminating reverse proxy & file server, using [OpenResty](https://openresty.org/)
 - **`postgres`** - Configuration & schemas for our database
+- **`raami`** - An express.js app providing the Art show management part of the [REST API](docs/index.md)
+- **`tools`** - Semi-automated tools for importing data, and for other tasks
+- **`tuohi`** - Fills out a PDF form, for `people/:id/ballot`
 
 [Kansa](https://en.wiktionary.org/wiki/kansa#Finnish) is Finnish for "people" or "tribe", and it's
 the name for our member registry. The [Hugo Awards](http://www.thehugoawards.org/) are awards that
-are nominated and selected by the members of each year's Worldcon. Kyyhky is Finnish for "pigeon".
+are nominated and selected by the members of each year's Worldcon. Kyyhky is Finnish for "pigeon",
+Raami is "frame", and Tuohi is the bark of a birch tree.
 
 For the front-end code, please see [worldcon75/client](https://github.com/worldcon75/client).
 
@@ -52,7 +54,7 @@ The development server is bootstrapped with an admin account `admin@example.com`
 `key`, which you may login as by visiting either of the addresses
 [`https://localhost:4430/login/admin@example.com/key`](https://localhost:4430/login/admin@example.com/key)
 (for smooth browser redicretion) or
-[`https://localhost:4430/api/kansa/login?email=admin@example.com&key=key`](`https://localhost:4430/api/kansa/login?email=admin@example.com&key=key`)
+[`https://localhost:4430/api/login?email=admin@example.com&key=key`](`https://localhost:4430/api/login?email=admin@example.com&key=key`)
 (direct login, with JSON response).
 
 
@@ -67,7 +69,7 @@ base config will instead need to be overridden by [docker-compose.prod.yml](dock
 
 For the most part, services are configured using environment variables, some of which need to match
 across services:
-  - `SESSION_SECRET` allows hugo/server and kansa/server to share authenticated sessions
+  - `JWT_SECRET` and `SESSION_SECRET` allow the servers to share authenticated sessions
   - `DATABASE_URL` and `*_PG_PASSWORD` are required for the services' database connections
 
 

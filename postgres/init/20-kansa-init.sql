@@ -46,26 +46,6 @@ CREATE TABLE IF NOT EXISTS Log (
     description text NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS Payments (
-    id SERIAL PRIMARY KEY,
-    created timestamptz NOT NULL DEFAULT now(),
-    paid timestamptz,
-    payment_email text,
-    stripe_charge_id text,
-    stripe_token text,
-    error text,
-    amount integer NOT NULL,
-    currency text NOT NULL,
-    person_id integer REFERENCES People,
-    person_name text,
-    category text NOT NULL,
-    type text,
-    data jsonb,
-    invoice text,
-    comments text
-);
-
-
 -- keep People.last_modified up to date
 CREATE FUNCTION set_last_modified() RETURNS trigger AS $$
 BEGIN
@@ -96,12 +76,6 @@ CREATE TRIGGER notify
 
 
 -- utility functions for SELECT people queries
-CREATE FUNCTION public_name(p people) RETURNS varchar AS $$
-BEGIN
-    RETURN nullif(trim(both from concat_ws(' ', p.public_first_name, p.public_last_name)), '');
-END;
-$$ LANGUAGE plpgsql;
-
 CREATE FUNCTION preferred_name(p people) RETURNS varchar AS $$
 DECLARE
     pn varchar;

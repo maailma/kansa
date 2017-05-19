@@ -24,6 +24,7 @@ CREATE TABLE Nominations (
 CREATE TABLE Finalists (
     id SERIAL PRIMARY KEY,
     category Category NOT NULL,
+    sortindex int,
     title text NOT NULL,
     subtitle text
 );
@@ -37,6 +38,13 @@ CREATE TABLE Votes (
     signature text NOT NULL,
     category Category NOT NULL,
     votes integer[] NOT NULL
+);
+
+CREATE TABLE Packet (
+    category Category NOT NULL,
+    filename text NOT NULL,
+    filesize integer,
+    format text NOT NULL
 );
 
 CREATE TABLE Canon (

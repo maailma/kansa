@@ -1,17 +1,10 @@
 const fs = require('fs');
 const mustache = require('mustache');
-const SendGrid  = require('sendgrid');
 const tfm = require('tiny-frontmatter');
 const wrap = require('wordwrap');
+const loginUri = require('./login-uri');
 
 const WRAP_WIDTH = 78;
-
-function loginUri(email, key, id) {
-  const root = process.env.LOGIN_URI_ROOT;
-  const parts = [root, email, key];
-  if (id) parts.push(id);
-  return encodeURI(parts.join('/'));
-}
 
 function nominationsString(data) {
   return data.map(({ category, nominations }) => {
@@ -24,11 +17,11 @@ function nominationsString(data) {
   }).join('\n\n');
 }
 
-function paymentDataString(data, shape) {
+function paymentDataString(data, shape, ignored) {
   if (!data) return '';
   const label = (key) => shape && shape[key] && shape[key].label || key;
   return Object.keys(data)
-    .filter(key => key && data[key])
+    .filter(key => key && data[key] && !ignored[key])
     .map(key => `${label(key)}: ${data[key]}`)
     .join('\n');
 }
@@ -47,25 +40,10 @@ function votesString(data) {
 }
 
 class Mailer {
-  constructor(tmplDir, tmplSuffix, sendgridApiKey) {
+  constructor(tmplDir, tmplSuffix, sendgrid) {
+    this.sendgrid = sendgrid;
     this.tmplDir = tmplDir;
     this.tmplSuffix = tmplSuffix;
-    if (sendgridApiKey) {
-      this.sendgrid = SendGrid(sendgridApiKey);
-    } else {
-      this.sendgrid = {
-        emptyRequest: (request) => request,
-        API: ({ body: { content, from, personalizations, subject }, method, path }, callback) => {
-          console.log('MOCK SendGrid request', method, path);
-          console.log('FROM:', JSON.stringify(from.name), `<${from.email}>`);
-          console.log('TO:', JSON.stringify(personalizations[0].to[0]));
-          console.log('SUBJECT:', subject);
-          console.log('--------\n', content[0] && content[0].value, '\n--------');
-          callback(null, null);
-        }
-      };
-      console.warn('Using MOCK SendGrid instance -> emails will not be sent!');
-    }
   }
 
   tmplFileName(tmplName) {
@@ -95,9 +73,7 @@ class Mailer {
   }
 
   sendEmail(tmplName, data, done) {
-    let tmplData = Object.assign({
-      login_uri: loginUri(data.email, data.key, data.memberId)
-    }, data);
+    let tmplData = Object.assign({ login_uri: loginUri(data) }, data);
     switch (tmplName) {
 
       case 'hugo-update-nominations':
@@ -109,10 +85,11 @@ class Mailer {
         break;
 
       case 'kansa-new-payment':
-        if (data.type === 'ss-token') {
+      case 'kansa-update-payment':
+        if (data.type === 'ss-token' && data.status === 'succeeded') {
           tmplName = 'kansa-new-siteselection-token';
         }
-        tmplData.data = paymentDataString(data.data, data.shape);
+        tmplData.data = paymentDataString(data.data, data.shape, { mandate_url: true });
         tmplData.strAmount = data.currency.toUpperCase() + ' ' + (data.amount / 100).toFixed(2);
         break;
 
@@ -123,19 +100,10 @@ class Mailer {
     }
     fs.readFile(this.tmplFileName(tmplName), 'utf8', (err, msgTemplate) => {
       if (err) return done(err);
-      try {
-        const request = this.sgRequest(msgTemplate, tmplData);
-        this.sendgrid.API(request, (err, response) => {
-          if (err) {
-            console.warn('SendGrid error', response);
-            done(err, response);
-          } else {
-            done(null, { to: data.email });
-          }
-        });
-      } catch (err) {
-        done(err);
-      }
+      const request = this.sgRequest(msgTemplate, tmplData);
+      this.sendgrid.API(request)
+        .then(() => done(null, { to: data.email }))
+        .catch(done)
     });
   }
 }

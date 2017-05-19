@@ -1,7 +1,0 @@
-sbt:
-  build: sbt
-  volumes:
-    - ../../../:/api
-    - ${HOME}/.ivy2:/home/imonroe/.ivy2
-    - ${HOME}/.sbt:/home/imonroe/.sbt
-
