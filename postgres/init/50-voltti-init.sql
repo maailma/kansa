@@ -10,7 +10,7 @@ SET ROLE voltti;
 CREATE TABLE IF NOT EXISTS Volunteer (
     -- id SERIAL PRIMARY KEY,
     people_id integer REFERENCES kansa.People PRIMARY KEY,
-    birth integer,
+    birth text,
     phone text,
     experience text,
     JV text,
@@ -18,6 +18,20 @@ CREATE TABLE IF NOT EXISTS Volunteer (
     firstaid text,
     languages text,
     tshirt text,
-    allergies text
+    allergies text,
+    hugo text,
+    ex_mimo text,
+    ex_con text,
+    reg text, 
+    outreach text, 
+    program text, 
+    helpdesk text, 
+    logistics text, 
+    turva text, 
+    ops text, 
+    site text, 
+    members text, 
+    design text,
+    notes text
     );
 

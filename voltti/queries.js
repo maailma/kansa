@@ -37,16 +37,15 @@ function getVolunteer(req, res, next) {
 }
 
 // 'people_id', 'birth', 'phone', 'experience', 'JV', 'hygiene', 'firstaid', 'languages', 'tshirt' , 'allergies'
-
+// hugo, ex_mimo, ex_con, reg, outreach, program, helpdesk, logistic, turva, ops, site, members, design, notes
 function upsertVolunteer(req, res, next) {
   access(req)
     .then(({ id }) => {
       const volunteer = Object.assign({}, req.body, { people_id: id });
       const keys = [
-        'people_id', 'name', 'continent', 'url', 'filename', 'filedata',
-        'category', 'description', 'transport', 'auction', 'print', 'digital',
-        'legal', 'agent', 'contact', 'waitlist', 'postage','half'
-      ].filter(key => artist.hasOwnProperty(key));
+        'people_id', 'birth', 'phone', 'experience', 'JV', 'hygiene', 'firstaid', 'languages', 'tshirt' , 'allergies',
+        'hugo', 'ex_mimo', 'ex_con', 'reg', 'outreach', 'program', 'helpdesk', 'logistic', 'turva', 'ops', 'site', 'members', 'design', 'notes'
+      ].filter(key => volunteer.hasOwnProperty(key));
       const insertValues = keys.map(key => `$(${key})`).join(', ');
       const insertVolunteer = `(${keys.join(', ')}) VALUES(${insertValues})`;
       const updateVolunteer = keys.map(key => `${key}=$(${key})`).join(', ');
@@ -67,10 +66,9 @@ function exportVolunteers(req, res, next) {
      if (!req.session.user.voltti_admin) return res.status(401).json({ status: 'unauthorized' });
     req.app.locals.db.any(`
     SELECT p.member_number, p.membership, p.legal_name, p.email, p.city, p.country,
-        a.name, a.continent, a.url,
-        a.category, a.description, a.transport, a.auction, a.print, a.digital, a.half,
-        a.legal, a.agent, a.contact, a.waitlist, a.postage 
-        FROM Volunteer as a, kansa.people as p WHERE a.people_id = p.ID order by p.member_number
+        v.people_id, v.birth, v.phone, v.experience, v.JV, v.hygiene, v.firstaid, v.languages, v.tshirt, v.allergies,
+        v.hugo, v.ex_mimo, v.ex_con, v.reg, v.outreach, v.program, v.helpdesk, v.logistic, v.turva, v.ops, v.site, v.members, v.design, v.notes
+        FROM Volunteer as v, kansa.people as p WHERE a.people_id = p.ID order by p.member_number
     `)
     .then((data) => res.status(200).csv(data, true))
     .catch(next)
