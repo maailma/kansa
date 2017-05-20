@@ -41,8 +41,10 @@ class Index extends React.Component {
   }
 
   render() {
-    const { people, prices, push } = this.props;
-    const isLoggedIn = !!(people && people.size);
+    const { people, prices, push } = this.props
+    const isLoggedIn = !!(people && people.size)
+    const upgradePath = people && people.size === 1
+      ? `/upgrade/${people.first().get('id')}` : '/upgrade/'
     return <Row style={{ marginBottom: -24 }}>
       <Col xs={12} sm={6} lg={4} lgOffset={2}>
         {isLoggedIn ? this.memberCards : <KeyRequest/>}
@@ -58,10 +60,10 @@ class Index extends React.Component {
           category="upgrade"
           disabled={!isLoggedIn}
           expandable={isLoggedIn}
-          onSelectType={(type) => push('/upgrade')}
+          onSelectType={() => push(upgradePath)}
         />
       </Col>
-    </Row>;
+    </Row>
   }
 }
 
