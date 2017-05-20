@@ -152,6 +152,7 @@ class Upgrade extends React.Component {
           amount={amount}
           currency="EUR"
           description={this.description}
+          disabled={disabled}
           email={this.props.email}
           onCheckout={(token) => this.onPurchase(amount, token)}
           onClose={() => this.setState({ sent: false })}

@@ -30,13 +30,14 @@ class StripeCheckout extends React.Component {
   }
 
   render() {
-    const { account, amount, children, currency, description, email, onCheckout, onClose, stripeKeys } = this.props
+    const { account, amount, children, currency, description, disabled, email, onCheckout, onClose, stripeKeys } = this.props
     return stripeKeys && (
       <ReactStripeCheckout
         amount={amount}
         closed={onClose}
         currency={currency || 'EUR'}
         description={description}
+        disabled={disabled}
         email={email}
         name={TITLE}
         stripeKey={stripeKeys.get(account || 'default')}

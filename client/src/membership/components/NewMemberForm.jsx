@@ -83,6 +83,7 @@ class NewMemberForm extends React.Component {
   render() {
     const { prices, replace } = this.props;
     const { member, sent, valid } = this.state;
+    const paymentDisabled = !valid || this.price <= 0;
 
     return <Row>
       <Col
@@ -118,13 +119,14 @@ class NewMemberForm extends React.Component {
               amount={this.price}
               currency="EUR"
               description={this.description}
+              disabled={paymentDisabled}
               email={member.get('email')}
               onCheckout={this.onCheckout}
               onClose={() => this.setState({ sent: false })}
             >
               <FlatButton
                 label={ sent ? 'Working...' : 'Pay by card' }
-                disabled={ !valid || this.price <= 0 }
+                disabled={paymentDisabled}
                 onTouchTap={ () => this.setState({ sent: true }) }
                 style={{ flexShrink: 0 }}
                 tabIndex={3}
