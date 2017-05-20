@@ -102,7 +102,6 @@ class TekMemberForm extends React.Component {
           <CardText>
             <Row>
               <Col xs={12}>
-                <p style={{ color: 'red', fontWeight: 'bold' }}>[Huomautus tähän TEK-jäsenyyden pakollisuudesta]</p>
                 <MembershipSelect
                   discount="TEK"
                   getValue={ path => member.getIn(path) || ''}
