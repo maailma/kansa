@@ -44,7 +44,8 @@ function upsertVolunteer(req, res, next) {
       const volunteer = Object.assign({}, req.body, { people_id: id });
       const keys = [
         'people_id', 'birth', 'phone', 'experience', 'JV', 'hygiene', 'firstaid', 'languages', 'tshirt' , 'allergies',
-        'hugo', 'ex_mimo', 'ex_con', 'reg', 'outreach', 'program', 'helpdesk', 'logistic', 'turva', 'ops', 'site', 'members', 'design', 'notes'
+        'hugo', 'ex_mimo', 'ex_con', 'reg', 'outreach', 'program', 'helpdesk', 'logistic', 'turva', 'ops', 'site', 'members', 'design', 'notes','hours',
+        'Tue8', 'Wed9', 'Thu10', 'Fri11', 'Sat12', 'Sun13', 'Mon14'
       ].filter(key => volunteer.hasOwnProperty(key));
       const insertValues = keys.map(key => `$(${key})`).join(', ');
       const insertVolunteer = `(${keys.join(', ')}) VALUES(${insertValues})`;
@@ -67,7 +68,8 @@ function exportVolunteers(req, res, next) {
     req.app.locals.db.any(`
     SELECT p.member_number, p.membership, p.legal_name, p.email, p.city, p.country,
         v.people_id, v.birth, v.phone, v.experience, v.JV, v.hygiene, v.firstaid, v.languages, v.tshirt, v.allergies,
-        v.hugo, v.ex_mimo, v.ex_con, v.reg, v.outreach, v.program, v.helpdesk, v.logistic, v.turva, v.ops, v.site, v.members, v.design, v.notes
+        v.hugo, v.ex_mimo, v.ex_con, v.reg, v.outreach, v.program, v.helpdesk, v.logistic, v.turva, v.ops, v.site, v.members, v.design, v.notes, v.hours,
+        v.Tue8, v.Wed9, v.Thu10, v.Fri11, v.Sat12, v.Sun13, v.Mon14
         FROM Volunteer as v, kansa.people as p WHERE a.people_id = p.ID order by p.member_number
     `)
     .then((data) => res.status(200).csv(data, true))
