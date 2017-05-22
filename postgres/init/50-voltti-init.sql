@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS Volunteer (
     site text, 
     members text, 
     design text,
+    events text,
     notes text,
     hours integer,
     Tue8 boolean,
