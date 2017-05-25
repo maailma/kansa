@@ -5,7 +5,7 @@ export const fields = [
   'country', 'state', 'city', 'paper_pubs'
 ]
 
-export const membershipTypes = [ 'NonMember', 'Supporter', 'KidInTow', 'Child', 'Youth', 'FirstWorldcon', 'Adult' ]
+export const membershipTypes = [ 'NonMember', 'Exhibitor', 'Supporter', 'KidInTow', 'Child', 'Youth', 'FirstWorldcon', 'Adult' ]
 
 export const emptyPaperPubsMap = Map({ name: '', address: '', country: '' })
 

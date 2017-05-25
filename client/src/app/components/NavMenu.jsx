@@ -21,7 +21,7 @@ const singleWithKey = (currentMember, otherMembers, key) => (
 
 const linkArtshowRegistration = (currentMember) => {
   const ms = currentMember && currentMember.get('membership');
-  return ['Supporter', 'Youth', 'FirstWorldcon', 'Adult'].indexOf(ms) !== -1;
+  return ['Supporter', 'Exhibitor', 'Youth', 'FirstWorldcon', 'Adult'].indexOf(ms) !== -1;
 };
 
 const linkHugoNominations = (currentMember, otherMembers) => (
