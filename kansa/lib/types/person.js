@@ -31,8 +31,7 @@ class Person {
   }
 
   static get membershipTypes() {
-    return [ 'NonMember', 'Supporter', 'KidInTow', 'Child', 'Youth',
-             'FirstWorldcon', 'Adult' ];
+    return [ 'NonMember', 'Exhibitor', 'Supporter', 'KidInTow', 'Child', 'Youth', 'FirstWorldcon', 'Adult' ];
   }
 
   static get paperPubsFields() {

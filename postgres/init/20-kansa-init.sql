@@ -8,7 +8,10 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO kansa;
 SET ROLE kansa;
 
 CREATE SEQUENCE member_number_seq;
-CREATE TYPE MembershipStatus AS ENUM ('NonMember','Supporter','KidInTow','Child','Youth','FirstWorldcon','Adult');
+CREATE TYPE MembershipStatus AS ENUM (
+    'NonMember', 'Exhibitor', 'Supporter', 'KidInTow',
+    'Child', 'Youth', 'FirstWorldcon', 'Adult'
+);
 
 CREATE TABLE IF NOT EXISTS People (
     id SERIAL PRIMARY KEY,

@@ -18,6 +18,10 @@
     }
   },
   "memberships": {
+    "Exhibitor": {
+      "amount": 2000,
+      "description": "Trader/Displayer"
+    },
     "Supporter": {
       "amount": 3500,
       "description": "Supporting"

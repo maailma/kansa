@@ -5,7 +5,7 @@ module.exports = {
 }
 
 const mailRecipient = (email, res) => {
-  const mt = [ 'NonMember', 'KidInTow', 'Child', 'Supporter', 'Youth', 'FirstWorldcon', 'Adult' ]
+  const mt = [ 'NonMember', 'KidInTow', 'Exhibitor', 'Child', 'Supporter', 'Youth', 'FirstWorldcon', 'Adult' ]
     // inlined as types/person.js has Supporter < Child
   const mi = res.reduce((max, r) => Math.max(max, mt.indexOf(r.membership)), -1)
   let name = res[0].name
