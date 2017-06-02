@@ -37,6 +37,7 @@ function checkType(category, type) {
 }
 
 function validateItem(item, currency) {
+  if (item.id) return;
   if (!item.amount || !item.currency || !item.category || !item.type) {
     throw new InputError('Required parameters: amount, currency, category, type');
   }
@@ -48,6 +49,9 @@ function validateItem(item, currency) {
   }
   if (!purchaseData[item.category]) {
     throw new InputError('Supported categories: ' + Object.keys(purchaseData).join(', '));
+  }
+  if (item.status === 'invoice' && (item.stripe_charge_id || item.stripe_receipt || item.stripe_token)) {
+    throw new InputError('Invoice items cannot have associated payment data');
   }
   const typeErrors = checkType(item.category, item.type);
   if (typeErrors) throw new InputError('Supported types: ' + JSON.stringify(typeErrors));
@@ -82,13 +86,13 @@ class Payment {
     this.email = email;
     this.source = source;
     this.items = items.map(item => ({
-      id: null,
+      id: item.id || null,
       updated: null,
       payment_email: email,
-      status: 'chargeable',
+      status: source ? 'chargeable' : 'invoice',
       stripe_charge_id: null,
       stripe_receipt: null,
-      stripe_token: source.id,
+      stripe_token: source && source.id || null,
       amount: Number(item.amount),
       currency: item.currency || 'eur',
       person_email: null,
@@ -113,7 +117,7 @@ class Payment {
     return new Promise((resolve, reject) => {
       if (!this.email) {
         reject(new InputError('A valid email is required'));
-      } else if (!this.source || !this.source.id) {
+      } else if (this.source && !this.source.id) {
         reject(new InputError('A valid source is required'));
       } else if (!this.items || this.items.length === 0) {
         reject(new InputError('At least one item is required'));
@@ -124,16 +128,35 @@ class Payment {
       }
     })
       .then(() => {
-        const ids = Object.keys(this.items.reduce((set, item) => {
+        const itemIds = this.items.map(it => it.id).filter(id => id)
+        return itemIds.length === 0 ? null : this.db.many(`
+          SELECT a.id, a.status, amount, currency, person_id,
+                 a.category, a.type, a.data, a.invoice,
+                 p.email AS person_email, preferred_name(p) as person_name
+            FROM Payments a LEFT JOIN People p ON (person_id = p.id)
+           WHERE a.id in ($1:csv)`, [itemIds]
+        ).then(dbItems => {
+          dbItems.forEach(dbItem => {
+            const item = this.items.find(item => item.id === dbItem.id)
+            Object.assign(item, dbItem)
+          })
+          const notFound = this.items.find(item => !item.type)
+          if (notFound) throw new Error('Payment not found: ' + JSON.stringify(notFound))
+        })
+      })
+      .then(() => {
+        const personIds = Object.keys(this.items.reduce((set, item) => {
           const id = Number(item.person_id);
-          if (id > 0 && CUSTOM_EMAIL_CATEGORIES.indexOf(item.category) === -1) set[id] = true;
+          if (id > 0 && !item.person_email &&
+            CUSTOM_EMAIL_CATEGORIES.indexOf(item.category) === -1
+          ) set[id] = true;
           return set;
         }, {}));
-        return ids.length === 0 ? null
+        return personIds.length === 0 ? null
           : this.db.many(`
               SELECT id, email, preferred_name(p) as name
                 FROM People p
-               WHERE id in ($1:csv)`, [ids]
+               WHERE id in ($1:csv)`, [personIds]
             ).then(data => this.items.forEach(item => {
               const id = item.person_id;
               const pd = id && data.find(d => d.id === id);
@@ -156,13 +179,15 @@ class Payment {
   record() {
     const charges = this.items.map(item => item.stripe_charge_id).filter(c => c);
     if (charges.length) throw new Error('Payment already made? charge ids:' + charges);
-    const sqlInsert = this.pgp.helpers.insert(this.items, Payment.fields, Payment.table);
+    const newItems = this.items.filter(item => !item.id);
+    if (newItems.length === 0) return null
+    const sqlInsert = this.pgp.helpers.insert(newItems, Payment.fields, Payment.table);
     return this.db.many(`${sqlInsert} RETURNING id`)
       .catch(error => Promise.reject(error.message && error.message.indexOf('payments_person_id_fkey') !== -1
         ? new InputError('Not a valid person id: ' + error.detail)
         : error
       ))
-      .then(ids => ids.forEach(({ id }, i) => this.items[i].id = id));
+      .then(ids => ids.forEach(({ id }, i) => newItems[i].id = id));
   }
 
   charge() {
@@ -208,7 +233,7 @@ class Payment {
   process() {
     return this.validate()
       .then(() => this.record())
-      .then(() => this.charge())
+      .then(() => this.source && this.charge())
       .then(() => this.items)
       .catch(error => {
         const ids = this.items.map(item => item.id).filter(id => id);

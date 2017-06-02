@@ -51,6 +51,7 @@ router.get('/favicon.ico', (req, res, next) => {
 
 router.post('/purchase', purchase.makeMembershipPurchase);
 router.get('/purchase/data', purchase.getPurchaseData);
+router.post('/purchase/invoice', purchase.createInvoice);
 router.get('/purchase/keys', purchase.getStripeKeys);
 router.get('/purchase/list', purchase.getPurchases);
 router.post('/purchase/other', purchase.makeOtherPurchase);

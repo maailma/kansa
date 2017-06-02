@@ -342,4 +342,75 @@ describe('Other purchases', () => {
     });
   });
 
+  context('Invoices (using Stripe API)', function() {
+    this.timeout(10000)
+    const admin = request.agent(host, { ca: cert })
+    const { email } = adminLoginParams
+    const testData = { sponsor: 'test-' + (Math.random().toString(36)+'00000000000000000').slice(2, 7) }
+    let item
+
+    before((done) => {
+      admin.get('/api/login')
+        .query(adminLoginParams)
+        .end(done);
+    });
+
+    it('invoice should be created', (done) => {
+      admin.post('/api/purchase/invoice')
+        .send({
+          email,
+          items: [{
+            amount: 4200,
+            category: 'Sponsorship',
+            type: 'bench',
+            data: testData
+          }]
+        })
+        .expect(200)
+        .expect(({ body }) => {
+          if (!body || body.status !== 'success' || !body.email) throw new Error(
+            `Bad response! ${JSON.stringify(body)}`
+          );
+        })
+        .end(done);
+    });
+
+    it('invoice should be listed', (done) => {
+      admin.get('/api/purchase/list')
+        .expect(200)
+        .expect(({ body }) => {
+          if (!Array.isArray(body)) throw new Error(`Not array! ${JSON.stringify(body)}`);
+          item = body.find(it => it.data && it.data.sponsor === testData.sponsor)
+          if (!item) throw new Error(`Missing item! ${JSON.stringify(body)}`);
+        })
+        .end(done);
+    });
+
+    it('invoice should be payable', (done) => {
+      stripe.tokens.create({
+        card: {
+          number: '4242424242424242',
+          exp_month: 12,
+          exp_year: 2020,
+          cvc: '123'
+        }
+      }).then(source => {
+        agent.post('/api/purchase/other')
+          .send({
+            email,
+            source,
+            items: [{ id: item.id }]
+          })
+          .expect(200)
+          .expect(({ body }) => {
+            if (!body || body.status !== 'succeeded' || !body.charge_id) throw new Error(
+              `Bad response! ${JSON.stringify(body)}`
+            );
+          })
+          .end(done);
+      });
+    });
+
+  });
+
 });

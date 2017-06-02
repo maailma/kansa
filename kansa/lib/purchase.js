@@ -13,6 +13,7 @@ class Purchase {
   constructor(pgp, db) {
     this.pgp = pgp;
     this.db = db;
+    this.createInvoice = this.createInvoice.bind(this);
     this.getPrices = this.getPrices.bind(this);
     this.getPurchaseData = this.getPurchaseData.bind(this);
     this.getPurchases = this.getPurchases.bind(this);
@@ -236,12 +237,28 @@ class Purchase {
             typeLabel: typeData && typeData.label || item.type
           }, item));
         }))
-          .then(() => res.status(200).json({
+          .then(() => res.json({
             status: items[0].status,
             charge_id: items[0].stripe_receipt || items[0].stripe_charge_id
           }))
       ))
       .catch(next);
+  }
+
+  createInvoice(req, res, next) {
+    if (!req.session.user || !req.session.user.member_admin) throw new AuthError()
+    const { email, items } = req.body
+    if (!email || !items || items.length === 0) throw new InputError('Required parameters: email, items')
+    new Payment(this.pgp, this.db, 'default', email, null, items)
+      .process()
+      .then(items => {
+        if (items.some(item => !item.id || item.status !== 'invoice')) {
+          throw new Error('Bad item: ' + JSON.stringify(item))
+        }
+        return mailTask('kansa-new-invoice', { email, items })
+      })
+      .then(() => res.json({ status: 'success', email }))
+      .catch(next)
   }
 }
 
