@@ -144,12 +144,7 @@ export default class MemberForm extends React.Component {
         </Col>
         <Col xs={12} style={hintStyle}>{this.msg('location_hint')}</Col>
       </Row>
-      {newMember ? (
-        <AddPaperPubs
-          prices={prices}
-          {...inputProps}
-        />
-      ) : this.hasPaperPubs ? (
+      {!newMember && this.hasPaperPubs ? (
         <EditPaperPubs
           prices={prices}
           {...inputProps}

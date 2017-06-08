@@ -43,7 +43,7 @@ export const memberTypeData = {
   },
   Upgrade: {
     primary: 'Upgrade membership',
-    secondary: 'and/or add paper publications',
+    secondary: '',
     icon: <ThumbUp/>
   }
 };
@@ -76,9 +76,9 @@ export default class MemberTypeList extends React.Component {
     const primaryText = amount < 0 ? primary
         : amount > 0 ? `${primary} (€${amount / 100})`
         : !prevType ? `${primary} (free)`
-        : canAddPaperPubs ? 'No upgrade' : 'No upgrade available';
+        : prevType === 'Adult' ? 'No upgrade available' : 'No upgrade';
     const secondaryText = !prevType || amount ? secondary
-        : canAddPaperPubs ? 'Just add paper publications' : 'Already has paper publications';
+        : canAddPaperPubs ? 'Just add paper publications' : '';
     return {
       disabled: isDisabled,
       innerDivStyle: { paddingLeft: 60 },
