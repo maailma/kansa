@@ -16,62 +16,56 @@ function access(req) {
   return req.app.locals.db.oneOrNone('SELECT email FROM kansa.People WHERE id = $1', id)
     .then(data => {
       if (!data || !req.session.user.voltti_admin && req.session.user.email !== data.email) throw new AuthError();
-      return {
-        id,
-      };
+      return { id };
     });
 }
 
 function getVolunteers(req, res, next) {
-  access(req)
-    .then(({ id }) => req.app.locals.db.oneOrNone(`SELECT * FROM Volunteer`))
-    .then(data => res.status(200).json(data || {}))
+  if (!req.session.user || !req.session.user.voltti_admin) return next(new AuthError())
+  req.app.locals.db.any(`SELECT * FROM Volunteers`)
+    .then(data => res.json(data))
     .catch(next);
 }
 
 function getVolunteer(req, res, next) {
   access(req)
-    .then(({ id }) => req.app.locals.db.oneOrNone(`SELECT * FROM Volunteer WHERE people_id = $1`, id))
-    .then(data => res.status(200).json(data || {}))
-    .catch(next);
+    .then(({ id }) => req.app.locals.db.oneOrNone(`SELECT * FROM Volunteers WHERE people_id = $1`, id))
+    .then(data => res.json(data || {}))
+    .catch(next)
 }
 
-// 'people_id', 'birth', 'phone', 'experience', 'JV', 'hygiene', 'firstaid', 'languages', 'tshirt' , 'allergies'
-// hugo, ex_mimo, ex_con, reg, outreach, program, helpdesk, logistic, turva, ops, site, members, design, notes
 function upsertVolunteer(req, res, next) {
   access(req)
     .then(({ id }) => {
       const volunteer = Object.assign({}, req.body, { people_id: id });
       const keys = [
-        'people_id', 'birth', 'phone', 'experience', 'JV', 'hygiene', 'firstaid', 'languages', 'tshirt' , 'allergies',
+        'people_id', 'birth', 'phone', 'experience', 'jv', 'hygiene', 'firstaid', 'languages', 'tshirt' , 'allergies',
         'hugo', 'ex_mimo', 'ex_con', 'reg', 'outreach', 'program', 'helpdesk', 'logistic', 'turva', 'ops', 'site', 'members', 'design', 'events', 'notes','hours',
-        'Tue8', 'Wed9', 'Thu10', 'Fri11', 'Sat12', 'Sun13', 'Mon14'
+        'day_in', 'day_1', 'day_2', 'day_3', 'day_4', 'day_5', 'day_out'
       ].filter(key => volunteer.hasOwnProperty(key));
       const insertValues = keys.map(key => `$(${key})`).join(', ');
       const insertVolunteer = `(${keys.join(', ')}) VALUES(${insertValues})`;
       const updateVolunteer = keys.map(key => `${key}=$(${key})`).join(', ');
-      return req.app.locals.db.one(`
-        INSERT INTO Volunteer ${insertVolunteer}
-        ON CONFLICT (people_id)
-          DO UPDATE SET ${updateVolunteer}
-          RETURNING people_id`, volunteer)
+      return req.app.locals.db.none(`
+        INSERT INTO Volunteers ${insertVolunteer}
+        ON CONFLICT (people_id) DO UPDATE SET ${updateVolunteer}`, volunteer)
     })
-    .then(people_id => res.status(200).json({ status: 'success', people_id }))
-    .catch(next);
+    .then(() => res.json({ status: 'success' }))
+    .catch(next)
 }
 
 
 /**** export CSV ****/
 
 function exportVolunteers(req, res, next) {
-     if (!req.session.user.voltti_admin) return res.status(401).json({ status: 'unauthorized' });
-    req.app.locals.db.any(`
+  if (!req.session.user.voltti_admin) return next(new AuthError())
+  req.app.locals.db.any(`
     SELECT p.member_number, p.membership, p.legal_name, p.email, p.city, p.country,
-        v.people_id, v.birth, v.phone, v.experience, v.JV, v.hygiene, v.firstaid, v.languages, v.tshirt, v.allergies,
+        v.people_id, v.birth, v.phone, v.experience, v.jv, v.hygiene, v.firstaid, v.languages, v.tshirt, v.allergies,
         v.hugo, v.ex_mimo, v.ex_con, v.reg, v.outreach, v.program, v.helpdesk, v.logistic, v.turva, v.ops, v.site, v.members, v.design, v.events, v.notes, v.hours,
-        v.Tue8, v.Wed9, v.Thu10, v.Fri11, v.Sat12, v.Sun13, v.Mon14
-        FROM Volunteer as v, kansa.people as p WHERE a.people_id = p.ID order by p.member_number
-    `)
-    .then((data) => res.status(200).csv(data, true))
+        v.day_in, v.day_1, v.day_2, v.day_3, v.day_4, v.day_5, v.day_out
+        FROM Volunteers as v, kansa.people as p WHERE a.people_id = p.id order by p.member_number
+  `)
+    .then((data) => res.csv(data, true))
     .catch(next)
 }
