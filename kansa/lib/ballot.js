@@ -14,13 +14,13 @@ const ballotData = ({ member_number, legal_name, email, city, state, country, ba
       'Address (2nd line)': address.length > 1 ? address.slice(1).join('; ') : '',
       'City': city || '',
       'Country': paper_pubs ? paper_pubs.country : country || '',
-      'Membership number': member_number,
+      'Membership number': member_number || '........',
       'Voting token': token,
       'E-mail': email,
       'State/Province/Prefecture': state || '',
       'Badge name': badge_text || '',
       'Voting fee': 'Yes',
-      'Member': 'Yes'
+      'Member': member_number ? 'Yes' : 'No'
     }
   }
 }

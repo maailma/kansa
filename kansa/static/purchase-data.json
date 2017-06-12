@@ -4,7 +4,6 @@
     "allowCreate": false,
     "description": "<p>You (or someone else you pay for) will receive a <b>voting token</b> to be entered on the site selection ballot as proof of payment, which will allow you to submit a vote for where the 77th Worldcon will be held in 2019. You can vote in advance by postal mail or in person at Worldcon 75. Your ballot will NOT be counted unless you provide this proof of payment of the Advance Supporting Membership Fee for the 2019 Worldcon. You will receive your voting token via email.</p><p><b>Worldcon Site Selection Ballot</b>: <a href=\"http://www.worldcon.fi/wsfs/site-selection/\" target=\"_blank\">Click here</a> to find a printable copy of the Worldcon Site Selection ballot to download.</p>",
     "disabled": ["invoice", "comments"],
-    "requireMembership": ["Supporter", "Youth", "FirstWorldcon", "Adult"],
     "shape": {
       "token": {
         "generated": true,
