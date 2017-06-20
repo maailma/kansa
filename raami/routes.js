@@ -24,5 +24,6 @@ router.delete('/:id/works/:work', db.removeWork);
 
 router.get('/export/artists', db.exportArtists);
 
+router.get('/export/preview', db.exportPreview)
 
 module.exports = router;
