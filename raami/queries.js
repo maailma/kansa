@@ -1,6 +1,9 @@
 const AuthError = require('./errors').AuthError;
 const InputError = require('./errors').InputError;
 const csv = require('csv-express');
+const fs  = require('fs')
+const path = require('path');
+const archiver = require('archiver');
 
 module.exports = {
 	upsertArtist,
@@ -10,7 +13,8 @@ module.exports = {
 	createWork,
 	updateWork,
 	removeWork,
-  exportArtists
+  exportArtists,
+  exportPreview
 };
 
 function access(req) {
@@ -126,7 +130,7 @@ function removeWork(req, res, next) {
     .catch(next);
 }
 
-/**** export CSV ****/
+/**** exports ****/
 
 function exportArtists(req, res, next) {
      if (!req.session.user.raami_admin) return res.status(401).json({ status: 'unauthorized' });
@@ -138,5 +142,58 @@ function exportArtists(req, res, next) {
         FROM Artist as a, kansa.people as p WHERE a.people_id = p.ID order by p.member_number
     `)
     .then((data) => res.status(200).csv(data, true))
+    .catch(next)
+}
+
+function exportPreview(req, res, next) {
+    //const dir = '/tmp/raamitmp/'
+    const output = fs.createWriteStream('/tmp/raamipreview.zip');
+    const zip = archiver('zip', {
+    store: true // Sets the compression method to STORE. 
+      });
+
+    output.on('close', function () {
+      console.log(zip.pointer() + ' total bytes');
+      fs.stat('/tmp/raamipreview.zip', function (err, stats) {
+          if (err) {
+         return console.error(err);
+         }
+        console.log(stats);
+      })
+      res.sendFile(path.resolve('/tmp/raamipreview.zip'))
+
+    });
+
+    zip.on('error', function(err){
+      throw err;
+    });
+
+    if (!req.session.user.raami_admin) return res.status(401).json({ status: 'unauthorized' });
+    req.app.locals.db.any(`
+      SELECT w.filedata, w.filename, a.name FROM Works as w, Artist as a where a.people_id = w.people_id
+       `)
+    .then((data)=> {
+
+      zip.pipe(output);
+
+
+      for(img of data) {
+        const imgdata = img.filedata.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+        const buffer3 = new Buffer.from(imgdata[2], 'base64');
+        zip.append(buffer3, { name: img.name+'_'+img.filename });
+        // fs.writeFile(dir+img.name+'_'+img.filename, img.filedata, (err)=>{
+        //     if (err) throw err
+        // })
+        // console.log(dir+img.name+'_'+img.filename+' saved')
+
+      }
+
+
+      //archive.directory(dir);
+      zip.finalize();
+
+
+
+    })
     .catch(next)
 }
