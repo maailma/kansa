@@ -8,6 +8,7 @@ const ImmutablePropTypes = require('react-immutable-proptypes');
 
 import { CommonFields, PaperPubsFields } from './form';
 import MemberLog from './MemberLog';
+import NewInvoice from './NewInvoice';
 import Upgrade from './Upgrade';
 
 export default class Member extends React.Component {
@@ -121,6 +122,19 @@ export default class Member extends React.Component {
         >
           <FlatButton label='Upgrade' style={{ float: 'left' }} />
         </Upgrade>,
+
+        <NewInvoice key='invoice'
+          onSubmit={invoice => {
+            const email = member.get('email')
+            return api.POST(`purchase/invoice`, {
+              email,
+              items: [invoice]
+            })
+          }}
+          person={member}
+        >
+          <FlatButton label='New invoice' style={{ float: 'left' }} />
+        </NewInvoice>,
 
         <FlatButton key='close' label='Close' onTouchTap={handleClose} />,
 

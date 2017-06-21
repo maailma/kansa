@@ -14,11 +14,12 @@ import './styles/app.css';
 
 import API from './api';
 import App from './components/App';
+import paymentData from './reducers/payment-data';
 import payments from './reducers/payments';
 import people from './reducers/people';
 import user from './reducers/user';
 
-const store = createStore(combineReducers({ payments, people, user }));
+const store = createStore(combineReducers({ paymentData, payments, people, user }));
 const api = new API(API_HOST ? `https://${API_HOST}/api/` : '/api/');
 api.GET('user')
   .then(data => store.dispatch({ type: 'LOGIN', data }))
@@ -35,6 +36,8 @@ api.GET('user')
   })
   .then(() => api.GET('purchase/list', { all: 1 }))
   .then(data => store.dispatch({ type: 'INIT PAYMENTS', data }))
+  .then(() => api.GET('purchase/data'))
+  .then(data => store.dispatch({ type: 'SET PAYMENT DATA', data }))
   .catch(e => console.error(e));
 
 const orange = '#fc7c39';
