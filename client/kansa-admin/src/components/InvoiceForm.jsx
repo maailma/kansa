@@ -4,7 +4,6 @@ import SelectField from 'material-ui/SelectField'
 import TextField from 'material-ui/TextField'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { connect } from 'react-redux'
 const ImmutablePropTypes = require('react-immutable-proptypes')
 
 const styles = {
@@ -51,9 +50,11 @@ const TypeSelect = ({ category, onChange, paymentData, type }) => {
 
 const DataField = ({ field, name, onChange, style = {}, value }) => {
   const isNumber = field.get('type') === 'number'
+  let label = field.get('label')
+  if (field.get('required')) label += ' (Required)'
   return <TextField
     floatingLabelFixed={true}
-    floatingLabelText={field.get('label')}
+    floatingLabelText={label}
     fullWidth={true}
     multiLine={!isNumber}
     name={name}
@@ -125,8 +126,4 @@ const InvoiceForm = ({
   </form>
 )
 
-export default connect(
-  ({ paymentData }) => ({
-    paymentData
-  })
-)(InvoiceForm)
+export default InvoiceForm

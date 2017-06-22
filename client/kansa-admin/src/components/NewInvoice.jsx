@@ -1,11 +1,12 @@
 import { Map } from 'immutable'
-import PropTypes from 'prop-types'
-import React from 'react'
 import ContentAdd from 'material-ui/svg-icons/content/add'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import FloatingActionButton from 'material-ui/FloatingActionButton'
+import PropTypes from 'prop-types'
+import React from 'react'
 const ImmutablePropTypes = require('react-immutable-proptypes')
+import { connect } from 'react-redux'
 
 import InvoiceForm from './InvoiceForm'
 
@@ -15,7 +16,7 @@ const preferredName = (person) => {
   return pna.filter(s => s).join(' ') || person.get('legal_name')
 }
 
-export default class NewInvoice extends React.Component {
+class NewInvoice extends React.Component {
   static propTypes = {
     onSubmit: PropTypes.func.isRequired,
     person: ImmutablePropTypes.mapContains({
@@ -33,8 +34,12 @@ export default class NewInvoice extends React.Component {
   }
 
   get disableSubmit() {
-    const { amount, category, comments, data, invoice, type } = this.state.invoice
-    return !category || !type || !amount
+    const { paymentData } = this.props
+    const { amount, category, data, type } = this.state.invoice
+    return !category || !type || !amount || !data || !paymentData ||
+      paymentData
+        .getIn([category, 'shape'], Map())
+        .some((shape, key) => shape.get('required') && !data[key])
   }
 
   handleOpen = () => {
@@ -53,7 +58,7 @@ export default class NewInvoice extends React.Component {
   handleClose = () => { this.setState({ open: false }) }
 
   render() {
-    const { onSubmit, children } = this.props
+    const { children, onSubmit, paymentData } = this.props
     const { invoice, open, sent } = this.state
     return (
       <div>
@@ -84,9 +89,16 @@ export default class NewInvoice extends React.Component {
           <InvoiceForm
             invoice={invoice}
             onChange={update => this.setState({ invoice: Object.assign({}, this.state.invoice, update) })}
+            paymentData={paymentData}
           />
         </Dialog>
       </div>
     )
   }
 }
+
+export default connect(
+  ({ paymentData }) => ({
+    paymentData
+  })
+)(NewInvoice)
