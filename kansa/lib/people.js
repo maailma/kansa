@@ -111,6 +111,9 @@ function getPerson(req, res, next) {
 }
 
 function addPerson(req, db, person) {
+  const passDays = person.passDays
+  const status = person.data.membership
+  if (passDays.length) person.data.membership = 'NonMember'
   const log = new LogEntry(req, 'Add new person');
   let res;
   return db.tx(tx => tx.sequence((i, data) => { switch (i) {
@@ -125,6 +128,16 @@ function addPerson(req, db, person) {
       res = data;
       log.subject = data.id
       return tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
+
+    case 2:
+      if (passDays.length) {
+        person.data.membership = status
+        const trueDays = passDays.map(d => 'true').join(',')
+        return tx.none(`
+          INSERT INTO daypasses (person_id,status,${passDays.join(',')})
+               VALUES ($(id),$(membership),${trueDays})`, person.data
+        )
+      }
 
   }}))
     .then(() => res);

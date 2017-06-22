@@ -67,6 +67,10 @@ class Person {
     return Person.hugoVoterType(this.data.membership)
   }
 
+  get passDays() {
+    return Object.keys(this.data).filter(key => /^day\d+$/.test(key) && this.data[key])
+  }
+
   get preferredName() {
     const { legal_name, public_first_name, public_last_name } = this.data;
     return [public_first_name, public_last_name].filter(n => n).join(' ').trim() || legal_name;

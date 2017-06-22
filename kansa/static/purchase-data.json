@@ -18,6 +18,75 @@
       "label": "Site Selection Voting Fee"
     }]
   },
+  "Day pass": {
+    "allowCreate": true,
+    "allow_new_email": true,
+    "shape": {
+      "day1": {
+        "label": "Wednesday",
+        "type": "boolean"
+      },
+      "day2": {
+        "label": "Thursday",
+        "type": "boolean"
+      },
+      "day3": {
+        "label": "Friday",
+        "type": "boolean"
+      },
+      "day4": {
+        "label": "Saturday",
+        "type": "boolean"
+      },
+      "day5": {
+        "label": "Sunday",
+        "type": "boolean"
+      },
+      "legal_name": {
+        "label": "Legal name",
+        "required": true,
+        "type": "string"
+      },
+      "email": {
+        "label": "Email",
+        "required": true,
+        "type": "string"
+      },
+      "public_first_name": {
+        "label": "Public first name",
+        "type": "string"
+      },
+      "public_last_name": {
+        "label": "Public last name",
+        "type": "string"
+      },
+      "city": {
+        "label": "City",
+        "type": "string"
+      },
+      "state": {
+        "label": "State/province",
+        "type": "string"
+      },
+      "country": {
+        "label": "Country",
+        "type": "string"
+      }
+    },
+    "types": [
+      {
+        "key": "daypass-Adult",
+        "label": "Adult (from €25/day)"
+      }, {
+        "key": "daypass-Youth",
+        "label": "Youth (from €15/day)"
+      }, {
+        "key": "daypass-Child",
+        "label": "Child (from €10/day)"
+      }
+    ],
+    "unlisted": true
+  },
   "New membership": {
     "allowCreate": true,
     "allow_new_email": true,
