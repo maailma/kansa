@@ -195,12 +195,10 @@ class Purchase {
     }).then(() => Promise.all(
       newMembers.map(m => (
         addPerson(req, this.db, m)
-          .then(({ id, member_number }) => {
-            m.data.id = id;
-            m.data.member_number = member_number;
+          .then(() => {
             const pi = paymentItems.find(item => item.data === m.data);
             return pi && this.db.none(
-              `UPDATE ${Payment.table} SET person_id=$1 WHERE id=$2`, [id, pi.id]
+              `UPDATE ${Payment.table} SET person_id=$1 WHERE id=$2`, [m.data.id, pi.id]
             );
           })
           .then(() => getKeyChecked(req, this.db, m.data.email))

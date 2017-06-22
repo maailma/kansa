@@ -120,9 +120,11 @@ function addPerson(req, db, person) {
       return tx.one(`INSERT INTO People ${person.sqlValues} RETURNING id, member_number`, person.data);
 
     case 1:
+      person.data.id = data.id
+      person.data.member_number = data.member_number
       res = data;
-      log.subject = parseInt(data.id);
-      return tx.none(`INSERT INTO Log ${log.sqlValues}`, log);
+      log.subject = data.id
+      return tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
 
   }}))
     .then(() => res);
