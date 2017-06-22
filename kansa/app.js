@@ -130,7 +130,7 @@ app.use((req, res, next) => {
 const isDevEnv = (app.get('env') === 'development');
 app.use((err, req, res, next) => {
   const error = err.error || err;
-  debugErrors(error instanceof Error ? error : err)
+  debugErrors(error instanceof Error ? error.message : err)
   const data = { status: 'error', message: error.message };
   if (isDevEnv) data.error = err;
   const status = err.status || error.status || error.name == 'InputError' && 400 || 500;
