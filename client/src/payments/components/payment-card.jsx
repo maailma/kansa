@@ -1,30 +1,12 @@
 import React, { PropTypes } from 'react'
-const ImmutablePropTypes = require('react-immutable-proptypes');
+const ImmutablePropTypes = require('react-immutable-proptypes')
 
-import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
-import FlatButton from 'material-ui/FlatButton'
+import { Card, CardHeader, CardText } from 'material-ui/Card'
 import Divider from 'material-ui/Divider'
 
-import { API_ROOT } from '../../constants'
 import { orange, lightBlue } from '../../theme'
 import * as PaymentPropTypes from '../proptypes'
-
-const PaymentActions = ({ person_id, status, type, userIds }) => {
-  switch (type) {
-    case 'ss-token':
-      return person_id && (status === 'succeeded') && userIds && userIds.includes(person_id) ? (
-        <CardActions style={{ display: 'flex' }}>
-          <FlatButton
-            href={`${API_ROOT}people/${person_id}/ballot`}
-            label="Download personal ballot"
-            primary={true}
-            target="_blank"
-          />
-        </CardActions>
-      ) : null;
-  }
-  return null;
-}
+import PaymentActions from './payment-actions'
 
 const PaymentCardHeader = ({ amount, status, subtitle, title, updated }) => {
   let amountColor, statusColor, subtitleColor, titleColor
@@ -64,8 +46,8 @@ const PaymentCardHeader = ({ amount, status, subtitle, title, updated }) => {
 
 const PaymentCard = ({ label, purchase, shape, userIds }) => {
   const {
-    amount, category, comments, data, error, invoice, payment_email, person_id,
-    person_name, status, stripe_charge_id, stripe_receipt, type, updated
+    amount, category, comments, data, error, invoice, payment_email,
+    person_name, status, stripe_charge_id, stripe_receipt, updated
   } = purchase.toJS()
   const backgroundColor = status === 'succeeded' ? 'white' : status === 'failed' ? orange : lightBlue
   return <Card
@@ -92,10 +74,10 @@ const PaymentCard = ({ label, purchase, shape, userIds }) => {
           <td>Payment for:</td>
           <td>{person_name}</td>
         </tr>
-        <tr>
+        {stripe_receipt || stripe_charge_id ? <tr>
           <td>Charge id:</td>
           <td style={{ fontFamily: 'monospace' }}>{stripe_receipt || stripe_charge_id}</td>
-        </tr>
+        </tr> : null}
         {invoice ? <tr>
           <td>Invoice:</td>
           <td>{invoice}</td>
@@ -119,7 +101,7 @@ const PaymentCard = ({ label, purchase, shape, userIds }) => {
         </tr> : null}
       </tbody></table>
     </CardText>
-    <PaymentActions person_id={person_id} status={status} type={type} userIds={userIds} />
+    <PaymentActions purchase={purchase} userIds={userIds} />
   </Card>
 }
 
@@ -130,4 +112,4 @@ PaymentCard.propTypes = {
   userIds: ImmutablePropTypes.listOf(PropTypes.number)
 }
 
-export default PaymentCard;
+export default PaymentCard
