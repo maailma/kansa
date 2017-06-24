@@ -10,6 +10,22 @@ export default ({ dispatch }) => (next) => (action) => {
 
   if (!action.error) switch (action.type) {
 
+    case 'BUY_DAYPASS': {
+      const { amount, callback, email, person, source } = action;
+      api.POST('purchase/daypass', {
+        amount,
+        email,
+        source,
+        passes: [person]
+      })
+        .then(() => api.GET('user')
+          .then(user => dispatch(memberSet(user)))
+          .catch(() => {/* isgnore auth error */})
+        )
+        .then(() => callback && callback())
+        .catch(handleError);
+    } return;
+
     case 'BUY_MEMBERSHIP': {
       const { amount, callback, email, member, source } = action;
       api.POST('purchase', {
@@ -52,6 +68,12 @@ export default ({ dispatch }) => (next) => (action) => {
         .then(() => api.GET('user'))
         .then(user => dispatch(memberSet(user)))
         .then(() => callback && callback())
+        .catch(handleError);
+    } return;
+
+    case 'GET_DAYPASS_PRICES': {
+      api.GET('purchase/daypass-prices')
+        .then(prices => next({ ...action, prices }))
         .catch(handleError);
     } return;
 

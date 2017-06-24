@@ -1,3 +1,13 @@
+export const buyDaypass = (person, amount, email, source, callback) => ({
+  module: 'kansa',
+  type: 'BUY_DAYPASS',
+  amount,
+  callback,
+  email,
+  person,
+  source
+});
+
 export const buyMembership = (member, amount, email, source, callback) => ({
   module: 'kansa',
   type: 'BUY_MEMBERSHIP',
@@ -29,6 +39,11 @@ export const buyUpgrade = (id, membership, paper_pubs, amount, email, source, ca
   membership,
   paper_pubs,
   source
+});
+
+export const getDaypassPrices = () => ({
+  module: 'kansa',
+  type: 'GET_DAYPASS_PRICES'
 });
 
 export const getPrices = () => ({

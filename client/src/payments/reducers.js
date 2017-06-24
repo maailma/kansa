@@ -2,6 +2,7 @@ import { fromJS, Map, OrderedMap } from 'immutable'
 
 const defaultState = Map({
   data: null,
+  daypassPrices: null,
   keys: null,
   list: null,
   prices: null,
@@ -11,9 +12,11 @@ export default function(state = defaultState, action) {
   if (action.error || action.module !== 'kansa') return state;
   switch (action.type) {
 
+    case 'GET_DAYPASS_PRICES':
+      return state.set('daypassPrices', fromJS(action.prices))
+
     case 'GET_PRICES':
-      const { prices } = action;
-      return state.set('prices', fromJS(prices));
+      return state.set('prices', fromJS(action.prices))
 
     case 'GET_PURCHASE_DATA':
       const { data } = action;
