@@ -10,6 +10,7 @@ import Nominate from './hugo-nominations/components/Nominate'
 import Vote from './hugo-votes'
 import Finalists from './hugo-admin/components/Finalists'
 import HugoAdmin from './hugo-admin/components/HugoAdmin'
+import NewDaypassForm from './membership/components/NewDaypassForm'
 import NewMemberForm from './membership/components/NewMemberForm'
 import NewMemberIndex from './membership/components/NewMemberIndex'
 import TekMemberForm from './membership/components/TekMemberForm'
@@ -86,6 +87,7 @@ export default class AppRouter extends Route {
           <Redirect from="profile" to="/" />
           <Route path="exhibition/:id" component={ExhibitRegistration} onEnter={this.requireAuth} />
           {hugoRoutes('hugo', this.requireAuth)}
+          <Route path="daypass/:type" component={NewDaypassForm} />
           <Route path="new" component={NewMemberIndex} />
           <Route path="new/:membership" component={NewMemberForm} />
           <Route path="pay" component={Payments} />
