@@ -23,3 +23,13 @@ CREATE TABLE daypasses (
     day4 bool DEFAULT false,
     day5 bool DEFAULT false
 );
+
+CREATE FUNCTION daypass_days(d daypasses) RETURNS bool[] AS $$
+BEGIN
+    IF d.status IS NOT NULL THEN
+        RETURN ARRAY[d.day1, d.day2, d.day3, d.day4, d.day5];
+    ELSE
+        RETURN NULL;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;

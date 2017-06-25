@@ -4,7 +4,12 @@ const { mailTask, updateMailRecipient } = require('./mail')
 const LogEntry = require('./types/logentry');
 const Person = require('./types/person');
 
+const selectAllPeopleData = `
+  SELECT p.*, preferred_name(p), d.status AS daypass, daypass_days(d)
+    FROM people p LEFT JOIN daypasses d ON (p.id = d.person_id)`
+
 module.exports = {
+  selectAllPeopleData,
   getMemberEmails, getMemberPaperPubs, getPeople,
   getPerson, addPerson, authAddPerson, updatePerson
 };
@@ -24,7 +29,7 @@ function getPeopleQuery(req, res, next) {
     default:
       return (Person.fields.indexOf(fn) !== -1) ? `${fn} ILIKE $(${fn})` : 'true';
   }});
-  req.app.locals.db.any(`SELECT * FROM People WHERE ${cond.join(' AND ')}`, req.query)
+  req.app.locals.db.any(`${selectAllPeopleData} WHERE ${cond.join(' AND ')}`, req.query)
     .then(data => res.status(200).json(data))
     .catch(err => next(err));
 }
@@ -83,7 +88,7 @@ function getPeople(req, res, next) {
     return res.status(401).json({ status: 'unauthorized' });
   }
   if (Object.keys(req.query).length > 0) getPeopleQuery(req, res, next);
-  else req.app.locals.db.any('SELECT * FROM People')
+  else req.app.locals.db.any(selectAllPeopleData)
     .then(data => {
       const maxId = data.reduce((m, p) => Math.max(m, p.id), -1);
       if (isNaN(maxId)) {
@@ -105,7 +110,7 @@ function getPeople(req, res, next) {
 
 function getPerson(req, res, next) {
   const id = parseInt(req.params.id);
-  req.app.locals.db.one('SELECT * FROM People WHERE id = $1', id)
+  req.app.locals.db.one(`${selectAllPeopleData} WHERE id = $1`, id)
     .then(data => res.status(200).json(data))
     .catch(err => next(err));
 }
