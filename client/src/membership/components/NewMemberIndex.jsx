@@ -40,6 +40,7 @@ class NewMemberIndex extends React.Component {
       >
         <NewMemberCard category="attend" onSelectType={this.onSelectType} prices={prices}/>
         <NewMemberCard category="upgrade" onSelectType={() => push('/upgrade')} />
+        <NewMemberCard category="child" onSelectType={this.onSelectType} prices={prices}/>
       </Col>
       <Col
         xs={12}
@@ -48,8 +49,8 @@ class NewMemberIndex extends React.Component {
         lg={4}
         style={{ paddingLeft: '0.75rem', paddingRight: '0.75rem' }}
       >
-        <NewMemberCard category="child" onSelectType={this.onSelectType} prices={prices}/>
         <NewMemberCard category="support" onSelectType={this.onSelectType} prices={prices}/>
+        <NewMemberCard category="daypass" onSelectType={(type) => push(`/daypass/${type}`)} />
       </Col>
     </Row>;
   }

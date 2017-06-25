@@ -62,6 +62,24 @@ const contents = {
     memberships: [ 'Child', 'KidInTow' ]
   },
 
+  daypass: {
+    title: 'New day pass',
+    body: <div>
+      <p>
+        If you are only able to come to Worldcon 75 for a day or two, we have
+        day passes available. This pass will entitle you to enjoy the activities,
+        programming and events of Worldcon for that day, except for the parties
+        in the evenings.
+      </p><p>
+        Day passes do not include guaranteed seating to the Hugo Ceremony
+        (Friday) and the Masquerade (Saturday). While we expect to be able to
+        seat everyone, those with full attending memberships will have
+        precedence for this special event seating.
+      </p>
+    </div>,
+    memberships: ['Adult', 'Youth', 'Child']
+  },
+
   support: {
     title: 'New supporting membership',
     body: <div>
@@ -113,6 +131,7 @@ const NewMemberCard = ({ category, disabled = false, expandable = false, onSelec
     </CardText>
     <CardActions style={{ marginLeft: 8, paddingTop: 0 }}>
       <MemberTypeList
+        category={category}
         disabled={disabled}
         memberTypes={memberships}
         onSelectType={onSelectType}
