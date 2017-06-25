@@ -29,6 +29,14 @@ class MemberEdit extends React.Component {
     return isOpen && !sent && Map.isMap(changes) && changes.size > 0;
   }
 
+  get title() {
+    const { member } = this.props
+    return member.get('membership', 'NonMember') !== 'NonMember'
+      ? `Edit member #${member.get('member_number')}`
+      : member.get('daypass') ? `Edit ${member.get('daypass')} day pass holder`
+      : 'Edit non-member'
+  }
+
   componentWillReceiveProps(nextProps) {
     const { isOpen, sent } = this.state;
     if (isOpen && sent && !nextProps.member.equals(this.props.member)) {
@@ -62,7 +70,6 @@ class MemberEdit extends React.Component {
 
   render() {
     const { member, children } = this.props;
-    const membership = member.get('membership', 'NonMember');
     const { isOpen } = this.state;
 
     return <div>
@@ -88,13 +95,11 @@ class MemberEdit extends React.Component {
         autoScrollBodyContent={true}
         onRequestClose={this.handleClose}
         open={isOpen}
-        title={membership === 'NonMember'
-          ? 'Edit non-member'
-          : `Edit ${membership} member #${member.get('member_number')}`
-        }
+        title={this.title}
         titleStyle={{ color: orange, textShadow: 'none' }}
       >
         <MemberForm
+          lc={member.get('daypass') ? 'daypass' : 'en'}
           member={member}
           onChange={ (valid, changes) => {
             if (valid) this.setState({ changes });

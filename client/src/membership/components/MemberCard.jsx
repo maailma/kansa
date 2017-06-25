@@ -109,17 +109,28 @@ class MemberCard extends React.Component {
     return actions
   }
 
+  get title() {
+    const { member } = this.props
+    const membership = member.get('membership', 'NonMember')
+    if (membership !== 'NonMember') return `${membership} member #${member.get('member_number')}`
+    const daypass = member.get('daypass')
+    if (daypass) {
+      const days = ['Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        .filter((day, i) => member.getIn(['daypass_days', i]))
+        .join('/')
+      return `${daypass} day pass ${days}`
+    }
+    return member.get('can_hugo_nominate') ? 'Hugo nominator' : 'Non-member'
+  }
+
   render() {
     const { member } = this.props
     if (!member) return null
-    const membership = member.get('membership', 'NonMember')
     return <Card style={{ marginBottom: 18 }}>
       <CardHeader
-        title={ member.get('legal_name') }
+        title={member.get('legal_name')}
         style={{ fontWeight: 600 }}
-        subtitle={ membership === 'NonMember'
-            ? 'Non-member' + (member.get('can_hugo_nominate') ? ' (Hugo nominator)' : '')
-            : `${membership} member #${member.get('member_number')}` }
+        subtitle={this.title}
       />
       <CardActions style={{ marginLeft: 8, paddingTop: 0 }}>
         <List style={{ paddingTop: 0 }}>
