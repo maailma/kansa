@@ -113,7 +113,10 @@ function getPerson(req, res, next) {
 function addPerson(req, db, person) {
   const passDays = person.passDays
   const status = person.data.membership
-  if (passDays.length) person.data.membership = 'NonMember'
+  if (passDays.length) {
+    person.data.membership = 'NonMember'
+    person.data.member_number = null
+  }
   const log = new LogEntry(req, 'Add new person');
   let res;
   return db.tx(tx => tx.sequence((i, data) => { switch (i) {
