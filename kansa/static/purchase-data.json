@@ -188,6 +188,91 @@
     ],
     "unlisted": true
   },
+  "Exhibits": {
+    "allowCreate": false,
+    "shape": {
+      "count": {
+        "label": "Number of items",
+        "type": "string"
+      }
+    },
+    "types": [
+      {
+        "key": "art-board",
+        "amount": 3000,
+        "label": "Art show board"
+      }, {
+        "key": "art-halftable",
+        "amount": 1500,
+        "label": "Art show half-table"
+      }, {
+        "key": "art-printshop",
+        "amount": 50,
+        "label": "Print shop"
+      }, {
+        "key": "art-digital",
+        "amount": 2000,
+        "label": "Digital Gallery"
+      }, {
+        "key": "book-table",
+        "amount": 500,
+        "label": "Book sales table"
+      }, {
+        "key": "ca-member-wed",
+        "amount": 500,
+        "label": "Creators Alley table (member) - Wednesday"
+      }, {
+        "key": "ca-member-thu",
+        "amount": 1000,
+        "label": "Creators Alley table (member) - Thursday"
+      }, {
+        "key": "ca-member-fri",
+        "amount": 1000,
+        "label": "Creators Alley table (member) - Friday"
+      }, {
+        "key": "ca-member-sat",
+        "amount": 2500,
+        "label": "Creators Alley table (member) - Saturday"
+      }, {
+        "key": "ca-member-sun",
+        "amount": 1500,
+        "label": "Creators Alley table (member) - Sunday"
+      }, {
+        "key": "ca-nonmember-wed",
+        "amount": 2500,
+        "label": "Creators Alley table (non-member) - Wednesday"
+      }, {
+        "key": "ca-nonmember-thu",
+        "amount": 3000,
+        "label": "Creators Alley table (non-member) - Thursday"
+      }, {
+        "key": "ca-nonmember-fri",
+        "amount": 3000,
+        "label": "Creators Alley table (non-member) - Friday"
+      }, {
+        "key": "ca-nonmember-sat",
+        "amount": 4500,
+        "label": "Creators Alley table (non-member) - Saturday"
+      }, {
+        "key": "ca-nonmember-sun",
+        "amount": 3500,
+        "label": "Creators Alley table (non-member) - Sunday"
+      }, {
+        "key": "ca-electricity",
+        "amount": 2000,
+        "label": "Creators Alley table - electricity"
+      }, {
+        "key": "ca-exhibitor",
+        "amount": 2000,
+        "label": "Creators Alley extra exhibitor pass"
+      }, {
+        "key": "fan-electricity",
+        "amount": 2000,
+        "label": "Fan table - electricity"
+      }
+    ],
+    "unlisted": true
+  },
   "Sponsorship": {
     "allowCreate": true,
     "description": "The problem with travelling is the waiting. The long wait for a space elevator capsule or dragon caravan (or for that programme item you really want to see) can get quite dull. Why not sponsor a craft lounge to help con-goers pass the time? Or sponsor a bench, and give weary convention members somewhere to put their feet up when they've spent too long wandering around the halls.",
