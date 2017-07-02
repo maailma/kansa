@@ -273,6 +273,33 @@
     ],
     "unlisted": true
   },
+  "Trips And Tours": {
+    "allowCreate": false,
+    "shape": {},
+    "types": [
+      {
+        "key": "solar-system-tour",
+        "amount": 1700,
+        "label": "Solar System Tour Bike Rental"
+      },
+      {
+        "key": "nuclear-plant-tour",
+        "amount": 3500,
+        "label": "Nuclear Power Plant Tour"
+      },
+      {
+        "key": "suomenlinna-tour",
+        "amount": 1100,
+        "label": "Suomenlinna Tour"
+      },
+      {
+        "key": "beertram-tour",
+        "amount": 3000,
+        "label": "Spårakoff Ride (Thursday)"
+      }
+    ],
+    "unlisted": true
+  },
   "Sponsorship": {
     "allowCreate": true,
     "description": "The problem with travelling is the waiting. The long wait for a space elevator capsule or dragon caravan (or for that programme item you really want to see) can get quite dull. Why not sponsor a craft lounge to help con-goers pass the time? Or sponsor a bench, and give weary convention members somewhere to put their feet up when they've spent too long wandering around the halls.",
