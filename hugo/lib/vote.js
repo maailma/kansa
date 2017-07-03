@@ -9,6 +9,7 @@ class Vote {
     this.db = db;
     this.getFinalists = this.getFinalists.bind(this);
     this.getPacket = this.getPacket.bind(this);
+    this.packetSeriesExtra = this.packetSeriesExtra.bind(this);
     this.getVotes = this.getVotes.bind(this);
     this.setVotes = this.setVotes.bind(this);
 
@@ -80,6 +81,23 @@ class Vote {
         res.clearCookie('packet', options);
         next(error);
       })
+  }
+
+  packetSeriesExtra(req, res, next) {
+    this.access(req)
+      .then(({ id, voter }) => {
+        if (!voter) throw new AuthError();
+        return this.db.one(`
+          SELECT email, kansa.preferred_name(p) as name
+            FROM kansa.People AS p
+           WHERE id = $1`, id)
+      })
+      .then(({ email, name }) => sendEmail(
+        'hugo-packet-series-extra',
+        { email, name }
+      ))
+      .then(() => res.json({ status: 'success' }))
+      .catch(next);
   }
 
   getVotes(req, res, next) {

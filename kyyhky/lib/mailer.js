@@ -76,6 +76,13 @@ class Mailer {
     let tmplData = Object.assign({ login_uri: loginUri(data) }, data);
     switch (tmplName) {
 
+      case 'hugo-packet-series-extra':
+        tmplData = {
+          email: 'hugos@choiceofgames.com',
+          voter_email: data.email
+        }
+        break;
+
       case 'hugo-update-nominations':
         tmplData.nominations = nominationsString(data.nominations);
         break;

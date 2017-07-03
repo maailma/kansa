@@ -81,6 +81,7 @@ queue.on('job failed', (id, result) => {
 });
 
 [
+  'hugo-packet-series-extra',
   'hugo-update-email',
   'kansa-add-paper-pubs',
   'kansa-create-account',
