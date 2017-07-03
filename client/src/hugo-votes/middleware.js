@@ -66,6 +66,14 @@ export default ({ dispatch, getState }) => (next) => (action) => {
       return;
     }
 
+    case 'GET_HUGO_PACKET_SERIES_EXTRA': {
+      const id = getState().hugoVotes.get('id');
+      if (!id) return dispatch({ type: 'ERROR', error: new Error('Voter id not set!') })
+      api.GET(`hugo/${id}/packet-series-extra`)
+        .then(() => dispatch(showMessage('Token requested, will be sent by email.')));
+      return;
+    }
+
     case 'GET_VOTES':
       const id = getState().hugoVotes.get('id');
       if (!id) return dispatch({ type: 'ERROR', error: new Error('Voter id not set!') })

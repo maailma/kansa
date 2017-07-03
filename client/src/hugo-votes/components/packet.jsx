@@ -1,10 +1,12 @@
 import React, { PropTypes } from 'react'
+import { connect } from 'react-redux'
 import FlatButton from 'material-ui/FlatButton'
 
 import { midGray } from '../../theme'
+import { getHugoPacketSeriesExtra } from '../actions'
 import { categoryPacket } from '../proptypes'
 
-const Packet = ({ formats }) => {
+const Packet = ({ category, formats, getHugoPacketSeriesExtra }) => {
   if (!formats || formats.size === 0) return null
   return (
     <div style={{
@@ -27,6 +29,15 @@ const Packet = ({ formats }) => {
           />
         </div>
       ))}
+      {category === 'Series' && (
+        <div key='extra' style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <FlatButton
+            label='Get Steam Token for The Craft Sequence games'
+            onTouchTap={getHugoPacketSeriesExtra}
+            style={{ lineHeight: '33px' }}
+          />
+        </div>
+      )}
     </div>
   )
 }
@@ -35,4 +46,4 @@ Packet.propTypes = {
   formats: categoryPacket
 }
 
-export default Packet
+export default connect(null, { getHugoPacketSeriesExtra })(Packet)

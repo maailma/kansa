@@ -3,6 +3,11 @@ export const getFinalists = () => ({
   type: 'GET_FINALISTS'
 });
 
+export const getHugoPacketSeriesExtra = () => ({
+  module: 'hugo-votes',
+  type: 'GET_HUGO_PACKET_SERIES_EXTRA'
+});
+
 export const getVotes = () => ({
   module: 'hugo-votes',
   type: 'GET_VOTES'

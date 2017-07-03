@@ -45,7 +45,7 @@ class VoteCategory extends React.Component {
           textAlign: 'left'
         }}
       >
-        <Packet formats={packet} />
+        <Packet category={category} formats={packet} />
       </CardHeader>
       <CardText>
         <CategoryList
