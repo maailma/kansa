@@ -77,6 +77,12 @@ CREATE VIEW CurrentNominations AS SELECT
     ) AS n
     NATURAL LEFT OUTER JOIN Classification c;
 
+CREATE VIEW CurrentVotes AS SELECT
+    DISTINCT ON (person_id, category)
+    id, person_id, signature, category, votes
+    FROM Votes
+    ORDER BY person_id, category, time DESC;
+
 
 -- allow clients to listen to changes
 CREATE FUNCTION canon_notify() RETURNS trigger as $$
