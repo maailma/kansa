@@ -1,5 +1,6 @@
 const AuthError = require('./errors').AuthError;
 const InputError = require('./errors').InputError;
+const countVotes = require('./vote-count');
 
 class Admin {
   static verifyAdminAccess(req, res, next) {
@@ -20,6 +21,7 @@ class Admin {
     this.getNominations = this.getNominations.bind(this);
     this.classify = this.classify.bind(this);
     this.updateCanonEntry = this.updateCanonEntry.bind(this);
+    this.getVoteResults = this.getVoteResults.bind(this);
   }
 
   getAllBallots(req, res, next) {
@@ -168,6 +170,41 @@ class Admin {
     )
       .then(() => res.status(200).json({ status: 'success' }))
       .catch(next);
+  }
+
+  getVoteResults(req, res, next) {
+    if (!req.session.user || !req.session.user.hugo_admin) return next(new AuthError())
+    const { category } = req.params
+    const { csv } = req.query
+    this.db.task(t => t.batch([
+      t.any(`SELECT votes FROM CurrentVotes WHERE category = $1`, category),
+      t.any(`SELECT id, title FROM Finalists WHERE category = $1`, category)
+    ])).then(([ballots, finalists]) => {
+      finalists.push({ id: -1, title: 'No award' })
+      const { rounds, runoff, winner } = countVotes(ballots.map(b => b.votes), finalists.map(f => f.id))
+      if (csv) {
+        const data = finalists.map(({ id, title }) => {
+          const row = rounds.reduce((row, { tally }, i) => {
+            const { votes } = tally.find(fv => fv.finalist === id) || {}
+            row[`Round ${i+1}`] = votes || 0
+            return row
+          }, { Finalist: title })
+          row.Runoff = id === winner ? runoff.wins : id === -1 ? runoff.losses : 0
+          return row
+        })
+        res.csv(data, true)
+      } else {
+        const getFinalistTitle = id => finalists.find(f => f.id === id).title
+        rounds.forEach(round => {
+          round.tally.forEach(fv => {
+            fv.finalist = getFinalistTitle(fv.finalist)
+          })
+          if (round.eliminated) round.eliminated = round.eliminated.map(getFinalistTitle)
+          if (round.winner) round.winner = getFinalistTitle(round.winner)
+        })
+        res.json({ rounds, runoff, winner: winner && getFinalistTitle(winner) })
+      }
+    }).catch(next)
   }
 }
 

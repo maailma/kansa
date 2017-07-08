@@ -54,6 +54,7 @@ router.get('/admin/canon', admin.getCanon);
 router.get('/admin/nominations', admin.getNominations);
 router.post('/admin/classify', admin.classify);
 router.post('/admin/canon/:id', admin.updateCanonEntry);
+router.get('/admin/votes/:category', admin.getVoteResults);
 
 router.get('/:id/nominations', nominate.getNominations);
 router.post('/:id/nominate', nominate.nominate);
