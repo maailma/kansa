@@ -192,7 +192,7 @@ class Admin {
           row.Runoff = id === winner ? runoff.wins : id === -1 ? runoff.losses : 0
           return row
         })
-        res.csv(data, true)
+        res.csv(data, true, { 'Content-Disposition': `inline; filename="${category}.csv"` })
       } else {
         const getFinalistTitle = id => finalists.find(f => f.id === id).title
         rounds.forEach(round => {

@@ -161,7 +161,7 @@ function getNextRound(ballots, eliminated) {
 /**
  * Test winner against runoff candidate (no award)
  *
- * 3.11.3: “No Award” shall be the run-off candidate for the purposes of
+ * 3.12.3: “No Award” shall be the run-off candidate for the purposes of
  * Section 6.5.
  *
  * 6.5: Run-off. After a tentative winner is determined, then unless the
@@ -181,7 +181,7 @@ function getNextRound(ballots, eliminated) {
  * @returns {RunoffResults|null}
  */
 function runoffTest(ballots, finalist) {
-  if (finalist === NO_AWARD) return undefined
+  if (!finalist || finalist === NO_AWARD) return undefined
   let wins = 0
   let losses = 0
   for (let i = 0; i < ballots.length; ++i) {
@@ -222,7 +222,7 @@ function countVotes(ballots, finalists) {
   do {
     const round = getNextRound(ballots, eliminated)
     rounds.push(round)
-    if (round.winner) break
+    if (round.winner || round.totalWithPreference === 0) break
     if (!firstPlaceVotes) firstPlaceVotes = round.tally
     round.eliminated = eliminateNextCandidates(round.tally, firstPlaceVotes)
     eliminated.push.apply(eliminated, round.eliminated)
@@ -230,6 +230,6 @@ function countVotes(ballots, finalists) {
   } while (eliminated.length > 0 && eliminated.length < finalists.length)
   let winner = rounds[rounds.length - 1].winner
   const runoff = runoffTest(ballots, winner)
-  if (runoff && runoff.losses > runoff.wins) winner = NO_AWARD
+  if (runoff && (runoff.losses > runoff.wins)) winner = NO_AWARD
   return { rounds, runoff, winner }
 }
