@@ -172,6 +172,30 @@ class Admin {
       .catch(next);
   }
 
+  _csvVoteResults(place, finalists, { rounds, runoff, winner }) {
+    return finalists.map(({ id, title }) => {
+      const row = rounds.reduce((row, { tally }, i) => {
+        const { votes } = tally.find(fv => fv.finalist === id) || {}
+        row[`Round ${i+1}`] = votes || 0
+        return row
+      }, { Place: place, Finalist: title })
+      if (runoff) row.Runoff = id === winner ? runoff.wins : id === -1 ? runoff.losses : 0
+      return row
+    })
+  }
+
+  _jsonVoteResults(place, finalists, { rounds, runoff, winner }) {
+    const getFinalistTitle = id => finalists.find(f => f.id === id).title
+    rounds.forEach(round => {
+      round.tally.forEach(fv => {
+        fv.finalist = getFinalistTitle(fv.finalist)
+      })
+      if (round.eliminated) round.eliminated = round.eliminated.map(getFinalistTitle)
+      if (round.winner) round.winner = getFinalistTitle(round.winner)
+    })
+    return { rounds, runoff, place, winner: winner && getFinalistTitle(winner) }
+  }
+
   getVoteResults(req, res, next) {
     if (!req.session.user || !req.session.user.hugo_admin) return next(new AuthError())
     const { category } = req.params
@@ -181,28 +205,24 @@ class Admin {
       t.any(`SELECT id, title FROM Finalists WHERE category = $1`, category)
     ])).then(([ballots, finalists]) => {
       finalists.push({ id: -1, title: 'No award' })
-      const { rounds, runoff, winner } = countVotes(ballots.map(b => b.votes), finalists.map(f => f.id))
+      const data = []
+      let place = 1
+      while (finalists.length > 1) {
+        const placeResults = countVotes(ballots.map(b => b.votes), finalists.map(f => f.id))
+        const { winner } = placeResults
+        if (csv) {
+          data.push.apply(data, this._csvVoteResults(place, finalists, placeResults))
+        } else {
+          data.push(this._jsonVoteResults(place, finalists, placeResults))
+        }
+        if (!winner) break
+        finalists = finalists.filter(({ id }) => id !== winner)
+        ++place
+      }
       if (csv) {
-        const data = finalists.map(({ id, title }) => {
-          const row = rounds.reduce((row, { tally }, i) => {
-            const { votes } = tally.find(fv => fv.finalist === id) || {}
-            row[`Round ${i+1}`] = votes || 0
-            return row
-          }, { Finalist: title })
-          row.Runoff = id === winner ? runoff.wins : id === -1 ? runoff.losses : 0
-          return row
-        })
         res.csv(data, true, { 'Content-Disposition': `inline; filename="${category}.csv"` })
       } else {
-        const getFinalistTitle = id => finalists.find(f => f.id === id).title
-        rounds.forEach(round => {
-          round.tally.forEach(fv => {
-            fv.finalist = getFinalistTitle(fv.finalist)
-          })
-          if (round.eliminated) round.eliminated = round.eliminated.map(getFinalistTitle)
-          if (round.winner) round.winner = getFinalistTitle(round.winner)
-        })
-        res.json({ rounds, runoff, winner: winner && getFinalistTitle(winner) })
+        res.json(data)
       }
     }).catch(next)
   }
