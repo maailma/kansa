@@ -12,6 +12,8 @@ services:
       - hugo
       - kansa
       - raami
+      - voltti
+
     entrypoint: /bin/bash -c "envsubst '$$SERVER_NAME $$SSL_CERTIFICATE $$SSL_CERTIFICATE_KEY' < /nginx.conf.template > /usr/local/openresty/nginx/conf/nginx.conf && /usr/local/openresty/bin/openresty -g 'daemon off;'"
 
   hugo:
@@ -34,6 +36,14 @@ services:
 
   raami:
     build: ./raami
+    entrypoint: ./wait-for-it.sh postgres:5432 -- npm start
+    links:
+      - postgres
+    expose:
+      - "3000"
+
+  voltti:
+    build: ./voltti
     entrypoint: ./wait-for-it.sh postgres:5432 -- npm start
     links:
       - postgres
@@ -85,3 +95,4 @@ services:
       - ./postgres/init/25-public-data.sql:/docker-entrypoint-initdb.d/25-public-data.sql:ro
       - ./postgres/init/30-hugo-init.sql:/docker-entrypoint-initdb.d/30-hugo-init.sql:ro
       - ./postgres/init/40-raami-init.sql:/docker-entrypoint-initdb.d/40-raami-init.sql:ro
+      - ./postgres/init/50-voltti-init.sql:/docker-entrypoint-initdb.d/50-voltti-init.sql:ro

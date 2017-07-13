@@ -36,6 +36,11 @@ services:
       DATABASE_URL:
       SESSION_SECRET:
 
+  voltti:
+    environment:
+      DATABASE_URL:
+      SESSION_SECRET:
+
   kyyhky:
     environment:
       LOGIN_URI_ROOT:
