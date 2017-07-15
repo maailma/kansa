@@ -87,3 +87,15 @@ BEGIN
     RETURN coalesce(nullif(trim(both from pn), ''), p.legal_name) AS name;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE FUNCTION get_badge_name(p people) RETURNS varchar AS $$
+BEGIN
+    RETURN coalesce(nullif(p.badge_name, ''), preferred_name(p)) AS name;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE FUNCTION get_badge_subtitle(p people) RETURNS varchar AS $$
+BEGIN
+    RETURN coalesce(p.badge_subtitle, p.country, '') AS name;
+END;
+$$ LANGUAGE plpgsql;

@@ -110,7 +110,7 @@ function getPeople(req, res, next) {
 
 function getPerson(req, res, next) {
   const id = parseInt(req.params.id);
-  req.app.locals.db.one(`${selectAllPeopleData} WHERE id = $1`, id)
+  req.app.locals.db.one(`${selectAllPeopleData} WHERE p.id = $1`, id)
     .then(data => res.status(200).json(data))
     .catch(err => next(err));
 }
