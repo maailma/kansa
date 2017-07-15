@@ -40,6 +40,10 @@ services:
       DATABASE_URL: postgres://raami:pwd@postgres:5432/api
       SESSION_SECRET: dev secret
 
+  tarra:
+    volumes:
+      - ./tarra/fonts:/var/www/html/vendor/tecnickcom/tcpdf/fonts:ro
+
   tuohi:
     environment:
       VERBOSE_FILL: 'true'

@@ -28,6 +28,7 @@ services:
     links:
       - kyyhky
       - postgres
+      - tarra
       - tuohi
     expose:
       - "3000"
@@ -39,6 +40,11 @@ services:
       - postgres
     expose:
       - "3000"
+
+  tarra:
+    image: worldcon75devops/label-printer:0.1.0
+    expose:
+      - "80"
 
   tuohi:
     image: eeemeli/pdf-form-fill:0.2
