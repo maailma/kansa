@@ -122,8 +122,9 @@ function eliminateNextCandidates(tally, firstPlaceVotes) {
     .filter(({ votes }) => votes === leastVotes)
     .map(({ finalist }) => finalist)
   if (next.length <= 1) return next
-  const leastFirstPlaceVotes = firstPlaceVotes[firstPlaceVotes.length - 1].votes
-  return firstPlaceVotes
+  const tiebreaker = firstPlaceVotes.filter(({ finalist }) => next.includes(finalist))
+  const leastFirstPlaceVotes = tiebreaker[tiebreaker.length - 1].votes
+  return tiebreaker
     .filter(({ votes }) => votes === leastFirstPlaceVotes)
     .map(({ finalist }) => finalist)
 }
