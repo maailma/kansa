@@ -18,6 +18,7 @@ if (debug.enabled('kansa:db')) {
 const db = pgp(process.env.DATABASE_URL);
 
 const admin = require('./lib/admin');
+const badge = require('./lib/badge');
 const Ballot = require('./lib/ballot');
 const ballot = new Ballot(db);
 const key = require('./lib/key');
@@ -74,6 +75,7 @@ router.post('/people/lookup', publicData.lookupPerson);
 router.all('/people/:id*', user.verifyPeopleAccess);
 router.get('/people/:id', people.getPerson);
 router.post('/people/:id', people.updatePerson);
+router.get('/people/:id/badge', badge.getBadge);
 router.get('/people/:id/ballot', ballot.getBallot);
 router.get('/people/:id/log', log.getPersonLog);
 router.post('/people/:id/upgrade', upgrade.authUpgradePerson);
