@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 
-const ballotData = ({ member_number, legal_name, email, city, state, country, badge_text, paper_pubs, token }) => {
+const ballotData = ({ member_number, legal_name, email, city, state, country, badge_name, paper_pubs, token }) => {
   const address = paper_pubs && paper_pubs.address.split(/[\n\r]+/) || [''];
   return {
     info: {
@@ -18,7 +18,7 @@ const ballotData = ({ member_number, legal_name, email, city, state, country, ba
       'Voting token': token,
       'E-mail': email,
       'State/Province/Prefecture': state || '',
-      'Badge name': badge_text || '',
+      'Badge name': badge_name || '',
       'Voting fee': 'Yes',
       'Member': member_number ? 'Yes' : 'No'
     }
@@ -34,7 +34,7 @@ class Ballot {
   getBallot(req, res, next) {
     const id = parseInt(req.params.id);
     this.db.any(`
-      SELECT member_number, legal_name, email, city, state, country, badge_text, paper_pubs, m.data->>'token' as token
+      SELECT member_number, legal_name, email, city, state, country, badge_name, paper_pubs, m.data->>'token' as token
         FROM People p JOIN Payments m ON (p.id = m.person_id)
        WHERE p.id = $1 AND m.type = 'ss-token' AND m.data->>'token' IS NOT NULL`, id
     )

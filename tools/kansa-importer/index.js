@@ -152,7 +152,7 @@ function personData(rec) {
     'public_first_name', 'public_last_name',
     'email',
     'city', 'state', 'country',
-    'badge_text'
+    'badge_name'
   ].reduce((data, key) => {
     const v = rec[key];
     if (v) data[key] = v;

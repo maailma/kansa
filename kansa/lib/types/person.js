@@ -12,7 +12,7 @@ class Person {
       'public_first_name', 'public_last_name',  // text
       'email',  // text
       'city', 'state', 'country',  // text
-      'badge_text',  // text
+      'badge_name', 'badge_subtitle',  // text
       'can_hugo_nominate', 'can_hugo_vote', 'can_site_select',  // bool NOT NULL DEFAULT false
       'paper_pubs'  // jsonb
     ];
