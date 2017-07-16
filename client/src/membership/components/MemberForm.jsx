@@ -1,4 +1,5 @@
 import { Map } from 'immutable'
+import FlatButton from 'material-ui/FlatButton'
 import React, { PropTypes } from 'react'
 const { Col, Row } = require('react-flexbox-grid')
 const ImmutablePropTypes = require('react-immutable-proptypes')
@@ -8,6 +9,7 @@ import { emptyPaperPubsMap } from '../constants'
 import messages from '../messages'
 import { TextInput } from './form-components'
 import { paperPubsIsValid, AddPaperPubs, EditPaperPubs } from './paper-pubs'
+import PreviewBadge from './preview-badge'
 
 export const hintStyle = {
   color: midGray,
@@ -131,7 +133,16 @@ export default class MemberForm extends React.Component {
         <Col xs={12} sm={6}>
           <TextInput { ...inputProps } path='badge_subtitle' hintText={member.get('country')} />
         </Col>
-        <Col xs={12} style={hintStyle}>{this.msg('badge_hint')}</Col>
+        <Col xs={12} style={hintStyle}>
+          <PreviewBadge
+            memberId={member.get('id')}
+            name={member.get('badge_name') || member.get('preferred_name')}
+            subtitle={member.get('badge_subtitle') || member.get('country')}
+          >
+            <FlatButton label='Preview' primary={true} style={{ float: 'right' }} />
+          </PreviewBadge>
+          {this.msg('badge_hint')}
+        </Col>
       </Row>
       <Row>
         <Col xs={12} sm={6}>
