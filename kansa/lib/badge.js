@@ -32,23 +32,25 @@ const splitNameInTwain = (name) => {
 }
 
 function getBadge(req, res, next) {
-  const id = parseInt(req.params.id);
-  req.app.locals.db.one(`
+  const id = parseInt(req.params.id)
+  req.app.locals.db.oneOrNone(`
     SELECT member_number, membership, get_badge_name(p) AS name, get_badge_subtitle(p) AS subtitle
       FROM people p WHERE id = $1 AND membership != 'Supporter'`, id
   )
-    .then(({ member_number, membership, name, subtitle}) => {
-      const [FirstName, Surname] = splitNameInTwain(name)
+    .then(data => {
+      const { member_number, membership, name, subtitle } = data || {}
+      const [FirstName, Surname] = splitNameInTwain(req.query.name || name || '')
       return fetch('http://tarra/label.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           format: 'png',
           labeldata: [{
-            id: String(member_number),
+            id: String(member_number) || 'barcode',
+            Class: membership,
             FirstName,
             Surname,
-            Info: subtitle
+            Info: req.query.subtitle || subtitle || ''
           }]
         })
       }).then(({ body, headers }) => {
