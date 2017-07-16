@@ -65,10 +65,6 @@ function upgradeMembership(req, db, data) {
       if (nextTypeIdx <= prevTypeIdx) throw new InputError(`Can't "upgrade" from ${prev.membership} to ${data.membership}`);
       if (!parseInt(prev.member_number)) set.push("member_number=nextdamm('member_number_seq')");
       if (data.paper_pubs) set.push('paper_pubs=$(paper_pubs)');
-      if (Person.hugoVoterType(data.membership)) {
-        data.can_hugo_vote = true;
-        set.push('can_hugo_vote=$(can_hugo_vote)')
-      }
       return tx.one(`
            UPDATE People
               SET ${set.join(', ')}

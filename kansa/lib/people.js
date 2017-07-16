@@ -127,7 +127,6 @@ function addPerson(req, db, person) {
   return db.tx(tx => tx.sequence((i, data) => { switch (i) {
 
     case 0:
-      if (person.hugoVoterType) person.data.can_hugo_vote = true;
       return tx.one(`INSERT INTO People ${person.sqlValues} RETURNING id, member_number`, person.data);
 
     case 1:
