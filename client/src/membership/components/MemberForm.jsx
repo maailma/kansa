@@ -91,6 +91,7 @@ export default class MemberForm extends React.Component {
 
   render() {
     const { lc, newMember, prices, tabIndex } = this.props
+    const { member } = this.state
     const inputProps = {
       getDefaultValue: this.getDefaultValue,
       getValue: this.getValue,
@@ -122,6 +123,15 @@ export default class MemberForm extends React.Component {
               </div>
           ] }
         </Col>
+      </Row>
+      <Row>
+        <Col xs={12} sm={6}>
+          <TextInput { ...inputProps } path='badge_name' hintText={member.get('preferred_name')} />
+        </Col>
+        <Col xs={12} sm={6}>
+          <TextInput { ...inputProps } path='badge_subtitle' hintText={member.get('country')} />
+        </Col>
+        <Col xs={12} style={hintStyle}>{this.msg('badge_hint')}</Col>
       </Row>
       <Row>
         <Col xs={12} sm={6}>
