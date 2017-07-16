@@ -97,6 +97,6 @@ $$ LANGUAGE plpgsql;
 
 CREATE FUNCTION get_badge_subtitle(p people) RETURNS varchar AS $$
 BEGIN
-    RETURN coalesce(p.badge_subtitle, p.country, '') AS name;
+    RETURN coalesce(nullif(p.badge_subtitle, ''), p.country, '') AS name;
 END;
 $$ LANGUAGE plpgsql;
