@@ -6,8 +6,13 @@ module.exports = { getBadge }
 
 const splitNameInTwain = (name) => {
   name = name.trim()
-  if (name.length <= TITLE_MAX_LENGTH) {
-    return [name, '']
+  if (name.indexOf('\n') !== -1) {
+    const nm = name.match(/(.*)\s+([\s\S]*)/)
+    const n0 = nm[1].trim()
+    const n1 = nm[2].trim().replace(/\s+/g, ' ')
+    return [n0, n1]
+  } else if (name.length <= TITLE_MAX_LENGTH) {
+    return ['', name]
   } else {
     const na = name.split(/\s+/)
     let n0 = na.shift() || ''
