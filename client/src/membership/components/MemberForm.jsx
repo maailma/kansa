@@ -5,7 +5,7 @@ const { Col, Row } = require('react-flexbox-grid')
 const ImmutablePropTypes = require('react-immutable-proptypes')
 
 import { midGray } from '../../theme'
-import { emptyPaperPubsMap } from '../constants'
+import { emptyPaperPubsMap, isAttendingMember } from '../constants'
 import messages from '../messages'
 import { TextInput } from './form-components'
 import { paperPubsIsValid, AddPaperPubs, EditPaperPubs } from './paper-pubs'
@@ -126,9 +126,15 @@ export default class MemberForm extends React.Component {
           ] }
         </Col>
       </Row>
-      <Row>
+      {isAttendingMember(member) && <Row>
         <Col xs={12} sm={6}>
-          <TextInput { ...inputProps } path='badge_name' hintText={member.get('preferred_name')} />
+          <TextInput
+            hintText={member.get('preferred_name')}
+            multiLine={true}
+            path='badge_name'
+            rowsMax={2}
+            { ...inputProps }
+          />
         </Col>
         <Col xs={12} sm={6}>
           <TextInput { ...inputProps } path='badge_subtitle' hintText={member.get('country')} />
@@ -143,7 +149,7 @@ export default class MemberForm extends React.Component {
           </PreviewBadge>
           {this.msg('badge_hint')}
         </Col>
-      </Row>
+      </Row>}
       <Row>
         <Col xs={12} sm={6}>
           <TextInput { ...inputProps } path='public_first_name' />
