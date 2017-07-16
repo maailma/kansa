@@ -48,7 +48,8 @@ function cleanBallots(ballots, finalists) {
     const ballot = ballots[i]
     for (let j = ballot.length - 1; j >= 0; --j) {
       const choice = ballot[j]
-      if (finalists.indexOf(choice) === -1) ballot.splice(j, 1)
+      if (!choice) ballot.splice(j)  // no-preference is null at this point
+      else if (finalists.indexOf(choice) === -1) ballot.splice(j, 1)
     }
     if (ballot.length === 0) ballots.splice(i, 1)
   }
