@@ -21,6 +21,10 @@ const location = (member) => (
     .trim()
 )
 
+const badgeName = (member) => (
+  member.get('badge_name') || member.get('preferred_name')
+)
+
 const publicName = (member) => (
   [member.get('public_first_name'), member.get('public_last_name')]
     .filter(n => n)
@@ -55,8 +59,8 @@ class MemberCard extends React.Component {
           leftIcon={<ContentCreate style={{ top: 12 }}/>}
           primaryText="Edit personal information"
           secondaryText={<p>
+            Badge name: <span style={infoStyle}>{badgeName(member)}</span><br/>
             Public name: <span style={infoStyle}>{publicName(member) || '[not set]'}</span><br/>
-            Location: <span style={infoStyle}>{location(member) || '[not set]'}</span>
           </p>}
           secondaryTextLines={2}
         />
