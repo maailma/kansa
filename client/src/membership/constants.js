@@ -10,7 +10,7 @@ export const membershipTypes = [ 'NonMember', 'Exhibitor', 'Supporter', 'KidInTo
 export const emptyPaperPubsMap = Map({ name: '', address: '', country: '' })
 
 export const isAttendingMember = (member) => {
-  const types = ['Exhibitor', 'KinInTow', 'Child', 'Youth', 'FirstWorldcon', 'Adult']
+  const types = ['Exhibitor', 'KidInTow', 'Child', 'Youth', 'FirstWorldcon', 'Adult']
   const membership = typeof member === 'string' ? member : member.get('membership')
   return types.indexOf(membership) !== -1
 }
