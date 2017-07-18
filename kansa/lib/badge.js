@@ -27,7 +27,7 @@ const splitNameInTwain = (name) => {
         if (n0.length + p0.length <= n1.length + p0.length) {
           n0 = n0 + ' ' + p0
         } else {
-          n1 = p0 + ' ' + n1
+          n1 = p1 + ' ' + n1
         }
         if (p1) na.push(p1)
       }
@@ -56,7 +56,8 @@ function getBadge(req, res, next) {
             FirstName,
             Surname,
             Info: req.query.subtitle || subtitle || ''
-          }]
+          }],
+          ltype: 'web'
         })
       }).then(({ body, headers }) => {
         res.setHeader('Content-Type', headers.get('content-type'))
