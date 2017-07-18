@@ -20,15 +20,13 @@ const splitNameInTwain = (name) => {
     while (na.length) {
       const p0 = na.shift()
       const p1 = na.pop()
-      if (p1 && (n1.length + p1.length < n0.length + p0.length)) {
+      if (p1 && (n0.length + p0.length > n1.length + p1.length)) {
         n1 = p1 + ' ' + n1
         na.unshift(p0)
+      } else if (!p1 && (n0.length + p0.length > n1.length + p0.length)) {
+        n1 = p0 + ' ' + n1
       } else {
-        if (n0.length + p0.length <= n1.length + p0.length) {
-          n0 = n0 + ' ' + p0
-        } else {
-          n1 = p1 + ' ' + n1
-        }
+        n0 = n0 + ' ' + p0
         if (p1) na.push(p1)
       }
     }
