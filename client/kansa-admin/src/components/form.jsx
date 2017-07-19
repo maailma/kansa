@@ -22,9 +22,11 @@ const basePropTypes = {
   onChange: PropTypes.func.isRequired
 };
 
-function label(path) {
-  const ps = path.join(' ');
-  return ps.charAt(0).toUpperCase() + ps.slice(1).replace(/_/g, ' ');
+function label(path, required) {
+  const ps = path.join(' ')
+  let label = ps.charAt(0).toUpperCase() + ps.slice(1).replace(/_/g, ' ')
+  if (required) label += ' (Required)'
+  return label
 }
 
 const TextInput = ({ getDefaultValue, getValue, onChange, path, required, style = {}, ...props }) => {
@@ -33,14 +35,13 @@ const TextInput = ({ getDefaultValue, getValue, onChange, path, required, style 
   if (value === null) return null;
   const ulStyle = value === getDefaultValue(path) ? {} : styles.changed;
   return <TextField
-    floatingLabelText={label(path)}
+    floatingLabelText={label(path, required)}
     floatingLabelFixed={true}
     style={{ ...styles.common, ...style }}
     className='memberInput'
     underlineStyle={ulStyle}
     underlineFocusStyle={ulStyle}
     value={value}
-    errorText={ !required || value ? '' : 'Required' }
     onChange={ ev => onChange(path, ev.target.value) }
     { ...props }
   />;
