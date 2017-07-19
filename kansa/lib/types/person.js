@@ -14,7 +14,9 @@ class Person {
       'city', 'state', 'country',  // text
       'badge_name', 'badge_subtitle',  // text
       'can_hugo_nominate', 'can_hugo_vote', 'can_site_select',  // bool NOT NULL DEFAULT false
-      'paper_pubs'  // jsonb
+      'paper_pubs',  // jsonb
+      'daypass',  // string
+      'daypass_days'  // int[]
     ];
   }
 
