@@ -160,7 +160,11 @@ export default class Member extends React.Component {
           Last modified<br />
           { member.get('last_modified') }
         </div>
-        { membership == 'NonMember' ? 'Non-member' : `Member #${member.get('member_number')} (${membership})` }
+        {
+          membership == 'NonMember' ? 'Non-member'
+            : /^DP/.test(membership) ? membership.replace(/^DP/, 'Day pass:')
+            : `Member #${member.get('member_number')} (${membership})`
+        }
       </div>}
       open={true}
       autoScrollBodyContent={true}

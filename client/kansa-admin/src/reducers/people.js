@@ -9,6 +9,14 @@ export default function(state = List(), action) {
         console.warn(`${action.type} expects array data (got ${typeof action.data})`, action.data);
         return state;
       }
+      action.data.forEach(person => {
+        if (person && person.membership === 'NonMember' && person.daypass) {
+          const days = ['Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            .filter((day, i) => person.daypass_days[i])
+            .join('/')
+          person.membership = `DP ${person.daypass} ${days}`
+        }
+      })
       return fromJS(action.data);
 
     case 'SET PERSON':
