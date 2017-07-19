@@ -18,6 +18,8 @@ export default class Member extends React.Component {
     member: ImmutablePropTypes.mapContains({
       legal_name: PropTypes.string,
       email: PropTypes.string,
+      badge_name: PropTypes.string,
+      badge_subtitle: PropTypes.string,
       public_first_name: PropTypes.string,
       public_last_name: PropTypes.string,
       country: PropTypes.string,
@@ -35,6 +37,8 @@ export default class Member extends React.Component {
     member: Map({
       legal_name: '',
       email: '',
+      badge_name: '',
+      badge_subtitle: '',
       public_first_name: '',
       public_last_name: '',
       country: '',
@@ -43,7 +47,7 @@ export default class Member extends React.Component {
     })
   }
 
-  static fields = [ 'membership', 'legal_name', 'email', 'public_first_name', 'public_last_name',
+  static fields = [ 'membership', 'legal_name', 'email', 'badge_name', 'badge_subtitle', 'public_first_name', 'public_last_name',
     'country', 'state', 'city', 'paper_pubs' ];
 
   static membershipTypes = [ 'NonMember', 'Exhibitor', 'Supporter', 'KidInTow', 'Child', 'Youth', 'FirstWorldcon', 'Adult' ];

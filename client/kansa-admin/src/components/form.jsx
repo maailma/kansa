@@ -50,7 +50,10 @@ const TextInput = ({ getDefaultValue, getValue, onChange, path, required, style 
 export const CommonFields = (props) => (<div>
   <TextInput { ...props } path='legal_name' required={true} />
   <TextInput { ...props } path='email' required={true} />
-  <br />
+  <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+    <TextInput { ...props } path='badge_name' multiLine rowsMax={2} />
+    <TextInput { ...props } path='badge_subtitle' />
+  </div>
   <TextInput { ...props } path='public_first_name' />
   <TextInput { ...props } path='public_last_name' />
   <br />
