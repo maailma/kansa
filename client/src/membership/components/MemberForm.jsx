@@ -80,7 +80,8 @@ export default class MemberForm extends React.Component {
 
   msg(key, params) {
     const { lc = 'en' } = this.props
-    return messages[lc][key](params)
+    const fn = messages[lc][key]
+    return fn ? fn(params) : key
   }
 
   onChange = (path, value) => {
@@ -126,7 +127,7 @@ export default class MemberForm extends React.Component {
           ] }
         </Col>
       </Row>
-      {isAttendingMember(member) && <Row>
+      {lc !== 'daypass' && isAttendingMember(member) && <Row>
         <Col xs={12} sm={6}>
           <TextInput
             hintText={member.get('preferred_name')}

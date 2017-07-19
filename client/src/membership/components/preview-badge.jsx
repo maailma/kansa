@@ -23,7 +23,7 @@ const styles = {
 
 export default class PreviewBadge extends React.Component {
   static propTypes = {
-    memberId: PropTypes.number.isRequired,
+    memberId: PropTypes.number,
     name: PropTypes.string,
     subtitle: PropTypes.string
   }
@@ -38,7 +38,7 @@ export default class PreviewBadge extends React.Component {
     if (name) q.push(`name=${encodeURIComponent(name)}`)
     if (subtitle) q.push(`subtitle=${encodeURIComponent(subtitle)}`)
     const qs = q.length === 0 ? '' : '?' + q.join('&')
-    return `${API_ROOT}people/${memberId}/badge${qs}`
+    return `${API_ROOT}people/${memberId||0}/badge${qs}`
   }
 
   handleClose = () => this.setState({ isOpen: false })
