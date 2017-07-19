@@ -21,7 +21,7 @@ export default class NewMember extends React.Component {
   }
 
   handleOpen = () => { this.setState({
-    member: Member.defaultProps.member.set('comment', ''),
+    member: Member.defaultProps.member.merge({ comment: '', membership: 'NonMember' }),
     open: true,
     sent: false
   }) }
