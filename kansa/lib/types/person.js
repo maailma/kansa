@@ -29,7 +29,7 @@ class Person {
   }
 
   static get userModFields() {
-    return [ 'legal_name', 'public_first_name', 'public_last_name', 'city', 'state', 'country', 'paper_pubs' ];
+    return [ 'legal_name', 'public_first_name', 'public_last_name', 'city', 'state', 'country', 'badge_name', 'badge_subtitle', 'paper_pubs' ];
   }
 
   static get membershipTypes() {
