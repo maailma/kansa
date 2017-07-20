@@ -42,7 +42,7 @@ services:
       - "3000"
 
   tarra:
-    image: worldcon75devops/label-printer:0.2.1
+    image: worldcon75devops/label-printer:0.3.0
     expose:
       - "80"
 

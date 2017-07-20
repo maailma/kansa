@@ -1,4 +1,5 @@
 const fetch = require('node-fetch')
+const { AuthError } = require('./errors')
 
 const TITLE_MAX_LENGTH = 14
 
@@ -68,24 +69,34 @@ function getBadge(req, res, next) {
 
 function getBarcode(req, res, next) {
   const id = parseInt(req.params.id)
+  const key = req.params.key
   const format = req.params.fmt === 'pdf' ? 'pdf' : 'png'
   req.app.locals.db.one(`
-    SELECT member_number, membership, get_badge_name(p) AS name, get_badge_subtitle(p) AS subtitle
-      FROM people p WHERE id = $1 AND membership != 'Supporter'`, id
+    SELECT member_number, membership,
+           get_badge_name(p) AS name, get_badge_subtitle(p) AS subtitle,
+           d.status AS daypass, daypass_days(d) AS days
+      FROM people p
+      JOIN keys k USING (email)
+ LEFT JOIN daypasses d ON (p.id = d.person_id)
+     WHERE p.id=$(id) AND key=$(key) AND membership != 'Supporter'`, { id, key }
   )
     .then(data => {
-      const { member_number, membership, name, subtitle } = data || {}
+      const { daypass, days, member_number, membership, name, subtitle } = data
+      const code = membership.charAt(0) + '-' + (member_number || `i${id}`)
       const [FirstName, Surname] = splitNameInTwain(name || '')
+      const Info = daypass
+        ? 'Daypass ' + ['Wed', 'Thu', 'Fri', 'Sat', 'Sun'].filter((_, i) => days[i]).join('/')
+        : subtitle || ''
       return fetch('http://tarra/label.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           format,
           labeldata: [{
-            id: `${membership.charAt(0)}-${id}`,
+            id: code,
             FirstName,
             Surname,
-            Info: subtitle || ''
+            Info
           }],
           ltype: 'mail'
         })
@@ -95,5 +106,10 @@ function getBarcode(req, res, next) {
         body.pipe(res)
       })
     })
-    .catch(next)
+    .catch(error => {
+      if (error.message === 'No data returned from the query.') {
+        error = new AuthError()
+      }
+      next(error)
+    })
 }

@@ -45,6 +45,7 @@ router.get('/public/stats', cors({ origin: '*' }), publicData.getPublicStats);
 
 router.post('/key', key.setKey);
 router.all('/login', user.login);
+router.get('/barcode/:key/:id.:fmt', badge.getBarcode);
 
 router.get('/favicon.ico', (req, res, next) => {
   res.sendFile('static/favicon.ico', { root: __dirname }, err => err && next(err));
@@ -77,7 +78,6 @@ router.get('/people/:id', people.getPerson);
 router.post('/people/:id', people.updatePerson);
 router.get('/people/:id/badge', badge.getBadge);
 router.get('/people/:id/ballot', ballot.getBallot);
-router.get('/people/:id/barcode.:fmt', badge.getBarcode);
 router.get('/people/:id/log', log.getPersonLog);
 router.post('/people/:id/upgrade', upgrade.authUpgradePerson);
 
