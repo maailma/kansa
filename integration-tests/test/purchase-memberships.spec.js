@@ -15,7 +15,7 @@ describe('Membership purchases', () => {
       agent.post('/api/purchase')
         .send({ amount: 0, email: '@', source: { id: 'x' } })
         .expect((res) => {
-          const exp = { status: 400, message: 'Required parameters: amount, email, source' };
+          const exp = { status: 400, message: 'If one is set, the other is required: amount, source' };
           if (res.status !== exp.status) throw new Error(`Bad status: got ${res.status}, expected ${exp.status}`);
           if (res.body.message !== exp.message) throw new Error(`Bad reply: ${JSON.stringify(res.body)}`);
         })
