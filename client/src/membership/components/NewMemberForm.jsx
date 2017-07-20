@@ -62,6 +62,16 @@ class NewMemberForm extends React.Component {
     });
   }
 
+  onSignup = () => {
+    const { buyMembership, push, showMessage } = this.props
+    const { member } = this.state
+    showMessage('Signing up...')
+    buyMembership(member, 0, member.get('email'), null, () => {
+      showMessage('Signup completed; new member registered!')
+      push('/')
+    })
+  }
+
   get description() {
     const { prices } = this.props;
     const { member } = this.state;
@@ -81,9 +91,9 @@ class NewMemberForm extends React.Component {
   }
 
   render() {
-    const { prices, replace } = this.props;
-    const { member, sent, valid } = this.state;
-    const paymentDisabled = !valid || this.price <= 0;
+    const { prices, replace } = this.props
+    const { member, sent, valid } = this.state
+    const amount = this.price
 
     return <Row>
       <Col
@@ -113,25 +123,35 @@ class NewMemberForm extends React.Component {
           </CardText>
           <CardActions style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: 16, paddingBottom: 16 }}>
             <div style={{ color: 'rgba(0, 0, 0, 0.5)', paddingTop: 8, paddingRight: 16 }}>
-              {this.price > 0 ? `Total: €${this.price / 100}` : ''}
+              {amount > 0 ? `Total: €${amount / 100}` : ''}
             </div>
-            <StripeCheckout
-              amount={this.price}
-              currency="EUR"
-              description={this.description}
-              disabled={paymentDisabled}
-              email={member.get('email')}
-              onCheckout={this.onCheckout}
-              onClose={() => this.setState({ sent: false })}
-            >
+            {amount > 0 ? (
+              <StripeCheckout
+                amount={amount}
+                currency="EUR"
+                description={this.description}
+                disabled={!valid}
+                email={member.get('email')}
+                onCheckout={this.onCheckout}
+                onClose={() => this.setState({ sent: false })}
+              >
+                <FlatButton
+                  label={sent ? 'Working...' : 'Pay by card'}
+                  disabled={!valid}
+                  onTouchTap={() => this.setState({ sent: true })}
+                  style={{ flexShrink: 0 }}
+                  tabIndex={3}
+                />
+              </StripeCheckout>
+            ) : (
               <FlatButton
-                label={ sent ? 'Working...' : 'Pay by card' }
-                disabled={paymentDisabled}
-                onTouchTap={ () => this.setState({ sent: true }) }
+                label="Sign up"
+                disabled={!valid || amount < 0}
+                onTouchTap={this.onSignup}
                 style={{ flexShrink: 0 }}
                 tabIndex={3}
               />
-            </StripeCheckout>
+            )}
           </CardActions>
         </Card>
       </Col>
