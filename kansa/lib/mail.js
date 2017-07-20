@@ -21,10 +21,20 @@ const mailRecipient = (email, res) => {
       names[last] = 'and ' + names[last]
       name = names.join(', ')
   }
+  const attending = res
+    .filter(r => {
+      switch (r.membership) {
+        case 'Supporter': return false
+        case 'NonMember': return !!r.daypass
+        default: return true
+      }
+    })
+    .map(({ id, name }) => ({ id, name }))
   const hugo_members = res
     .filter(r => r.can_hugo_nominate || r.can_hugo_vote)
     .map(({ id, name }) => ({ id, name }))
   return {
+    attending,
     email: res[0].email,
     hugo_members,
     key: res[0].key,
@@ -33,8 +43,11 @@ const mailRecipient = (email, res) => {
   }
 }
 mailRecipient.selector = `
-  SELECT email, key, id, membership, preferred_name(p) as name, can_hugo_nominate, can_hugo_vote
-    FROM People p LEFT JOIN Keys USING (email)`
+   SELECT email, key, p.id, membership, preferred_name(p) as name,
+          can_hugo_nominate, can_hugo_vote, d.status AS daypass
+     FROM people p
+LEFT JOIN keys USING (email)
+LEFT JOIN daypasses d ON (p.id = d.person_id)`
 
 function mailTask(type, data, options = { searchKeys: [] }) {
   return fetch('http://kyyhky:3000/job', {

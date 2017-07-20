@@ -2,7 +2,7 @@ const fs = require('fs');
 const mustache = require('mustache');
 const tfm = require('tiny-frontmatter');
 const wrap = require('wordwrap');
-const loginUri = require('./login-uri');
+const { loginUri } = require('./login-uri');
 
 const WRAP_WIDTH = 78;
 

@@ -1,7 +1,8 @@
 var ContactImporter = require('sendgrid/lib/helpers/contact-importer/contact-importer')
 const debug = require('debug')('kyyhky:sync')
-const loginUri = require('./login-uri');
+const { barcodeUri, loginUri } = require('./login-uri');
 
+const MAX_ATTENDING = process.env.MAX_ATTENDING || 3
 const MAX_HUGO_MEMBERS = process.env.MAX_HUGO_MEMBERS || 4
 
 const recipient = (src) => {
@@ -100,12 +101,19 @@ class ContactSync {
             return false
           }
           rx.login_url = loginUri(rx)
+          if (!rx.attending || rx.attending.length > MAX_ATTENDING) rx.attending = []
+          for (let i = 1; i <= MAX_ATTENDING; ++i) {
+            const { id, name } = rx.attending[i - 1] || {}
+            rx[`attending_barcode_url_${i}`] = id ? barcodeUri({ key: rx.key, memberId: id }) : null
+            rx[`attending_name_${i}`] = name || null
+          }
           if (!rx.hugo_members || rx.hugo_members.length > MAX_HUGO_MEMBERS) rx.hugo_members = []
           for (let i = 1; i <= MAX_HUGO_MEMBERS; ++i) {
             const { id, name } = rx.hugo_members[i - 1] || {}
             rx[`hugo_login_url_${i}`] = id ? loginUri(Object.assign({ memberId: id }, rx)) : null
             rx[`hugo_name_${i}`] = name || null
           }
+          delete rx.attending
           delete rx.hugo_members
           delete rx.key
           const prev = recipients.find(r => r.email === rx.email)

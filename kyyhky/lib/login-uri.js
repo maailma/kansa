@@ -1,5 +1,10 @@
 const root = process.env.LOGIN_URI_ROOT
 
+function barcodeUri({ key, memberId }) {
+  const parts = [root, 'api/barcode', key, memberId]
+  return encodeURI(parts.join('/'))
+}
+
 function loginUri({ email, key, memberId, path }) {
   const parts = [root, email, key]
   if (memberId) parts.push(memberId)
@@ -12,4 +17,4 @@ function loginUri({ email, key, memberId, path }) {
   return encodeURI(uri)
 }
 
-module.exports = loginUri
+module.exports = { barcodeUri, loginUri }
