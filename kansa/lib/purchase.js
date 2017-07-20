@@ -222,9 +222,8 @@ class Purchase {
   makeMembershipPurchase(req, res, next) {
     const amount = Number(req.body.amount);
     const { account, email, source } = req.body;
-    if (!amount || !email || !source) return next(
-      new InputError('Required parameters: amount, email, source')
-    );
+    if (!email) return next(new InputError('Required parameter: email'));
+    if (!amount !== !source) return next(new InputError('If one is set, the other is required: amount, source'));
     const newMembers = (req.body.new_members || []).map(src => new Person(src));
     const reqUpgrades = req.body.upgrades || [];
     if (newMembers.length === 0 && reqUpgrades.length === 0) return next(
@@ -254,11 +253,11 @@ class Purchase {
       const items = newMemberPaymentItems.concat(upgradePaymentItems);
       const calcAmount = items.reduce((sum, item) => sum + item.amount, 0);
       if (amount !== calcAmount) throw new InputError(`Amount mismatch: in request ${amount}, calculated ${calcAmount}`);
-      return new Payment(this.pgp, this.db, account, email, source, items)
+      return amount === 0 ? [] : new Payment(this.pgp, this.db, account, email, source, items)
         .process()
     }).then(_items => {
       paymentItems = _items;
-      charge_id = _items[0].stripe_charge_id;
+      if (_items[0]) charge_id = _items[0].stripe_charge_id
       return Promise.all(upgrades.map(u => (
         upgradePerson(req, this.db, u)
           .then(({ member_number }) => {
