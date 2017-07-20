@@ -50,6 +50,7 @@ services:
 
   kyyhky:
     environment:
+      API_URI_ROOT: https://localhost:4430/api
       DEBUG: kyyhky:*,sendgrid
       LOGIN_URI_ROOT: https://localhost:4430/#/login
       SENDGRID_APIKEY:

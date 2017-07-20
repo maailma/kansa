@@ -1,12 +1,13 @@
-const root = process.env.LOGIN_URI_ROOT
+const apiRoot = process.env.API_URI_ROOT
+const loginRoot = process.env.LOGIN_URI_ROOT
 
 function barcodeUri({ key, memberId }) {
-  const parts = [root, 'api/barcode', key, memberId]
+  const parts = [apiRoot, 'barcode', key, memberId]
   return encodeURI(parts.join('/'))
 }
 
 function loginUri({ email, key, memberId, path }) {
-  const parts = [root, email, key]
+  const parts = [loginRoot, email, key]
   if (memberId) parts.push(memberId)
   let uri = parts.join('/')
   if (!memberId && path) {

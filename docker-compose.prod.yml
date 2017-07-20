@@ -38,6 +38,7 @@ services:
 
   kyyhky:
     environment:
+      API_URI_ROOT:
       LOGIN_URI_ROOT:
       SENDGRID_APIKEY:
     restart: always
