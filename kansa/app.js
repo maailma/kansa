@@ -77,6 +77,7 @@ router.get('/people/:id', people.getPerson);
 router.post('/people/:id', people.updatePerson);
 router.get('/people/:id/badge', badge.getBadge);
 router.get('/people/:id/ballot', ballot.getBallot);
+router.get('/people/:id/barcode.:fmt', badge.getBarcode);
 router.get('/people/:id/log', log.getPersonLog);
 router.post('/people/:id/upgrade', upgrade.authUpgradePerson);
 

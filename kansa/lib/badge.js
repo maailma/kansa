@@ -2,7 +2,7 @@ const fetch = require('node-fetch')
 
 const TITLE_MAX_LENGTH = 14
 
-module.exports = { getBadge }
+module.exports = { getBadge, getBarcode }
 
 const splitNameInTwain = (name) => {
   name = name.trim()
@@ -56,6 +56,38 @@ function getBadge(req, res, next) {
             Info: req.query.subtitle || subtitle || ''
           }],
           ltype: 'web'
+        })
+      }).then(({ body, headers }) => {
+        res.setHeader('Content-Type', headers.get('content-type'))
+        res.setHeader('Content-Length', headers.get('content-length'))
+        body.pipe(res)
+      })
+    })
+    .catch(next)
+}
+
+function getBarcode(req, res, next) {
+  const id = parseInt(req.params.id)
+  const format = req.params.fmt === 'pdf' ? 'pdf' : 'png'
+  req.app.locals.db.one(`
+    SELECT member_number, membership, get_badge_name(p) AS name, get_badge_subtitle(p) AS subtitle
+      FROM people p WHERE id = $1 AND membership != 'Supporter'`, id
+  )
+    .then(data => {
+      const { member_number, membership, name, subtitle } = data || {}
+      const [FirstName, Surname] = splitNameInTwain(name || '')
+      return fetch('http://tarra/label.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          format,
+          labeldata: [{
+            id: `${membership.charAt(0)}-${id}`,
+            FirstName,
+            Surname,
+            Info: subtitle || ''
+          }],
+          ltype: 'mail'
         })
       }).then(({ body, headers }) => {
         res.setHeader('Content-Type', headers.get('content-type'))
