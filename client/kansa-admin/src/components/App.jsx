@@ -7,6 +7,7 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 
 import filterPeople from '../filterPeople';
+import BarcodeListener from './barcode-listener'
 import { HelpDialog } from './Help';
 import Member from './Member';
 import MemberTable from './MemberTable';
@@ -50,10 +51,23 @@ class App extends React.Component {
     }
   }
 
+  handleBarcode = (code) => {
+    const { people } = this.props
+    if (this.state.member) return this.setState({ filter: '' })
+    const [_, isId, num] = code.match(/^.-(i?)(\d+)/)
+    const member = isId
+      ? people.get(Number(num))
+      : people.find(p => p && p.get('member_number') === num)
+    this.setState({ filter: '', member })
+  }
+
   render() {
     const { title, api, payments, people, user } = this.props
     const { filter, helpOpen, member, scene } = this.state
-    return <div>
+    return <BarcodeListener
+      onBarcode={this.handleBarcode}
+      pattern={/^[A-Z]-i?\d+$/}
+    >
       <Toolbar
         title={title}
         filter={filter}
@@ -97,7 +111,7 @@ class App extends React.Component {
         open={helpOpen}
         handleClose={() => this.setState({ helpOpen: false })}
       />
-    </div>
+    </BarcodeListener>
   }
 }
 
