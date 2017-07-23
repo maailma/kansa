@@ -9,6 +9,7 @@ import ContentAdd from 'material-ui/svg-icons/content/add';
 import filterPeople from '../filterPeople';
 import BarcodeListener from './barcode-listener'
 import { HelpDialog } from './Help';
+import RegOptionsDialog from './RegistrationOptions';
 import Member from './Member';
 import MemberTable from './MemberTable';
 import NewMember from './NewMember';
@@ -31,6 +32,7 @@ class App extends React.Component {
     filter: '',
     helpOpen: false,
     member: null,
+    regOpen: false,
     scene: 'people'
   }
 
@@ -63,7 +65,7 @@ class App extends React.Component {
 
   render() {
     const { title, api, payments, people, user } = this.props
-    const { filter, helpOpen, member, scene } = this.state
+    const { filter, helpOpen, member, regOpen, scene } = this.state
     return <BarcodeListener
       onBarcode={this.handleBarcode}
       pattern={/^[A-Z]-i?\d+$/}
@@ -78,6 +80,7 @@ class App extends React.Component {
           .then(res => location.reload())
           .catch(e => console.error('Logout failed', e))
         }
+        onRegOptions={() => this.setState({ regOpen: true })}
         onSceneChange={scene => this.setState({ scene })}
         scene={scene}
       />
@@ -110,6 +113,10 @@ class App extends React.Component {
       <HelpDialog
         open={helpOpen}
         handleClose={() => this.setState({ helpOpen: false })}
+      />
+      <RegOptionsDialog
+        onClose={() => this.setState({ regOpen: false })}
+        open={regOpen}
       />
     </BarcodeListener>
   }

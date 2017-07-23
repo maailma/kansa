@@ -15,9 +15,10 @@ import './styles/app.css';
 
 import API from './api';
 import App from './components/App';
+import { loadRegistrationState } from './components/RegistrationOptions'
 import reducers from './reducers'
 
-const store = createStore(reducers);
+const store = createStore(reducers, loadRegistrationState());
 const api = new API(API_HOST ? `https://${API_HOST}/api/` : '/api/');
 api.GET('user')
   .then(data => store.dispatch({ type: 'LOGIN', data }))

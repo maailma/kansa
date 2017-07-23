@@ -16,7 +16,7 @@ import PeopleIcon from 'material-ui/svg-icons/social/people'
 
 let searchField = null;
 
-const KansaToolbar = ({ title, filter, user, onFilterChange, onHelp, onLogout, onSceneChange, scene }) => <Toolbar
+const KansaToolbar = ({ title, filter, user, onFilterChange, onHelp, onLogout, onRegOptions, onSceneChange, scene }) => <Toolbar
   style={{ position: 'fixed', zIndex: 1, height: 48, width: '100%', backgroundColor: 'rgb(221, 236, 148)' }}
 >
   <ToolbarGroup firstChild={true}>
@@ -61,6 +61,7 @@ const KansaToolbar = ({ title, filter, user, onFilterChange, onHelp, onLogout, o
       targetOrigin={{ horizontal: 'right', vertical: 'top' }}
     >
       <MenuItem primaryText={user.get('email')} disabled={true} />
+      <MenuItem primaryText="Registration options" onTouchTap={onRegOptions} />
       <MenuItem primaryText="Help" onTouchTap={onHelp} />
       <MenuItem primaryText="Logout" onTouchTap={onLogout} />
     </IconMenu>
@@ -73,7 +74,8 @@ KansaToolbar.propTypes = {
   user: PropTypes.instanceOf(Map).isRequired,
   onFilterChange: PropTypes.func.isRequired,
   onHelp: PropTypes.func.isRequired,
-  onLogout: PropTypes.func.isRequired
+  onLogout: PropTypes.func.isRequired,
+  onRegOptions: PropTypes.func.isRequired
 }
 
 export default KansaToolbar;
