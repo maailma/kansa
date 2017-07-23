@@ -4,7 +4,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import ReconnectingWebSocket from 'reconnecting-websocket';
-import { combineReducers, createStore } from 'redux';
+import { createStore } from 'redux';
 
 // Needed by material-ui for onTouchTap, see http://stackoverflow.com/a/34015469/988941
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -15,12 +15,9 @@ import './styles/app.css';
 
 import API from './api';
 import App from './components/App';
-import paymentData from './reducers/payment-data';
-import payments from './reducers/payments';
-import people from './reducers/people';
-import user from './reducers/user';
+import reducers from './reducers'
 
-const store = createStore(combineReducers({ paymentData, payments, people, user }));
+const store = createStore(reducers);
 const api = new API(API_HOST ? `https://${API_HOST}/api/` : '/api/');
 api.GET('user')
   .then(data => store.dispatch({ type: 'LOGIN', data }))
