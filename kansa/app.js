@@ -45,7 +45,9 @@ router.get('/public/stats', cors({ origin: '*' }), publicData.getPublicStats);
 
 router.post('/key', key.setKey);
 router.all('/login', user.login);
+
 router.get('/barcode/:key/:id.:fmt', badge.getBarcode);
+router.get('/blank-badge', badge.getBadge);
 
 router.get('/favicon.ico', (req, res, next) => {
   res.sendFile('static/favicon.ico', { root: __dirname }, err => err && next(err));

@@ -36,7 +36,7 @@ const splitNameInTwain = (name) => {
 }
 
 function getBadge(req, res, next) {
-  const id = parseInt(req.params.id)
+  const id = parseInt(req.params.id || '0')
   req.app.locals.db.oneOrNone(`
     SELECT member_number, membership, get_badge_name(p) AS name, get_badge_subtitle(p) AS subtitle
       FROM people p WHERE id = $1 AND membership != 'Supporter'`, id
@@ -50,7 +50,7 @@ function getBadge(req, res, next) {
         body: JSON.stringify({
           format: 'png',
           labeldata: [{
-            id: String(member_number) || 'barcode',
+            id: String(member_number) || 'number',
             Class: membership,
             FirstName,
             Surname,
