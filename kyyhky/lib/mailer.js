@@ -2,7 +2,7 @@ const fs = require('fs');
 const mustache = require('mustache');
 const tfm = require('tiny-frontmatter');
 const wrap = require('wordwrap');
-const { loginUri } = require('./login-uri');
+const { barcodeUri, loginUri } = require('./login-uri');
 
 const WRAP_WIDTH = 78;
 
@@ -73,7 +73,10 @@ class Mailer {
   }
 
   sendEmail(tmplName, data, done) {
-    let tmplData = Object.assign({ login_uri: loginUri(data) }, data);
+    let tmplData = Object.assign({
+      barcode_uri: barcodeUri(data),
+      login_uri: loginUri(data)
+    }, data);
     switch (tmplName) {
 
       case 'hugo-packet-series-extra':

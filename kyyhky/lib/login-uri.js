@@ -1,8 +1,9 @@
 const apiRoot = process.env.API_URI_ROOT
 const loginRoot = process.env.LOGIN_URI_ROOT
 
-function barcodeUri({ key, memberId }) {
-  const parts = [apiRoot, 'barcode', key, memberId]
+function barcodeUri({ id, key, memberId, membership }) {
+  if (membership === 'Supporter') return ''
+  const parts = [apiRoot, 'barcode', key, memberId || id]
   return encodeURI(parts.join('/'))
 }
 
