@@ -3,6 +3,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
+import ReconnectingWebSocket from 'reconnecting-websocket';
 import { combineReducers, createStore } from 'redux';
 
 // Needed by material-ui for onTouchTap, see http://stackoverflow.com/a/34015469/988941
@@ -26,13 +27,12 @@ api.GET('user')
   .then(() => api.GET('people'))
   .then(data => store.dispatch({ type: 'INIT PEOPLE', data }))
   .then(() => {
-    const ws = new WebSocket(`wss://${API_HOST || location.host}/api/people/updates`);
+    const wsUri = `wss://${API_HOST || location.host}/api/people/updates`;
+    const ws = new ReconnectingWebSocket(wsUri);
     ws.onmessage = msg => {
       const data = JSON.parse(msg.data);
       store.dispatch({ type: 'SET PERSON', data });
     };
-    ws.onclose = ev => console.warn('WebSocket closed', ev);
-    ws.onerror = ev => console.error('WebSocket error!', ws, ev);
   })
   .then(() => api.GET('purchase/list', { all: 1 }))
   .then(data => store.dispatch({ type: 'INIT PAYMENTS', data }))
