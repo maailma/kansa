@@ -34,11 +34,12 @@ export default class PreviewBadge extends React.Component {
 
   get badgeImgUrl() {
     const { memberId, name, subtitle } = this.props
+    const path = memberId ? `people/${memberId}/badge` : 'blank-badge'
     const q = []
     if (name) q.push(`name=${encodeURIComponent(name)}`)
     if (subtitle) q.push(`subtitle=${encodeURIComponent(subtitle)}`)
     const qs = q.length === 0 ? '' : '?' + q.join('&')
-    return `${API_ROOT}people/${memberId||0}/badge${qs}`
+    return API_ROOT + path + qs
   }
 
   handleClose = () => this.setState({ isOpen: false })
