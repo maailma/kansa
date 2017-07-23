@@ -1,8 +1,26 @@
 const { AuthError, InputError } = require('./errors');
 
 module.exports = {
-  getPublicPeople, getPublicStats, lookupPerson
+  getDaypassStats, getPublicPeople, getPublicStats, lookupPerson
 };
+
+function getDaypassStats(req, res, next) {
+  const csv = !!(req.query.csv);
+  req.app.locals.db.any('SELECT * FROM daypass_stats')
+    .then(data => {
+      if (csv) res.csv(data, true);
+      else {
+        const days = { Wed: {}, Thu: {}, Fri: {}, Sat: {}, Sun: {} }
+        data.forEach(row => {
+          Object.keys(days).forEach(day => {
+            if (row[day]) days[day][row.status] = row[day]
+          })
+        })
+        res.json(days);
+      }
+    })
+    .catch(next);
+}
 
 function getPublicPeople(req, res, next) {
   const csv = !!(req.query.csv);

@@ -42,6 +42,7 @@ const peopleStream = new PeopleStream(db);
 // these are accessible without authentication
 router.get('/public/people', cors({ origin: '*' }), publicData.getPublicPeople);
 router.get('/public/stats', cors({ origin: '*' }), publicData.getPublicStats);
+router.get('/public/daypass-stats', cors({ origin: '*' }), publicData.getDaypassStats);
 
 router.post('/key', key.setKey);
 router.all('/login', user.login);

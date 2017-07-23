@@ -67,6 +67,33 @@ CREATE VIEW country_stats AS SELECT * FROM crosstab(
   "=" int
 );
 
+CREATE VIEW daypass_stats AS SELECT * FROM crosstab(
+     'SELECT status, ''Wed'' AS day, count(*)
+        FROM daypasses WHERE day1=true
+    GROUP BY status
+  UNION
+      SELECT status, ''Thu'' AS day, count(*)
+        FROM daypasses WHERE day2=true
+    GROUP BY status
+  UNION
+      SELECT status, ''Fri'' AS day, count(*)
+        FROM daypasses WHERE day3=true
+    GROUP BY status
+  UNION
+      SELECT status, ''Sat'' AS day, count(*)
+        FROM daypasses WHERE day4=true
+    GROUP BY status
+  UNION
+      SELECT status, ''Sun'' AS day, count(*)
+        FROM daypasses WHERE day5=true
+    GROUP BY status
+  ORDER BY status DESC',
+  $$VALUES ('Wed'), ('Thu'), ('Fri'), ('Sat'), ('Sun') $$
+) AS ct (
+  status text,
+  "Wed" int, "Thu" int, "Fri" int, "Sat" int, "Sun" int
+);
+
 CREATE VIEW public_members AS
      SELECT country(country), membership,
             public_last_name AS last_name,
