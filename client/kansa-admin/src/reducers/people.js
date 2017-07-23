@@ -10,6 +10,7 @@ export default function(state = List(), action) {
         return state;
       }
       action.data.forEach(person => {
+        if (person && person.member_number) person.member_number = parseInt(person.member_number)
         if (person && person.membership === 'NonMember' && person.daypass) {
           const days = ['Wed', 'Thu', 'Fri', 'Sat', 'Sun']
             .filter((day, i) => person.daypass_days[i])
@@ -25,6 +26,7 @@ export default function(state = List(), action) {
         console.warn(`${action.type} expects positive integer id`, action.data);
         return state;
       }
+      if (action.data.member_number) action.data.member_number = parseInt(action.data.member_number);
       [
         'legal_name', 'email', 'public_first_name', 'public_last_name',
         'city', 'state', 'country'

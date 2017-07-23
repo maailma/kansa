@@ -47,7 +47,7 @@ function getMemberFilter(filter) {
           return member.get('membership', '').toLowerCase().indexOf(cmp) > -1;
         default:
           const value = member.get(key, null);
-          return value !== null && value.toLowerCase().indexOf(cmp) > -1;
+          return value !== null && String(value).toLowerCase().indexOf(cmp) > -1;
       }
     }
 
