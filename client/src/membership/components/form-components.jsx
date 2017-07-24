@@ -67,6 +67,7 @@ export const MembershipSelect = ({ discount, getDefaultValue, getValue, lc = 'en
     { membershipTypes.map((type, idx) => {
       if (type === 'NonMember' && prevMembership !== 'NonMember') return null
       if (type === 'Exhibitor' && prevMembership !== 'Exhibitor') return null
+      if (type === 'FirstWorldcon' && prevMembership !== 'FirstWorldcon') return null
       let amount = prices ? prices.getIn(['memberships', type, 'amount'], -100) : -100
       if (discount) amount -= prices && prices.getIn(['discounts', `${discount}-${type}`, 'amount']) || 0
       const eurAmount = (amount - prevAmount) / 100

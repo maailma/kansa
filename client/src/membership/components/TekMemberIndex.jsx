@@ -10,7 +10,6 @@ import { List, ListItem, makeSelectable } from 'material-ui/List'
 import EventSeat from 'material-ui/svg-icons/action/event-seat'
 import DirectionsRun from 'material-ui/svg-icons/maps/directions-run'
 import DirectionsWalk from 'material-ui/svg-icons/maps/directions-walk'
-import StarTicket from 'material-ui/svg-icons/maps/local-play'
 import SmilingFace from 'material-ui/svg-icons/social/mood'
 
 import { setScene } from '../../app/actions/app'
@@ -43,13 +42,6 @@ class TekMemberTypeList extends React.Component {
         style={style}
         value={selectedType}
       >
-        <ListItem
-          innerDivStyle={{ paddingLeft: 60 }}
-          leftIcon={<StarTicket/>}
-          primaryText={`${messages.fi.FirstWorldcon()} (${this.getAmount('FirstWorldcon')/100}€)`}
-          secondaryText="TEKin jäsen, joka ei aiemmin ole ollut yhdenkään Worldconin jäsen"
-          value="FirstWorldcon"
-        />
         <ListItem
           innerDivStyle={{ paddingLeft: 60 }}
           leftIcon={<DirectionsWalk/>}
