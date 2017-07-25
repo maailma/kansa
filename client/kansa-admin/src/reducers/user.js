@@ -9,7 +9,8 @@ export default function(state = Map(), action) {
         email: action.data.email,
         people: List((action.data.people || {}).map(p => p.id)),
         member_admin: action.data.roles && action.data.roles.indexOf('member_admin') != -1,
-        admin_admin: action.data.roles && action.data.roles.indexOf('admin_admin') != -1
+        member_list: action.data.roles && action.data.roles.indexOf('member_list') != -1,
+        siteselection: action.data.roles && action.data.roles.indexOf('siteselection') != -1
       });
 
     case 'LOGOUT':
@@ -18,4 +19,3 @@ export default function(state = Map(), action) {
   }
   return state;
 }
-
