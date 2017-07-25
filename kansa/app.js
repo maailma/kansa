@@ -29,6 +29,8 @@ const PeopleStream = require('./lib/PeopleStream');
 const publicData = require('./lib/public');
 const Purchase = require('./lib/purchase');
 const purchase = new Purchase(pgp, db);
+const Siteselect = require('./lib/siteselect');
+const siteselect = new Siteselect(db);
 const slack = require('./lib/slack');
 const upgrade = require('./lib/upgrade');
 const user = require('./lib/user');
@@ -88,6 +90,13 @@ router.post('/slack/invite', slack.invite);
 
 router.get('/user', user.getInfo);
 router.get('/user/log', log.getUserLog);
+
+router.all('/siteselect*', siteselect.verifyAccess);
+router.get('/siteselect/tokens.:fmt', siteselect.getTokens);
+router.get('/siteselect/tokens/:token', siteselect.findToken);
+router.get('/siteselect/voters.:fmt', siteselect.getVoters);
+router.get('/siteselect/voters/:id', siteselect.findVoterTokens);
+router.post('/siteselect/voters/:id', siteselect.vote);
 
 router.all('/admin*', admin.isAdminAdmin);
 router.get('/admin', admin.getAdmins);
