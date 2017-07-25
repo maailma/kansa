@@ -15,7 +15,9 @@ import PeopleIcon from 'material-ui/svg-icons/social/people'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
+import { HelpDialog } from './Help'
 import RegistrationLock from './RegistrationLock'
+import RegOptionsDialog from './RegistrationOptions'
 
 const SceneTabs = ({ onChange, value }) => (
   <Tabs
@@ -75,7 +77,7 @@ class SearchBox extends Component {
 
 let ToolbarActions = class extends Component {
   render () {
-    const { lockable, locked, onHelp, onLogout, onRegOptions, user } = this.props
+    const { email, lockable, locked, onHelp, onLogout, onRegOptions } = this.props
     return (
       <ToolbarGroup lastChild={true}>
         <RegistrationLock
@@ -89,7 +91,7 @@ let ToolbarActions = class extends Component {
             anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
             targetOrigin={{ horizontal: 'right', vertical: 'top' }}
           >
-            <MenuItem primaryText={user.get('email')} disabled={true} />
+            <MenuItem primaryText={email} disabled={true} />
             {lockable && <MenuItem primaryText="Lock for Registration"
               onTouchTap={() => this.regLock.lock()}
             />}
@@ -104,7 +106,8 @@ let ToolbarActions = class extends Component {
 }
 
 ToolbarActions = connect(
-  ({ registration }) => ({
+  ({ registration, user }) => ({
+    email: user.get('email'),
     locked: registration.get('locked') || false,
     lockable: !!registration.get('password')
   })
@@ -112,13 +115,14 @@ ToolbarActions = connect(
 
 export default class KansaToolbar extends Component {
   static propTypes = {
-    title: PropTypes.string.isRequired,
     filter: PropTypes.string.isRequired,
-    user: PropTypes.instanceOf(Map).isRequired,
     onFilterChange: PropTypes.func.isRequired,
-    onHelp: PropTypes.func.isRequired,
-    onLogout: PropTypes.func.isRequired,
-    onRegOptions: PropTypes.func.isRequired
+    onLogout: PropTypes.func.isRequired
+  }
+
+  state = {
+    helpOpen: false,
+    regOpen: false
   }
 
   focus () {
@@ -126,13 +130,14 @@ export default class KansaToolbar extends Component {
   }
 
   render () {
-    const { title, filter, user, onFilterChange, onHelp, onLogout, onRegOptions, onSceneChange, scene } = this.props
+    const { filter, onFilterChange, onLogout, onSceneChange, scene } = this.props
+    const { helpOpen, regOpen } = this.state
     return (
       <Toolbar
         style={{ position: 'fixed', zIndex: 1, height: 48, width: '100%', backgroundColor: 'rgb(221, 236, 148)' }}
       >
         <ToolbarGroup firstChild={true}>
-          <ToolbarTitle text={title} style={{ lineHeight: '48px', marginLeft: 16, paddingRight: 16 }} />
+          <ToolbarTitle text={TITLE} style={{ lineHeight: '48px', marginLeft: 16, paddingRight: 16 }} />
         </ToolbarGroup>
         <ToolbarGroup>
           <SceneTabs onChange={onSceneChange} value={scene} />
@@ -142,7 +147,20 @@ export default class KansaToolbar extends Component {
           onChange={onFilterChange}
           ref={ref => { this.searchBox = ref }}
         />
-        <ToolbarActions onHelp={onHelp} onLogout={onLogout} onRegOptions={onRegOptions} user={user} />
+        <ToolbarActions
+          onHelp={() => this.setState({ helpOpen: true })}
+          onLogout={onLogout}
+          onRegOptions={() => this.setState({ regOpen: true })}
+        />
+
+        <HelpDialog
+          open={helpOpen}
+          handleClose={() => this.setState({ helpOpen: false })}
+        />
+        <RegOptionsDialog
+          onClose={() => this.setState({ regOpen: false })}
+          open={regOpen}
+        />
       </Toolbar>
     )
   }

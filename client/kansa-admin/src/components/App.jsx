@@ -8,8 +8,6 @@ import ContentAdd from 'material-ui/svg-icons/content/add';
 
 import filterPeople from '../filterPeople';
 import BarcodeListener from './barcode-listener'
-import { HelpDialog } from './Help';
-import RegOptionsDialog from './RegistrationOptions';
 import Member from './Member';
 import MemberTable from './MemberTable';
 import NewMember from './NewMember';
@@ -18,7 +16,6 @@ import Toolbar from './Toolbar';
 
 class App extends React.Component {
   static propTypes = {
-    title: PropTypes.string,
     api: PropTypes.object.isRequired,
     people: PropTypes.instanceOf(List).isRequired,
     user: PropTypes.instanceOf(Map).isRequired
@@ -30,30 +27,21 @@ class App extends React.Component {
 
   state = {
     filter: '',
-    helpOpen: false,
     member: null,
-    regOpen: false,
     scene: 'people'
-  }
-
-  constructor(props) {
-    super(props);
-    const defaultTitle = App.defaultProps.title;
-    let title = props.title;
-    if (title.indexOf(defaultTitle) === -1) title = `${defaultTitle} - ${title}`;
-    document.title = title;
   }
 
   componentDidMount () {
     if (this.toolbar) this.toolbar.focus()
+    const appTitle = App.defaultProps.title
+    document.title = TITLE.indexOf(appTitle) === -1 ? `${appTitle} - ${TITLE}` : TITLE
   }
 
-  componentWillReceiveProps(nextProps) {
-    const prevMember = this.state.member;
-    if (prevMember) {
-      const id = prevMember.get('id');
-      const member = nextProps.list && nextProps.list.find(m => m && m.get('id') === id) || null;
-      this.setState({ member });
+  componentWillReceiveProps ({ list }) {
+    if (this.state.member) {
+      const id = this.state.member.get('id')
+      const member = list && list.find(m => m && m.get('id') === id) || null
+      this.setState({ member })
     }
   }
 
@@ -68,24 +56,25 @@ class App extends React.Component {
     this.setState({ filter: '', member })
   }
 
-  render() {
-    const { title, api, payments, people, user } = this.props
-    const { filter, helpOpen, member, regOpen, scene } = this.state
+  render () {
+    const { api, payments, people, user } = this.props
+    const { filter, member, scene } = this.state
+    if (!Map.isMap(user) || user.size === 0) {
+      return <div>Login required.</div>
+    } else if (!user.get('member_admin') && !user.get('member_list')) {
+      return <div>User not authorised</div>
+    }
     return <BarcodeListener
       onBarcode={this.handleBarcode}
       pattern={/^[A-Z]-i?\d+$/}
     >
       <Toolbar
-        title={title}
         filter={filter}
-        user={user}
         onFilterChange={filter => this.setState({ filter })}
-        onHelp={() => this.setState({ helpOpen: true })}
         onLogout={() => api.GET('logout')
           .then(res => location.reload())
           .catch(e => console.error('Logout failed', e))
         }
-        onRegOptions={() => this.setState({ regOpen: true })}
         onSceneChange={scene => this.setState({ scene })}
         ref={ref => { this.toolbar = ref }}
         scene={scene}
@@ -100,7 +89,9 @@ class App extends React.Component {
         <Member
           key="dialog"
           api={api}
-          handleClose={() => this.setState({ member: null }, () => { if (this.toolbar) this.toolbar.focus() })}
+          handleClose={() => this.setState({ member: null }, () => {
+            if (this.toolbar) this.toolbar.focus()
+          })}
           member={member}
         />,
         <NewMember key="new" add={member => api.POST('people', member.toJS())}>
@@ -115,15 +106,6 @@ class App extends React.Component {
           onPaymentSelect={payment => console.log('payment', payment.toJS())}
         />
       ]}
-
-      <HelpDialog
-        open={helpOpen}
-        handleClose={() => this.setState({ helpOpen: false })}
-      />
-      <RegOptionsDialog
-        onClose={() => this.setState({ regOpen: false })}
-        open={regOpen}
-      />
     </BarcodeListener>
   }
 }

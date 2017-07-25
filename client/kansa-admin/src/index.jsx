@@ -68,7 +68,7 @@ const theme = getMuiTheme({
 render(
   <Provider store={store}>
     <MuiThemeProvider muiTheme={theme}>
-      <App api={api} title={TITLE} />
+      <App api={api} />
     </MuiThemeProvider>
   </Provider>,
   document.getElementById('app')
