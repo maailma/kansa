@@ -164,8 +164,8 @@ function exportPreview(req, res, next) {
 	if (!req.session.user.raami_admin) return res.status(401).json({ status: 'unauthorized' });
 	req.app.locals.db.any(`
 		SELECT w.filedata, w.filename, a.name
-		  FROM Works AS w, Artist AS a
-		 WHERE a.people_id = w.people_id`)
+		  FROM Works w LEFT JOIN Artist a USING (people_id)
+		 WHERE w.filedata IS NOT NULL`)
 		.then((data)=> {
 			zip.pipe(output);
 			for (img of data) {
