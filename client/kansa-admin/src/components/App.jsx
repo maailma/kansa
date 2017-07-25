@@ -44,6 +44,10 @@ class App extends React.Component {
     document.title = title;
   }
 
+  componentDidMount () {
+    if (this.toolbar) this.toolbar.focus()
+  }
+
   componentWillReceiveProps(nextProps) {
     const prevMember = this.state.member;
     if (prevMember) {
@@ -56,9 +60,10 @@ class App extends React.Component {
   handleBarcode = (code) => {
     const { people } = this.props
     if (this.state.member) return this.setState({ filter: '' })
-    const [_, isId, num] = code.match(/^.-(i?)(\d+)/)
+    const [_, isId, numStr] = code.match(/^.-(i?)(\d+)/)
+    const num = Number(numStr)
     const member = isId
-      ? people.get(Number(num))
+      ? people.get(num)
       : people.find(p => p && p.get('member_number') === num)
     this.setState({ filter: '', member })
   }
@@ -82,6 +87,7 @@ class App extends React.Component {
         }
         onRegOptions={() => this.setState({ regOpen: true })}
         onSceneChange={scene => this.setState({ scene })}
+        ref={ref => { this.toolbar = ref }}
         scene={scene}
       />
 
@@ -94,7 +100,7 @@ class App extends React.Component {
         <Member
           key="dialog"
           api={api}
-          handleClose={() => this.setState({ member: null })}
+          handleClose={() => this.setState({ member: null }, () => { if (this.toolbar) this.toolbar.focus() })}
           member={member}
         />,
         <NewMember key="new" add={member => api.POST('people', member.toJS())}>

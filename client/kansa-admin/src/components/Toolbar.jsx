@@ -40,6 +40,10 @@ const SceneTabs = ({ onChange, value }) => (
 )
 
 class SearchBox extends Component {
+  focus () {
+    if (this.searchField) this.searchField.focus()
+  }
+
   render () {
     const { filter, onChange } = this.props
     return (
@@ -117,6 +121,10 @@ export default class KansaToolbar extends Component {
     onRegOptions: PropTypes.func.isRequired
   }
 
+  focus () {
+    if (this.searchBox) this.searchBox.focus()
+  }
+
   render () {
     const { title, filter, user, onFilterChange, onHelp, onLogout, onRegOptions, onSceneChange, scene } = this.props
     return (
@@ -129,7 +137,11 @@ export default class KansaToolbar extends Component {
         <ToolbarGroup>
           <SceneTabs onChange={onSceneChange} value={scene} />
         </ToolbarGroup>
-        <SearchBox filter={filter} onChange={onFilterChange} />
+        <SearchBox
+          filter={filter}
+          onChange={onFilterChange}
+          ref={ref => { this.searchBox = ref }}
+        />
         <ToolbarActions onHelp={onHelp} onLogout={onLogout} onRegOptions={onRegOptions} user={user} />
       </Toolbar>
     )
