@@ -3,15 +3,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import FloatingActionButton from 'material-ui/FloatingActionButton';
-import ContentAdd from 'material-ui/svg-icons/content/add';
-
 import filterPeople from '../filterPeople';
 import BarcodeListener from './barcode-listener'
-import Member from './Member';
-import MemberTable from './MemberTable';
-import NewMember from './NewMember';
 import PaymentTable from './PaymentTable';
+import PeopleScene from './PeopleScene'
 import Toolbar from './Toolbar';
 
 class App extends React.Component {
@@ -80,32 +75,21 @@ class App extends React.Component {
         scene={scene}
       />
 
-      {scene === 'people' ? [
-        <MemberTable
-          key="table"
-          list={filterPeople(people, filter)}
-          onMemberSelect={member => this.setState({ member })}
-        />,
-        <Member
-          key="dialog"
+      {scene === 'people' ? (
+        <PeopleScene
           api={api}
-          handleClose={() => this.setState({ member: null }, () => {
-            if (this.toolbar) this.toolbar.focus()
-          })}
+          filter={filter}
           member={member}
-        />,
-        <NewMember key="new" add={member => api.POST('people', member.toJS())}>
-          <FloatingActionButton style={{ position: 'fixed', bottom: '24px', right: '24px' }}>
-            <ContentAdd />
-          </FloatingActionButton>
-        </NewMember>
-      ] : [
+          onMemberSelect={member => this.setState({ member }, () => {
+            if (!member && this.toolbar) this.toolbar.focus()
+          })}
+        />
+      ) : (
         <PaymentTable
-          key="table"
           list={filterPeople(payments, filter)}
           onPaymentSelect={payment => console.log('payment', payment.toJS())}
         />
-      ]}
+      )}
     </BarcodeListener>
   }
 }

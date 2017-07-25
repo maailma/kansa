@@ -12,8 +12,8 @@ import Member from './Member'
 
 class NewMember extends Component {
   static propTypes = {
-    add: PropTypes.func.isRequired,
-    locked: PropTypes.bool
+    enabled: PropTypes.bool,
+    onAdd: PropTypes.func.isRequired
   }
 
   state = {
@@ -31,10 +31,9 @@ class NewMember extends Component {
   handleClose = () => { this.setState({ open: false }) }
 
   render() {
-    const { add, children, locked } = this.props
+    const { enabled, onAdd } = this.props
     const { member, open, sent } = this.state
-    if (locked) return null
-    const button = React.Children.only(children)
+    if (!enabled) return null
     let disabled = sent || !Member.isValid(member)
     const formProps = {
       getDefaultValue: () => '',
@@ -43,7 +42,12 @@ class NewMember extends Component {
     }
     return (
       <div>
-        { React.cloneElement(button, { onTouchTap: this.handleOpen }) }
+        <FloatingActionButton
+          onTouchTap={this.handleOpen}
+          style={{ position: 'fixed', bottom: '24px', right: '24px' }}
+        >
+          <ContentAdd />
+        </FloatingActionButton>
         <Dialog
           title='Add new member'
           open={open}
@@ -57,7 +61,7 @@ class NewMember extends Component {
               disabled={disabled}
               onTouchTap={ () => {
                 this.setState({ sent: true })
-                (add(member) || Promise.reject('NewMember expected a Promise from add()'))
+                (onAdd(member) || Promise.reject('NewMember expected a Promise from onAdd()'))
                   .then(res => {
                     console.log('New member added', res)
                     this.handleClose()
@@ -79,7 +83,7 @@ class NewMember extends Component {
 }
 
 export default connect(
-  ({ registration }) => ({
-    locked: registration.get('locked') || false,
+  ({ registration, user }) => ({
+    enabled: Boolean(user.get('member_admin') && !registration.get('locked'))
   })
 )(NewMember)
