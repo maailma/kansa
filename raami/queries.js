@@ -169,9 +169,11 @@ function exportPreview(req, res, next) {
 		.then((data)=> {
 			zip.pipe(output);
 			for (img of data) {
-				const imgdata = img.filedata.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-				const buffer3 = new Buffer.from(imgdata[2], 'base64');
-				zip.append(buffer3, { name: img.name+'_'+img.filename });
+				const imgdata = img.filedata.match(/^data:([A-Za-z-+\/]*);base64,(.+)$/);
+				if (imgdata) {
+					const buffer3 = new Buffer.from(imgdata[2], 'base64');
+					zip.append(buffer3, { name: img.name+'_'+img.filename });
+				}
 				// fs.writeFile(dir+img.name+'_'+img.filename, img.filedata, (err)=>{
 				//     if (err) throw err
 				// })
