@@ -138,7 +138,7 @@ function exportArtists(req, res, next) {
     SELECT p.member_number, p.membership, p.legal_name, p.email, p.city, p.country,
         a.name, a.continent, a.url,
         a.category, a.description, a.transport, a.auction, a.print, a.digital, a.half,
-        a.legal, a.agent, a.contact, a.waitlist, a.postage 
+        a.legal, a.agent, a.contact, a.waitlist, a.postage
         FROM Artist as a, kansa.people as p WHERE a.people_id = p.ID order by p.member_number
     `)
     .then((data) => res.status(200).csv(data, true))
@@ -146,54 +146,39 @@ function exportArtists(req, res, next) {
 }
 
 function exportPreview(req, res, next) {
-    //const dir = '/tmp/raamitmp/'
-    const output = fs.createWriteStream('/tmp/raamipreview.zip');
-    const zip = archiver('zip', {
-    store: true // Sets the compression method to STORE. 
-      });
+	//const dir = '/tmp/raamitmp/'
+	const output = fs.createWriteStream('/tmp/raamipreview.zip');
+	const zip = archiver('zip', {
+		store: true // Sets the compression method to STORE.
+	});
+	output.on('close', () => {
+		console.log(zip.pointer() + ' total bytes');
+		fs.stat('/tmp/raamipreview.zip', (err, stats) => {
+			if (err) return console.error(err);
+			console.log(stats);
+		})
+		res.sendFile(path.resolve('/tmp/raamipreview.zip'))
+	});
+	zip.on('error', (err) => { throw err });
 
-    output.on('close', function () {
-      console.log(zip.pointer() + ' total bytes');
-      fs.stat('/tmp/raamipreview.zip', function (err, stats) {
-          if (err) {
-         return console.error(err);
-         }
-        console.log(stats);
-      })
-      res.sendFile(path.resolve('/tmp/raamipreview.zip'))
-
-    });
-
-    zip.on('error', function(err){
-      throw err;
-    });
-
-    if (!req.session.user.raami_admin) return res.status(401).json({ status: 'unauthorized' });
-    req.app.locals.db.any(`
-      SELECT w.filedata, w.filename, a.name FROM Works as w, Artist as a where a.people_id = w.people_id
-       `)
-    .then((data)=> {
-
-      zip.pipe(output);
-
-
-      for(img of data) {
-        const imgdata = img.filedata.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-        const buffer3 = new Buffer.from(imgdata[2], 'base64');
-        zip.append(buffer3, { name: img.name+'_'+img.filename });
-        // fs.writeFile(dir+img.name+'_'+img.filename, img.filedata, (err)=>{
-        //     if (err) throw err
-        // })
-        // console.log(dir+img.name+'_'+img.filename+' saved')
-
-      }
-
-
-      //archive.directory(dir);
-      zip.finalize();
-
-
-
-    })
-    .catch(next)
+	if (!req.session.user.raami_admin) return res.status(401).json({ status: 'unauthorized' });
+	req.app.locals.db.any(`
+		SELECT w.filedata, w.filename, a.name
+		  FROM Works AS w, Artist AS a
+		 WHERE a.people_id = w.people_id`)
+		.then((data)=> {
+			zip.pipe(output);
+			for (img of data) {
+				const imgdata = img.filedata.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+				const buffer3 = new Buffer.from(imgdata[2], 'base64');
+				zip.append(buffer3, { name: img.name+'_'+img.filename });
+				// fs.writeFile(dir+img.name+'_'+img.filename, img.filedata, (err)=>{
+				//     if (err) throw err
+				// })
+				// console.log(dir+img.name+'_'+img.filename+' saved')
+			}
+			//archive.directory(dir);
+			zip.finalize();
+		})
+		.catch(next)
 }
