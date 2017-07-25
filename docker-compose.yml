@@ -89,5 +89,6 @@ services:
       - ./postgres/init/25-day-passes.sql:/docker-entrypoint-initdb.d/25-day-passes.sql:ro
       - ./postgres/init/25-payments.sql:/docker-entrypoint-initdb.d/25-payments.sql:ro
       - ./postgres/init/25-public-data.sql:/docker-entrypoint-initdb.d/25-public-data.sql:ro
+      - ./postgres/init/28-siteselection.sql:/docker-entrypoint-initdb.d/28-siteselection.sql:ro
       - ./postgres/init/30-hugo-init.sql:/docker-entrypoint-initdb.d/30-hugo-init.sql:ro
       - ./postgres/init/40-raami-init.sql:/docker-entrypoint-initdb.d/40-raami-init.sql:ro
