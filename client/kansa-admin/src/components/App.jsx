@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import filterPeople from '../filterPeople';
 import BarcodeListener from './barcode-listener'
 import PaymentTable from './PaymentTable';
 import PeopleScene from './PeopleScene'
@@ -52,7 +51,7 @@ class App extends React.Component {
   }
 
   render () {
-    const { api, payments, people, user } = this.props
+    const { api, people, user } = this.props
     const { filter, member, scene } = this.state
     if (!Map.isMap(user) || user.size === 0) {
       return <div>Login required.</div>
@@ -86,7 +85,7 @@ class App extends React.Component {
         />
       ) : (
         <PaymentTable
-          list={filterPeople(payments, filter)}
+          filter={filter}
           onPaymentSelect={payment => console.log('payment', payment.toJS())}
         />
       )}
@@ -94,4 +93,9 @@ class App extends React.Component {
   }
 }
 
-export default connect(state => state)(App);
+export default connect(
+  ({ people, user }) => ({
+    people,
+    user
+  })
+)(App)

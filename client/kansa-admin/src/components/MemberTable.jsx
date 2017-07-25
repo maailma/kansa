@@ -25,7 +25,7 @@ const fullLocation = (person) => ['country', 'state', 'city']
 
 const noRowsRenderer = () => (
   <div className={styles.noRows}>
-    No rows
+    Loading...
   </div>
 );
 
