@@ -11,6 +11,7 @@ import LockClosed from 'material-ui/svg-icons/action/lock-outline'
 import ActionSearch from 'material-ui/svg-icons/action/search'
 import ContentClear from 'material-ui/svg-icons/content/clear'
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
+import LocationCity from 'material-ui/svg-icons/social/location-city'
 import PeopleIcon from 'material-ui/svg-icons/social/people'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
@@ -77,8 +78,12 @@ class SearchBox extends Component {
 
 let ToolbarActions = class extends Component {
   render () {
-    const { email, lockable, locked, onHelp, onLogout, onRegOptions } = this.props
-    return (
+    const { email, lockable, locked, onHelp, onLogout, onRegOptions, siteselection } = this.props
+    return siteselection ? (
+      <ToolbarGroup lastChild={true} title='Site selection'>
+        <LocationCity style={{ color: 'rgba(0, 0, 0, 0.6)', padding: 12 }} />
+      </ToolbarGroup>
+    ) : (
       <ToolbarGroup lastChild={true}>
         <RegistrationLock
           ref={ref => { this.regLock = ref && ref.getWrappedInstance() }}
@@ -109,7 +114,8 @@ ToolbarActions = connect(
   ({ registration, user }) => ({
     email: user.get('email'),
     locked: registration.get('locked') || false,
-    lockable: !!registration.get('password')
+    lockable: !!registration.get('password'),
+    siteselection: user.get('siteselection')
   })
 )(ToolbarActions)
 
