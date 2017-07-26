@@ -13,8 +13,9 @@ module.exports = {
 	createWork,
 	updateWork,
 	removeWork,
-  exportArtists,
-  exportPreview
+	exportArtists,
+	exportPreview,
+	exportWorks
 };
 
 function access(req) {
@@ -182,5 +183,18 @@ function exportPreview(req, res, next) {
 			//archive.directory(dir);
 			zip.finalize();
 		})
+		.catch(next)
+}
+
+function exportWorks (req, res, next) {
+	const { user } = req.session || {}
+	if (!user || !user.raami_admin) return next(new AuthError())
+	req.app.locals.db.any(`
+    SELECT a.name, a.people_id AS artist_id, w.id AS work_id,
+           w.title, w.width, w.height, w.depth, w.technique, w.orientation,
+           w.graduation, w.filename, w.price, w.gallery, w.year, w.original,
+           w.copies, w.start, w.sale, w.permission, w.form
+      FROM Works w LEFT JOIN Artist a USING (people_id)`)
+		.then((data) => res.csv(data, true))
 		.catch(next)
 }

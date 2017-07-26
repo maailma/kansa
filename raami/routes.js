@@ -23,7 +23,7 @@ router.post('/:id/works/:work', db.updateWork);
 router.delete('/:id/works/:work', db.removeWork);
 
 router.get('/export/artists', db.exportArtists);
-
 router.get('/export/preview', db.exportPreview)
+router.get('/export/works.csv', db.exportWorks)
 
 module.exports = router;
