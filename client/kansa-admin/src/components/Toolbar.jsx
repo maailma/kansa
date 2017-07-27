@@ -48,7 +48,7 @@ class SearchBox extends Component {
   }
 
   render () {
-    const { filter, onChange } = this.props
+    const { filter, onChange, onSubmit } = this.props
     return (
       <ToolbarGroup style={{ flexGrow: 1 }}>
         <IconButton
@@ -69,6 +69,9 @@ class SearchBox extends Component {
           underlineShow={false}
           value={filter}
           onChange={(_, value) => onChange(value)}
+          onKeyDown={({ key }) => {
+            if (key === 'Enter') onSubmit()
+          }}
           ref={ref => { this.searchField = ref }}
         />
       </ToolbarGroup>
@@ -140,7 +143,7 @@ class KansaToolbar extends Component {
   }
 
   render () {
-    const { filter, onFilterChange, onLogout, onSceneChange, scene, siteselection } = this.props
+    const { filter, onFilterChange, onLogout, onSceneChange, onSubmitFilter, scene, siteselection } = this.props
     return (
       <Toolbar
         style={{ position: 'fixed', zIndex: 1, height: 48, width: '100%', backgroundColor: 'rgb(221, 236, 148)' }}
@@ -160,6 +163,7 @@ class KansaToolbar extends Component {
         <SearchBox
           filter={filter}
           onChange={onFilterChange}
+          onSubmit={onSubmitFilter}
           ref={ref => { this.searchBox = ref }}
         />
         {siteselection ? null : <ToolbarActions onLogout={onLogout} />}

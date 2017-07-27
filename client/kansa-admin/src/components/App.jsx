@@ -50,6 +50,14 @@ class App extends React.Component {
     this.setState({ filter: '', member })
   }
 
+  handleSubmitFilter = () => {
+    const { filter } = this.state
+    const { people } = this.props
+    const num = Number(filter)
+    const member = num && people.find(p => p && p.get('member_number') === num) || null
+    this.setState({ member })
+  }
+
   render () {
     const { api, people, user } = this.props
     const { filter, member, scene } = this.state
@@ -67,9 +75,10 @@ class App extends React.Component {
         onFilterChange={filter => this.setState({ filter })}
         onLogout={() => api.GET('logout')
           .then(res => location.reload())
-          .catch(e => console.error('Logout failed', e))
+          .catch(e => window.alert('Logout failed: ' + e.message))
         }
         onSceneChange={scene => this.setState({ scene })}
+        onSubmitFilter={this.handleSubmitFilter}
         ref={ref => { this.toolbar = ref && ref.getWrappedInstance() }}
         scene={scene}
       />
