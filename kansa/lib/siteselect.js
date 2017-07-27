@@ -30,7 +30,12 @@ class Siteselect {
   findVoterTokens (req, res, next) {
     const { id } = req.params
     if (!id) return res.status(404).json({ error: 'not found' })
-    this.db.any(`SELECT * FROM tokens WHERE person_id=$1`, id)
+    this.db.any(`
+      SELECT token, payment_email, used, voter_name, voter_email
+        FROM tokens WHERE person_id=$1
+       UNION
+      SELECT null, null, time AS used, voter_name, voter_email
+        FROM siteselection_votes WHERE person_id=$1 AND token IS NULL`, id)
       .then(data => res.json(data))
       .catch(next)
   }
