@@ -62,3 +62,9 @@ export const prices = ImmutablePropTypes.mapContains({
   memberships: memberships.isRequired,
   PaperPubs: priceEntry.isRequired
 });
+
+export const root = ImmutablePropTypes.mapContains({
+  data,
+  list,
+  prices
+})

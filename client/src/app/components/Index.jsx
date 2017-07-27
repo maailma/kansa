@@ -1,60 +1,95 @@
 import { List } from 'immutable'
-import React from 'react'
+import React, { Component, PropTypes } from 'react'
+import { Col, Row } from 'react-flexbox-grid'
+import ImmutablePropTypes from 'react-immutable-proptypes'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
-const { Col, Row } = require('react-flexbox-grid');
-const ImmutablePropTypes = require('react-immutable-proptypes');
 
 import { setScene } from '../actions/app'
-import KeyRequest from './KeyRequest'
-import { getPrices } from '../../payments/actions'
+import { getPrices, getPurchaseData, getPurchaseList } from '../../payments/actions'
+import PaymentCard from '../../payments/components/payment-card'
+import * as PaymentPropTypes from '../../payments/proptypes'
 import MemberCard from '../../membership/components/MemberCard'
 import NewMemberCard from '../../membership/components/NewMemberCard'
+import KeyRequest from './KeyRequest'
 
-class Index extends React.Component {
+class Index extends Component {
 
   static propTypes = {
-    getPrices: React.PropTypes.func.isRequired,
+    getPrices: PropTypes.func.isRequired,
+    getPurchaseData: PropTypes.func.isRequired,
+    getPurchaseList: PropTypes.func.isRequired,
     people: ImmutablePropTypes.list.isRequired,
-    push: React.PropTypes.func.isRequired,
-    setScene: React.PropTypes.func.isRequired
+    purchase: PaymentPropTypes.root,
+    push: PropTypes.func.isRequired,
+    setScene: PropTypes.func.isRequired
   }
 
-  componentDidMount() {
-    const { getPrices, prices, setScene } = this.props;
-    setScene({ title: 'Memberships', dockSidebar: false });
-    if (!prices) getPrices();
+  componentDidMount () {
+    const { getPrices, getPurchaseData, purchase, setScene } = this.props
+    setScene({ title: 'Memberships', dockSidebar: false })
+    if (!purchase.get('prices')) getPrices()
+    if (!purchase.get('data')) getPurchaseData()
+  }
+
+  componentWillReceiveProps ({ getPurchaseList, people, purchase }) {
+    if (people.size > 0 && !purchase.get('list')) getPurchaseList()
+  }
+
+  get invoiceCards() {
+    const { people, purchase } = this.props
+    console.log(purchase)
+    if (!purchase.get('list') || !purchase.get('data')) return []
+    const getCategoryData = (category, type) => (
+      purchase.getIn(['data', category]) || purchase.get('data').find(cd => cd.get('types').some(td => td.get('key') === type))
+    )
+    return purchase.get('list')
+      .filter(p => p.get('status') === 'invoice')
+      .map((purchase, key) => {
+        const category = purchase.get('category')
+        const type = purchase.get('type')
+        const categoryData = getCategoryData(category, type)
+        return (
+          <PaymentCard
+            key={key}
+            label={categoryData.getIn(['types', type, 'label']) || type}
+            purchase={purchase}
+            shape={categoryData.get('shape')}
+            userIds={people.map(p => p.get('id'))}
+          />
+        )
+      })
   }
 
   get memberCards() {
-    const { people } = this.props;
+    const { people } = this.props
     const hugoCount = people.reduce((sum, m) => (
       sum + (m.get('can_hugo_nominate') || m.get('can_hugo_vote') ? 1 : 0)
-    ), 0);
+    ), 0)
     return people.map((member, key) => (
       <MemberCard
         key={key}
         member={member}
         showHugoActions={hugoCount === 1}
       />
-    ));
+    ))
   }
 
   render() {
-    const { people, prices, push } = this.props
+    const { people, purchase, push } = this.props
     const isLoggedIn = !!(people && people.size)
     const upgradePath = people && people.size === 1
       ? `/upgrade/${people.first().get('id')}` : '/upgrade/'
     return <Row style={{ marginBottom: -24 }}>
       <Col xs={12} sm={6} lg={4} lgOffset={2}>
-        {isLoggedIn ? this.memberCards : <KeyRequest/>}
+        {isLoggedIn ? [this.invoiceCards, this.memberCards] : <KeyRequest/>}
       </Col>
       <Col xs={12} sm={6} lg={4}>
         <NewMemberCard
           category="all"
           expandable={true}
           onSelectType={(type) => push(`/new/${type}`)}
-          prices={prices}
+          prices={purchase.get('prices')}
         />
         <NewMemberCard
           category="upgrade"
@@ -75,10 +110,12 @@ class Index extends React.Component {
 export default connect(
   ({ purchase, user }) => ({
     people: user.get('people') || List(),
-    prices: purchase.get('prices')
+    purchase
   }), {
     getPrices,
+    getPurchaseData,
+    getPurchaseList,
     push,
     setScene
   }
-)(Index);
+)(Index)
