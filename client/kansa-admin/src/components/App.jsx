@@ -70,7 +70,7 @@ class App extends React.Component {
           .catch(e => console.error('Logout failed', e))
         }
         onSceneChange={scene => this.setState({ scene })}
-        ref={ref => { this.toolbar = ref }}
+        ref={ref => { this.toolbar = ref && ref.getWrappedInstance() }}
         scene={scene}
       />
 

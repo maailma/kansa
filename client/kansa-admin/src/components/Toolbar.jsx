@@ -77,13 +77,15 @@ class SearchBox extends Component {
 }
 
 let ToolbarActions = class extends Component {
+  state = {
+    helpOpen: false,
+    regOpen: false
+  }
+
   render () {
-    const { email, lockable, locked, onHelp, onLogout, onRegOptions, siteselection } = this.props
-    return siteselection ? (
-      <ToolbarGroup lastChild={true} title='Site selection'>
-        <LocationCity style={{ color: 'rgba(0, 0, 0, 0.6)', padding: 12 }} />
-      </ToolbarGroup>
-    ) : (
+    const { email, lockable, locked, onLogout } = this.props
+    const { helpOpen, regOpen } = this.state
+    return (
       <ToolbarGroup lastChild={true}>
         <RegistrationLock
           ref={ref => { this.regLock = ref && ref.getWrappedInstance() }}
@@ -100,11 +102,19 @@ let ToolbarActions = class extends Component {
             {lockable && <MenuItem primaryText="Lock for Registration"
               onTouchTap={() => this.regLock.lock()}
             />}
-            <MenuItem primaryText="Registration options" onTouchTap={onRegOptions} />
-            <MenuItem primaryText="Help" onTouchTap={onHelp} />
+            <MenuItem primaryText="Registration options" onTouchTap={() => this.setState({ regOpen: true })} />
+            <MenuItem primaryText="Help" onTouchTap={() => this.setState({ helpOpen: true })} />
             <MenuItem primaryText="Logout" onTouchTap={onLogout} />
           </IconMenu>
         ) : null}
+        <HelpDialog
+          open={helpOpen}
+          handleClose={() => this.setState({ helpOpen: false })}
+        />
+        <RegOptionsDialog
+          onClose={() => this.setState({ regOpen: false })}
+          open={regOpen}
+        />
       </ToolbarGroup>
     )
   }
@@ -114,21 +124,15 @@ ToolbarActions = connect(
   ({ registration, user }) => ({
     email: user.get('email'),
     locked: registration.get('locked') || false,
-    lockable: !!registration.get('password'),
-    siteselection: user.get('siteselection')
+    lockable: !!registration.get('password')
   })
 )(ToolbarActions)
 
-export default class KansaToolbar extends Component {
+class KansaToolbar extends Component {
   static propTypes = {
     filter: PropTypes.string.isRequired,
     onFilterChange: PropTypes.func.isRequired,
     onLogout: PropTypes.func.isRequired
-  }
-
-  state = {
-    helpOpen: false,
-    regOpen: false
   }
 
   focus () {
@@ -136,38 +140,36 @@ export default class KansaToolbar extends Component {
   }
 
   render () {
-    const { filter, onFilterChange, onLogout, onSceneChange, scene } = this.props
-    const { helpOpen, regOpen } = this.state
+    const { filter, onFilterChange, onLogout, onSceneChange, scene, siteselection } = this.props
     return (
       <Toolbar
         style={{ position: 'fixed', zIndex: 1, height: 48, width: '100%', backgroundColor: 'rgb(221, 236, 148)' }}
       >
         <ToolbarGroup firstChild={true}>
-          <ToolbarTitle text={TITLE} style={{ lineHeight: '48px', marginLeft: 16, paddingRight: 16 }} />
+          <LocationCity style={{ color: 'rgba(0, 0, 0, 0.6)', padding: 12 }} />
+          <ToolbarTitle
+            style={{ lineHeight: '48px', paddingRight: 16 }}
+            text={siteselection ? 'Site selection' : TITLE}
+          />
         </ToolbarGroup>
-        <ToolbarGroup>
-          <SceneTabs onChange={onSceneChange} value={scene} />
-        </ToolbarGroup>
+        {siteselection ? null : (
+          <ToolbarGroup>
+            <SceneTabs onChange={onSceneChange} value={scene} />
+          </ToolbarGroup>
+        )}
         <SearchBox
           filter={filter}
           onChange={onFilterChange}
           ref={ref => { this.searchBox = ref }}
         />
-        <ToolbarActions
-          onHelp={() => this.setState({ helpOpen: true })}
-          onLogout={onLogout}
-          onRegOptions={() => this.setState({ regOpen: true })}
-        />
-
-        <HelpDialog
-          open={helpOpen}
-          handleClose={() => this.setState({ helpOpen: false })}
-        />
-        <RegOptionsDialog
-          onClose={() => this.setState({ regOpen: false })}
-          open={regOpen}
-        />
+        {siteselection ? null : <ToolbarActions onLogout={onLogout} />}
       </Toolbar>
     )
   }
 }
+
+export default connect(
+  ({ user }) => ({
+    siteselection: !!user.get('siteselection')
+  }), null, null, { withRef: true }
+)(KansaToolbar)

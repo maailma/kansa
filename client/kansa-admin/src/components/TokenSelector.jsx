@@ -27,8 +27,12 @@ export default class TokenSelector extends Component {
       this.setState({ error: null, query: `${query}...`, sent: true })
       api.GET(`siteselect/tokens/${query}`)
         .then(token => {
-          onAdd(token)
-          this.setState({ query: '', sent: false })
+          if (token.used) {
+            this.setState({ error: `Token ${query} already used`, query: '', sent: false })
+          } else {
+            onAdd(token)
+            this.setState({ query: '', sent: false })
+          }
         })
         .catch(err => {
           const error = err.error === 'not found' ? `Token ${query} not found` : err.message
@@ -47,10 +51,9 @@ export default class TokenSelector extends Component {
           <TextField
             disabled={sent}
             errorText={error}
-            inputStyle={{ marginTop: 0 }}
             name='query'
             onChange={this.setTokenQuery}
-            style={{ marginLeft: 16 }}
+            style={{ marginBottom: (error ? 16 : 0), marginLeft: 16 }}
             value={query}
           />
         </div>
