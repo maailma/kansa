@@ -18,18 +18,18 @@ class Siteselect {
 
   findToken (req, res, next) {
     const { token } = req.params
-    if (!token) return res.status(404).end()
+    if (!token) return res.status(404).json({ error: 'not found' })
     this.db.oneOrNone(`SELECT * FROM token_lookup WHERE token=$1`, token)
       .then(data => {
         if (data) res.json(data)
-        else res.status(404).end()
+        else res.status(404).json({ error: 'not found' })
       })
       .catch(next)
   }
 
   findVoterTokens (req, res, next) {
     const { id } = req.params
-    if (!id) return res.status(404).end()
+    if (!id) return res.status(404).json({ error: 'not found' })
     this.db.any(`SELECT * FROM tokens WHERE person_id=$1`, id)
       .then(data => res.json(data))
       .catch(next)
