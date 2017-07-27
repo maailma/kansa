@@ -3,7 +3,8 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { combineReducers, createStore } from 'redux';
+import ReconnectingWebSocket from 'reconnecting-websocket';
+import { createStore } from 'redux';
 
 // Needed by material-ui for onTouchTap, see http://stackoverflow.com/a/34015469/988941
 import injectTapEventPlugin from 'react-tap-event-plugin';
@@ -14,25 +15,22 @@ import './styles/app.css';
 
 import API from './api';
 import App from './components/App';
-import paymentData from './reducers/payment-data';
-import payments from './reducers/payments';
-import people from './reducers/people';
-import user from './reducers/user';
+import { loadRegistrationState } from './components/RegistrationOptions'
+import reducers from './reducers'
 
-const store = createStore(combineReducers({ paymentData, payments, people, user }));
+const store = createStore(reducers, loadRegistrationState());
 const api = new API(API_HOST ? `https://${API_HOST}/api/` : '/api/');
 api.GET('user')
   .then(data => store.dispatch({ type: 'LOGIN', data }))
   .then(() => api.GET('people'))
   .then(data => store.dispatch({ type: 'INIT PEOPLE', data }))
   .then(() => {
-    const ws = new WebSocket(`wss://${API_HOST || location.host}/api/people/updates`);
+    const wsUri = `wss://${API_HOST || location.host}/api/people/updates`;
+    const ws = new ReconnectingWebSocket(wsUri);
     ws.onmessage = msg => {
       const data = JSON.parse(msg.data);
       store.dispatch({ type: 'SET PERSON', data });
     };
-    ws.onclose = ev => console.warn('WebSocket closed', ev);
-    ws.onerror = ev => console.error('WebSocket error!', ws, ev);
   })
   .then(() => api.GET('purchase/list', { all: 1 }))
   .then(data => store.dispatch({ type: 'INIT PAYMENTS', data }))
@@ -70,7 +68,7 @@ const theme = getMuiTheme({
 render(
   <Provider store={store}>
     <MuiThemeProvider muiTheme={theme}>
-      <App api={api} title={TITLE} />
+      <App api={api} />
     </MuiThemeProvider>
   </Provider>,
   document.getElementById('app')

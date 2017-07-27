@@ -2,17 +2,19 @@ import { List } from 'immutable'
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
+import { connect } from 'react-redux'
 import { AutoSizer, FlexTable, FlexColumn, SortDirection } from 'react-virtualized'
 
+import filterPeople from '../filterPeople'
 import styles from '../styles/MemberTable.css'
 
 const noRowsRenderer = () => (
   <div className={styles.noRows}>
-    No rows
+    Loading...
   </div>
 );
 
-export default class PaymentTable extends React.Component {
+class PaymentTable extends React.Component {
   static propTypes = {
     list: PropTypes.instanceOf(List).isRequired,
     onPaymentSelect: PropTypes.func.isRequired
@@ -95,3 +97,9 @@ export default class PaymentTable extends React.Component {
     )
   }
 }
+
+export default connect(
+  ({ payments }, { filter }) => ({
+    list: filterPeople(payments, filter)
+  })
+)(PaymentTable)

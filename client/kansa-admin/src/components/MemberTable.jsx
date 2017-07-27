@@ -2,8 +2,10 @@ import { List } from 'immutable'
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
+import { connect } from 'react-redux'
 import { AutoSizer, FlexTable, FlexColumn, SortDirection } from 'react-virtualized'
 
+import filterPeople from '../filterPeople'
 import styles from '../styles/MemberTable.css'
 
 const publicName = (person) => ['public_first_name', 'public_last_name']
@@ -23,11 +25,11 @@ const fullLocation = (person) => ['country', 'state', 'city']
 
 const noRowsRenderer = () => (
   <div className={styles.noRows}>
-    No rows
+    Loading...
   </div>
 );
 
-export default class MemberTable extends React.Component {
+class MemberTable extends React.Component {
   static propTypes = {
     list: PropTypes.instanceOf(List).isRequired,
     onMemberSelect: PropTypes.func.isRequired
@@ -113,3 +115,9 @@ export default class MemberTable extends React.Component {
     )
   }
 }
+
+export default connect(
+  ({ people }, { filter }) => ({
+    list: filterPeople(people, filter)
+  })
+)(MemberTable)
