@@ -1,20 +1,17 @@
 import { Map } from 'immutable'
+import Dialog from 'material-ui/Dialog'
+import FlatButton from 'material-ui/FlatButton'
+import TextField from 'material-ui/TextField'
 import PropTypes from 'prop-types'
 import React from 'react'
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
-
-const ImmutablePropTypes = require('react-immutable-proptypes');
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import { CommonFields, PaperPubsFields } from './form';
-import MemberLog from './MemberLog';
-import NewInvoice from './NewInvoice';
-import Upgrade from './Upgrade';
+import TokenSelector from './TokenSelector'
 
-const fullLocation = (person) => ['country', 'state', 'city']
-  .map(k => person.get(k))
-  .filter(v => !!v)
-  .join(', ');
+const styles = {
+  noVote: { color: 'black', fontWeight: 'bold', paddingTop: 20, textAlign: 'right' }
+}
 
 export default class Voter extends React.Component {
   static propTypes = {
@@ -53,11 +50,6 @@ export default class Voter extends React.Component {
       Voter.voterTypes.indexOf(member.get('membership')) !== -1
   }
 
-  get validToken () {
-    const { token } = this.state
-    return token && token.token && !token.used
-  }
-
   componentWillReceiveProps ({ api, member }) {
     if (member && !member.equals(this.props.member)) {
       this.setState(Voter.defaultState)
@@ -77,9 +69,8 @@ export default class Voter extends React.Component {
     const { api, member, onClose } = this.props
     const { token, voter_name, voter_email } = this.state
     this.setState({ sent: true })
-    api.POST('siteselect/vote', {
-      person_id: member.get('id'),
-      token: token.token,
+    api.POST(`siteselect/voters/${member.get('id')}`, {
+      token: token ? token.token : null,
       voter_name: voter_name.trim() || member.get('legal_name'),
       voter_email: voter_email.trim() || member.get('email')
     })
@@ -93,7 +84,7 @@ export default class Voter extends React.Component {
 
   render () {
     const { api, member, onClose } = this.props
-    const { sent, token } = this.state
+    const { available_tokens, sent, token, voter_email, voter_name } = this.state
     const {
       legal_name, preferred_name, badge_name,
       email, membership, member_number,
@@ -106,28 +97,50 @@ export default class Voter extends React.Component {
           <FlatButton key='close' label='Close' onTouchTap={onClose} />,
           <FlatButton key='ok'
             label={sent ? 'Working...' : 'Vote'}
-            disabled={sent || !this.isVoter || !this.validToken}
+            disabled={sent || !this.isVoter || !!(token && (!token.token || token.used))}
             onTouchTap={this.vote}
           />
         ]}
         autoScrollBodyContent={true}
+        className='voter'
         onRequestClose={onClose}
         open={!!member}
         title={this.isVoter ? `Member #${member_number} (${membership})` : `Non-voter (${membership})`}
       >
-        <dl>
-          <dt>Name</dt><dd>{legal_name}</dd>
-          {preferred_name && preferred_name !== legal_name ? [
-            <dt key='pt'>Public name</dt>, <dd key='pn'>{preferred_name}</dd>
-          ] : null}
-          {badge_name && badge_name !== preferred_name ? [
-            <dt key='bt'>Badge name</dt>, <dd key='bn'>{badge_name}</dd>
-          ] : null}
-          <dt>Email</dt><dd>{email}</dd>
-          {location ? [<dt key='lt'>Location</dt>, <dd key='ll'>{location}</dd>] : null}
-          <hr />
-          <dt>Token</dt><dd>{token && token.token}</dd>
-        </dl>
+        <TextField
+          floatingLabelText='Voter name'
+          floatingLabelFixed={true}
+          fullWidth={true}
+          hintText={legal_name}
+          name='name'
+          onChange={(_, voter_name) => this.setState({ voter_name })}
+          value={voter_name}
+        />
+        <TextField
+          floatingLabelText='Voter email'
+          floatingLabelFixed={true}
+          fullWidth={true}
+          hintText={email}
+          name='email'
+          onChange={(_, voter_email) => this.setState({ voter_email })}
+          value={voter_email}
+        />
+        {token && token.used ? (
+          <div style={styles.noVote}>Voted at {token.used}</div>
+        ) : !this.isVoter ? (
+          <div style={styles.noVote}>Not eligible to vote</div>
+        ) : (
+          <TokenSelector
+            api={api}
+            onAdd={(token) => this.setState({
+              available_tokens: [token].concat(this.state.available_tokens),
+              token
+            })}
+            onSelect={(token) => this.setState({ token })}
+            selected={token || null}
+            tokens={available_tokens}
+          />
+        )}
       </Dialog>
     )
   }
