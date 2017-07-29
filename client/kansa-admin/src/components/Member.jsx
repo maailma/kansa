@@ -6,6 +6,7 @@ import React, { PureComponent } from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 import { connect } from 'react-redux'
 
+import printBadge from '../printBadge'
 import { CommonFields, PaperPubsFields } from './form'
 import MemberLog from './MemberLog'
 import NewInvoice from './NewInvoice'
@@ -32,7 +33,8 @@ class Member extends PureComponent {
         address: PropTypes.string.isRequired,
         country: PropTypes.string.isRequired
       })
-    })
+    }),
+    printer: PropTypes.string
   }
 
   static defaultProps = {
@@ -88,7 +90,7 @@ class Member extends PureComponent {
   }
 
   get actions () {
-    const { api, handleClose, locked, member } = this.props
+    const { api, handleClose, locked, member, printer } = this.props
     const { sent } = this.state
     const hasChanges = this.changes.size > 0
     const email = member.get('email')
@@ -222,6 +224,7 @@ class Member extends PureComponent {
 
 export default connect(
   ({ registration }) => ({
-    locked: registration.get('locked') || false
+    locked: registration.get('locked') || false,
+    printer: registration.get('printer')
   })
 )(Member)
