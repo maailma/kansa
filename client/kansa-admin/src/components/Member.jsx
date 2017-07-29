@@ -1,21 +1,23 @@
 import { Map } from 'immutable'
+import Dialog from 'material-ui/Dialog'
+import FlatButton from 'material-ui/FlatButton'
 import PropTypes from 'prop-types'
-import React from 'react'
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
+import React, { PureComponent } from 'react'
+import ImmutablePropTypes from 'react-immutable-proptypes'
+import { connect } from 'react-redux'
 
-const ImmutablePropTypes = require('react-immutable-proptypes');
+import { CommonFields, PaperPubsFields } from './form'
+import MemberLog from './MemberLog'
+import NewInvoice from './NewInvoice'
+import Upgrade from './Upgrade'
 
-import { CommonFields, PaperPubsFields } from './form';
-import MemberLog from './MemberLog';
-import NewInvoice from './NewInvoice';
-import Upgrade from './Upgrade';
-
-export default class Member extends React.Component {
+class Member extends PureComponent {
   static propTypes = {
     api: PropTypes.object.isRequired,
     handleClose: PropTypes.func.isRequired,
+    locked: PropTypes.bool.isRequired,
     member: ImmutablePropTypes.mapContains({
+      id: PropTypes.number,
       legal_name: PropTypes.string,
       email: PropTypes.string,
       badge_name: PropTypes.string,
@@ -47,111 +49,147 @@ export default class Member extends React.Component {
     })
   }
 
-  static fields = [ 'membership', 'legal_name', 'email', 'badge_name', 'badge_subtitle', 'public_first_name', 'public_last_name',
-    'country', 'state', 'city', 'paper_pubs' ];
+  static fields = [
+    'membership', 'legal_name', 'email', 'badge_name', 'badge_subtitle',
+    'public_first_name', 'public_last_name', 'country', 'state', 'city',
+    'paper_pubs'
+  ]
 
-  static membershipTypes = [ 'NonMember', 'Exhibitor', 'Supporter', 'KidInTow', 'Child', 'Youth', 'FirstWorldcon', 'Adult' ];
+  static membershipTypes = [
+    'NonMember', 'Exhibitor', 'Supporter', 'KidInTow', 'Child', 'Youth',
+    'FirstWorldcon', 'Adult'
+  ]
 
-  static emptyPaperPubsMap = Map({ name: '', address: '', country: '' });
+  static emptyPaperPubsMap = Map({ name: '', address: '', country: '' })
 
-  static paperPubsIsValid(pp) {
-    return !pp || pp.get('name') && pp.get('address') && pp.get('country');
-  }
+  static paperPubsIsValid = (pp) => (
+    !pp || pp.get('name') && pp.get('address') && pp.get('country')
+  )
 
-  static isValid(member) {
-    return Map.isMap(member)
-      && member.get('legal_name', false) && member.get('email', false)
-      && Member.paperPubsIsValid(member.get('paper_pubs'));
-  }
+  static isValid = (member) => (
+    Map.isMap(member) &&
+    member.get('legal_name', false) &&
+    member.get('email', false) &&
+    Member.paperPubsIsValid(member.get('paper_pubs'))
+  )
 
   state = {
     member: Map(),
     sent: false
   }
 
-  get changes() {
-    const m0 = this.props.member;
-    return this.state.member.filter((value, key) => {
-      const v0 = m0.get(key, '');
-      return Map.isMap(value) ? !value.equals(v0) : value !== v0;
-    });
-  }
-
-  get valid() {
-    return Member.isValid(this.state.member);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.member && (!this.props.member || !nextProps.member.equals(this.props.member))) {
+  componentWillReceiveProps ({ member }) {
+    if (member && !member.equals(this.props.member)) {
       this.setState({
-        member: Member.defaultProps.member.merge(nextProps.member),
+        member: Member.defaultProps.member.merge(member),
         sent: false
-      });
+      })
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.api !== this.props.api) return true;
-    if (nextProps.handleClose !== this.props.handleClose) return true;
-    if (!nextProps.member.equals(this.props.member)) return true;
-    if (nextState.sent !== this.state.sent) return true;
-    if (!nextState.member.equals(this.state.member)) return true;
-    return false;
+  get actions () {
+    const { api, handleClose, locked, member } = this.props
+    const { sent } = this.state
+    const hasChanges = this.changes.size > 0
+    const email = member.get('email')
+    const id = member.get('id')
+    const legal_name = member.get('legal_name')
+    const member_number = member.get('member_number')
+    const membership = member.get('membership')
+    const paper_pubs = member.get('paper_pubs')
+
+    const actions = [
+      <FlatButton key='close' label='Close' onTouchTap={handleClose} />,
+      <FlatButton key='ok'
+        disabled={sent || !hasChanges || !this.valid}
+        label={sent ? 'Working...' : 'Apply'}
+        onTouchTap={() => this.save().then(handleClose)}
+      />
+    ]
+
+    if (!locked) actions.unshift(
+      <MemberLog key='log'
+        getLog={() => api.GET(`people/${id}/log`)}
+        id={id}
+      >
+        <FlatButton label='View log' style={{ float: 'left' }} />
+      </MemberLog>,
+
+      <Upgrade key='upgrade'
+        membership={membership}
+        paper_pubs={paper_pubs}
+        name={`${legal_name} <${email}>`}
+        upgrade={res => api.POST(`people/${id}/upgrade`, res)}
+      >
+        <FlatButton label='Upgrade' style={{ float: 'left' }} />
+      </Upgrade>,
+
+      <NewInvoice key='invoice'
+        onSubmit={invoice => api.POST(`purchase/invoice`, {
+          email,
+          items: [invoice]
+        })}
+        person={member}
+      >
+        <FlatButton label='New invoice' style={{ float: 'left' }} />
+      </NewInvoice>,
+    )
+
+    if (printer && member_number) actions.unshift(
+      <FlatButton
+        disabled={sent || !this.valid}
+        label={hasChanges ? 'Save & Print badge' : 'Print badge'}
+        onTouchTap={() => {
+          const [pu, pn] = printer.split('#')
+          return printBadge(pu, pn, this.state.member)
+            .catch(err => {
+              console.error('Badge print failed!', err)
+              window.alert('Badge print failed! ' + (err.message || err.statusText || err.status))
+            })
+            .then(() => hasChanges ? this.save() : null)
+            .then(handleClose)
+        }}
+        style={{ float: 'left' }}
+      />
+    )
+
+    return actions
   }
 
-  render() {
-    const { api, handleClose, member } = this.props;
-    if (!member) return null;
-    const membership = member.get('membership', 'NonMember');
+  get changes () {
+    const m0 = this.props.member
+    return this.state.member.filter((value, key) => {
+      const v0 = m0.get(key, '')
+      return Map.isMap(value) ? !value.equals(v0) : value !== v0
+    })
+  }
+
+  get valid () {
+    return Member.isValid(this.state.member)
+  }
+
+  save () {
+    const { member } = this.props
+    this.setState({ sent: true })
+    return api.POST(`people/${member.get('id')}`, this.changes.toJS())
+      .catch(err => {
+        console.error('Member save failed!', err)
+        window.alert('Member save failed! ' + err.message)
+      })
+  }
+
+  render () {
+    const { handleClose, member } = this.props
+    if (!member) return null
+    const membership = member.get('membership', 'NonMember')
     const formProps = {
       getDefaultValue: path => member.getIn(path, ''),
       getValue: path => this.state.member.getIn(path, null),
       onChange: (path, value) => this.setState({ member: this.state.member.setIn(path, value) })
-    };
+    }
 
     return <Dialog
-      actions={[
-        <MemberLog key='log'
-          getLog={ id => id > 0 ? api.GET(`people/${id}/log`) : Promise.reject('Invalid id! ' + id) }
-          id={member.get('id', -1)}
-        >
-          <FlatButton label='View log' style={{ float: 'left' }} />
-        </MemberLog>,
-
-        <Upgrade key='upgrade'
-          membership={membership}
-          paper_pubs={member.get('paper_pubs')}
-          name={ member.get('legal_name') + ' <' + member.get('email') + '>' }
-          upgrade={ res => api.POST(`people/${member.get('id')}/upgrade`, res) }
-        >
-          <FlatButton label='Upgrade' style={{ float: 'left' }} />
-        </Upgrade>,
-
-        <NewInvoice key='invoice'
-          onSubmit={invoice => {
-            const email = member.get('email')
-            return api.POST(`purchase/invoice`, {
-              email,
-              items: [invoice]
-            })
-          }}
-          person={member}
-        >
-          <FlatButton label='New invoice' style={{ float: 'left' }} />
-        </NewInvoice>,
-
-        <FlatButton key='close' label='Close' onTouchTap={handleClose} />,
-
-        <FlatButton key='ok'
-          label={ this.state.sent ? 'Working...' : 'Apply' }
-          disabled={ this.state.sent || this.changes.size == 0 || !this.valid }
-          onTouchTap={() => {
-            this.setState({ sent: true });
-            api.POST(`people/${member.get('id')}`, this.changes.toJS())
-              .then(handleClose)
-              .catch(e => console.error(e));  // TODO: report errors better
-          }} />
-      ]}
+      actions={this.actions}
       title={<div title={'ID: ' + member.get('id')}>
         <div style={{
           color: 'rgba(0, 0, 0, 0.3)',
@@ -178,6 +216,12 @@ export default class Member extends React.Component {
       <CommonFields { ...formProps } />
       <br />
       <PaperPubsFields { ...formProps } />
-    </Dialog>;
+    </Dialog>
   }
 }
+
+export default connect(
+  ({ registration }) => ({
+    locked: registration.get('locked') || false
+  })
+)(Member)
