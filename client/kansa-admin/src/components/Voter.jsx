@@ -35,6 +35,7 @@ export default class Voter extends React.Component {
   static get defaultState () {
     return {
       available_tokens: [],
+      past_names: [],
       sent: false,
       token: null,
       voter_name: '',
@@ -59,8 +60,13 @@ export default class Voter extends React.Component {
           token: tokens.find(t => t.used) || tokens[0]
         }))
         .catch(err => {
-          console.error(err)
+          console.error('Token lookup failed!', err)
           window.alert('Token lookup failed! ' + err.message)
+        })
+      api.GET(`people/${member.get('id')}/prev-names`)
+        .then(past_names => this.setState({ past_names }))
+        .catch(err => {
+          console.error('Past name lookup failed!', err)
         })
     }
   }
@@ -81,6 +87,12 @@ export default class Voter extends React.Component {
         window.alert('Vote failed! ' + err.message)
       })
   }
+
+  renderPastNames = () => this.state.past_names.map(({ prev_legal_name, time_from, time_to }, i) => {
+    const t0 = time_from ? new Date(time_from).toISOString().substr(0,10) : '???'
+    const t1 = time_to ? new Date(time_to).toISOString().substr(0,10) : '???'
+    return <p key={i}>Previous name: <b>{prev_legal_name}</b> ({t0} - {t1})</p>
+  })
 
   render () {
     const { api, member, onClose } = this.props
@@ -107,6 +119,7 @@ export default class Voter extends React.Component {
         open={!!member}
         title={this.isVoter ? `Member #${member_number} (${membership})` : `Non-voter (${membership})`}
       >
+        {this.renderPastNames()}
         <TextField
           floatingLabelText='Voter name'
           floatingLabelFixed={true}
