@@ -10,7 +10,7 @@ const selectAllPeopleData = `
 
 module.exports = {
   selectAllPeopleData,
-  getMemberEmails, getMemberPaperPubs, getPeople, getPerson, getPrevNames,
+  getMemberEmails, getMemberPaperPubs, getPeople, getPerson, getAllPrevNames, getPrevNames,
   addPerson, authAddPerson, updatePerson
 };
 
@@ -112,6 +112,32 @@ function getPerson(req, res, next) {
   const id = parseInt(req.params.id)
   req.app.locals.db.one(`${selectAllPeopleData} WHERE p.id = $1`, id)
     .then(data => res.json(data))
+    .catch(next)
+}
+
+function getAllPrevNames(req, res, next) {
+  const { user } = req.session
+  if (!user || !user.member_admin && !user.member_list) return next(new AuthError())
+  const csv = req.params.fmt === 'csv'
+  req.app.locals.db.any(`
+    SELECT DISTINCT ON (h.id,h.legal_name)
+           h.id,
+           h.legal_name AS prev_name,
+           h.timestamp::date AS time_from,
+           l.timestamp::date AS time_to,
+           p.legal_name AS curr_name,
+           p.email AS curr_email
+      FROM past_names h
+           LEFT JOIN log l ON (h.id=l.subject)
+           LEFT JOIN people p ON (l.subject=p.id)
+     WHERE l.timestamp > h.timestamp AND
+           l.parameters->>'legal_name' IS NOT NULL AND
+           name_match(l.parameters->>'legal_name', h.legal_name) = false
+  ORDER BY h.id,h.legal_name,l.timestamp`)
+    .then(data => {
+      if (csv) res.csv(data, true)
+      else res.json(data)
+    })
     .catch(next)
 }
 
