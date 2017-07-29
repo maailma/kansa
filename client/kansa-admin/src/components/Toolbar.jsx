@@ -21,25 +21,27 @@ import RegistrationLock from './RegistrationLock'
 import RegOptionsDialog from './RegistrationOptions'
 
 const SceneTabs = ({ onChange, value }) => (
-  <Tabs
-    inkBarStyle={{ position: 'absolute', bottom: 'auto', marginTop: 0, top: 0 }}
-    onChange={onChange}
-    value={value}
-  >
-    <Tab
-      buttonStyle={{ color: 'rgba(0,0,0,0.4)', padding: '0 16px' }}
-      icon={<PeopleIcon/>}
-      style={{ color: 'rgba(0,0,0,0.4)' }}
-      title="People"
-      value="people"
-    />
-    <Tab
-      buttonStyle={{ padding: '0 16px' }}
-      icon={<PaymentsIcon/>}
-      title="Payments"
-      value="payments"
-    />
-  </Tabs>
+  <div style={{ position: 'relative' }}>
+    <Tabs
+      inkBarStyle={{ position: 'absolute', bottom: 'auto', marginTop: 0, top: 0 }}
+      onChange={onChange}
+      value={value}
+    >
+      <Tab
+        buttonStyle={{ color: 'rgba(0,0,0,0.4)', padding: '0 16px' }}
+        icon={<PeopleIcon/>}
+        style={{ color: 'rgba(0,0,0,0.4)' }}
+        title="People"
+        value="people"
+      />
+      <Tab
+        buttonStyle={{ padding: '0 16px' }}
+        icon={<PaymentsIcon/>}
+        title="Payments"
+        value="payments"
+      />
+    </Tabs>
+  </div>
 )
 
 class SearchBox extends Component {
@@ -148,15 +150,20 @@ class KansaToolbar extends Component {
       <Toolbar
         style={{ position: 'fixed', zIndex: 1, height: 48, width: '100%', backgroundColor: 'rgb(221, 236, 148)' }}
       >
-        <ToolbarGroup firstChild={true}>
-          <LocationCity style={{ color: 'rgba(0, 0, 0, 0.6)', padding: 12 }} />
-          <ToolbarTitle
-            style={{ lineHeight: '48px', paddingRight: 16 }}
-            text={siteselection ? 'Site selection' : TITLE}
-          />
-        </ToolbarGroup>
-        {siteselection ? null : (
-          <ToolbarGroup>
+        {siteselection ? (
+          <ToolbarGroup firstChild={true}>
+            <LocationCity style={{ color: 'rgba(0, 0, 0, 0.6)', padding: 12 }} />
+            <ToolbarTitle
+              style={{ lineHeight: '48px', paddingRight: 16 }}
+              text='Site selection'
+            />
+          </ToolbarGroup>
+        ) : (
+          <ToolbarGroup firstChild={true}>
+            <ToolbarTitle
+              style={{ lineHeight: '48px', paddingLeft: 16, paddingRight: 16 }}
+              text={TITLE}
+            />
             <SceneTabs onChange={onSceneChange} value={scene} />
           </ToolbarGroup>
         )}

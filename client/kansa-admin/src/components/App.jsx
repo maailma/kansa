@@ -31,11 +31,11 @@ class App extends React.Component {
     document.title = TITLE.indexOf(appTitle) === -1 ? `${appTitle} - ${TITLE}` : TITLE
   }
 
-  componentWillReceiveProps ({ list }) {
+  componentWillReceiveProps ({ people }) {
     if (this.state.member) {
       const id = this.state.member.get('id')
-      const member = list && list.find(m => m && m.get('id') === id) || null
-      this.setState({ member })
+      const member = people && people.find(m => m && m.get('id') === id)
+      if (member) this.setState({ member })
     }
   }
 
