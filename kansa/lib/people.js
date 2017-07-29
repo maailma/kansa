@@ -10,8 +10,8 @@ const selectAllPeopleData = `
 
 module.exports = {
   selectAllPeopleData,
-  getMemberEmails, getMemberPaperPubs, getPeople,
-  getPerson, addPerson, authAddPerson, updatePerson
+  getMemberEmails, getMemberPaperPubs, getPeople, getPerson, getPrevNames,
+  addPerson, authAddPerson, updatePerson
 };
 
 function getPeopleQuery(req, res, next) {
@@ -109,10 +109,27 @@ function getPeople(req, res, next) {
 }
 
 function getPerson(req, res, next) {
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id)
   req.app.locals.db.one(`${selectAllPeopleData} WHERE p.id = $1`, id)
-    .then(data => res.status(200).json(data))
-    .catch(err => next(err));
+    .then(data => res.json(data))
+    .catch(next)
+}
+
+function getPrevNames(req, res, next) {
+  const id = parseInt(req.params.id)
+  req.app.locals.db.any(`
+    SELECT DISTINCT ON (h.legal_name)
+           h.legal_name AS prev_legal_name,
+           h.timestamp AS time_from,
+           l.timestamp AS time_to
+      FROM past_names h LEFT JOIN log l ON (h.id=l.subject)
+     WHERE h.id = $1 AND
+           l.timestamp > h.timestamp AND
+           l.parameters->>'legal_name' IS NOT NULL AND
+           name_match(l.parameters->>'legal_name', h.legal_name) = false
+  ORDER BY h.legal_name,l.timestamp`, id)
+    .then(data => res.json(data))
+    .catch(next)
 }
 
 function addPerson(req, db, person) {

@@ -1,6 +1,7 @@
 \set kansaPwd `echo "$KANSA_PG_PASSWORD"`
 
 CREATE EXTENSION damm WITH SCHEMA public;
+CREATE EXTENSION fuzzystrmatch WITH SCHEMA public;
 
 CREATE USER kansa WITH PASSWORD :'kansaPwd' IN ROLE api_access;
 CREATE SCHEMA AUTHORIZATION kansa;
@@ -100,3 +101,21 @@ BEGIN
     RETURN coalesce(nullif(p.badge_subtitle, ''), p.country, '') AS name;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE FUNCTION name_match(a text, b text) RETURNS boolean AS $$
+DECLARE
+    ac text;
+    bc text;
+BEGIN
+    ac := lower(trim(regexp_replace(a, '\s+', ' ', 'g')));
+    bc := lower(trim(regexp_replace(b, '\s+', ' ', 'g')));
+    RETURN levenshtein_less_equal(ac, bc, 3) <= 3;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE VIEW past_names AS
+    SELECT l.subject AS id, l.timestamp, l.parameters->>'legal_name' AS legal_name
+      FROM log l LEFT JOIN people p ON (l.subject=p.id)
+     WHERE l.parameters->>'legal_name' IS NOT NULL AND
+           name_match(l.parameters->>'legal_name', p.legal_name) = false
+  ORDER BY id, timestamp;
