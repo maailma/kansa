@@ -11,7 +11,7 @@ const noRowsRenderer = () => (
   <div className={styles.noRows}>
     Loading...
   </div>
-);
+)
 
 class PaymentTable extends PureComponent {
   static propTypes = {
@@ -28,7 +28,7 @@ class PaymentTable extends PureComponent {
     sortDirection: SortDirection.DESC
   }
 
-  render() {
+  render () {
     const {
       headerHeight,
       overscanRowCount,
@@ -63,17 +63,17 @@ class PaymentTable extends PureComponent {
                 sortBy={sortBy}
                 sortDirection={sortDirection}
                 width={width}
-                onRowClick={ ({ index }) => this.props.onPaymentSelect(list.get(index)) }
+                onRowClick={({ index }) => this.props.onPaymentSelect(list.get(index))}
               >
                 <Column dataKey='updated' label='Mod' width={100}
-                  cellDataGetter = {({ rowData }) => {
+                  cellDataGetter={({ rowData }) => {
                     const ts = rowData.get('updated') || rowData.get('created')
                     return ts.slice(0, ts.indexOf('T'))
                   }}
                 />
                 <Column dataKey='status' label='Status' width={80} />
                 <Column dataKey='amount' label='€' width={50}
-                  cellDataGetter = {({ rowData }) => {
+                  cellDataGetter={({ rowData }) => {
                     let amount = rowData.get('amount') / 100
                     const currency = rowData.get('currency', '').toUpperCase()
                     if (currency && currency !== 'EUR') amount += ' ' + currency

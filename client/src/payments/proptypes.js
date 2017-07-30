@@ -1,7 +1,6 @@
 import { PropTypes } from 'prop-types'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 
-
 export const shapeEntry = ImmutablePropTypes.mapContains({
   label: PropTypes.string,
   required: PropTypes.bool,
@@ -10,23 +9,23 @@ export const shapeEntry = ImmutablePropTypes.mapContains({
     PropTypes.string,
     PropTypes.string
   )
-});
+})
 
-export const shape = ImmutablePropTypes.mapOf(shapeEntry, PropTypes.string);
+export const shape = ImmutablePropTypes.mapOf(shapeEntry, PropTypes.string)
 
 export const type = ImmutablePropTypes.mapContains({
   amount: PropTypes.number,
   key: PropTypes.string.isRequired,
   label: PropTypes.string
-});
+})
 
-export const types = ImmutablePropTypes.orderedMapOf(type, PropTypes.string);
+export const types = ImmutablePropTypes.orderedMapOf(type, PropTypes.string)
 
-export const categoryData = ImmutablePropTypes.mapContains({ shape, types });
+export const categoryData = ImmutablePropTypes.mapContains({ shape, types })
 
-export const data = ImmutablePropTypes.mapOf(categoryData, PropTypes.string);
+export const data = ImmutablePropTypes.mapOf(categoryData, PropTypes.string)
 
-export const keys = ImmutablePropTypes.mapOf(PropTypes.string);
+export const keys = ImmutablePropTypes.mapOf(PropTypes.string)
 
 export const purchase = ImmutablePropTypes.mapContains({
   id: PropTypes.number.isRequired,
@@ -47,21 +46,21 @@ export const purchase = ImmutablePropTypes.mapContains({
   data: ImmutablePropTypes.map,
   invoice: PropTypes.string,
   comments: PropTypes.string
-});
+})
 
-export const list = ImmutablePropTypes.listOf(purchase);
+export const list = ImmutablePropTypes.listOf(purchase)
 
 export const priceEntry = ImmutablePropTypes.mapContains({
   amount: PropTypes.number.isRequired,
   description: PropTypes.string.isRequired
-});
+})
 
-export const memberships = ImmutablePropTypes.mapOf(priceEntry, PropTypes.string);
+export const memberships = ImmutablePropTypes.mapOf(priceEntry, PropTypes.string)
 
 export const prices = ImmutablePropTypes.mapContains({
   memberships: memberships.isRequired,
   PaperPubs: priceEntry.isRequired
-});
+})
 
 export const root = ImmutablePropTypes.mapContains({
   data,

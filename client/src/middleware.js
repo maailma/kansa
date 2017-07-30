@@ -10,4 +10,4 @@ import logger from './app/middleware'
 export default (history) => applyMiddleware(
   hugoNominations, hugoVotes, membership, payments, logger,
   routerMiddleware(history)
-);
+)

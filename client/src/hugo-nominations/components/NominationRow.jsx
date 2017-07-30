@@ -5,14 +5,13 @@ import ImmutablePropTypes from 'react-immutable-proptypes'
 import IconButton from 'material-ui/IconButton'
 import ContentClear from 'material-ui/svg-icons/content/clear'
 import TextField from 'material-ui/TextField'
-const { Col, Row } = require('react-flexbox-grid');
-
+import { Col, Row } from 'react-flexbox-grid'
 
 const NominationField = ({ changed, disabled, name, onChange, value }) => <TextField
-  className={ 'NominationField' + (changed ? ' changed' : '') }
+  className={'NominationField' + (changed ? ' changed' : '')}
   disabled={disabled}
-  fullWidth={true}
-  multiLine={true}
+  fullWidth
+  multiLine
   name={name}
   onChange={onChange}
   underlineDisabledStyle={{
@@ -20,7 +19,7 @@ const NominationField = ({ changed, disabled, name, onChange, value }) => <TextF
     borderBottomWidth: 1
   }}
   value={value}
-/>;
+/>
 
 NominationField.propTypes = {
   changed: PropTypes.bool,
@@ -30,19 +29,18 @@ NominationField.propTypes = {
   value: PropTypes.string.isRequired
 }
 
-
 class NominationRemoveButton extends React.Component {
   static propTypes = {
     disabled: PropTypes.bool.isRequired,
     onRemove: PropTypes.func
   }
 
-  shouldComponentUpdate(nextProps) {
-    return nextProps.disabled !== this.props.disabled;
+  shouldComponentUpdate (nextProps) {
+    return nextProps.disabled !== this.props.disabled
   }
 
-  render() {
-    const { disabled, onRemove } = this.props;
+  render () {
+    const { disabled, onRemove } = this.props
     return <IconButton
       disabled={disabled}
       onTouchTap={onRemove}
@@ -54,30 +52,28 @@ class NominationRemoveButton extends React.Component {
       tooltipStyles={{ top: 24 }}
     >
       <ContentClear />
-    </IconButton>;
+    </IconButton>
   }
 }
-
 
 export const NominationFillerRow = ({ colSpan, fields }) => <Row>
   {
     fields.map(field => <Col key={field} xs={colSpan}>
       <TextField
-        className="NominationField NominationLink"
-        disabled={true}
-        fullWidth={true}
+        className='NominationField NominationLink'
+        disabled
+        fullWidth
         name={field}
         style={{ cursor: 'default' }}
         underlineDisabledStyle={{
           borderBottomStyle: 'dashed',
           borderBottomWidth: 1
         }}
-        value=""
+        value=''
       />
     </Col>)
   }
-</Row>;
-
+</Row>
 
 export class NominationRow extends React.Component {
   static propTypes = {
@@ -91,13 +87,13 @@ export class NominationRow extends React.Component {
     values: ImmutablePropTypes.map.isRequired
   }
 
-  shouldComponentUpdate(nextProps) {
-    const { defaultValues, disabled, values } = this.props;
-    return nextProps.disabled !== disabled || !defaultValues.equals(nextProps.defaultValues) || !values.equals(nextProps.values);
+  shouldComponentUpdate (nextProps) {
+    const { defaultValues, disabled, values } = this.props
+    return nextProps.disabled !== disabled || !defaultValues.equals(nextProps.defaultValues) || !values.equals(nextProps.values)
   }
 
-  render() {
-    const { active, colSpan, defaultValues, disabled, fields, onChange, onRemove, values } = this.props;
+  render () {
+    const { active, colSpan, defaultValues, disabled, fields, onChange, onRemove, values } = this.props
     return <Row bottom='xs'>
       {
         fields.map(field => <Col
@@ -106,15 +102,15 @@ export class NominationRow extends React.Component {
           xs={colSpan}
         >
           <NominationField
-            changed={ values.get(field, '') != defaultValues.get(field, '') }
+            changed={values.get(field, '') != defaultValues.get(field, '')}
             disabled={disabled}
             name={field}
-            onChange={ active ? ev => onChange(field, ev.target.value) : () => {} }
-            value={ values.get(field, '') }
+            onChange={active ? ev => onChange(field, ev.target.value) : () => {}}
+            value={values.get(field, '')}
           />
         </Col>)
       }
       { !active || values.isEmpty() ? null : <NominationRemoveButton disabled={disabled} onRemove={onRemove} /> }
-    </Row>;
+    </Row>
   }
 }

@@ -1,13 +1,11 @@
-import { Map } from 'immutable'
 import { List, ListItem, makeSelectable } from 'material-ui/List'
 import Paper from 'material-ui/Paper'
 import TextField from 'material-ui/TextField'
-import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 
 const TOKEN_LENGTH = 6
 
-let SelectableList = makeSelectable(List);
+let SelectableList = makeSelectable(List)
 
 export default class TokenSelector extends Component {
   state = {
@@ -42,7 +40,7 @@ export default class TokenSelector extends Component {
   }
 
   render () {
-    const { api, onAdd, onSelect, selected, tokens } = this.props
+    const { onSelect, selected, tokens } = this.props
     const { error, query, sent } = this.state
     return (
       <Paper zDepth={1}>

@@ -10,7 +10,6 @@ import { cleanBallots, selectFinalists } from '../nomination-count'
 import Results from './results'
 
 class Finalists extends React.Component {
-
   static propTypes = {
     allBallots: PropTypes.instanceOf(Map),
     allNominations: PropTypes.instanceOf(Map),
@@ -19,50 +18,50 @@ class Finalists extends React.Component {
     fetchAllBallots: PropTypes.func.isRequired
   }
 
-  constructor(props) {
-    super(props);
-    const { allBallots, allNominations, category, fetchAllBallots } = props;
+  constructor (props) {
+    super(props)
+    const { allBallots, allNominations, category, fetchAllBallots } = props
     this.state = { log: List(), results: null }
     if (allBallots.isEmpty()) {
-      fetchAllBallots();
+      fetchAllBallots()
     } else if (allNominations.has(category)) {
-      this.getFinalists();
+      this.getFinalists()
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { allBallots, allNominations, canon, category, fetchAllBallots } = nextProps;
+  componentWillReceiveProps (nextProps) {
+    const { allBallots, allNominations, canon, category, fetchAllBallots } = nextProps
     if (
       !allBallots.equals(this.props.allBallots) ||
       !canon.equals(this.props.canon) ||
       !allNominations.equals(this.props.allNominations)
     ) {
-      this.setState({ log: List(), results: null });
+      this.setState({ log: List(), results: null })
       if (allBallots.isEmpty()) {
-        fetchAllBallots();
+        fetchAllBallots()
       } else if (allNominations.has(category)) {
-        this.getFinalists();
+        this.getFinalists()
       }
     }
   }
 
-  getFinalists() {
+  getFinalists () {
     setTimeout(() => {
-      const { allBallots, allNominations, canon, category } = this.props;
-      const cb = cleanBallots(category, allBallots, allNominations, canon);
-      const results = selectFinalists(minFinalistsPerCategory, cb, this.logSelectionRound);
-      this.setState({ results });
-    });
+      const { allBallots, allNominations, canon, category } = this.props
+      const cb = cleanBallots(category, allBallots, allNominations, canon)
+      const results = selectFinalists(minFinalistsPerCategory, cb, this.logSelectionRound)
+      this.setState({ results })
+    })
   }
 
   logSelectionRound = (ballots, counts, next) => {
-    const { log } = this.state;
-    this.setState({ log: log.push(Map({ counts, next })) });
+    const { log } = this.state
+    this.setState({ log: log.push(Map({ counts, next })) })
   }
 
-  render() {
-    const { category } = this.props;
-    const { log, results } = this.state;
+  render () {
+    const { category } = this.props
+    const { log, results } = this.state
     return results ? <div
       style={{ display: 'flex' }}
     >
@@ -84,4 +83,4 @@ export default connect(
   }), {
     fetchAllBallots
   }
-)(Finalists);
+)(Finalists)

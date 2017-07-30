@@ -7,22 +7,22 @@ export const lookupQuery = ImmutablePropTypes.mapContains({
   email: PropTypes.string,
   member_number: PropTypes.number,
   name: PropTypes.string
-});
+})
 
 export const lookupResults = ImmutablePropTypes.mapContains({
   status: PropTypes.oneOf(['multiple', 'not found', 'success']).isRequired,
   id: PropTypes.number,
   membership: PropTypes.oneOf(membershipTypes),
   name: PropTypes.string
-});
+})
 
-export const lookup = ImmutablePropTypes.mapOf(lookupResults, lookupQuery);
+export const lookup = ImmutablePropTypes.mapOf(lookupResults, lookupQuery)
 
 export const paperPubs = ImmutablePropTypes.mapContains({
   name: PropTypes.string.isRequired,
   address: PropTypes.string.isRequired,
   country: PropTypes.string.isRequired
-});
+})
 
 export const person = ImmutablePropTypes.mapContains({
   id: PropTypes.number.isRequired,
@@ -40,6 +40,6 @@ export const person = ImmutablePropTypes.mapContains({
   can_hugo_vote: PropTypes.bool,
   can_site_select: PropTypes.bool,
   paper_pubs: paperPubs
-});
+})
 
-export const people = ImmutablePropTypes.listOf(person);
+export const people = ImmutablePropTypes.listOf(person)

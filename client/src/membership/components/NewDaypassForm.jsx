@@ -1,7 +1,7 @@
 import { Map } from 'immutable'
 import PropTypes from 'prop-types'
 import React from 'react'
-const { Col, Row } = require('react-flexbox-grid')
+import { Col, Row } from 'react-flexbox-grid'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 import { connect } from 'react-redux'
 import { push, replace } from 'react-router-redux'
@@ -18,9 +18,9 @@ import MemberForm from './MemberForm'
 
 const DaypassTypeSelect = ({ daypassData, onChange, value }) => (
   <SelectField
-    floatingLabelFixed={true}
-    floatingLabelText="Day pass type"
-    fullWidth={true}
+    floatingLabelFixed
+    floatingLabelText='Day pass type'
+    fullWidth
     onChange={(ev, idx, value) => onChange(value)}
     value={value}
   >
@@ -51,7 +51,7 @@ class NewDaypassForm extends React.Component {
     showMessage: PropTypes.func.isRequired
   }
 
-  constructor(props) {
+  constructor (props) {
     super(props)
     const { email, params: { type } } = this.props
     this.state = {
@@ -61,7 +61,7 @@ class NewDaypassForm extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps (nextProps) {
     const { email, params: { type } } = nextProps
     let { person } = this.state
     if (email !== this.props.email) person = person.set('email', email)
@@ -69,7 +69,7 @@ class NewDaypassForm extends React.Component {
     if (!person.equals(this.state.person)) this.setState({ person })
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const { daypassData, daypassPrices, getDaypassPrices, getPurchaseData, setScene } = this.props
     setScene({ title: 'New Day Pass', dockSidebar: false })
     if (!daypassData) getPurchaseData()
@@ -81,29 +81,29 @@ class NewDaypassForm extends React.Component {
     const { person } = this.state
     const amount = this.price
     const email = person.get('email')
-    showMessage(`Charging ${email} EUR ${amount/100} ...`)
+    showMessage(`Charging ${email} EUR ${amount / 100} ...`)
     buyDaypass(person, amount, email, token, () => {
       showMessage('Charge completed; day pass purchased!')
       push('/')
-    });
+    })
   }
 
-  get dayData() {
+  get dayData () {
     const { daypassData } = this.props
     return daypassData.get('shape').entrySeq().filter(([key]) => /^day\d+$/.test(key))
   }
 
-  get description() {
+  get description () {
     const { params: { type } } = this.props
     const { person } = this.state
     const ds = (this.dayData || Map())
       .filter(([day]) => person.get(day))
-      .map(([_, data]) => data.get('label').substr(0,3))
+      .map(([_, data]) => data.get('label').substr(0, 3))
       .join('/')
     return `${type} day pass ${ds}`
   }
 
-  get price() {
+  get price () {
     const { daypassPrices, params: { type } } = this.props
     const { person } = this.state
     return daypassPrices.get(type).reduce((sum, price, day) => (
@@ -111,7 +111,7 @@ class NewDaypassForm extends React.Component {
     ), 0)
   }
 
-  render() {
+  render () {
     const { daypassData, daypassPrices, params: { type }, replace } = this.props
     const { person, sent, valid } = this.state
     if (!daypassData || !daypassPrices) return null
@@ -131,21 +131,21 @@ class NewDaypassForm extends React.Component {
               <Col xs={12}>
                 <DaypassTypeSelect
                   daypassData={daypassData}
-                  onChange={(type) => replace(`/${type.replace('-','/')}`)}
+                  onChange={(type) => replace(`/${type.replace('-', '/')}`)}
                   value={`daypass-${type}`}
                 />
               </Col>
             </Row>
             <Row style={{ paddingBottom: 20, paddingTop: 6 }}>
-              <Col xs={0} sm={2}></Col>
+              <Col xs={0} sm={2} />
               {this.dayData.map(([day, data]) => {
                 const selected = person.get(day, false)
                 return (
                   <Col xs={12} sm={4} key={day} style={{ paddingTop: '0.5rem', paddingBottom: '0.5rem' }}>
                     <RaisedButton
-                      fullWidth={true}
+                      fullWidth
                       label={`${data.get('label')} (€${daypassPrices.getIn([type, day]) / 100})`}
-                      onTouchTap={() => this.setState({ person: person.set(day, !selected)})}
+                      onTouchTap={() => this.setState({ person: person.set(day, !selected) })}
                       primary={selected}
                     />
                   </Col>
@@ -153,9 +153,9 @@ class NewDaypassForm extends React.Component {
               })}
             </Row>
             <MemberForm
-              lc="daypass"
+              lc='daypass'
               member={person}
-              newMember={true}
+              newMember
               onChange={(valid, person) => this.setState({ person, valid })}
               tabIndex={2}
             />
@@ -163,7 +163,7 @@ class NewDaypassForm extends React.Component {
           <CardActions style={{ alignItems: 'center', display: 'flex', flexWrap: 'wrap', padding: 16 }}>
             <StripeCheckout
               amount={amount}
-              currency="EUR"
+              currency='EUR'
               description={this.description}
               disabled={paymentDisabled}
               email={person.get('email')}
@@ -174,7 +174,7 @@ class NewDaypassForm extends React.Component {
                 label={sent ? 'Working...' : 'Pay by card'}
                 disabled={paymentDisabled}
                 onTouchTap={() => this.setState({ sent: true })}
-                primary={true}
+                primary
                 style={{ marginRight: 16 }}
                 tabIndex={3}
               />
@@ -185,7 +185,7 @@ class NewDaypassForm extends React.Component {
           </CardActions>
         </Card>
       </Col>
-    </Row>;
+    </Row>
   }
 }
 

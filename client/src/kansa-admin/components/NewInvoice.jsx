@@ -1,8 +1,6 @@
 import { Map } from 'immutable'
-import ContentAdd from 'material-ui/svg-icons/content/add'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
-import FloatingActionButton from 'material-ui/FloatingActionButton'
 import PropTypes from 'prop-types'
 import React from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
@@ -23,7 +21,7 @@ class NewInvoice extends React.Component {
       email: PropTypes.string,
       legal_name: PropTypes.string,
       public_first_name: PropTypes.string,
-      public_last_name: PropTypes.string,
+      public_last_name: PropTypes.string
     })
   }
 
@@ -33,7 +31,7 @@ class NewInvoice extends React.Component {
     sent: false
   }
 
-  get disableSubmit() {
+  get disableSubmit () {
     const { paymentData } = this.props
     const { amount, category, data, type } = this.state.invoice
     return !category || !type || !amount || !data || !paymentData ||
@@ -57,7 +55,7 @@ class NewInvoice extends React.Component {
 
   handleClose = () => { this.setState({ open: false }) }
 
-  render() {
+  render () {
     const { children, onSubmit, paymentData } = this.props
     const { invoice, open, sent } = this.state
     return (
@@ -66,15 +64,15 @@ class NewInvoice extends React.Component {
         <Dialog
           title='Add new invoice'
           open={open}
-          autoScrollBodyContent={true}
+          autoScrollBodyContent
           bodyClassName='invoiceDialog'
           onRequestClose={this.handleClose}
           actions={[
             <FlatButton key='cancel' label='Cancel' onTouchTap={this.handleClose} />,
             <FlatButton key='add'
-              label={ sent ? 'Working...' : 'Add' }
+              label={sent ? 'Working...' : 'Add'}
               disabled={this.disableSubmit}
-              onTouchTap={ () => {
+              onTouchTap={() => {
                 this.setState({ sent: true })
                 onSubmit(invoice)
                   .then(res => {

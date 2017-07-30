@@ -1,8 +1,3 @@
-import { Map } from 'immutable'
-import PropTypes from 'prop-types'
-import React from 'react'
-import ImmutablePropTypes from 'react-immutable-proptypes'
-
 import Divider from 'material-ui/Divider'
 import IconButton from 'material-ui/IconButton'
 import { List, ListItem, makeSelectable } from 'material-ui/List'
@@ -22,30 +17,28 @@ import Number3 from 'material-ui/svg-icons/image/looks-3'
 import Number4 from 'material-ui/svg-icons/image/looks-4'
 import Number5 from 'material-ui/svg-icons/image/looks-5'
 import Number6 from 'material-ui/svg-icons/image/looks-6'
-import Number7 from '../../lib/looks-7'
+import PropTypes from 'prop-types'
+import React from 'react'
 
-import { noAwardEntry } from '../constants'
+import Number7 from '../../lib/looks-7'
 import * as VotePropTypes from '../proptypes'
 
-const SelectableList = makeSelectable(List);
-
-const fieldLabel = (field) => field.charAt(0).toUpperCase() + field.substr(1);
+const SelectableList = makeSelectable(List)
 
 const getIcon = (n, entry) => {
   switch (n) {
-    case 0: return entry ? <Number1 /> : <Blank1 />;
-    case 1: return entry ? <Number2 /> : <Blank2 />;
-    case 2: return entry ? <Number3 /> : <Blank3 />;
-    case 3: return entry ? <Number4 /> : <Blank4 />;
-    case 4: return entry ? <Number5 /> : <Blank5 />;
-    case 5: return entry ? <Number6 /> : <Blank6 />;
-    case 6: return entry ? <Number7 /> : <Blank7 />;
-    default: return <NoNumber />;
+    case 0: return entry ? <Number1 /> : <Blank1 />
+    case 1: return entry ? <Number2 /> : <Blank2 />
+    case 2: return entry ? <Number3 /> : <Blank3 />
+    case 3: return entry ? <Number4 /> : <Blank4 />
+    case 4: return entry ? <Number5 /> : <Blank5 />
+    case 5: return entry ? <Number6 /> : <Blank6 />
+    case 6: return entry ? <Number7 /> : <Blank7 />
+    default: return <NoNumber />
   }
 }
 
 export default class CategoryList extends React.Component {
-
   static propTypes = {
     finalists: VotePropTypes.categoryFinalists.isRequired,
     preference: VotePropTypes.categoryVotes.isRequired,
@@ -56,24 +49,24 @@ export default class CategoryList extends React.Component {
     popAnchor: null,
     popEntry: null,
     popIdx: 0,
-    popOpen: false,
+    popOpen: false
   }
 
-  getActionText(idx) {
-    const { popIdx, popEntry } = this.state;
+  getActionText (idx) {
+    const { popIdx, popEntry } = this.state
     switch (idx) {
-      case popIdx: return this.getPrimaryText(popEntry);
-      case -1: return 'Remove from ballot';
-      default: return `Move to position ${idx + 1}`;
+      case popIdx: return this.getPrimaryText(popEntry)
+      case -1: return 'Remove from ballot'
+      default: return `Move to position ${idx + 1}`
     }
   }
 
-  getPrimaryText(entry) {
-    return entry ? entry.get('title', '[title]') : <span style={{ color: 'rgba(0, 0, 0, 0.541176)' }}>[No entry]</span>;
+  getPrimaryText (entry) {
+    return entry ? entry.get('title', '[title]') : <span style={{ color: 'rgba(0, 0, 0, 0.541176)' }}>[No entry]</span>
   }
 
-  getSecondaryText(entry) {
-    return entry ? entry.get('subtitle', '') : 'Tap to remove';
+  getSecondaryText (entry) {
+    return entry ? entry.get('subtitle', '') : 'Tap to remove'
   }
 
   listItemProps = (entry) => ({
@@ -83,72 +76,72 @@ export default class CategoryList extends React.Component {
   });
 
   openPopover = (event, idx, entry) => {
-    event.preventDefault();
+    event.preventDefault()
     this.setState({
       popAnchor: event.currentTarget,
       popEntry: entry,
       popIdx: idx,
       popOpen: true
-    });
+    })
   }
 
   setPreference = (idx, fi) => {
-    let { preference } = this.props;
+    let { preference } = this.props
     if (fi) {
-      let prevIdx;
+      let prevIdx
       do {
-        prevIdx = preference.keyOf(fi);
-        if (typeof prevIdx !== 'number') break;
-        if (prevIdx === idx) return;
+        prevIdx = preference.keyOf(fi)
+        if (typeof prevIdx !== 'number') break
+        if (prevIdx === idx) return
         if (prevIdx < idx) {
-          preference = preference.set(prevIdx, null);
+          preference = preference.set(prevIdx, null)
         } else {
           preference = preference.delete(prevIdx)
         }
       } while (preference.size)
       if (preference.get(idx)) {
-        if (preference.size >= 7) ++idx;
-        preference = preference.insert(idx, fi);
+        if (preference.size >= 7) ++idx
+        preference = preference.insert(idx, fi)
       } else {
-        preference = preference.set(idx, fi);
+        preference = preference.set(idx, fi)
       }
     } else {
-      preference = preference.delete(idx);
+      preference = preference.delete(idx)
     }
     while (preference.size && !preference.last()) {
-      preference = preference.pop();
+      preference = preference.pop()
     }
     while (preference.size > 7) {
-      const emptyIdx = preference.findLastKey(e => !e);
-      if (typeof emptyIdx !== 'number') break;
-      preference = preference.delete(emptyIdx);
+      const emptyIdx = preference.findLastKey(e => !e)
+      if (typeof emptyIdx !== 'number') break
+      preference = preference.delete(emptyIdx)
     }
-    this.props.setPreference(preference);
+    this.props.setPreference(preference)
   }
 
-  render() {
-    const { finalists, preference } = this.props;
-    const { popAnchor, popEntry, popIdx, popOpen } = this.state;
-    const pFinalists = preference.map(fi => finalists.get(fi));
-    const npFinalists = finalists.toList().filter(entry => !pFinalists.includes(entry));
+  render () {
+    const { finalists, preference } = this.props
+    const { popAnchor, popEntry, popIdx, popOpen } = this.state
+    const pFinalists = preference.map(fi => finalists.get(fi))
+    const npFinalists = finalists.toList().filter(entry => !pFinalists.includes(entry))
 
     return (
       <List>
         {pFinalists.map((entry, idx) => (
           <ListItem
-            className="vote-item"
-            key={'p'+idx}
+            className='vote-item'
+            key={'p' + idx}
             leftIcon={getIcon(idx, entry)}
             onTouchTap={(ev) => {
-              if (entry) this.openPopover(ev, idx, entry);
-              else this.setPreference(idx, null);
+              if (entry) this.openPopover(ev, idx, entry)
+              else this.setPreference(idx, null)
             }}
             rightIconButton={<IconButton
               iconStyle={{ color: 'rgba(0, 0, 0, 0.541176)' }}
               onTouchTap={() => this.setPreference(idx, null)}
-              tooltip="Remove this entry"
+              tooltip='Remove this entry'
             ><ContentClear /></IconButton>}
-            { ...this.listItemProps(entry) }
+            {...this.listItemProps(entry)}
           />
         ))}
 
@@ -156,11 +149,11 @@ export default class CategoryList extends React.Component {
 
         {npFinalists.map((entry, idx) => (
           <ListItem
-            className="vote-item"
-            key={'n'+idx}
+            className='vote-item'
+            key={'n' + idx}
             leftIcon={<NoNumber />}
             onTouchTap={(ev) => this.openPopover(ev, -1, entry)}
-            { ...this.listItemProps(entry) }
+            {...this.listItemProps(entry)}
           />
         ))}
 
@@ -173,16 +166,16 @@ export default class CategoryList extends React.Component {
         >
           <SelectableList
             onChange={(ev, idx) => {
-              if (idx < 0) this.setPreference(popIdx, null);
-              else this.setPreference(idx, popEntry.get('id'));
-              this.setState({ popOpen: false });
+              if (idx < 0) this.setPreference(popIdx, null)
+              else this.setPreference(idx, popEntry.get('id'))
+              this.setState({ popOpen: false })
             }}
             style={{ padding: 0 }}
             value={popIdx}
           >
             {[0, 1, 2, 3, 4, 5, 6, -1].map(idx => (
               <ListItem
-                key={'pop'+idx}
+                key={'pop' + idx}
                 leftIcon={getIcon(idx, popEntry)}
                 primaryText={this.getActionText(idx)}
                 value={idx}
@@ -191,6 +184,6 @@ export default class CategoryList extends React.Component {
           </SelectableList>
         </Popover>
       </List>
-    );
+    )
   }
 }

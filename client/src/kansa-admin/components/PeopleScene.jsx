@@ -1,7 +1,7 @@
 import { Map } from 'immutable'
 import PropTypes from 'prop-types'
-import React, { Component } from 'react'
-import { connect } from 'react-redux';
+import React from 'react'
+import { connect } from 'react-redux'
 
 import Member from './Member'
 import MemberTable from './MemberTable'

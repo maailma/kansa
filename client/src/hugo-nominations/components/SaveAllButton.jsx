@@ -11,7 +11,7 @@ import { submitNominations } from '../actions'
 
 const SaveAllButton = ({ changedCategories, signature, submitNominations }) => (
   <Paper
-    circle={true}
+    circle
     className='SaveAllButton'
     style={{
       opacity: changedCategories.size ? 1 : 0,
@@ -29,12 +29,12 @@ const SaveAllButton = ({ changedCategories, signature, submitNominations }) => (
         top: -6,
         zoom: 1.1
       }}
-      primary={true}
+      primary
       style={{ padding: 0 }}
     >
       <IconButton
-        disabled={ changedCategories.size == 0 }
-        onTouchTap={ () => changedCategories.keySeq().forEach(category => submitNominations(category, signature)) }
+        disabled={changedCategories.size == 0}
+        onTouchTap={() => changedCategories.keySeq().forEach(category => submitNominations(category, signature))}
         style={{
           transition: transitions.easeOut(),
           position: 'relative',
@@ -57,7 +57,7 @@ const SaveAllButton = ({ changedCategories, signature, submitNominations }) => (
       </IconButton>
     </Badge>
   </Paper>
-);
+)
 
 export default connect(
   ({ nominations }) => ({
@@ -65,5 +65,4 @@ export default connect(
   }), {
     submitNominations
   }
-)(SaveAllButton);
-
+)(SaveAllButton)

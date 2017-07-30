@@ -1,17 +1,11 @@
-import { List as ImmutableList } from 'immutable'
 import React from 'react'
-const { Col, Row } = require('react-flexbox-grid');
-
-import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
-import { List, ListItem } from 'material-ui/List'
-import Paper from 'material-ui/Paper'
+import { Col, Row } from 'react-flexbox-grid'
 
 import { TextInput } from '../../membership/components/form-components'
 import MemberLookupSelector from '../../membership/components/MemberLookupSelector'
 
 const DataField = ({ field, name, onChange, value }) => {
   switch (field.get('type')) {
-
     case 'number':
       return <TextInput
         getDefaultValue={() => value}
@@ -21,36 +15,35 @@ const DataField = ({ field, name, onChange, value }) => {
         onChange={onChange}
         path={[]}
         required={field.get('required')}
-        type="number"
-      />;
+        type='number'
+      />
 
     case 'string':
       return <TextInput
         getDefaultValue={() => value}
         getValue={() => value}
         label={field.get('label')}
-        multiLine={true}
+        multiLine
         name={name}
         onChange={onChange}
         path={[]}
         required={field.get('required')}
-      />;
+      />
 
     case 'boolean':
-      console.warn('checkbox data field not implemented!');
+      console.warn('checkbox data field not implemented!')
       // fallthrough
 
     default:
       // select(values)
-      return <div>{field.get('label') || name}: {value || '[empty]'}</div>;
-
+      return <div>{field.get('label') || name}: {value || '[empty]'}</div>
   }
 }
 
 const NewPaymentForm = ({ disabled, onChange, people, purchase, requireMembership, shape }) => {
-  if (!people || people.size === 0) return null;
-  const showComments = !disabled || !disabled.includes('comments');
-  const showInvoice = !disabled || !disabled.includes('invoice');
+  if (!people || people.size === 0) return null
+  const showComments = !disabled || !disabled.includes('comments')
+  const showInvoice = !disabled || !disabled.includes('invoice')
   return (
     <form>
       <Row>
@@ -79,13 +72,13 @@ const NewPaymentForm = ({ disabled, onChange, people, purchase, requireMembershi
         <TextInput
           getDefaultValue={() => purchase.get('invoice')}
           getValue={() => purchase.get('invoice')}
-          key="ii"
-          label="Invoice number"
-          name="invoice"
+          key='ii'
+          label='Invoice number'
+          name='invoice'
           onChange={(_, invoice) => onChange({ invoice })}
           path={[]}
         />,
-      <div key="ih" style={{
+        <div key='ih' style={{
           color: 'rgba(0, 0, 0, 0.3)',
           fontSize: 12,
           marginTop: -4,
@@ -98,15 +91,15 @@ const NewPaymentForm = ({ disabled, onChange, people, purchase, requireMembershi
       {showComments && <TextInput
         getDefaultValue={() => purchase.get('comments')}
         getValue={() => purchase.get('comments')}
-        label="Comments"
-        multiLine={true}
-        name="comments"
+        label='Comments'
+        multiLine
+        name='comments'
         onChange={(_, comments) => onChange({ comments })}
         path={[]}
         rows={2}
       />}
     </form>
-  );
+  )
 }
 
-export default NewPaymentForm;
+export default NewPaymentForm

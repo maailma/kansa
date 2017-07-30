@@ -6,7 +6,6 @@ import FlatButton from 'material-ui/FlatButton'
 import TextField from 'material-ui/TextField'
 
 export default class NominationSignature extends React.Component {
-
   static propTypes = {
     open: PropTypes.bool.isRequired,
     setName: PropTypes.func.isRequired
@@ -14,19 +13,19 @@ export default class NominationSignature extends React.Component {
 
   state = { name: '' }
 
-  render() {
-    const { open, setName } = this.props;
-    const { name } = this.state;
+  render () {
+    const { open, setName } = this.props
+    const { name } = this.state
     return <Dialog
       actions={
         <FlatButton
           disabled={!name}
           label='OK'
-          onTouchTap={ () => setName(name) }
+          onTouchTap={() => setName(name)}
         />
       }
-      autoScrollBodyContent={true}
-      modal={true}
+      autoScrollBodyContent
+      modal
       open={open}
     >
       <p>
@@ -44,20 +43,20 @@ export default class NominationSignature extends React.Component {
       </p>
       <p>
         If you have difficulties accessing the online ballot, or you have more general questions on the Hugo process,
-        you can e-mail <a href="mailto:hugohelp@worldcon.fi">hugohelp@worldcon.fi</a> for assistance. See <a
-        href="http://www.worldcon.fi/wsfs/hugo/" target="_blank">here</a> for more information about the Hugo Awards.
+        you can e-mail <a href='mailto:hugohelp@worldcon.fi'>hugohelp@worldcon.fi</a> for assistance. See <a
+          href='http://www.worldcon.fi/wsfs/hugo/' target='_blank'>here</a> for more information about the Hugo Awards.
       </p>
       <p>
         Thank you for participating! To start nominating, please enter your name here:
       </p>
 
       <form onSubmit={ev => {
-        ev.preventDefault();
-        setName(name);
+        ev.preventDefault()
+        setName(name)
       }}>
         <TextField
           floatingLabelText='Signature'
-          onChange={ (event) => this.setState({ name: event.target.value }) }
+          onChange={(event) => this.setState({ name: event.target.value })}
           style={{
             backgroundColor: 'rgba(0, 0, 0, 0.05)',
             padding: '0 8px',
@@ -69,5 +68,4 @@ export default class NominationSignature extends React.Component {
       </form>
     </Dialog>
   }
-
 }

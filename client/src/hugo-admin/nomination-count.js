@@ -13,11 +13,9 @@
  * @param {Iterable<Nomination>} nextEliminations
  */
 
-
 import { List, Map, Seq } from 'immutable'
 
-import { maxNominationsPerCategory } from '../hugo-nominations/constants';
-
+import { maxNominationsPerCategory } from '../hugo-nominations/constants'
 
 /**
  * Count the number of uncanonicalised ballots that contain the specified
@@ -27,13 +25,12 @@ import { maxNominationsPerCategory } from '../hugo-nominations/constants';
  * @param {Nomination} nomination
  * @returns {number}
  */
-export function countRawBallots(rawBallots, nomination) {
+export function countRawBallots (rawBallots, nomination) {
   return rawBallots.reduce((res, ballot) => {
-    if (ballot.includes(nomination)) ++res;
-    return res;
-  }, 0);
+    if (ballot.includes(nomination)) ++res
+    return res
+  }, 0)
 }
-
 
 /**
  * Canonicalise & simplify ballots, removing duplicates and empty nominations
@@ -44,65 +41,64 @@ export function countRawBallots(rawBallots, nomination) {
  * @param {Map<canon_id, Map<{ data: Nomination, disqualified: bool, relocated: string }>>} canon
  * @returns {List<Set<Nomination>>}
  */
-export function cleanBallots(category, allBallots, allNominations, canon) {
+export function cleanBallots (category, allBallots, allNominations, canon) {
   const ballots = allBallots.get(category).withMutations(ballots => {
     allNominations.forEach((nominations, cat) => {
       nominations.forEach(nomination => {
-        const ci = nomination.get('canon_id');
-        const cd = ci && canon.get(ci);
+        const ci = nomination.get('canon_id')
+        const cd = ci && canon.get(ci)
         if (cat === category) {
-          const nd = nomination.get('data');
+          const nd = nomination.get('data')
           if (cd) {
             if (cd.get('disqualified')) {
               // remove disqualified nomination
               ballots.forEach((ballot, id) => {
                 if (ballot.includes(nd)) {
-                  ballots.set(id, ballot.filter(nom => !nd.equals(nom)));
+                  ballots.set(id, ballot.filter(nom => !nd.equals(nom)))
                 }
-              });
+              })
             } else {
               // canonicalise nomination within category
               ballots.forEach((ballot, id) => {
                 if (ballot.includes(nd)) {
-                  ballots.set(id, ballot.map(nom => nd.equals(nom) ? cd.get('data') : nom));
+                  ballots.set(id, ballot.map(nom => nd.equals(nom) ? cd.get('data') : nom))
                 }
-              });
+              })
             }
           } else if (ci) {
             // canonicalise nomination to another category
             ballots.forEach((ballot, id) => {
               if (ballot.includes(nd)) {
-                ballots.set(id, ballot.filter(nom => !nd.equals(nom)));
+                ballots.set(id, ballot.filter(nom => !nd.equals(nom)))
               }
-            });
+            })
           }
         } else if (cd && !cd.get('disqualified')) {
           // canonicalise nomination from another category
-          const nd = nomination.get('data');
+          const nd = nomination.get('data')
           allBallots.get(cat).forEach((srcBallot, id) => {
             if (srcBallot.includes(nd)) {
-              const tgtBallot = ballots.get(id);
+              const tgtBallot = ballots.get(id)
               if (!tgtBallot) {
-                ballots.set(id, List.of(cd.get('data')));
+                ballots.set(id, List.of(cd.get('data')))
               } else if (tgtBallot.size < maxNominationsPerCategory) {
-                ballots.set(id, tgtBallot.push(cd.get('data')));
+                ballots.set(id, tgtBallot.push(cd.get('data')))
               } else {
                 console.log(
                   `Dropping mis-categorisation by #${id} due to full ballot of`,
                   cd.toJS(), `from ${cat}`, srcBallot.toJS(),
                   `to ${category}`, tgtBallot.toJS()
-                );
+                )
               }
             }
-          });
+          })
         }
-      });
-    });
-  });
-  const emptyNom = Map();
-  return ballots.toList().map(ballot => ballot.toSet().delete(emptyNom));
+      })
+    })
+  })
+  const emptyNom = Map()
+  return ballots.toList().map(ballot => ballot.toSet().delete(emptyNom))
 }
-
 
 /**
  * Count the nominations and points for each nomination in `ballots`. In order
@@ -122,26 +118,25 @@ export function cleanBallots(category, allBallots, allNominations, canon) {
  * @param {List<Set<Nomination>>} ballots
  * @returns {Map<Nomination, { nominations: number, points: number }>}
  */
-function countNominations(ballots) {
-  const pointsPerBallot = 60;  // divisible by 1..6
+function countNominations (ballots) {
+  const pointsPerBallot = 60  // divisible by 1..6
   return Map().withMutations(counts => {
     ballots.forEach(ballot => {
       if (ballot.size > 0) {
-        const nomPoints = pointsPerBallot / ballot.size;
+        const nomPoints = pointsPerBallot / ballot.size
         ballot.forEach(nom => {
-          const count = counts.get(nom);
+          const count = counts.get(nom)
           if (count) {
-            count.nominations += 1;
-            count.points += nomPoints;
+            count.nominations += 1
+            count.points += nomPoints
           } else {
-            counts.set(nom, { nominations: 1, points: nomPoints });
+            counts.set(nom, { nominations: 1, points: nomPoints })
           }
-        });
+        })
       }
-    });
-  });
+    })
+  })
 }
-
 
 /**
  * Select at least two entries of `counts` with the lowest point counts. If
@@ -158,20 +153,19 @@ function countNominations(ballots) {
  * @param {Map<Nomination, { nominations: number, points: number }>} counts
  * @returns {Map<Nomination, { nominations: number, points: number }>}
  */
-function nominationsWithLeastPoints(counts) {
-  if (counts.size <= 2) return counts;
-  let ptLimit = counts.minBy(count => count.points).points;
-  let selected = counts.filter(count => count.points === ptLimit);
+function nominationsWithLeastPoints (counts) {
+  if (counts.size <= 2) return counts
+  let ptLimit = counts.minBy(count => count.points).points
+  let selected = counts.filter(count => count.points === ptLimit)
   if (selected.size < 2) {
     ptLimit = counts.toSeq()
       .filter(count => count.points > ptLimit)
       .minBy(count => count.points)
-      .points;
-    selected = counts.filter(count => count.points <= ptLimit);
+      .points
+    selected = counts.filter(count => count.points <= ptLimit)
   }
-  return selected;
+  return selected
 }
-
 
 /**
  * Select the entry or entries of `counts` with the least nominations and of
@@ -189,16 +183,15 @@ function nominationsWithLeastPoints(counts) {
  * @param {Map<Nomination, { nominations: number, points: number }>} counts
  * @returns {Map<Nomination, { nominations: number, points: number }>}
  */
-function nominationsWithLeastNominations(counts) {
-  const nomLimit = counts.minBy(count => count.nominations).nominations;
-  let selected = counts.filter(count => count.nominations === nomLimit);
+function nominationsWithLeastNominations (counts) {
+  const nomLimit = counts.minBy(count => count.nominations).nominations
+  let selected = counts.filter(count => count.nominations === nomLimit)
   if (selected.size > 1) {
-    const ptLimit = selected.minBy(count => count.points).points;
-    selected = selected.filter(count => count.points === ptLimit);
+    const ptLimit = selected.minBy(count => count.points).points
+    selected = selected.filter(count => count.points === ptLimit)
   }
-  return selected;
+  return selected
 }
-
 
 /**
  * Select the nominations that would next be eliminated according to the
@@ -207,12 +200,11 @@ function nominationsWithLeastNominations(counts) {
  * @param {Map<Nomination, { nominations: number, points: number }>} counts
  * @returns {Seq.Indexed<Nomination>}
  */
-function nominationsForElimination(counts) {
-  const leastPoints = nominationsWithLeastPoints(counts);
-  const leastNoms = nominationsWithLeastNominations(leastPoints);
-  return leastNoms.keySeq();
+function nominationsForElimination (counts) {
+  const leastPoints = nominationsWithLeastPoints(counts)
+  const leastNoms = nominationsWithLeastNominations(leastPoints)
+  return leastNoms.keySeq()
 }
-
 
 /**
  * Select `numSelected` finalists from `ballots` of canonicalised nominations.
@@ -225,20 +217,20 @@ function nominationsForElimination(counts) {
  * @param {logger} [log]
  * @returns {Iterable<Nomination> | null}
  */
-export function selectFinalists(numSelected, ballots, log) {
+export function selectFinalists (numSelected, ballots, log) {
   do {
-    const counts = countNominations(ballots);
-    const elimNoms = nominationsForElimination(counts);
-    const nextSize = counts.size - elimNoms.size;
-    if (log) log(ballots, counts, nextSize < numSelected ? Seq() : elimNoms);
+    const counts = countNominations(ballots)
+    const elimNoms = nominationsForElimination(counts)
+    const nextSize = counts.size - elimNoms.size
+    if (log) log(ballots, counts, nextSize < numSelected ? Seq() : elimNoms)
     if (nextSize === numSelected) {
-      return counts.keySeq().filterNot(nom => elimNoms.includes(nom));
+      return counts.keySeq().filterNot(nom => elimNoms.includes(nom))
     } else if (nextSize < numSelected) {
-      return counts.keySeq();
+      return counts.keySeq()
     }
     ballots = ballots
       .map(ballot => ballot.filterNot(nom => elimNoms.includes(nom)))
-      .filter(ballot => ballot.size);
-  } while(ballots.size);
-  return null;
+      .filter(ballot => ballot.size)
+  } while (ballots.size)
+  return null
 }

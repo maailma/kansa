@@ -1,24 +1,22 @@
-import PropTypes from 'prop-types'
-import React from 'react'
-import { connect } from 'react-redux'
-
-import Checkbox from 'material-ui/Checkbox';
+import Checkbox from 'material-ui/Checkbox'
 import RaisedButton from 'material-ui/RaisedButton'
-import MenuItem from 'material-ui/MenuItem';
-import SelectField from 'material-ui/SelectField';
-import TextField from 'material-ui/TextField';
+import MenuItem from 'material-ui/MenuItem'
+import SelectField from 'material-ui/SelectField'
+import TextField from 'material-ui/TextField'
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import OpenInNew from 'material-ui/svg-icons/action/open-in-new'
+import PropTypes from 'prop-types'
+import React from 'react'
 
-import { BasicRulesDialog } from './basic-rules';
+import { BasicRulesDialog } from './basic-rules'
 
 const labelStyle = {
   color: '#888',
   fontSize: 16
-};
+}
 
 const ArtistCard = ({ artist: { agent, continent, description, legal, name, transport, url }, onChange, onSave, style }) => <Card style={style}>
-  <CardHeader style={{ fontWeight: 600 }} title="Artist information"/>
+  <CardHeader style={{ fontWeight: 600 }} title='Artist information' />
   <CardText>
     <p>
       Please fill in the general fields to register to the W75 art show.
@@ -31,53 +29,53 @@ const ArtistCard = ({ artist: { agent, continent, description, legal, name, tran
 
     <TextField
       floatingLabelStyle={labelStyle}
-      floatingLabelText="Artist name"
-      fullWidth={true}
+      floatingLabelText='Artist name'
+      fullWidth
       onChange={ev => onChange({ name: ev.target.value })}
       value={name}
     />
     <TextField
       floatingLabelStyle={labelStyle}
-      floatingLabelText="Website URL"
-      fullWidth={true}
+      floatingLabelText='Website URL'
+      fullWidth
       onChange={ev => onChange({ url: ev.target.value })}
       value={url}
     />
     <TextField
       floatingLabelStyle={labelStyle}
-      floatingLabelText="Short description for catalogue/website (500 characters)"
-      fullWidth={true}
-      multiLine={true}
+      floatingLabelText='Short description for catalogue/website (500 characters)'
+      fullWidth
+      multiLine
       onChange={ev => onChange({ description: ev.target.value })}
       rows={5}
       value={description}
     />
     <SelectField
       floatingLabelStyle={labelStyle}
-      floatingLabelText="Continent for tax purposes"
-      fullWidth={true}
+      floatingLabelText='Continent for tax purposes'
+      fullWidth
       onChange={(ev, key, value) => onChange({ continent: value })}
       value={continent}
     >
-      <MenuItem value="EU" primaryText="EU" />
-      <MenuItem value="NON-EU" primaryText="NON-EU" />
+      <MenuItem value='EU' primaryText='EU' />
+      <MenuItem value='NON-EU' primaryText='NON-EU' />
     </SelectField>
     <SelectField
       floatingLabelStyle={labelStyle}
-      floatingLabelText="Select Transportation method"
-      fullWidth={true}
+      floatingLabelText='Select Transportation method'
+      fullWidth
       onChange={(ev, key, value) => onChange({ transport: value })}
       value={transport}
     >
-      <MenuItem value="Air mail" primaryText="Air mail" />
-      <MenuItem value="Courier" primaryText="Courier" />
-      <MenuItem value="Self" primaryText="Deliver self" />
+      <MenuItem value='Air mail' primaryText='Air mail' />
+      <MenuItem value='Courier' primaryText='Courier' />
+      <MenuItem value='Self' primaryText='Deliver self' />
     </SelectField>
     <TextField
       floatingLabelStyle={labelStyle}
-      floatingLabelText="Agent name and contact details (if applicable)"
-      fullWidth={true}
-      multiLine={true}
+      floatingLabelText='Agent name and contact details (if applicable)'
+      fullWidth
+      multiLine
       onChange={ev => onChange({ agent: ev.target.value })}
       rows={3}
       value={agent}
@@ -91,7 +89,7 @@ const ArtistCard = ({ artist: { agent, continent, description, legal, name, tran
       onCheck={(ev, value) => onChange({ legal: value })}
       style={{ width: 'auto' }}
     />
-    <div style={ Object.assign({ flexGrow: 1 }, labelStyle) }>
+    <div style={Object.assign({ flexGrow: 1 }, labelStyle)}>
       I accept the{' '}
       <BasicRulesDialog>
         <span style={{ cursor: 'pointer', textDecoration: 'underline' }}>
@@ -102,14 +100,14 @@ const ArtistCard = ({ artist: { agent, continent, description, legal, name, tran
     </div>
     <RaisedButton
       disabled={!legal}
-      label="Save"
+      label='Save'
       onClick={onSave}
-      primary={true}
-      type="submit"
+      primary
+      type='submit'
     />
   </CardActions>
 
-</Card>;
+</Card>
 
 ArtistCard.propTypes = {
   artist: PropTypes.shape({
@@ -122,7 +120,7 @@ ArtistCard.propTypes = {
     url: PropTypes.string
   }).isRequired,
   onChange: PropTypes.func.isRequired,
-  onSave: PropTypes.func.isRequired,
-};
+  onSave: PropTypes.func.isRequired
+}
 
-export default ArtistCard;
+export default ArtistCard

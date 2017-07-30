@@ -56,5 +56,9 @@
     "style-loader": "^0.18.2",
     "webpack": "^1.15.0",
     "webpack-dev-server": "^1.16.5"
+  },
+  "standard": {
+    "globals": [ "alert", "API_HOST", "Blob", "ENV", "fetch", "FileReader", "ga", "localStorage", "location", "Stripe", "TITLE", "WebSocket", "XMLHttpRequest" ],
+    "parser": "babel-eslint"
   }
 }

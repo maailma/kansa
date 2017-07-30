@@ -1,5 +1,3 @@
-import { Map } from 'immutable'
-import PropTypes from 'prop-types'
 import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar'
 import IconButton from 'material-ui/IconButton/IconButton'
 import IconMenu from 'material-ui/IconMenu'
@@ -13,6 +11,7 @@ import ContentClear from 'material-ui/svg-icons/content/clear'
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
 import LocationCity from 'material-ui/svg-icons/social/location-city'
 import PeopleIcon from 'material-ui/svg-icons/social/people'
+import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
@@ -29,16 +28,16 @@ const SceneTabs = ({ onChange, value }) => (
     >
       <Tab
         buttonStyle={{ color: 'rgba(0,0,0,0.4)', padding: '0 16px' }}
-        icon={<PeopleIcon/>}
+        icon={<PeopleIcon />}
         style={{ color: 'rgba(0,0,0,0.4)' }}
-        title="People"
-        value="people"
+        title='People'
+        value='people'
       />
       <Tab
         buttonStyle={{ padding: '0 16px' }}
-        icon={<PaymentsIcon/>}
-        title="Payments"
-        value="payments"
+        icon={<PaymentsIcon />}
+        title='Payments'
+        value='payments'
       />
     </Tabs>
   </div>
@@ -91,7 +90,7 @@ let ToolbarActions = class extends Component {
     const { email, lockable, locked, onLogout } = this.props
     const { helpOpen, regOpen } = this.state
     return (
-      <ToolbarGroup lastChild={true}>
+      <ToolbarGroup lastChild>
         <RegistrationLock
           ref={ref => { this.regLock = ref && ref.getWrappedInstance() }}
         >
@@ -103,13 +102,13 @@ let ToolbarActions = class extends Component {
             anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
             targetOrigin={{ horizontal: 'right', vertical: 'top' }}
           >
-            <MenuItem primaryText={email} disabled={true} />
-            {lockable && <MenuItem primaryText="Lock for Registration"
+            <MenuItem primaryText={email} disabled />
+            {lockable && <MenuItem primaryText='Lock for Registration'
               onTouchTap={() => this.regLock.lock()}
             />}
-            <MenuItem primaryText="Registration options" onTouchTap={() => this.setState({ regOpen: true })} />
-            <MenuItem primaryText="Help" onTouchTap={() => this.setState({ helpOpen: true })} />
-            <MenuItem primaryText="Logout" onTouchTap={onLogout} />
+            <MenuItem primaryText='Registration options' onTouchTap={() => this.setState({ regOpen: true })} />
+            <MenuItem primaryText='Help' onTouchTap={() => this.setState({ helpOpen: true })} />
+            <MenuItem primaryText='Logout' onTouchTap={onLogout} />
           </IconMenu>
         ) : null}
         <HelpDialog
@@ -151,7 +150,7 @@ class KansaToolbar extends Component {
         style={{ position: 'fixed', zIndex: 1, height: 48, width: '100%', backgroundColor: 'rgb(221, 236, 148)' }}
       >
         {siteselection ? (
-          <ToolbarGroup firstChild={true}>
+          <ToolbarGroup firstChild>
             <LocationCity style={{ color: 'rgba(0, 0, 0, 0.6)', padding: 12 }} />
             <ToolbarTitle
               style={{ lineHeight: '48px', paddingRight: 16 }}
@@ -159,7 +158,7 @@ class KansaToolbar extends Component {
             />
           </ToolbarGroup>
         ) : (
-          <ToolbarGroup firstChild={true}>
+          <ToolbarGroup firstChild>
             <ToolbarTitle
               style={{ lineHeight: '48px', paddingLeft: 16, paddingRight: 16 }}
               text={TITLE}

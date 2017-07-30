@@ -13,19 +13,19 @@ export const finalist = ImmutablePropTypes.mapContains({
 export const categoryFinalists = ImmutablePropTypes.mapOf(
   finalist,
   PropTypes.number
-);
+)
 
 export const finalists = ImmutablePropTypes.mapOf(
   categoryFinalists,
   PropTypes.oneOf(categories)
-);
+)
 
-export const categoryVotes = ImmutablePropTypes.listOf(PropTypes.number);
+export const categoryVotes = ImmutablePropTypes.listOf(PropTypes.number)
 
 export const votes = ImmutablePropTypes.mapOf(
   categoryVotes,
   PropTypes.oneOf(categories)
-);
+)
 
 export const hugoVotes = ImmutablePropTypes.mapContains({
   clientVotes: votes.isRequired,
@@ -35,7 +35,7 @@ export const hugoVotes = ImmutablePropTypes.mapContains({
   serverTime: PropTypes.instanceOf(Date),
   serverVotes: votes.isRequired,
   signature: PropTypes.string
-});
+})
 
 export const packetFormat = ImmutablePropTypes.mapContains({
   label: PropTypes.string.isRequired,

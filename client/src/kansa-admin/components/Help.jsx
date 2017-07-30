@@ -1,24 +1,24 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
+import Dialog from 'material-ui/Dialog'
+import FlatButton from 'material-ui/FlatButton'
 
-import { filterTerms } from '../filterPeople';
-import Member from './Member';
+import { filterTerms } from '../filterPeople'
+import Member from './Member'
 
-const styleTerm = (src) => src.split('_').map((val, idx) => (idx % 2) ? <i key={idx}>{val}</i> : val);
+const styleTerm = (src) => src.split('_').map((val, idx) => (idx % 2) ? <i key={idx}>{val}</i> : val)
 
 const listKeys = (list) => {
-  const lastIdx = list.length - 1;
+  const lastIdx = list.length - 1
   return list.reduce((res, key, idx) => {
-    const entry = <code key={key}>{key}</code>;
-    if (idx < lastIdx) res.push(entry, ', ');
+    const entry = <code key={key}>{key}</code>
+    if (idx < lastIdx) res.push(entry, ', ')
     else {
-      if (idx > 0) res[res.length - 1] = ', and ';
-      res.push(entry);
+      if (idx > 0) res[res.length - 1] = ', and '
+      res.push(entry)
     }
-    return res;
-  }, []);
+    return res
+  }, [])
 }
 
 export const helpText = [
@@ -36,18 +36,18 @@ export const helpText = [
       <dd key={`dd-${idx}`} style={{ marginBottom: 8 }}>{styleTerm(term[1])}</dd>
     ), [])
   }</dl>
-];
+]
 
 export const HelpDialog = ({ open, handleClose }) => (
   <Dialog
-    actions={ <FlatButton label='Close' onTouchTap={handleClose} /> }
+    actions={<FlatButton label='Close' onTouchTap={handleClose} />}
     open={open}
-    autoScrollBodyContent={true}
+    autoScrollBodyContent
     onRequestClose={handleClose}
   >
     { helpText }
   </Dialog>
-);
+)
 
 HelpDialog.propTypes = {
   open: PropTypes.bool.isRequired,

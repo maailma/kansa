@@ -5,32 +5,30 @@ const defaultState = Map({
   message: '',
   person: -1,
   title: TITLE
-});
+})
 
-export default function(state = defaultState, action) {
+export default function (state = defaultState, action) {
   if (action.error) {
-    const message = action.error.message || action.error.status;
-    return state.set('message', `${action.type} error` + (message ? `: ${message}` : ''));
+    const message = action.error.message || action.error.status
+    return state.set('message', `${action.type} error` + (message ? `: ${message}` : ''))
   }
   switch (action.type) {
-
     case 'DOCK_SIDEBAR':
-      return state.set('dockSidebar', !!action.dock);
+      return state.set('dockSidebar', !!action.dock)
 
     case 'SET_PERSON':
-      return state.set('person', action.person);
+      return state.set('person', action.person)
 
     case 'SET_SCENE': {
-      const { dockSidebar, title } = action;
-      return state.merge({ dockSidebar, title });
+      const { dockSidebar, title } = action
+      return state.merge({ dockSidebar, title })
     }
 
     case 'SHOW_MESSAGE':
-      return state.set('message', action.message);
+      return state.set('message', action.message)
 
     case 'HIDE_MESSAGE':
-      return state.set('message', '');
-
+      return state.set('message', '')
   }
-  return state;
+  return state
 }

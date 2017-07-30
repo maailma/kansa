@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 
 import { showMessage } from '../../app/actions/app'
 import { getStripeKeys } from '../actions'
-import * as PaymentPropTypes from '../proptypes'
 
 let stripeLoading = false
 const loadStripe = (done) => {
@@ -41,23 +40,25 @@ class StripeDirectDebit extends React.Component {
     stripeKey: PropTypes.string
   }
 
-  componentWillMount() {
+  componentWillMount () {
     if (!this.props.stripeKey) this.props.getStripeKeys()
   }
 
-  componentDidMount() {
-    if (!stripeLoading) loadStripe(err => {
-      const { showMessage, stripeKey } = this.props
-      if (err) {
-        showMessage('Error loading Stripe')
-        console.error(err)
-      } else if (stripeKey) {
-        Stripe.setPublishableKey(stripeKey)
-      }
-    })
+  componentDidMount () {
+    if (!stripeLoading) {
+      loadStripe(err => {
+        const { showMessage, stripeKey } = this.props
+        if (err) {
+          showMessage('Error loading Stripe')
+          console.error(err)
+        } else if (stripeKey) {
+          Stripe.setPublishableKey(stripeKey)
+        }
+      })
+    }
   }
 
-  componentWillReceiveProps({ stripeKey }) {
+  componentWillReceiveProps ({ stripeKey }) {
     if (stripeKey !== this.props.stripeKey && typeof Stripe !== 'undefined') {
       Stripe.setPublishableKey(stripeKey)
     }
@@ -82,7 +83,7 @@ class StripeDirectDebit extends React.Component {
     })
   }
 
-  render() {
+  render () {
     return <span onTouchTap={this.charge} children={this.props.children} />
   }
 }

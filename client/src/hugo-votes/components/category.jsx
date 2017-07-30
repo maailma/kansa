@@ -1,13 +1,10 @@
 import { List as ImmutableList, Map as ImmutableMap } from 'immutable'
+import { Card, CardHeader, CardText } from 'material-ui/Card'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { connect } from 'react-redux'
 
-import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
-const { Col, Row } = require('react-flexbox-grid')
-
-import time_diff from '../../lib/time_diff'
-import { categoryInfo, nominationFields } from '../../hugo-nominations/constants'
+import { categoryInfo } from '../../hugo-nominations/constants'
 import { setVotes } from '../actions'
 import { categories } from '../constants'
 import * as VotePropTypes from '../proptypes'
@@ -42,7 +39,7 @@ const VoteCategory = ({ category, finalists, packet, preference, setVotes }) => 
         finalists={finalists}
         preference={preference}
         setPreference={(preference) => {
-          setVotes(ImmutableMap([[category, preference]]));
+          setVotes(ImmutableMap([[category, preference]]))
         }}
       />
     </CardText>
@@ -61,9 +58,9 @@ export default connect(
   ({ hugoVotes }, { category }) => ({
     finalists: hugoVotes.getIn(['finalists', category]) || ImmutableMap(),
     packet: hugoVotes.getIn(['packet', category]) || ImmutableMap(),
-    preference: hugoVotes.getIn(['clientVotes',category]) ||
+    preference: hugoVotes.getIn(['clientVotes', category]) ||
       hugoVotes.getIn(['serverVotes', category]) ||
-      ImmutableList(),
+      ImmutableList()
   }), {
     setVotes
   }

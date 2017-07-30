@@ -5,7 +5,7 @@ import FlatButton from 'material-ui/FlatButton'
 import IconButton from 'material-ui/IconButton'
 import Paper from 'material-ui/Paper'
 import Snackbar from 'material-ui/Snackbar'
-import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
+import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar'
 import Menu from 'material-ui/svg-icons/navigation/menu'
 
 import Worldcon75 from '../../lib/worldcon75'
@@ -14,25 +14,25 @@ import { hideMessage } from '../actions/app'
 import { logout } from '../actions/auth'
 import NavDrawer from './NavDrawer'
 
-function getMenuState(allowMenuDocked) {
-  const flexboxgridMd = () => window.matchMedia('(min-width: 64em)').matches;
-  const flexboxgridLg = () => window.matchMedia('(min-width: 75em)').matches;
-  const menuWidth = (cols) => Math.round(window.innerWidth * cols / 12);
+function getMenuState (allowMenuDocked) {
+  const flexboxgridMd = () => window.matchMedia('(min-width: 64em)').matches
+  const flexboxgridLg = () => window.matchMedia('(min-width: 75em)').matches
+  const menuWidth = (cols) => Math.round(window.innerWidth * cols / 12)
   return !allowMenuDocked || !flexboxgridMd()
     ? { menuDocked: false, menuWidth: 256 }
     : {
-        menuDocked: true,
-        menuOpen: false,
-        menuWidth: flexboxgridLg() ? menuWidth(2) : menuWidth(3)
-      };
+      menuDocked: true,
+      menuOpen: false,
+      menuWidth: flexboxgridLg() ? menuWidth(2) : menuWidth(3)
+    }
 }
 
 const AppBar = ({ email, logout, menuDocked, menuWidth, onOpenMenu, title }) => <Paper zDepth={2} >
   <Toolbar
     style={{
       backgroundColor: 'white',
-      marginLeft: menuDocked ? menuWidth : 0,
-      //transition: 'margin 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms',
+      marginLeft: menuDocked ? menuWidth : 0
+      // transition: 'margin 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms',
     }}
   >
     <ToolbarGroup firstChild={!menuDocked}>
@@ -55,60 +55,59 @@ const AppBar = ({ email, logout, menuDocked, menuWidth, onOpenMenu, title }) => 
       </IconButton>
       <ToolbarTitle text={title} />
     </ToolbarGroup>
-    <ToolbarGroup lastChild={true}>
+    <ToolbarGroup lastChild>
       <FlatButton
         className='logoutButton'
         label={<span><span className='logoutHint'>Sign out </span>{email}</span>}
         labelStyle={{ color: darkBlue, textTransform: 'none', verticalAlign: 'initial' }}
         onTouchTap={logout}
-        primary={true}
+        primary
         style={{ marginTop: 10, marginRight: 10 }}
       />
     </ToolbarGroup>
   </Toolbar>
-</Paper>;
+</Paper>
 
 class App extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = Object.assign({ menuOpen: false }, getMenuState(props.allowMenuDocked));
+  constructor (props) {
+    super(props)
+    this.state = Object.assign({ menuOpen: false }, getMenuState(props.allowMenuDocked))
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { allowMenuDocked } = nextProps;
+  componentWillReceiveProps (nextProps) {
+    const { allowMenuDocked } = nextProps
     if (allowMenuDocked !== this.state.allowMenuDocked) this.setState(getMenuState(allowMenuDocked))
   }
 
   handleResize = () => {
-    this.setState(getMenuState(this.props.allowMenuDocked));
+    this.setState(getMenuState(this.props.allowMenuDocked))
   }
 
-  render() {
-    const { allowMenuDocked, children, email, hideMessage, logout, message, params: { id }, title } = this.props;
-    const { menuDocked, menuOpen, menuWidth } = this.state;
+  render () {
+    const { children, email, hideMessage, logout, message, params: { id }, title } = this.props
+    const { menuDocked, menuOpen, menuWidth } = this.state
 
     return (
       <EventListener
         onResize={this.handleResize}
-        target="window"
+        target='window'
       >
         <div>
           { email ? [
-            <Worldcon75 key="logo"
+            <Worldcon75 key='logo'
               className={menuOpen ? 'logo navbar' : 'logo'}
             />,
             <NavDrawer
               docked={menuDocked}
               id={Number(id) || undefined}
-              key="nav"
+              key='nav'
               onRequestChange={(menuOpen) => this.setState({ menuOpen })}
               open={menuOpen}
               width={menuWidth}
             />,
             <AppBar
               email={email}
-              key="top"
+              key='top'
               logout={logout}
               menuDocked={menuDocked}
               menuWidth={menuWidth}
@@ -117,7 +116,7 @@ class App extends React.Component {
             />
           ] : (
             <h1 style={{ paddingTop: 24 }}>
-              <Worldcon75 className="h1-logo" />
+              <Worldcon75 className='h1-logo' />
               {title}
             </h1>
           )}
@@ -125,14 +124,14 @@ class App extends React.Component {
             {children}
           </main>
           <Snackbar
-            bodyStyle={{ height: 'auto', lineHeight: '22px' , paddingBottom: 13, paddingTop: 13 }}
+            bodyStyle={{ height: 'auto', lineHeight: '22px', paddingBottom: 13, paddingTop: 13 }}
             message={message}
             onRequestClose={hideMessage}
             open={!!message}
           />
         </div>
       </EventListener>
-    );
+    )
   }
 }
 
@@ -146,4 +145,4 @@ export default connect(
     hideMessage,
     logout
   }
-)(App);
+)(App)

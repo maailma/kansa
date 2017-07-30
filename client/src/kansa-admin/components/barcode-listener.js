@@ -24,7 +24,7 @@ export default class BarcodeListener extends PureComponent {
   handleKeyDown = ({ altKey, ctrlKey, key, metaKey }) => {
     const { onBarcode, pattern } = this.props
     if (altKey || ctrlKey || metaKey) return
-    if (key == 'Enter') {
+    if (key === 'Enter') {
       const code = this.buffer.join('')
       this.reset()
       if (pattern.test(code)) onBarcode(code)

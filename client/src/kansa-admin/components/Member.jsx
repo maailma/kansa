@@ -109,51 +109,55 @@ class Member extends PureComponent {
       />
     ]
 
-    if (!locked) actions.unshift(
-      <MemberLog key='log'
-        getLog={() => api.GET(`people/${id}/log`)}
-        id={id}
+    if (!locked) {
+      actions.unshift(
+        <MemberLog key='log'
+          getLog={() => api.GET(`people/${id}/log`)}
+          id={id}
       >
-        <FlatButton label='View log' style={{ float: 'left' }} />
-      </MemberLog>,
+          <FlatButton label='View log' style={{ float: 'left' }} />
+        </MemberLog>,
 
-      <Upgrade key='upgrade'
-        membership={membership}
-        paper_pubs={paper_pubs}
-        name={`${legal_name} <${email}>`}
-        upgrade={res => api.POST(`people/${id}/upgrade`, res)}
+        <Upgrade key='upgrade'
+          membership={membership}
+          paper_pubs={paper_pubs}
+          name={`${legal_name} <${email}>`}
+          upgrade={res => api.POST(`people/${id}/upgrade`, res)}
       >
-        <FlatButton label='Upgrade' style={{ float: 'left' }} />
-      </Upgrade>,
+          <FlatButton label='Upgrade' style={{ float: 'left' }} />
+        </Upgrade>,
 
-      <NewInvoice key='invoice'
-        onSubmit={invoice => api.POST(`purchase/invoice`, {
-          email,
-          items: [invoice]
-        })}
-        person={member}
+        <NewInvoice key='invoice'
+          onSubmit={invoice => api.POST(`purchase/invoice`, {
+            email,
+            items: [invoice]
+          })}
+          person={member}
       >
-        <FlatButton label='New invoice' style={{ float: 'left' }} />
-      </NewInvoice>,
+          <FlatButton label='New invoice' style={{ float: 'left' }} />
+        </NewInvoice>
     )
+    }
 
-    if (printer && member_number) actions.unshift(
-      <FlatButton
-        disabled={sent || !this.valid}
-        label={hasChanges ? 'Save & Print badge' : 'Print badge'}
-        onTouchTap={() => {
-          const [pu, pn] = printer.split('#')
-          return printBadge(pu, pn, this.state.member)
+    if (printer && member_number) {
+      actions.unshift(
+        <FlatButton
+          disabled={sent || !this.valid}
+          label={hasChanges ? 'Save & Print badge' : 'Print badge'}
+          onTouchTap={() => {
+            const [pu, pn] = printer.split('#')
+            return printBadge(pu, pn, this.state.member)
             .catch(err => {
               console.error('Badge print failed!', err)
               window.alert('Badge print failed! ' + (err.message || err.statusText || err.status))
             })
             .then(() => hasChanges ? this.save() : null)
             .then(handleClose)
-        }}
-        style={{ float: 'left' }}
+          }}
+          style={{ float: 'left' }}
       />
     )
+    }
 
     return actions
   }
@@ -171,7 +175,7 @@ class Member extends PureComponent {
   }
 
   save () {
-    const { member } = this.props
+    const { api, member } = this.props
     this.setState({ sent: true })
     return api.POST(`people/${member.get('id')}`, this.changes.toJS())
       .catch(err => {
@@ -205,19 +209,19 @@ class Member extends PureComponent {
           { member.get('last_modified') }
         </div>
         {
-          membership == 'NonMember' ? 'Non-member'
+          membership === 'NonMember' ? 'Non-member'
             : /^DP/.test(membership) ? membership.replace(/^DP/, 'Day pass:')
             : `Member #${member.get('member_number')} (${membership})`
         }
       </div>}
-      open={true}
-      autoScrollBodyContent={true}
+      open
+      autoScrollBodyContent
       bodyClassName='memberDialog'
       onRequestClose={handleClose}
     >
-      <CommonFields { ...formProps } />
+      <CommonFields {...formProps} />
       <br />
-      <PaperPubsFields { ...formProps } />
+      <PaperPubsFields {...formProps} />
     </Dialog>
   }
 }

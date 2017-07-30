@@ -1,26 +1,19 @@
-import { Map } from 'immutable'
 import PropTypes from 'prop-types'
 import React from 'react'
+import { Col, Row } from 'react-flexbox-grid'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
 import { replace } from 'react-router-redux'
 
-const { Col, Row } = require('react-flexbox-grid');
-import { Card, CardText } from 'material-ui/Card'
-import Divider from 'material-ui/Divider'
-import Snackbar from 'material-ui/Snackbar'
-
 import { setScene } from '../app/actions/app'
 import { categoryInfo } from '../hugo-nominations/constants'
 
 import { getFinalists, setVoter } from './actions'
-import * as VotePropTypes from './proptypes'
 import VoteCategory from './components/category'
 import VoteIntro from './components/intro'
 
 class Vote extends React.Component {
-
   static propTypes = {
     getFinalists: PropTypes.func.isRequired,
     params: PropTypes.shape({ id: PropTypes.string }),
@@ -33,25 +26,24 @@ class Vote extends React.Component {
     voterId: PropTypes.number
   }
 
-  componentDidMount() {
-    const { getFinalists, setScene } = this.props;
-    getFinalists();
-    setScene({ title: 'Hugo Award Voting', dockSidebar: false });
-    this.componentWillReceiveProps(this.props);
+  componentDidMount () {
+    const { getFinalists, setScene } = this.props
+    getFinalists()
+    setScene({ title: 'Hugo Award Voting', dockSidebar: false })
+    this.componentWillReceiveProps(this.props)
   }
 
-  componentWillReceiveProps({ params, person, replace, setVoter, soleVoterId, voterId }) {
-    const personId = person && person.get('id') || null;
-    if (personId !== voterId) setVoter(personId, null);
+  componentWillReceiveProps ({ params, person, replace, setVoter, soleVoterId, voterId }) {
+    const personId = person && person.get('id') || null
+    if (personId !== voterId) setVoter(personId, null)
     if (!person) {
-      if (params.id) replace('/hugo/vote');
-      else if (soleVoterId) replace(`/hugo/vote/${soleVoterId}`);
+      if (params.id) replace('/hugo/vote')
+      else if (soleVoterId) replace(`/hugo/vote/${soleVoterId}`)
     }
   }
 
-  render() {
-    const { person, setVoter, signature } = this.props;
-    const active = person && person.get('can_hugo_vote');
+  render () {
+    const { person, setVoter, signature } = this.props
     return (
       <div>
         <Row>
@@ -81,7 +73,7 @@ class Vote extends React.Component {
                 <VoteCategory category={category} key={category} />
               ))}
               <div
-                className="bg-text"
+                className='bg-text'
                 style={{
                   fontSize: 14,
                   marginTop: -14,
@@ -99,21 +91,21 @@ class Vote extends React.Component {
                   Thank you for voting in the 2017 Hugo Awards!
                 </p>
                 <p>
-                  <Link to="/">&laquo; Return to the main member page</Link>
+                  <Link to='/'>&laquo; Return to the main member page</Link>
                 </p>
               </div>
             </Col>
           </Row>
         ) : null}
       </div>
-    );
+    )
   }
 }
 
 export default connect(
   ({ hugoVotes, user }, { params }) => {
-    const id = params && Number(params.id) || null;
-    const people = user.get('people');
+    const id = params && Number(params.id) || null
+    const people = user.get('people')
     const pv = id ? null : people && people.filter(p => p.get('can_hugo_vote'))
     return {
       person: id && people && people.find(p => p.get('id') === id) || null,
@@ -127,4 +119,4 @@ export default connect(
     setScene,
     setVoter
   }
-)(Vote);
+)(Vote)

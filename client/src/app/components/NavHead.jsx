@@ -4,7 +4,6 @@ import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import { JS_ROOT } from '../../constants'
 import headerBg from '../../img/header-bg.jpg'
-import titleImg from '../../img/title.png'
 import MemberAvatar from './MemberAvatar'
 
 const NavAvatars = ({ currentMember, otherMembers }) => <div style={{ display: 'flex', padding: '72px 16px 16px' }}>
@@ -17,32 +16,32 @@ const NavAvatars = ({ currentMember, otherMembers }) => <div style={{ display: '
   }</div>
   {otherMembers
     ? otherMembers.map((member, key) => (
-        <div key={key} style={{ marginLeft: 16 }}>
-          <MemberAvatar member={member} />
-        </div>
+      <div key={key} style={{ marginLeft: 16 }}>
+        <MemberAvatar member={member} />
+      </div>
       ))
     : currentMember && <div style={{
-        alignItems: 'center',
-        display: 'flex',
-        height: 56,
-        marginLeft: 16
-      }}>
-        <div style={{
-          fontSize: 12,
-          fontWeight: 600,
-        }}>{
+      alignItems: 'center',
+      display: 'flex',
+      height: 56,
+      marginLeft: 16
+    }}>
+      <div style={{
+        fontSize: 12,
+        fontWeight: 600
+      }}>{
           currentMember.get('legal_name')
         }</div>
       </div>
   }
-</div>;
+</div>
 
 const NavHead = ({ currentMember, handleNav, otherMembers }) => <div
   onTouchTap={() => handleNav('/')}
   style={{
     background: `url(${JS_ROOT}${headerBg})  30% 0 / auto 100%  #337ab7`,
     color: '#fff',
-    cursor: 'pointer',
+    cursor: 'pointer'
   }}
 >
   <NavAvatars
@@ -55,12 +54,12 @@ const NavHead = ({ currentMember, handleNav, otherMembers }) => <div
     marginTop: -12,
     padding: '0 0 16px 16px'
   }}>{currentMember.get('legal_name')}</div>}
-</div>;
+</div>
 
 NavHead.propTypes = {
   currentMember: ImmutablePropTypes.map,
   handleNav: PropTypes.func.isRequired,
   otherMembers: ImmutablePropTypes.list
-};
+}
 
-export default NavHead;
+export default NavHead

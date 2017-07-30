@@ -5,7 +5,7 @@ import SelectField from 'material-ui/SelectField'
 import TextField from 'material-ui/TextField'
 
 import { midGray, orange } from '../../theme'
-import { emptyPaperPubsMap, membershipTypes} from '../constants'
+import { membershipTypes } from '../constants'
 import messages from '../messages'
 
 export const TextInput = ({ getDefaultValue, getValue, inputRef, label, lc = 'en', onChange, path = [], required, style = {}, ...props }) => {
@@ -31,17 +31,17 @@ export const TextInput = ({ getDefaultValue, getValue, inputRef, label, lc = 'en
   }
   return <TextField
     floatingLabelText={label}
-    floatingLabelFixed={true}
+    floatingLabelFixed
     floatingLabelStyle={{ color: value ? midGray : 'rgba(0, 0, 0, 0.870588)' }}
-    fullWidth={true}
+    fullWidth
     style={style}
     className='memberInput'
     underlineStyle={ulStyle}
     underlineFocusStyle={ulStyle}
     value={value}
     onChange={(ev, value) => onChange(path, value)}
-    ref={ inputRef || (() => {}) }
-    { ...props }
+    ref={inputRef || (() => {})}
+    {...props}
   />
 }
 TextInput.propTypes = {
@@ -57,11 +57,11 @@ export const MembershipSelect = ({ discount, getDefaultValue, getValue, lc = 'en
   const prevAmount = prices && prevMembership && prices.getIn(['memberships', prevMembership, 'amount']) || 0
   const value = getValue(path) || 'NonMember'
   return <SelectField
-    errorText={ value === 'NonMember' && prevMembership !== 'NonMember' ? messages[lc].required() : '' }
-    floatingLabelFixed={true}
+    errorText={value === 'NonMember' && prevMembership !== 'NonMember' ? messages[lc].required() : ''}
+    floatingLabelFixed
     floatingLabelText={messages[lc].membership_type()}
-    fullWidth={true}
-    onChange={ (ev, idx, value) => onChange(path, value) }
+    fullWidth
+    onChange={(ev, idx, value) => onChange(path, value)}
     style={style}
     value={value}
   >
@@ -76,9 +76,9 @@ export const MembershipSelect = ({ discount, getDefaultValue, getValue, lc = 'en
         : prices && prices.getIn(['memberships', type, 'description']) || type
       return <MenuItem
         key={type}
-        disabled={ eurAmount < 0 || idx < prevIdx }
+        disabled={eurAmount < 0 || idx < prevIdx}
         value={type}
-        primaryText={ eurAmount <= 0 ? label : `${label} (€${eurAmount})` }
+        primaryText={eurAmount <= 0 ? label : `${label} (€${eurAmount})`}
       />
     }) }
   </SelectField>

@@ -1,18 +1,15 @@
 import { Map } from 'immutable'
+import RaisedButton from 'material-ui/RaisedButton'
+import TextField from 'material-ui/TextField'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { connect } from 'react-redux'
-const { Col, Row } = require('react-flexbox-grid');
-import ImmutablePropTypes from 'react-immutable-proptypes'
-import RaisedButton from 'material-ui/RaisedButton'
-import TextField from 'material-ui/TextField';
+import { Col, Row } from 'react-flexbox-grid'
 
 import { memberLookup } from '../actions'
 import * as MemberPropTypes from '../proptypes'
-import { TextInput } from './form-components'
 
 class MemberLookupForm extends React.Component {
-
   static propTypes = {
     lookupData: MemberPropTypes.lookup.isRequired,
     memberLookup: PropTypes.func.isRequired,
@@ -20,8 +17,8 @@ class MemberLookupForm extends React.Component {
     onQueryResults: PropTypes.func.isRequired
   }
 
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super(props)
     this.state = {
       email: '',
       fetching: false,
@@ -33,64 +30,64 @@ class MemberLookupForm extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    const query = this.state.query;
-    const results = nextProps.lookupData.get(query);
+  componentWillReceiveProps (nextProps) {
+    const query = this.state.query
+    const results = nextProps.lookupData.get(query)
     if (results && !results.equals(this.state.results)) {
-      this.setState({ fetching: false, results });
-      nextProps.onQueryResults({ query, results });
+      this.setState({ fetching: false, results })
+      nextProps.onQueryResults({ query, results })
     }
   }
 
-  get disableSubmit() {
-    const { email, name } = this.state;
-    return !(name || email && /.@./.test(email));
+  get disableSubmit () {
+    const { email, name } = this.state
+    return !(name || email && /.@./.test(email))
   }
 
-  get gotMultipleResults() {
+  get gotMultipleResults () {
     const { results } = this.state
-    return results && results.get('status') === 'multiple';
+    return results && results.get('status') === 'multiple'
   }
 
-  get gotNoResults() {
+  get gotNoResults () {
     const { results } = this.state
-    return results && results.get('status') === 'not found';
+    return results && results.get('status') === 'not found'
   }
 
-  get query() {
-    const { email, member_number, name } = this.state;
-    const query = {};
-    if (email && /.@./.test(email)) query.email = email.trim();
-    if (member_number > 0) query.member_number = Number(member_number);
-    if (name) query.name = name.trim();
-    return Map(query);
+  get query () {
+    const { email, member_number, name } = this.state
+    const query = {}
+    if (email && /.@./.test(email)) query.email = email.trim()
+    if (member_number > 0) query.member_number = Number(member_number)
+    if (name) query.name = name.trim()
+    return Map(query)
   }
 
   submit = () => {
-    const { fetching } = this.state;
-    const query = this.query;
+    const { fetching } = this.state
+    const query = this.query
     if (!fetching && query.size > 0 && !this.disableSubmit) {
-      const { lookupData, memberLookup, onQueryResults } = this.props;
-      const results = lookupData.get(query) || null;
-      this.setState({ fetching: !results, query, results });
+      const { lookupData, memberLookup, onQueryResults } = this.props
+      const results = lookupData.get(query) || null
+      this.setState({ fetching: !results, query, results })
       if (results) {
-        onQueryResults({ query, results });
+        onQueryResults({ query, results })
       } else {
-        memberLookup(query);
+        memberLookup(query)
       }
     }
   }
 
-  render() {
-    const { style } = this.props;
-    const { email, member_number, name, results } = this.state;
+  render () {
+    const { style } = this.props
+    const { email, member_number, name } = this.state
     return (
       <Row style={style}>
         <Col xs={12} md={6}>
           <TextField
-            autoFocus={true}
-            hintText="Name"
-            fullWidth={true}
+            autoFocus
+            hintText='Name'
+            fullWidth
             onBlur={this.submit}
             onChange={(ev, name) => this.setState({ name })}
             value={name}
@@ -98,8 +95,8 @@ class MemberLookupForm extends React.Component {
         </Col>
         <Col xs={12} md={6}>
           <TextField
-            hintText="Email address"
-            fullWidth={true}
+            hintText='Email address'
+            fullWidth
             onBlur={this.submit}
             onChange={(ev, email) => this.setState({ email })}
             value={email}
@@ -108,11 +105,11 @@ class MemberLookupForm extends React.Component {
 
         <Col xs={6}>
           {member_number || this.gotMultipleResults ? <TextField
-            hintText="Member number"
-            fullWidth={true}
+            hintText='Member number'
+            fullWidth
             onBlur={this.submit}
             onChange={(ev, member_number) => this.setState({ member_number })}
-            type="number"
+            type='number'
             value={member_number}
           /> : null}
         </Col>
@@ -126,7 +123,7 @@ class MemberLookupForm extends React.Component {
         }}>
           <RaisedButton
             disabled={this.disableSubmit}
-            label="Find"
+            label='Find'
             onTouchTap={this.submit}
             style={{ flexShrink: 1 }}
           />
@@ -145,7 +142,7 @@ class MemberLookupForm extends React.Component {
         </Col>
 
       </Row>
-    );
+    )
   }
 }
 
@@ -155,4 +152,4 @@ export default connect(
   }), {
     memberLookup
   }
-)(MemberLookupForm);
+)(MemberLookupForm)

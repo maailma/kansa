@@ -1,12 +1,12 @@
-import { List, Map } from 'immutable';
+import { List, Map } from 'immutable'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { connect } from 'react-redux';
+import { connect } from 'react-redux'
 
 import BarcodeListener from './barcode-listener'
-import PaymentTable from './PaymentTable';
+import PaymentTable from './PaymentTable'
 import PeopleScene from './PeopleScene'
-import Toolbar from './Toolbar';
+import Toolbar from './Toolbar'
 
 class App extends React.Component {
   static propTypes = {
@@ -59,7 +59,7 @@ class App extends React.Component {
   }
 
   render () {
-    const { api, people, user } = this.props
+    const { api, user } = this.props
     const { filter, member, scene } = this.state
     if (!Map.isMap(user) || user.size === 0) {
       return <div>Login required.</div>

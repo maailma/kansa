@@ -21,17 +21,17 @@ import ExhibitRegistration from './raami/components/Registration'
 
 const hugoRoutes = (path, requireAuth) => (
   <Route path={path} >
-    <IndexRedirect to="vote" />
-    <Route path="admin*" onEnter={() => {
-        window.location = HUGO_ADMIN_ROUTE_ROOT
+    <IndexRedirect to='vote' />
+    <Route path='admin*' onEnter={() => {
+      window.location = HUGO_ADMIN_ROUTE_ROOT
     }} />
-    <Route path="nominate/:id" onEnter={requireAuth} component={Nominate} />
-    <Route path="vote">
+    <Route path='nominate/:id' onEnter={requireAuth} component={Nominate} />
+    <Route path='vote'>
       <IndexRoute component={Vote} />
-      <Route path=":id" component={Vote} />
+      <Route path=':id' component={Vote} />
     </Route>
-    <Redirect from=":id/nominate" to="nominate/:id" />
-    <Redirect from=":id/vote" to="vote/:id" />
+    <Redirect from=':id/nominate' to='nominate/:id' />
+    <Redirect from=':id/vote' to='vote/:id' />
   </Route>
 )
 
@@ -43,11 +43,11 @@ export default class AppRouter extends Route {
     }).isRequired
   }
 
-  get dispatch() {
+  get dispatch () {
     return this.context.store.dispatch
   }
 
-  get userEmail() {
+  get userEmail () {
     return this.context.store.getState().user.get('email')
   }
 
@@ -61,36 +61,36 @@ export default class AppRouter extends Route {
     this.dispatch(keyLogin(email, key, next))
   }
 
-  requireAuth = ({ location: { pathname }}, replace) => {
-    if (!this.userEmail && pathname !== '/') replace('/');
+  requireAuth = ({ location: { pathname } }, replace) => {
+    if (!this.userEmail && pathname !== '/') replace('/')
   }
 
   scrollUpOnChange = (_, { location: { action } }) => {
     if (action !== 'POP') window.scrollTo(0, 0)
   }
 
-  render() {
+  render () {
     const { history } = this.props
     return (
       <Router history={history}>
-        <Route path="/login/:email/:key" onEnter={this.doLogin} />
-        <Route path="/login/:email/:key/:id" onEnter={this.doLogin} />
-        <Route path="/" component={App} onChange={this.scrollUpOnChange} onEnter={this.checkAuth} >
+        <Route path='/login/:email/:key' onEnter={this.doLogin} />
+        <Route path='/login/:email/:key/:id' onEnter={this.doLogin} />
+        <Route path='/' component={App} onChange={this.scrollUpOnChange} onEnter={this.checkAuth} >
           <IndexRoute component={Index} />
-          <Redirect from="login" to="/" />
-          <Redirect from="profile" to="/" />
-          <Route path="exhibition/:id" component={ExhibitRegistration} onEnter={this.requireAuth} />
+          <Redirect from='login' to='/' />
+          <Redirect from='profile' to='/' />
+          <Route path='exhibition/:id' component={ExhibitRegistration} onEnter={this.requireAuth} />
           {hugoRoutes('hugo', this.requireAuth)}
-          <Route path="daypass/:type" component={NewDaypassForm} />
-          <Route path="new" component={NewMemberIndex} />
-          <Route path="new/:membership" component={NewMemberForm} />
-          <Route path="pay" component={Payments} />
-          <Route path="pay/:type" component={NewPayment} />
-          <Route path="tek" component={TekMemberIndex} />
-          <Route path="tek/:membership" component={TekMemberForm} />
-          <Route path="upgrade" onEnter={this.requireAuth}>
+          <Route path='daypass/:type' component={NewDaypassForm} />
+          <Route path='new' component={NewMemberIndex} />
+          <Route path='new/:membership' component={NewMemberForm} />
+          <Route path='pay' component={Payments} />
+          <Route path='pay/:type' component={NewPayment} />
+          <Route path='tek' component={TekMemberIndex} />
+          <Route path='tek/:membership' component={TekMemberForm} />
+          <Route path='upgrade' onEnter={this.requireAuth}>
             <IndexRoute component={Upgrade} />
-            <Route path=":id" component={Upgrade} />
+            <Route path=':id' component={Upgrade} />
           </Route>
         </Route>
       </Router>

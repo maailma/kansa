@@ -1,21 +1,16 @@
+import Dialog from 'material-ui/Dialog'
+import FlatButton from 'material-ui/FlatButton'
 import PropTypes from 'prop-types'
 import React from 'react'
-import Checkbox from 'material-ui/Checkbox';
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
-import MenuItem from 'material-ui/MenuItem';
-import SelectField from 'material-ui/SelectField';
-import TextField from 'material-ui/TextField';
-
 import ImmutablePropTypes from 'react-immutable-proptypes'
 
-import { UpgradeFields, CommentField } from './form';
-import Member from './Member';
+import { UpgradeFields, CommentField } from './form'
+import Member from './Member'
 
-function getIn(obj, path, unset) {
-  const val = obj[path[0]];
-  if (typeof val === 'undefined') return unset;
-  return path.length <= 1 ? val : val.getIn(path.slice(1), unset);
+function getIn (obj, path, unset) {
+  const val = obj[path[0]]
+  if (typeof val === 'undefined') return unset
+  return path.length <= 1 ? val : val.getIn(path.slice(1), unset)
 }
 
 export default class Upgrade extends React.Component {
@@ -38,27 +33,30 @@ export default class Upgrade extends React.Component {
     sent: false
   }
 
-  handleOpen = () => { this.setState({
-    membership: this.props.membership,
-    paper_pubs: null,
-    open: true,
-    sent: false
-  }) }
+  handleOpen = () => {
+    this.setState({
+      membership: this.props.membership,
+      paper_pubs: null,
+      open: true,
+      sent: false
+    })
+  }
 
   handleClose = () => { this.setState({ open: false }) }
 
   setStateIn = (path, value) => {
-    const key = path[0];
-    if (path.length > 1) value = this.state[key].setIn(path.slice(1), value);
-    return this.setState({ [key]: value });
+    const key = path[0]
+    if (path.length > 1) value = this.state[key].setIn(path.slice(1), value)
+    return this.setState({ [key]: value })
   }
 
-  render() {
-    const { comment, membership, paper_pubs, sent, open } = this.state;
-    const button = React.Children.only(this.props.children);
-    const msChanged = membership !== this.props.membership;
-    const disabled = sent || !comment || (!msChanged && !paper_pubs)
-        || !Member.paperPubsIsValid(paper_pubs);
+  render () {
+    const { children, membership: prevMembership, name, upgrade } = this.props
+    const { comment, membership, paper_pubs, sent, open } = this.state
+    const button = React.Children.only(children)
+    const msChanged = membership !== prevMembership
+    const disabled = sent || !comment || (!msChanged && !paper_pubs) ||
+        !Member.paperPubsIsValid(paper_pubs)
     const formProps = {
       getDefaultValue: path => getIn(this.props, path, null),
       getValue: path => getIn(this.state, path, ''),
@@ -68,34 +66,37 @@ export default class Upgrade extends React.Component {
       { React.cloneElement(button, { onTouchTap: this.handleOpen }) }
       <Dialog
         bodyStyle={{ paddingLeft: 0 }}
-        title={ 'Upgrade ' + this.props.name }
+        title={'Upgrade ' + name}
         open={open}
-        autoScrollBodyContent={true}
+        autoScrollBodyContent
         onRequestClose={this.handleClose}
         actions={[
           <FlatButton key='cancel' label='Cancel' onTouchTap={this.handleClose} />,
           <FlatButton key='ok'
-            label={ sent ? 'Working...' : 'Apply' }
+            label={sent ? 'Working...' : 'Apply'}
             disabled={disabled}
-            onTouchTap={ () => {
-              this.setState({ sent: true });
-              const res = { comment };
-              if (msChanged) res.membership = membership;
-              if (paper_pubs) res.paper_pubs = paper_pubs.toJS();
-              (this.props.upgrade(res) || Promise.reject('Upgrade expected a Promise from upgrade()'))
+            onTouchTap={() => {
+              this.setState({ sent: true })
+              const res = { comment }
+              if (msChanged) res.membership = membership
+              if (paper_pubs) res.paper_pubs = paper_pubs.toJS()
+              upgrade(res)
                 .then(res => {
-                  console.log('Member upgraded', res);
-                  this.handleClose();
+                  console.log('Member upgraded', res)
+                  this.handleClose()
                 })
-                .catch(e => console.error(e));  // TODO: report errors better
+                .catch(err => {
+                  console.error('Member upgrade failed!', err)
+                  window.alert('Member upgrade failed! ' + err.message)
+                })
             }}
           />
         ]}
       >
-        <UpgradeFields { ...formProps } />
+        <UpgradeFields {...formProps} />
         <br />
-        <CommentField { ...formProps } />
+        <CommentField {...formProps} />
       </Dialog>
-    </div>;
+    </div>
   }
 }

@@ -73,7 +73,7 @@ class RegOptionsDialog extends Component {
           />
         ]}
         open={open}
-        autoScrollBodyContent={true}
+        autoScrollBodyContent
         onRequestClose={onClose}
       >
         <TextField

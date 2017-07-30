@@ -9,7 +9,6 @@ import NominationToolbar from './nomination-toolbar'
 import '../style.css'
 
 class App extends React.Component {
-
   static propTypes = {
     initHugoAdmin: PropTypes.func.isRequired,
     location: locationShape.isRequired,
@@ -24,7 +23,7 @@ class App extends React.Component {
     query: ''
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const { initHugoAdmin } = this.props
     initHugoAdmin()
   }
@@ -33,7 +32,7 @@ class App extends React.Component {
     if (!nominations) initHugoAdmin()
   }
 
-  render() {
+  render () {
     const { children, location: { pathname }, params: { category }, showBallotCounts } = this.props
     const { query } = this.state
     return <div>
@@ -41,7 +40,7 @@ class App extends React.Component {
         category={category}
         pathname={pathname}
         query={query}
-        setQuery={ query => this.setState({ query: query.toLowerCase() }) }
+        setQuery={query => this.setState({ query: query.toLowerCase() })}
         showBallotCounts={showBallotCounts}
       />
       <main>
@@ -54,7 +53,7 @@ class App extends React.Component {
 }
 
 export default connect(
-  ({ hugoAdmin }, { params: { category }}) => ({
+  ({ hugoAdmin }, { params: { category } }) => ({
     nominations: hugoAdmin.getIn(['nominations', category]),
     showBallotCounts: hugoAdmin.get('showBallotCounts')
   }), {

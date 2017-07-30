@@ -12,91 +12,99 @@ import PersonAdd from 'material-ui/svg-icons/social/person-add'
 
 import Rocket from '../../lib/rocket-icon'
 
-const SelectableList = makeSelectable(List);
+const SelectableList = makeSelectable(List)
 
 const singleWithKey = (currentMember, otherMembers, key) => (
   !currentMember || !currentMember.get(key) ? false
   : otherMembers ? otherMembers.every(m => !m.get(key))
   : true
-);
+)
 
 const linkArtshowRegistration = (currentMember) => {
-  const ms = currentMember && currentMember.get('membership');
-  return ['Supporter', 'Exhibitor', 'Youth', 'FirstWorldcon', 'Adult'].indexOf(ms) !== -1;
-};
+  const ms = currentMember && currentMember.get('membership')
+  return ['Supporter', 'Exhibitor', 'Youth', 'FirstWorldcon', 'Adult'].indexOf(ms) !== -1
+}
 
 const linkHugoNominations = (currentMember, otherMembers) => (
   singleWithKey(currentMember, otherMembers, 'can_hugo_nominate')
-);
+)
 
 const linkHugoVotes = (currentMember, otherMembers) => (
   singleWithKey(currentMember, otherMembers, 'can_hugo_vote')
-);
+)
 
 const NavMenu = ({ currentMember, handleNav, otherMembers }) => {
-  const id = currentMember && currentMember.get('id');
+  const id = currentMember && currentMember.get('id')
 
-  const memberItems = [];
-  if (linkHugoNominations(currentMember, otherMembers)) memberItems.push(<ListItem
-    key="hn"
-    leftIcon={<Rocket/>}
-    primaryText="Nominate for the Hugo Awards"
-    style={{ fontSize: 14 }}
-    value={`/hugo/${id}/nominate`}
-  />);
-  if (linkHugoVotes(currentMember, otherMembers)) memberItems.push(<ListItem
-    key="hv"
-    leftIcon={<Rocket/>}
-    primaryText="Vote for the Hugo Awards"
-    style={{ fontSize: 14 }}
-    value={`/hugo/${id}/vote`}
-  />);
-  if (linkArtshowRegistration(currentMember)) memberItems.push(<ListItem
-    key="art"
-    leftIcon={<Palette/>}
-    primaryText="Register for the Art Show"
-    style={{ fontSize: 14 }}
-    value={`/exhibition/${id}`}
-  />);
-  if (memberItems.length) memberItems.push(<Divider
-    key="div"
-    inset={true}
-    style={{ marginTop: 8, marginBottom: 8 }}
-  />);
+  const memberItems = []
+  if (linkHugoNominations(currentMember, otherMembers)) {
+    memberItems.push(<ListItem
+      key='hn'
+      leftIcon={<Rocket />}
+      primaryText='Nominate for the Hugo Awards'
+      style={{ fontSize: 14 }}
+      value={`/hugo/${id}/nominate`}
+  />)
+  }
+  if (linkHugoVotes(currentMember, otherMembers)) {
+    memberItems.push(<ListItem
+      key='hv'
+      leftIcon={<Rocket />}
+      primaryText='Vote for the Hugo Awards'
+      style={{ fontSize: 14 }}
+      value={`/hugo/${id}/vote`}
+  />)
+  }
+  if (linkArtshowRegistration(currentMember)) {
+    memberItems.push(<ListItem
+      key='art'
+      leftIcon={<Palette />}
+      primaryText='Register for the Art Show'
+      style={{ fontSize: 14 }}
+      value={`/exhibition/${id}`}
+  />)
+  }
+  if (memberItems.length) {
+    memberItems.push(<Divider
+      key='div'
+      inset
+      style={{ marginTop: 8, marginBottom: 8 }}
+  />)
+  }
 
   return <SelectableList onChange={(ev, val) => handleNav(val)}>
     { memberItems }
     <ListItem
-      leftIcon={<People/>}
-      primaryText="My memberships"
+      leftIcon={<People />}
+      primaryText='My memberships'
       style={{ fontSize: 14 }}
-      value="/"
+      value='/'
     />
     <ListItem
-      leftIcon={<PersonAdd/>}
-      primaryText="New Membership"
+      leftIcon={<PersonAdd />}
+      primaryText='New Membership'
       style={{ fontSize: 14 }}
-      value="/new"
+      value='/new'
     />
     <ListItem
-      leftIcon={<ThumbUp/>}
-      primaryText="Upgrade Membership"
+      leftIcon={<ThumbUp />}
+      primaryText='Upgrade Membership'
       style={{ fontSize: 14 }}
-      value="/upgrade"
+      value='/upgrade'
     />
     <ListItem
-      leftIcon={<EuroSymbol/>}
-      primaryText="Payments"
+      leftIcon={<EuroSymbol />}
+      primaryText='Payments'
       style={{ fontSize: 14 }}
-      value="/pay"
+      value='/pay'
     />
-  </SelectableList>;
-};
+  </SelectableList>
+}
 
 NavMenu.propTypes = {
   currentMember: ImmutablePropTypes.map,
   handleNav: PropTypes.func.isRequired,
   otherMembers: ImmutablePropTypes.list
-};
+}
 
-export default NavMenu;
+export default NavMenu

@@ -1,15 +1,9 @@
-import { Map } from 'immutable'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import TextField from 'material-ui/TextField'
-import LockOpen from 'material-ui/svg-icons/action/lock-open'
 import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-
-const styles = {
-  changed: { borderColor: 'rgb(255, 152, 0)' }
-}
 
 class RegistrationLock extends Component {
   static propTypes = {
@@ -57,10 +51,12 @@ class RegistrationLock extends Component {
     }
   }
 
-  componentDidUpdate(_, { open }) {
-    if (this.state.open && !open) setTimeout(() => {
-      if (this.inputRef) this.inputRef.focus()
-    }, 10)
+  componentDidUpdate (_, { open }) {
+    if (this.state.open && !open) {
+      setTimeout(() => {
+        if (this.inputRef) this.inputRef.focus()
+      }, 10)
+    }
   }
 
   render () {

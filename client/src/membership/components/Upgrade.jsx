@@ -5,8 +5,7 @@ import { push, replace } from 'react-router-redux'
 import { Card, CardActions, CardText } from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
 import Subheader from 'material-ui/Subheader'
-const { Col, Row } = require('react-flexbox-grid')
-import ImmutablePropTypes from 'react-immutable-proptypes'
+import { Col, Row } from 'react-flexbox-grid'
 
 import { setScene, showMessage } from '../../app/actions/app'
 import { buyUpgrade, getPrices } from '../../payments/actions'
@@ -15,15 +14,9 @@ import * as PaymentPropTypes from '../../payments/proptypes'
 import * as MemberPropTypes from '../proptypes'
 import MemberLookupSelector from './MemberLookupSelector'
 import MemberTypeList from './MemberTypeList'
-import { AddPaperPubs, paperPubsIsValid } from './paper-pubs';
+import { AddPaperPubs, paperPubsIsValid } from './paper-pubs'
 
-const UPGRADE_TARGET_TYPES = ['Adult', 'Youth', 'Child'];
-
-function getIn(obj, path, unset) {
-  const val = obj[path[0]];
-  if (typeof val === 'undefined') return unset;
-  return path.length <= 1 ? val : val.getIn(path.slice(1), unset);
-}
+const UPGRADE_TARGET_TYPES = ['Adult', 'Youth', 'Child']
 
 class Upgrade extends React.Component {
   static propTypes = {
@@ -41,84 +34,84 @@ class Upgrade extends React.Component {
     showMessage: PropTypes.func.isRequired
   }
 
-  static getNextState(props) {
-    const nextState = {};
-    const id = Number(props.params.id);
-    const person = id && props.people && props.people.find(p => p.get('id') === id);
+  static getNextState (props) {
+    const nextState = {}
+    const id = Number(props.params.id)
+    const person = id && props.people && props.people.find(p => p.get('id') === id)
     if (person) {
-      const pm = nextState.prevMembership = person.get('membership');
-      nextState.membership = UPGRADE_TARGET_TYPES.indexOf(pm) !== -1 ? pm : null;
-      nextState.canAddPaperPubs = false;
-      nextState.paperPubs = null;
+      const pm = nextState.prevMembership = person.get('membership')
+      nextState.membership = UPGRADE_TARGET_TYPES.indexOf(pm) !== -1 ? pm : null
+      nextState.canAddPaperPubs = false
+      nextState.paperPubs = null
     } else {
-      nextState.canAddPaperPubs = false;
-      nextState.membership = null;
-      nextState.paperPubs = null;
+      nextState.canAddPaperPubs = false
+      nextState.membership = null
+      nextState.paperPubs = null
     }
-    return nextState;
+    return nextState
   }
 
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super(props)
     this.state = Object.assign({
       canAddPaperPubs: false,
       membership: null,
       paperPubs: null,
       prevMembership: null,
       sent: false
-    }, Upgrade.getNextState(props));
+    }, Upgrade.getNextState(props))
   }
 
-  componentWillMount() {
-    const { getPrices, prices, setScene } = this.props;
-    if (!prices) getPrices();
-    setScene({ title: 'Upgrade Membership', dockSidebar: false });
+  componentWillMount () {
+    const { getPrices, prices, setScene } = this.props
+    if (!prices) getPrices()
+    setScene({ title: 'Upgrade Membership', dockSidebar: false })
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps (nextProps) {
     if (nextProps.params.id !== this.props.params.id) {
-      this.setState(Upgrade.getNextState(nextProps));
+      this.setState(Upgrade.getNextState(nextProps))
     }
   }
 
-  get amount() {
-    const { prices } = this.props;
-    const { membership, paperPubs, prevMembership } = this.state;
-    if (!prices) return 0;
-    const prevAmount = prices.getIn(['memberships', prevMembership, 'amount']) || 0;
-    const nextAmount = prices.getIn(['memberships', membership, 'amount']) || 0;
-    const ppAmount = paperPubs && prices.getIn(['PaperPubs', 'amount']) || 0;
-    return nextAmount - prevAmount + ppAmount;
+  get amount () {
+    const { prices } = this.props
+    const { membership, paperPubs, prevMembership } = this.state
+    if (!prices) return 0
+    const prevAmount = prices.getIn(['memberships', prevMembership, 'amount']) || 0
+    const nextAmount = prices.getIn(['memberships', membership, 'amount']) || 0
+    const ppAmount = paperPubs && prices.getIn(['PaperPubs', 'amount']) || 0
+    return nextAmount - prevAmount + ppAmount
   }
 
-  get description() {
-    const { prices } = this.props;
-    const { membership, paperPubs, prevMembership } = this.state;
-    const parts = [];
-    if (membership !== prevMembership) parts.push(`Upgrade to ${membership}`);
-    if (paperPubs) parts.push(prices.getIn(['PaperPubs', 'description']));
-    return parts.join(' + ') || 'Member upgrade';
+  get description () {
+    const { prices } = this.props
+    const { membership, paperPubs, prevMembership } = this.state
+    const parts = []
+    if (membership !== prevMembership) parts.push(`Upgrade to ${membership}`)
+    if (paperPubs) parts.push(prices.getIn(['PaperPubs', 'description']))
+    return parts.join(' + ') || 'Member upgrade'
   }
 
-  get disabledCheckout() {
-    const { paperPubs, prevMembership, sent } = this.state;
-    return sent || !prevMembership || this.amount <= 0 || !paperPubsIsValid(paperPubs);
+  get disabledCheckout () {
+    const { paperPubs, prevMembership, sent } = this.state
+    return sent || !prevMembership || this.amount <= 0 || !paperPubsIsValid(paperPubs)
   }
 
-  get id() {
-    return Number(this.props.params.id) || 0;
+  get id () {
+    return Number(this.props.params.id) || 0
   }
 
-  get person() {
-    const { people } = this.props;
-    const id = this.id;
-    return id && people && people.find(p => p.get('id') === id) || null;
+  get person () {
+    const { people } = this.props
+    const id = this.id
+    return id && people && people.find(p => p.get('id') === id) || null
   }
 
   onSelectMember = ({ membership, person_id }) => {
     if (person_id !== this.id) {
-      this.setState({ prevMembership: membership });
-      this.props.replace(person_id ? `/upgrade/${person_id}` : '/upgrade');
+      this.setState({ prevMembership: membership })
+      this.props.replace(person_id ? `/upgrade/${person_id}` : '/upgrade')
     }
   }
 
@@ -126,24 +119,24 @@ class Upgrade extends React.Component {
     if (key) {
       this.setState({ paperPubs: this.state.paperPubs.set(key, value) })
     } else {
-      this.setState({ paperPubs: value });
+      this.setState({ paperPubs: value })
     }
   }
 
   onPurchase = (amount, token) => {
-    const { buyUpgrade, email, push, showMessage } = this.props;
-    const { membership, paperPubs } = this.state;
-    showMessage(`Charging ${email} EUR ${amount/100} for upgrade...`);
+    const { buyUpgrade, email, push, showMessage } = this.props
+    const { membership, paperPubs } = this.state
+    showMessage(`Charging ${email} EUR ${amount / 100} for upgrade...`)
     buyUpgrade(this.id, membership, paperPubs, amount, email, token, () => {
-      showMessage('Payment successful!');
-      push('/');
-    });
+      showMessage('Payment successful!')
+      push('/')
+    })
   }
 
-  renderActions() {
-    const { prevMembership, sent } = this.state;
-    const amount = this.amount;
-    const disabled = this.disabledCheckout;
+  renderActions () {
+    const { prevMembership, sent } = this.state
+    const amount = this.amount
+    const disabled = this.disabledCheckout
     return (
       <CardActions style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: 16, paddingBottom: 16 }}>
         <div style={{ color: 'rgba(0, 0, 0, 0.5)', paddingTop: 8, paddingRight: 16 }}>
@@ -151,7 +144,7 @@ class Upgrade extends React.Component {
         </div>
         <StripeCheckout
           amount={amount}
-          currency="EUR"
+          currency='EUR'
           description={this.description}
           disabled={disabled}
           email={this.props.email}
@@ -170,10 +163,10 @@ class Upgrade extends React.Component {
     )
   }
 
-  render() {
-    const { people, prices } = this.props;
-    if (!people) return null;
-    const { canAddPaperPubs, membership, paperPubs, prevMembership } = this.state;
+  render () {
+    const { people, prices } = this.props
+    if (!people) return null
+    const { canAddPaperPubs, membership, paperPubs, prevMembership } = this.state
     return <Row>
       <Col
         xs={12}
@@ -198,13 +191,13 @@ class Upgrade extends React.Component {
                 <Subheader>
                   Upgrade to:
                 </Subheader>
-                  <MemberTypeList
-                    canAddPaperPubs={canAddPaperPubs}
-                    memberTypes={UPGRADE_TARGET_TYPES}
-                    onSelectType={(membership) => this.setState({ membership })}
-                    prevType={prevMembership}
-                    prices={prices}
-                    selectedType={membership}
+                <MemberTypeList
+                  canAddPaperPubs={canAddPaperPubs}
+                  memberTypes={UPGRADE_TARGET_TYPES}
+                  onSelectType={(membership) => this.setState({ membership })}
+                  prevType={prevMembership}
+                  prices={prices}
+                  selectedType={membership}
                   />
               </Col>
             </Row>
@@ -220,7 +213,7 @@ class Upgrade extends React.Component {
           { this.renderActions() }
         </Card>
       </Col>
-    </Row>;
+    </Row>
   }
 }
 
@@ -237,4 +230,4 @@ export default connect(
     setScene,
     showMessage
   }
-)(Upgrade);
+)(Upgrade)

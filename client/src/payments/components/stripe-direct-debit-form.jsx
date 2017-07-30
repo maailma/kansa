@@ -1,24 +1,16 @@
+import RaisedButton from 'material-ui/RaisedButton'
 import PropTypes from 'prop-types'
 import React from 'react'
-const { Col, Row } = require('react-flexbox-grid')
+import { Col, Row } from 'react-flexbox-grid'
 import ImmutablePropTypes from 'react-immutable-proptypes'
-const IBAN = require('iban')
-
-import RaisedButton from 'material-ui/RaisedButton'
-import TextField from 'material-ui/TextField'
 
 import { TextInput } from '../../membership/components/form-components'
 import SelectIbanCountry, { ibanCountries } from './select-iban-country'
 import StripeDirectDebit from './stripe-direct-debit'
 
-const orgName = TITLE
+const IBAN = require('iban')
 
-const labels = {
-  city: 'City',
-  country: 'Country',
-  name: 'Account owner name',
-  postal_code: 'Postal code'
-}
+const orgName = TITLE
 
 export default class StripeDirectDebitForm extends React.Component {
   static propTypes = {
@@ -27,7 +19,7 @@ export default class StripeDirectDebitForm extends React.Component {
     person: ImmutablePropTypes.map
   }
 
-  constructor(props) {
+  constructor (props) {
     super(props)
     const { person } = props
     this.state = {
@@ -39,15 +31,17 @@ export default class StripeDirectDebitForm extends React.Component {
     }
   }
 
-  componentWillReceiveProps({ person }) {
-    if (person && !person.equals(this.props.person)) this.setState({
-      city: person.get('city') || '',
-      country: ibanCountries[person.get('country')] || '',
-      name: person.get('legal_name') || '',
-    })
+  componentWillReceiveProps ({ person }) {
+    if (person && !person.equals(this.props.person)) {
+      this.setState({
+        city: person.get('city') || '',
+        country: ibanCountries[person.get('country')] || '',
+        name: person.get('legal_name') || ''
+      })
+    }
   }
 
-  render() {
+  render () {
     const { amount, onCharge } = this.props
     const { city, country, iban, name, postal_code } = this.state
     const disabled = !city || !country || !IBAN.isValid(iban) || !name || !postal_code
@@ -60,14 +54,14 @@ export default class StripeDirectDebitForm extends React.Component {
             <TextInput
               getDefaultValue={() => IBAN.isValid(iban) && IBAN.printFormat(iban) || ''}
               getValue={() => IBAN.printFormat(iban)}
-              label="IBAN"
+              label='IBAN'
               onChange={(_, iban) => {
                 iban = iban.replace(/ /g, '')
                 const update = { iban }
-                if (IBAN.isValid(iban)) update.country = iban.substr(0,2).toUpperCase()
+                if (IBAN.isValid(iban)) update.country = iban.substr(0, 2).toUpperCase()
                 this.setState(update)
               }}
-              required={true}
+              required
             />
           </Col>
         </Row>
@@ -75,28 +69,28 @@ export default class StripeDirectDebitForm extends React.Component {
           <Col xs={12} md={6} style={{ marginBottom: 20 }}>
             <TextInput
               getValue={() => name}
-              label="Account owner name"
+              label='Account owner name'
               onChange={(_, name) => this.setState({ name })}
-              required={true}
+              required
             />
             <SelectIbanCountry
-              floatingLabelFixed={true}
-              floatingLabelText="Country (Required)"
-              fullWidth={true}
+              floatingLabelFixed
+              floatingLabelText='Country (Required)'
+              fullWidth
               onChange={(ev, idx, country) => this.setState({ country })}
               value={country}
             />
             <TextInput
               getValue={() => city}
-              label="City"
+              label='City'
               onChange={(_, city) => this.setState({ city })}
-              required={true}
+              required
             />
             <TextInput
               getValue={() => postal_code}
-              label="Postal code"
+              label='Postal code'
               onChange={(_, postal_code) => this.setState({ postal_code })}
-              required={true}
+              required
             />
           </Col>
           <Col xs={12} md={6}>
@@ -115,7 +109,7 @@ export default class StripeDirectDebitForm extends React.Component {
               <RaisedButton
                 label={label}
                 disabled={disabled}
-                primary={true}
+                primary
               />
             </StripeDirectDebit>
           </Col>

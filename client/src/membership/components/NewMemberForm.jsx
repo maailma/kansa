@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { push, replace } from 'react-router-redux'
 import { Card, CardActions, CardText } from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
-const { Col, Row } = require('react-flexbox-grid');
+import { Col, Row } from 'react-flexbox-grid'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import { setScene, showMessage } from '../../app/actions/app'
@@ -29,38 +29,38 @@ class NewMemberForm extends React.Component {
     showMessage: PropTypes.func.isRequired
   }
 
-  constructor(props) {
-    super(props);
-    const { email, getPrices, params: { membership }, prices } = this.props;
+  constructor (props) {
+    super(props)
+    const { email, getPrices, params: { membership }, prices } = this.props
     this.state = {
       member: Map({ email, membership }),
       sent: false,
       valid: false
-    };
-    if (!prices) getPrices();
+    }
+    if (!prices) getPrices()
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { email, params: { membership } } = nextProps;
-    let { member } = this.state;
-    if (email !== this.props.email) member = member.set('email', email);
-    if (membership !== this.props.params.membership) member = member.set('membership', membership);
-    if (!member.equals(this.state.member)) this.setState({ member });
+  componentWillReceiveProps (nextProps) {
+    const { email, params: { membership } } = nextProps
+    let { member } = this.state
+    if (email !== this.props.email) member = member.set('email', email)
+    if (membership !== this.props.params.membership) member = member.set('membership', membership)
+    if (!member.equals(this.state.member)) this.setState({ member })
   }
 
-  componentDidMount() {
-    this.props.setScene({ title: 'New Membership', dockSidebar: false });
+  componentDidMount () {
+    this.props.setScene({ title: 'New Membership', dockSidebar: false })
   }
 
   onCheckout = (token) => {
-    const { buyMembership, push, showMessage } = this.props;
-    const { member } = this.state;
-    const email = member.get('email');
-    showMessage(`Charging ${email} EUR ${this.price/100} ...`);
+    const { buyMembership, push, showMessage } = this.props
+    const { member } = this.state
+    const email = member.get('email')
+    showMessage(`Charging ${email} EUR ${this.price / 100} ...`)
     buyMembership(member, this.price, email, token, () => {
-      showMessage('Charge completed; new member registered!');
-      push('/');
-    });
+      showMessage('Charge completed; new member registered!')
+      push('/')
+    })
   }
 
   onSignup = () => {
@@ -73,25 +73,25 @@ class NewMemberForm extends React.Component {
     })
   }
 
-  get description() {
-    const { prices } = this.props;
-    const { member } = this.state;
-    const msDesc = prices && prices.getIn(['memberships', member.get('membership'), 'description']);
-    const parts = [`New ${msDesc} member`];
-    if (member.get('paper_pubs')) parts.push(prices.getIn(['PaperPubs', 'description']));
+  get description () {
+    const { prices } = this.props
+    const { member } = this.state
+    const msDesc = prices && prices.getIn(['memberships', member.get('membership'), 'description'])
+    const parts = [`New ${msDesc} member`]
+    if (member.get('paper_pubs')) parts.push(prices.getIn(['PaperPubs', 'description']))
     return parts.join(' + ')
   }
 
-  get price() {
-    const { prices } = this.props;
-    if (!prices) return 0;
-    const { member } = this.state;
-    const msAmount = prices.getIn(['memberships', member.get('membership'), 'amount']) || 0;
-    const ppAmount = member.get('paper_pubs') && prices.getIn(['PaperPubs', 'amount']) || 0;
-    return msAmount + ppAmount;
+  get price () {
+    const { prices } = this.props
+    if (!prices) return 0
+    const { member } = this.state
+    const msAmount = prices.getIn(['memberships', member.get('membership'), 'amount']) || 0
+    const ppAmount = member.get('paper_pubs') && prices.getIn(['PaperPubs', 'amount']) || 0
+    return msAmount + ppAmount
   }
 
-  render() {
+  render () {
     const { prices, replace } = this.props
     const { member, sent, valid } = this.state
     const amount = this.price
@@ -108,16 +108,16 @@ class NewMemberForm extends React.Component {
             <Row>
               <Col xs={12}>
                 <MembershipSelect
-                  getValue={ path => member.getIn(path) || ''}
-                  onChange={ (path, value) => replace(`/new/${value}`) }
+                  getValue={path => member.getIn(path) || ''}
+                  onChange={(path, value) => replace(`/new/${value}`)}
                   prices={prices}
                 />
               </Col>
             </Row>
             <MemberForm
               member={member}
-              newMember={true}
-              onChange={ (valid, member) => this.setState({ member, valid }) }
+              newMember
+              onChange={(valid, member) => this.setState({ member, valid })}
               prices={prices}
               tabIndex={2}
             />
@@ -129,7 +129,7 @@ class NewMemberForm extends React.Component {
             {amount > 0 ? (
               <StripeCheckout
                 amount={amount}
-                currency="EUR"
+                currency='EUR'
                 description={this.description}
                 disabled={!valid}
                 email={member.get('email')}
@@ -146,7 +146,7 @@ class NewMemberForm extends React.Component {
               </StripeCheckout>
             ) : (
               <FlatButton
-                label="Sign up"
+                label='Sign up'
                 disabled={!valid || amount < 0}
                 onTouchTap={this.onSignup}
                 style={{ flexShrink: 0 }}
@@ -156,7 +156,7 @@ class NewMemberForm extends React.Component {
           </CardActions>
         </Card>
       </Col>
-    </Row>;
+    </Row>
   }
 }
 
@@ -172,4 +172,4 @@ export default connect(
     setScene,
     showMessage
   }
-)(NewMemberForm);
+)(NewMemberForm)

@@ -20,7 +20,6 @@ import { HUGO_ADMIN_ROUTE_ROOT, categoryGroups } from '../constants'
 import CategoryInfo from './category-info'
 
 class NominationToolbar extends Component {
-
   static propTypes = {
     category: PropTypes.string.isRequired,
     pathname: PropTypes.string.isRequired,
@@ -39,22 +38,22 @@ class NominationToolbar extends Component {
   }
 
   categoryMenuItem = (category, group) => {
-    const { setQuery, showNominations } = this.props;
+    const { setQuery, showNominations } = this.props
     return <MenuItem
       key={(group || '') + category}
-      onTouchTap={ () => {
-        this.setState({ menuOpen: false });
-        showNominations(category);
-        setQuery('');
-      } }
-      primaryText={ group ? `- ${category}` : category }
+      onTouchTap={() => {
+        this.setState({ menuOpen: false })
+        showNominations(category)
+        setQuery('')
+      }}
+      primaryText={group ? `- ${category}` : category}
     />
   }
 
-  get categoryInfoButton() {
-    const { category } = this.props;
-    const { infoOpen } = this.state;
-    if (!categoryInfo[category]) return null;
+  get categoryInfoButton () {
+    const { category } = this.props
+    const { infoOpen } = this.state
+    if (!categoryInfo[category]) return null
     return [
       <IconButton
         key='cib'
@@ -68,54 +67,54 @@ class NominationToolbar extends Component {
         key='cid'
         onRequestClose={() => this.setState({ infoOpen: false })}
       />
-    ];
+    ]
   }
 
-  get categoryViewButton() {
-    const { category, showFinalists, showNominations } = this.props;
-    if (!categoryInfo[category]) return null;
+  get categoryViewButton () {
+    const { category, showFinalists, showNominations } = this.props
+    if (!categoryInfo[category]) return null
     return (this.currentView === 'nominations')
       ? <IconButton
-          onTouchTap={ () => showFinalists(category) }
-          tooltip={`Show ${category} finalists`}
+        onTouchTap={() => showFinalists(category)}
+        tooltip={`Show ${category} finalists`}
         >
-          <FinalistsIcon />
-        </IconButton>
+        <FinalistsIcon />
+      </IconButton>
       : <IconButton
-          onTouchTap={ () => showNominations(category) }
-          tooltip={`Show ${category} nominations`}
+        onTouchTap={() => showNominations(category)}
+        tooltip={`Show ${category} nominations`}
         >
-          <NominationsIcon />
-        </IconButton>;
+        <NominationsIcon />
+      </IconButton>
   }
 
-  get currentView() {
-    return this.props.pathname.replace(/.*\//, '');
+  get currentView () {
+    return this.props.pathname.replace(/.*\//, '')
   }
 
   openMenu = (event) => {
-    event.preventDefault();
+    event.preventDefault()
     this.setState({
       menuOpen: true,
       anchorEl: event.currentTarget
-    });
+    })
   };
 
-  get showBallotCountButton() {
-    const { setShowBallotCounts, showBallotCounts } = this.props;
-    if (this.currentView !== 'nominations') return null;
+  get showBallotCountButton () {
+    const { setShowBallotCounts, showBallotCounts } = this.props
+    if (this.currentView !== 'nominations') return null
     return (
       <IconButton
-        iconStyle={ showBallotCounts ? { color: 'rgb(0, 188, 212)' } : null }
-        onTouchTap={ () => setShowBallotCounts(!showBallotCounts) }
+        iconStyle={showBallotCounts ? { color: 'rgb(0, 188, 212)' } : null}
+        onTouchTap={() => setShowBallotCounts(!showBallotCounts)}
         tooltip={`${showBallotCounts ? 'Hide' : 'Show'} ballot counts`}
       >
         <BallotCountIcon />
       </IconButton>
-    );
+    )
   }
 
-  render() {
+  render () {
     const { category, query, setQuery } = this.props
     const { anchorEl, menuOpen } = this.state
     return (
@@ -131,7 +130,7 @@ class NominationToolbar extends Component {
             anchorEl={anchorEl}
             anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
             targetOrigin={{ horizontal: 'left', vertical: 'top' }}
-            onRequestClose={ () => this.setState({ menuOpen: false }) }
+            onRequestClose={() => this.setState({ menuOpen: false })}
           >
             <Menu>
               {Object.keys(categoryGroups).reduce((items, gn) => items.concat(
@@ -146,11 +145,11 @@ class NominationToolbar extends Component {
           {this.currentView === 'nominations' ? (
             <TextField
               hintText='Search'
-              onChange={ ev => setQuery(ev.target.value) }
+              onChange={ev => setQuery(ev.target.value)}
               style={{ paddingLeft: 12 }}
               value={query}
             />
-          ): null}
+          ) : null}
         </div>
       </Paper>
     )
@@ -163,4 +162,4 @@ export default connect(null,
     showNominations: category => push(`${HUGO_ADMIN_ROUTE_ROOT}/${category}/nominations`),
     showFinalists: category => push(`${HUGO_ADMIN_ROUTE_ROOT}/${category}/finalists`)
   }
-)(NominationToolbar);
+)(NominationToolbar)

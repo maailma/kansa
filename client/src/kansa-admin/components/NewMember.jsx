@@ -22,15 +22,17 @@ class NewMember extends Component {
     sent: false
   }
 
-  handleOpen = () => { this.setState({
-    member: Member.defaultProps.member.merge({ comment: '', membership: 'NonMember' }),
-    open: true,
-    sent: false
-  }) }
+  handleOpen = () => {
+    this.setState({
+      member: Member.defaultProps.member.merge({ comment: '', membership: 'NonMember' }),
+      open: true,
+      sent: false
+    })
+  }
 
   handleClose = () => { this.setState({ open: false }) }
 
-  render() {
+  render () {
     const { enabled, onAdd } = this.props
     const { member, open, sent } = this.state
     if (!enabled) return null
@@ -51,17 +53,17 @@ class NewMember extends Component {
         <Dialog
           title='Add new member'
           open={open}
-          autoScrollBodyContent={true}
+          autoScrollBodyContent
           bodyClassName='memberDialog'
           onRequestClose={this.handleClose}
           actions={[
             <FlatButton key='cancel' label='Cancel' onTouchTap={this.handleClose} />,
             <FlatButton key='add'
-              label={ sent ? 'Working...' : 'Add' }
+              label={sent ? 'Working...' : 'Add'}
               disabled={disabled}
-              onTouchTap={ () => {
+              onTouchTap={() => {
                 this.setState({ sent: true })
-                (onAdd(member) || Promise.reject('NewMember expected a Promise from onAdd()'))
+                onAdd(member)
                   .then(res => {
                     console.log('New member added', res)
                     this.handleClose()
@@ -71,11 +73,11 @@ class NewMember extends Component {
             />
           ]}
         >
-          <CommonFields { ...formProps } />
+          <CommonFields {...formProps} />
           <br />
-          <UpgradeFields { ...formProps } />
+          <UpgradeFields {...formProps} />
           <br />
-          <CommentField { ...formProps } />
+          <CommentField {...formProps} />
         </Dialog>
       </div>
     )

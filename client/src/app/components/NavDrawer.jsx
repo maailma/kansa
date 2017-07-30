@@ -1,4 +1,4 @@
-import { List as ImmutableList } from 'immutable';
+import { List as ImmutableList } from 'immutable'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { connect } from 'react-redux'
@@ -11,7 +11,6 @@ import NavHead from './NavHead'
 import NavMenu from './NavMenu'
 
 class NavDrawer extends React.Component {
-
   static propTypes = {
     docked: PropTypes.bool,
     id: PropTypes.number,
@@ -19,54 +18,54 @@ class NavDrawer extends React.Component {
     open: PropTypes.bool,
     people: ImmutablePropTypes.list.isRequired,
     push: PropTypes.func.isRequired,
-    width: PropTypes.number,
+    width: PropTypes.number
   };
 
-  static currentMember(id, people) {
-    if (!people || people.size === 0) return null;
-    if (people.size === 1) return people.first();
-    if (id) return people.find(p => p.get('id') === id);
-    const nonKids = people.filter(p => ['KidInTow', 'Child'].indexOf(p.get('membership')) === -1);
-    return nonKids.size === 1 ? nonKids.first() : null;
+  static currentMember (id, people) {
+    if (!people || people.size === 0) return null
+    if (people.size === 1) return people.first()
+    if (id) return people.find(p => p.get('id') === id)
+    const nonKids = people.filter(p => ['KidInTow', 'Child'].indexOf(p.get('membership')) === -1)
+    return nonKids.size === 1 ? nonKids.first() : null
   }
 
-  static otherMembers(currentMember, people) {
-    if (!people || people.size === 0) return null;
-    const id = currentMember && currentMember.get('id');
-    if (!id) return people;
-    const om = people.filter(p => p.get('id') !== id);
-    return om.size > 0 ? om : null;
+  static otherMembers (currentMember, people) {
+    if (!people || people.size === 0) return null
+    const id = currentMember && currentMember.get('id')
+    if (!id) return people
+    const om = people.filter(p => p.get('id') !== id)
+    return om.size > 0 ? om : null
   }
 
-  constructor(props) {
-    super(props);
-    const { id, people } = this.props;
-    const currentMember = NavDrawer.currentMember(id, people);
-    const otherMembers = NavDrawer.otherMembers(currentMember, people);
+  constructor (props) {
+    super(props)
+    const { id, people } = this.props
+    const currentMember = NavDrawer.currentMember(id, people)
+    const otherMembers = NavDrawer.otherMembers(currentMember, people)
     this.state = {
       currentMember,
-      otherMembers,
-    };
+      otherMembers
+    }
   }
 
-  componentWillReceiveProps({ id, people }) {
-    const currentMember = NavDrawer.currentMember(id, people);
-    const otherMembers = NavDrawer.otherMembers(currentMember, people);
+  componentWillReceiveProps ({ id, people }) {
+    const currentMember = NavDrawer.currentMember(id, people)
+    const otherMembers = NavDrawer.otherMembers(currentMember, people)
     this.setState({
       currentMember,
-      otherMembers,
-    });
+      otherMembers
+    })
   }
 
   handleNav = (val) => {
-    const { onRequestChange, push } = this.props;
-    push(val);
-    onRequestChange(false);
+    const { onRequestChange, push } = this.props
+    push(val)
+    onRequestChange(false)
   }
 
-  render() {
-    const { docked, onRequestChange, open, width } = this.props;
-    const { currentMember, otherMembers } = this.state;
+  render () {
+    const { docked, onRequestChange, open, width } = this.props
+    const { currentMember, otherMembers } = this.state
 
     return (
       <Drawer
@@ -86,14 +85,14 @@ class NavDrawer extends React.Component {
           otherMembers={otherMembers}
         />
       </Drawer>
-    );
+    )
   }
 }
 
 export default connect(
   ({ user }) => ({
-    people: user.get('people') || ImmutableList(),
+    people: user.get('people') || ImmutableList()
   }), {
     push
   }
-)(NavDrawer);
+)(NavDrawer)

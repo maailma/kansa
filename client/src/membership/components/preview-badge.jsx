@@ -1,4 +1,3 @@
-import { Map } from 'immutable'
 import Dialog from 'material-ui/Dialog'
 import PropTypes from 'prop-types'
 import React from 'react'
@@ -17,7 +16,10 @@ const styles = {
   image: {
     cursor: 'zoom-out',
     position: 'absolute',
-    top: 0, bottom: 0, left: 0, right: 0,
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
     width: '100%'
   }
 }
@@ -33,7 +35,7 @@ export default class PreviewBadge extends React.Component {
     isOpen: false
   }
 
-  get badgeImgUrl() {
+  get badgeImgUrl () {
     const { memberId, name, subtitle } = this.props
     const path = memberId ? `people/${memberId}/badge` : 'blank-badge'
     const q = []
@@ -47,7 +49,7 @@ export default class PreviewBadge extends React.Component {
 
   handleOpen = () => this.setState({ isOpen: true })
 
-  render() {
+  render () {
     const { isOpen } = this.state
     return <div>
       {React.Children.map(this.props.children, (child) => (

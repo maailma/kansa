@@ -34,7 +34,7 @@ const PaymentCardHeader = ({ amount, status, subtitle, title, updated }) => {
     >
       <div style={{ flexGrow: 1, textAlign: 'right' }}>
         <div style={{ color: amountColor, fontSize: 15 }}>
-          €{amount / 100}<br/>
+          €{amount / 100}<br />
         </div>
         <div
           style={{ color: statusColor, fontSize: 14, textTransform: 'uppercase' }}
@@ -83,7 +83,7 @@ const PaymentCard = ({ label, purchase, shape, userIds }) => {
           <td>Invoice:</td>
           <td>{invoice}</td>
         </tr> : null}
-        <tr><td colSpan="2" style={{ paddingTop: 6, paddingBottom: 4 }}><Divider /></td></tr>
+        <tr><td colSpan='2' style={{ paddingTop: 6, paddingBottom: 4 }}><Divider /></td></tr>
         {Object.keys(data).filter(key => data[key]).map((key) => {
           let val = data[key]
           if (val && typeof data[key] === 'object') {

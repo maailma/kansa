@@ -1,23 +1,20 @@
 import { Map } from 'immutable'
-import PropTypes from 'prop-types'
-import React from 'react'
-import ImmutablePropTypes from 'react-immutable-proptypes'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-
-import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
+import { Card, CardHeader, CardText } from 'material-ui/Card'
 import RaisedButton from 'material-ui/RaisedButton'
 import ListCheck from 'material-ui/svg-icons/av/playlist-add-check'
 import ContentUndo from 'material-ui/svg-icons/content/undo'
-const { Col, Row } = require('react-flexbox-grid');
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Col, Row } from 'react-flexbox-grid'
+import ImmutablePropTypes from 'react-immutable-proptypes'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 
 import time_diff from '../../lib/time_diff'
 import { editNomination, submitNominations, resetNominations } from '../actions'
 import { categoryInfo, maxNominationsPerCategory, nominationFields } from '../constants'
 
 import { NominationFillerRow, NominationRow } from './NominationRow'
-
-
 
 class NominationActionsRow extends React.Component {
   static propTypes = {
@@ -28,12 +25,12 @@ class NominationActionsRow extends React.Component {
     saveTime: PropTypes.instanceOf(Date)
   }
 
-  shouldComponentUpdate(nextProps) {
-    return nextProps.disabled !== this.props.disabled || nextProps.saveTime !== this.props.saveTime;
+  shouldComponentUpdate (nextProps) {
+    return nextProps.disabled !== this.props.disabled || nextProps.saveTime !== this.props.saveTime
   }
 
-  render() {
-    const { active, disabled, onSave, onReset, saveTime } = this.props;
+  render () {
+    const { active, disabled, onSave, onReset, saveTime } = this.props
     return <Row
       middle='xs'
       style={{ paddingTop: 20 }}
@@ -64,46 +61,46 @@ class NominationActionsRow extends React.Component {
           title='Reset this category'
         />
       </Col> : null }
-    </Row>;
+    </Row>
   }
 }
 
 const nominationRowLinks = (n, props) => {
-  if (n <= 0) return null;
-  const res = [];
-  for (let i = 0; i < n; ++i) res.push(<NominationFillerRow key={`link-${i}`} {...props} />);
-  return res;
+  if (n <= 0) return null
+  const res = []
+  for (let i = 0; i < n; ++i) res.push(<NominationFillerRow key={`link-${i}`} {...props} />)
+  return res
 }
 
 const NominationBody = ({ active, colSpan, fields, maxNominations, onChange, onSave, onReset, state }) => {
-  const clientData = state.get('clientData');
-  const serverData = state.get('serverData');
-  const serverTime = state.get('serverTime');
-  const isFetching = state.get('isFetching');
-  const rows = active && clientData.size < maxNominations ? clientData.push(Map()) : clientData;
+  const clientData = state.get('clientData')
+  const serverData = state.get('serverData')
+  const serverTime = state.get('serverTime')
+  const isFetching = state.get('isFetching')
+  const rows = active && clientData.size < maxNominations ? clientData.push(Map()) : clientData
   return <div>
     {
       rows.map((rowValues, idx) => <NominationRow
         key={idx}
         active={active}
         colSpan={colSpan}
-        defaultValues={ serverData.get(idx, Map()) }
+        defaultValues={serverData.get(idx, Map())}
         disabled={isFetching}
         fields={fields}
-        onChange={ (field, value) => onChange(idx, rowValues.set(field, value)) }
-        onRemove={ () => onChange(idx, null) }
+        onChange={(field, value) => onChange(idx, rowValues.set(field, value))}
+        onRemove={() => onChange(idx, null)}
         values={rowValues}
       />)
     }
     { nominationRowLinks(maxNominations - rows.size, { colSpan, fields }) }
     <NominationActionsRow
       active={active}
-      disabled={ isFetching || clientData.equals(serverData) }
+      disabled={isFetching || clientData.equals(serverData)}
       onSave={onSave}
       onReset={onReset}
-      saveTime={ serverTime ? new Date(serverTime) : null }
+      saveTime={serverTime ? new Date(serverTime) : null}
     />
-  </div>;
+  </div>
 }
 
 NominationBody.propTypes = {
@@ -116,17 +113,17 @@ NominationBody.propTypes = {
   onReset: PropTypes.func.isRequired,
   state: ImmutablePropTypes.mapContains({
     clientData: ImmutablePropTypes.list.isRequired,
-    serverData: ImmutablePropTypes.list.isRequired,
-    //serverTime: React.PropTypes.string,
-    //isFetching: React.PropTypes.bool.isRequired,
-    //error: React.PropTypes.string
+    serverData: ImmutablePropTypes.list.isRequired
+    // serverTime: React.PropTypes.string,
+    // isFetching: React.PropTypes.bool.isRequired,
+    // error: React.PropTypes.string
   }).isRequired
-};
+}
 
 const NominationCategory = ({ category, ...props }) => {
-  const { title, description, nominationFieldLabels } = categoryInfo[category];
-  const fields = nominationFields(category);
-  const colSpan = Math.floor(12 / fields.size);
+  const { title, description, nominationFieldLabels } = categoryInfo[category]
+  const fields = nominationFields(category)
+  const colSpan = Math.floor(12 / fields.size)
 
   return <Card className='NominationCategory'>
     <CardHeader
@@ -136,7 +133,7 @@ const NominationCategory = ({ category, ...props }) => {
         fontSize: 24,
         fontWeight: 300,
         textAlign: 'center',
-        width: '100%',
+        width: '100%'
       }}
     />
     <CardText>
@@ -169,4 +166,4 @@ export default connect(
     onSave: () => submitNominations(category, signature),
     onReset: () => resetNominations(category)
   }, dispatch)
-)(NominationCategory);
+)(NominationCategory)

@@ -1,27 +1,26 @@
 import Promise from 'promise-polyfill'
-if (!window.Promise) window.Promise = Promise;
-
 import injectTapEventPlugin from 'react-tap-event-plugin'
-injectTapEventPlugin();
 
-if (typeof Object.assign != 'function') {
-  Object.assign = function(target) {
-    'use strict';
+if (!window.Promise) window.Promise = Promise
+injectTapEventPlugin()
+if (typeof Object.assign !== 'function') {
+  Object.assign = function (target) {
+    'use strict'
     if (target == null) {
-      throw new TypeError('Cannot convert undefined or null to object');
+      throw new TypeError('Cannot convert undefined or null to object')
     }
 
-    target = Object(target);
+    target = Object(target)
     for (var index = 1; index < arguments.length; index++) {
-      var source = arguments[index];
+      var source = arguments[index]
       if (source != null) {
         for (var key in source) {
           if (Object.prototype.hasOwnProperty.call(source, key)) {
-            target[key] = source[key];
+            target[key] = source[key]
           }
         }
       }
     }
-    return target;
-  };
+    return target
+  }
 }

@@ -10,23 +10,23 @@ import styles from '../styles/MemberTable.css'
 const publicName = (person) => ['public_first_name', 'public_last_name']
   .map(k => person.get(k))
   .join(' ')
-  .trim();
+  .trim()
 
 const publicSortName = (person) => ['public_last_name', 'public_first_name']
   .map(k => person.get(k))
   .filter(v => !!v)
-  .join(';');
+  .join(';')
 
 const fullLocation = (person) => ['country', 'state', 'city']
   .map(k => person.get(k))
   .filter(v => !!v)
-  .join(', ');
+  .join(', ')
 
 const noRowsRenderer = () => (
   <div className={styles.noRows}>
     Loading...
   </div>
-);
+)
 
 class MemberTable extends PureComponent {
   static propTypes = {
@@ -43,16 +43,16 @@ class MemberTable extends PureComponent {
     sortDirection: SortDirection.ASC
   }
 
-  get sortFn() {
-    const { sortBy } = this.state;
+  get sortFn () {
+    const { sortBy } = this.state
     switch (sortBy) {
-      case 'public_name':  return publicSortName;
-      case 'loc':          return fullLocation;
-      default:             return item => item.get(sortBy, '');
+      case 'public_name': return publicSortName
+      case 'loc': return fullLocation
+      default: return item => item.get(sortBy, '')
     }
   }
 
-  render() {
+  render () {
     const {
       headerHeight,
       overscanRowCount,
@@ -87,20 +87,20 @@ class MemberTable extends PureComponent {
                 sortBy={sortBy}
                 sortDirection={sortDirection}
                 width={width}
-                onRowClick={ ({ index }) => this.props.onMemberSelect(list.get(index)) }
+                onRowClick={({ index }) => this.props.onMemberSelect(list.get(index))}
               >
                 <Column dataKey='member_number' label='#' width={50} />
                 <Column dataKey='membership' label='Type' width={80} />
                 <Column dataKey='legal_name' label='Name' width={120} flexGrow={1} />
                 <Column dataKey='email' label='Email' width={210} />
                 <Column dataKey='public_name' label='Public' width={120} flexGrow={1}
-                  cellDataGetter = { ({ rowData }) => publicName(rowData) }
+                  cellDataGetter={({ rowData }) => publicName(rowData)}
                 />
                 <Column dataKey='loc' label='Location' width={120} flexGrow={1}
-                  cellDataGetter = { ({ rowData }) => fullLocation(rowData) }
+                  cellDataGetter={({ rowData }) => fullLocation(rowData)}
                 />
                 <Column dataKey='last_modified' label='Mod' width={90}
-                  cellDataGetter = { ({ dataKey, rowData }) => rowData.get(dataKey).substr(0,10) }
+                  cellDataGetter={({ dataKey, rowData }) => rowData.get(dataKey).substr(0, 10)}
                 />
               </Table>
             ) }

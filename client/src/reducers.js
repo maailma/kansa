@@ -16,4 +16,4 @@ export default combineReducers({
   purchase,
   user,
   routing: routerReducer
-});
+})

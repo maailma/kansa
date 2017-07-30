@@ -5,10 +5,9 @@ import { connect } from 'react-redux'
 import Dialog from 'material-ui/Dialog'
 
 import { fetchAllBallots } from '../actions'
-import { cleanBallots } from '../nomination-count';
+import { cleanBallots } from '../nomination-count'
 
 class CategoryInfo extends React.Component {
-
   static propTypes = {
     allBallots: PropTypes.instanceOf(Map),
     allNominations: PropTypes.instanceOf(Map),
@@ -18,27 +17,27 @@ class CategoryInfo extends React.Component {
     onRequestClose: PropTypes.func.isRequired
   }
 
-  static ballotSizer(ballots, key) {
+  static ballotSizer (ballots, key) {
     return <div style={{ display: 'flex', marginBottom: '1em' }}>
-      { [1,2,3,4,5].map(n => <div key={key + n} style={{ flex: 1, textAlign: 'center' }}>
+      { [1, 2, 3, 4, 5].map(n => <div key={key + n} style={{ flex: 1, textAlign: 'center' }}>
         <b>{ ballots.filter(ballot => ballot.size === n).size }</b>
-        <br/>
+        <br />
         <small>{ n }</small>
       </div>) }
     </div>
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { allBallots, category, fetchAllBallots } = nextProps;
-    if (category && allBallots.isEmpty()) fetchAllBallots();
+  componentWillReceiveProps (nextProps) {
+    const { allBallots, category, fetchAllBallots } = nextProps
+    if (category && allBallots.isEmpty()) fetchAllBallots()
   }
 
-  render() {
-    const { allBallots, allNominations, canon, category, onRequestClose } = this.props;
-    if (!category || allBallots.isEmpty()) return null;
-    const ballots = allBallots.get(category, Map()).filter(ballot => ballot.size);
-    const nominations = allNominations.get(category);
-    const cb = cleanBallots(category, allBallots, allNominations, canon).filter(ballot => ballot.size);
+  render () {
+    const { allBallots, allNominations, canon, category, onRequestClose } = this.props
+    if (!category || allBallots.isEmpty()) return null
+    const ballots = allBallots.get(category, Map()).filter(ballot => ballot.size)
+    const nominations = allNominations.get(category)
+    const cb = cleanBallots(category, allBallots, allNominations, canon).filter(ballot => ballot.size)
     return <Dialog
       onRequestClose={onRequestClose}
       open={!!category}
@@ -59,7 +58,6 @@ class CategoryInfo extends React.Component {
       </div>
     </Dialog>
   }
-
 }
 
 export default connect(
@@ -70,4 +68,4 @@ export default connect(
   }), {
     fetchAllBallots
   }
-)(CategoryInfo);
+)(CategoryInfo)

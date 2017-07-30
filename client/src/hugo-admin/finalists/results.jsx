@@ -1,7 +1,7 @@
 import { Iterable, List } from 'immutable'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import { AutoSizer, Column, SortDirection, Table } from 'react-virtualized'
+import { AutoSizer, Column, Table } from 'react-virtualized'
 import 'react-virtualized/styles.css'
 
 import { nominationFields } from '../../hugo-nominations/constants'
@@ -18,38 +18,38 @@ export default class Results extends PureComponent {
   static overscanRowCount = 10;
   static rowHeight = 30;
 
-  get columns() {
-    const { category } = this.props;
+  get columns () {
+    const { category } = this.props
     const points = <Column
       dataKey='points'
       key='points'
       label='Pts'
       width={40}
-    />;
+    />
     const nominations = <Column
       dataKey='nominations'
       key='nominations'
       label='Nominations'
       width={30}
-    />;
+    />
     const round = <Column
       dataKey='round'
       key='round'
       label='#'
       width={30}
-    />;
+    />
     const data = nominationFields(category).map(key => <Column
       dataKey={key}
       flexGrow={1}
       key={key}
       label={key}
       width={100}
-    />);
-    return [points, nominations, round, ...data];
+    />)
+    return [points, nominations, round, ...data]
   }
 
-  get list() {
-    const { log, results } = this.props;
+  get list () {
+    const { log, results } = this.props
     return log.reduceRight((list, entry, idx) => list.concat(
       entry.get('next').map(nom => nom
         .merge(entry.getIn(['counts', nom]))
@@ -61,12 +61,12 @@ export default class Results extends PureComponent {
         .set('round', '*')
       )
       .sortBy(nom => -nom.get('points'))
-    ).toList();
+    ).toList()
   }
 
-  render() {
-    const { style } = this.props;
-    const list = this.list;
+  render () {
+    const { style } = this.props
+    const list = this.list
     return (
       <div
         style={style}
@@ -92,7 +92,7 @@ export default class Results extends PureComponent {
   }
 
   rowClassName = (list, index) => {
-    const round = list.getIn([index, 'round']);
-    return round === '*' ? 'finalist' : '';
+    const round = list.getIn([index, 'round'])
+    return round === '*' ? 'finalist' : ''
   }
 }

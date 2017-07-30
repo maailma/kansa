@@ -1,8 +1,8 @@
+import { CardText } from 'material-ui/Card'
 import React from 'react'
-import { CardActions, CardHeader, CardText } from 'material-ui/Card'
 
 const VoteIntroText = () => (
-  <CardText className="vote-intro" style={{ padding: '16px 32px' }}>
+  <CardText className='vote-intro' style={{ padding: '16px 32px' }}>
     <h3>
       Thank you for participating in the 2017 Hugo Awards and the John W. Campbell Award!
     </h3>
@@ -19,7 +19,7 @@ const VoteIntroText = () => (
       streaming the ceremony live via the Internet, enabling fans around the world to experience the event.
     </p>
     <p>
-      The official website of the Hugo Awards is <a href="http://thehugoawards.org/" target="_blank">thehugoawards.org</a>,
+      The official website of the Hugo Awards is <a href='http://thehugoawards.org/' target='_blank'>thehugoawards.org</a>,
       where you can find the full history of the Hugo Awards as well as the names of past finalists and winners,
       information about the voting process, a gallery of past trophy designs, and more.
     </p>
@@ -51,7 +51,7 @@ const VoteIntroText = () => (
       half the votes, the finalist with the fewest first place votes is eliminated and its votes are transferred to
       the finalists marked “2” on those ballots. This process of elimination continues until one finalist receives
       more than half the votes, at which point it becomes the winner (unless the votes are outnumbered by “No Award”
-       votes under specific conditions described in Section 3.11 of the WSFS Constitution).
+       votes under specific conditions described in Section 3.11 of the WSFS Constitution).
     </p>
     <p>
       Please note that second and further preferences play no part in the vote unless and until your first choice is
@@ -92,7 +92,7 @@ const VoteIntroText = () => (
       saved. Your current ballot will be emailed to you 30 minutes after you finish modifying it.
     </p>
     <p>
-      If you have questions regarding the ballot, please contact <a href="mailto:hugohelp@worldcon.fi">hugohelp@worldcon.fi</a>.
+      If you have questions regarding the ballot, please contact <a href='mailto:hugohelp@worldcon.fi'>hugohelp@worldcon.fi</a>.
     </p>
 
     <h3>Hugo Voter Packet</h3>
@@ -113,13 +113,13 @@ const VoteIntroText = () => (
     </p>
     <p>
       The Hugo Voter Packet will be available for download until the voting deadline specified above. Again, if you
-      have any questions regarding the packet, please contact <a href="mailto:hugohelp@worldcon.fi">hugohelp@worldcon.fi</a>.
+      have any questions regarding the packet, please contact <a href='mailto:hugohelp@worldcon.fi'>hugohelp@worldcon.fi</a>.
     </p>
     <p>
       We ask that voters honor publishers’ and creators’ request that they reserve these copies for their personal use
       only, and that they do not share these works with non-members of Worldcon 75.
     </p>
   </CardText>
-);
+)
 
-export default VoteIntroText;
+export default VoteIntroText

@@ -1,6 +1,6 @@
 import { Map } from 'immutable'
 
-export const noAwardEntry = Map({ id: -1, 'no-award': true, title: 'No award' });
+export const noAwardEntry = Map({ id: -1, 'no-award': true, title: 'No award' })
 
 export const categories = [
   'Novel', 'Novella', 'Novelette', 'ShortStory', 'RelatedWork', 'GraphicStory',

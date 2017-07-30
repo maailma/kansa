@@ -101,16 +101,16 @@ const contents = {
     </div>,
     memberships: [ 'Upgrade' ]
   }
-};
+}
 
 const NewMemberCard = ({ category, disabled = false, expandable = false, onSelectType, prices }) => {
-  const { title, body, memberships } = contents[category];
+  const { title, body, memberships } = contents[category]
   return <Card
     style={{ marginBottom: 24 }}
   >
     <CardHeader
       actAsExpander={expandable}
-      className="action-head"
+      className='action-head'
       showExpandableButton={expandable}
       textStyle={{ paddingRight: 0 }}
       title={title}
@@ -132,13 +132,13 @@ const NewMemberCard = ({ category, disabled = false, expandable = false, onSelec
         style={{ paddingTop: 0 }}
       />
     </CardActions>
-  </Card>;
+  </Card>
 }
 
 NewMemberCard.propTypes = {
   category: PropTypes.oneOf(Object.keys(contents)).isRequired,
   onSelectType: PropTypes.func.isRequired,
-  prices: ImmutablePropTypes.map,
+  prices: ImmutablePropTypes.map
 }
 
-export default NewMemberCard;
+export default NewMemberCard

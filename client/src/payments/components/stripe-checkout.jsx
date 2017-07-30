@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { connect } from 'react-redux'
-import ImmutablePropTypes from 'react-immutable-proptypes'
 import ReactStripeCheckout from 'react-stripe-checkout'
 
 import { getStripeKeys } from '../actions'
@@ -17,20 +16,20 @@ class StripeCheckout extends React.Component {
     onCheckout: PropTypes.func.isRequired,
     onClose: PropTypes.func,
     getStripeKeys: PropTypes.func.isRequired,
-    stripeKeys: PaymentPropTypes.keys,
+    stripeKeys: PaymentPropTypes.keys
   }
 
-  componentWillMount() {
+  componentWillMount () {
     const { getStripeKeys, stripeKeys } = this.props
     if (!stripeKeys) getStripeKeys()
     ReactStripeCheckout.stripeHandler = null
   }
 
-  componentWillReceiveProps({ account, stripeKeys }) {
+  componentWillReceiveProps ({ account, stripeKeys }) {
     if (account !== this.props.account) ReactStripeCheckout.stripeHandler = null
   }
 
-  render() {
+  render () {
     const { account, amount, children, currency, description, disabled, email, onCheckout, onClose, stripeKeys } = this.props
     return stripeKeys && (
       <ReactStripeCheckout
@@ -44,7 +43,7 @@ class StripeCheckout extends React.Component {
         stripeKey={stripeKeys.get(account || 'default')}
         token={onCheckout}
         triggerEvent='onTouchTap'
-        zipCode={true}
+        zipCode
       >{children}</ReactStripeCheckout>
     )
   }

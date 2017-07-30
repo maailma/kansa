@@ -6,7 +6,6 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 
-import { CommonFields, PaperPubsFields } from './form';
 import TokenSelector from './TokenSelector'
 
 const styles = {
@@ -89,20 +88,15 @@ export default class Voter extends React.Component {
   }
 
   renderPastNames = () => this.state.past_names.map(({ prev_legal_name, time_from, time_to }, i) => {
-    const t0 = time_from ? new Date(time_from).toISOString().substr(0,10) : '???'
-    const t1 = time_to ? new Date(time_to).toISOString().substr(0,10) : '???'
+    const t0 = time_from ? new Date(time_from).toISOString().substr(0, 10) : '???'
+    const t1 = time_to ? new Date(time_to).toISOString().substr(0, 10) : '???'
     return <p key={i}>Previous name: <b>{prev_legal_name}</b> ({t0} - {t1})</p>
   })
 
   render () {
     const { api, member, onClose } = this.props
     const { available_tokens, sent, token, voter_email, voter_name } = this.state
-    const {
-      legal_name, preferred_name, badge_name,
-      email, membership, member_number,
-      country, state, city
-    } = member ? member.toJS() : {}
-    const location = [country, state, city].filter(v => v).join(', ')
+    const { legal_name, email, membership, member_number } = member ? member.toJS() : {}
     return (
       <Dialog
         actions={[
@@ -113,7 +107,7 @@ export default class Voter extends React.Component {
             onTouchTap={this.vote}
           />
         ]}
-        autoScrollBodyContent={true}
+        autoScrollBodyContent
         className='voter'
         onRequestClose={onClose}
         open={!!member}
@@ -122,8 +116,8 @@ export default class Voter extends React.Component {
         {this.renderPastNames()}
         <TextField
           floatingLabelText='Voter name'
-          floatingLabelFixed={true}
-          fullWidth={true}
+          floatingLabelFixed
+          fullWidth
           hintText={legal_name}
           name='name'
           onChange={(_, voter_name) => this.setState({ voter_name })}
@@ -131,8 +125,8 @@ export default class Voter extends React.Component {
         />
         <TextField
           floatingLabelText='Voter email'
-          floatingLabelFixed={true}
-          fullWidth={true}
+          floatingLabelFixed
+          fullWidth
           hintText={email}
           name='email'
           onChange={(_, voter_email) => this.setState({ voter_email })}

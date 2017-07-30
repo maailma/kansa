@@ -11,12 +11,11 @@ import { memberUpdate } from '../actions'
 import MemberForm from './MemberForm'
 
 class MemberEdit extends React.Component {
-
   static propTypes = {
     member: ImmutablePropTypes.mapContains({
       paper_pubs: ImmutablePropTypes.map
     }).isRequired,
-    memberUpdate: PropTypes.func.isRequired,
+    memberUpdate: PropTypes.func.isRequired
   }
 
   state = {
@@ -25,12 +24,12 @@ class MemberEdit extends React.Component {
     sent: false
   }
 
-  get canSaveChanges() {
-    const { changes, isOpen, sent } = this.state;
-    return isOpen && !sent && Map.isMap(changes) && changes.size > 0;
+  get canSaveChanges () {
+    const { changes, isOpen, sent } = this.state
+    return isOpen && !sent && Map.isMap(changes) && changes.size > 0
   }
 
-  get title() {
+  get title () {
     const { member } = this.props
     return member.get('membership', 'NonMember') !== 'NonMember'
       ? `Edit member #${member.get('member_number')}`
@@ -38,10 +37,10 @@ class MemberEdit extends React.Component {
       : 'Edit non-member'
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { isOpen, sent } = this.state;
+  componentWillReceiveProps (nextProps) {
+    const { isOpen, sent } = this.state
     if (isOpen && sent && !nextProps.member.equals(this.props.member)) {
-      this.handleClose();
+      this.handleClose()
     }
   }
 
@@ -54,24 +53,24 @@ class MemberEdit extends React.Component {
   });
 
   saveChanges = () => {
-    const { member, memberUpdate } = this.props;
-    const { changes } = this.state;
+    const { member, memberUpdate } = this.props
+    const { changes } = this.state
     if (this.canSaveChanges) {
-      this.setState({ sent: true });
-      memberUpdate(member.get('id'), changes);
+      this.setState({ sent: true })
+      memberUpdate(member.get('id'), changes)
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if (nextState.changes !== this.state.changes) return true;
-    if (nextState.isOpen !== this.state.isOpen) return true;
-    if (!nextProps.member.equals(this.props.member)) return true;
-    return false;
+  shouldComponentUpdate (nextProps, nextState) {
+    if (nextState.changes !== this.state.changes) return true
+    if (nextState.isOpen !== this.state.isOpen) return true
+    if (!nextProps.member.equals(this.props.member)) return true
+    return false
   }
 
-  render() {
-    const { member, children } = this.props;
-    const { isOpen } = this.state;
+  render () {
+    const { member, children } = this.props
+    const { isOpen } = this.state
 
     return <div>
       { React.Children.map(children, (child) => React.cloneElement(child, { onTouchTap: this.handleOpen })) }
@@ -81,7 +80,7 @@ class MemberEdit extends React.Component {
             key='cancel'
             label='Cancel'
             onTouchTap={this.handleClose}
-            primary={true}
+            primary
             tabIndex={3}
           />,
           <FlatButton
@@ -89,11 +88,11 @@ class MemberEdit extends React.Component {
             disabled={!this.canSaveChanges}
             label='Save'
             onTouchTap={this.saveChanges}
-            primary={true}
+            primary
             tabIndex={2}
           />
         ]}
-        autoScrollBodyContent={true}
+        autoScrollBodyContent
         onRequestClose={this.handleClose}
         open={isOpen}
         title={this.title}
@@ -102,16 +101,16 @@ class MemberEdit extends React.Component {
         <MemberForm
           lc={member.get('daypass') ? 'daypass' : 'en'}
           member={member}
-          onChange={ (valid, changes) => {
-            if (valid) this.setState({ changes });
-          } }
+          onChange={(valid, changes) => {
+            if (valid) this.setState({ changes })
+          }}
           tabIndex={1}
         />
       </Dialog>
-    </div>;
+    </div>
   }
 }
 
 export default connect(null, {
   memberUpdate
-})(MemberEdit);
+})(MemberEdit)

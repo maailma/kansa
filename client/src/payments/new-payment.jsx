@@ -4,7 +4,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
 import { push, replace } from 'react-router-redux'
-const { Col, Row } = require('react-flexbox-grid');
+import { Col, Row } from 'react-flexbox-grid'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
@@ -31,12 +31,12 @@ class NewPayment extends React.Component {
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
     setScene: PropTypes.func.isRequired,
-    showMessage: PropTypes.func.isRequired,
+    showMessage: PropTypes.func.isRequired
   }
 
-  constructor(props) {
-    super(props);
-    const { email = '', people } = props;
+  constructor (props) {
+    super(props)
+    const { email = '', people } = props
     this.state = {
       amount: 0,
       category: null,
@@ -46,50 +46,50 @@ class NewPayment extends React.Component {
         email,
         invoice: '',
         name: '',
-        person_id: people ? people.first().get('id') : null,
+        person_id: people ? people.first().get('id') : null
       }),
-      sent: false,
-    };
-  }
-
-  init({ params: { type }, purchaseData, replace, showMessage }) {
-    const category = purchaseData.findKey(cd => cd.get('types').has(type));
-    const typeData = purchaseData.getIn([category, 'types', type]);
-    if (typeData) {
-      this.setState({ amount: typeData.get('amount'), category });
-    } else {
-      showMessage(`Unknown purchase type "${category}/${type}"`)
-      replace('/pay');
+      sent: false
     }
   }
 
-  componentDidMount() {
-    const { getPurchaseData, purchaseData, setScene } = this.props;
-    setScene({ title: 'New Payment', dockSidebar: false });
-    if (purchaseData) this.init(this.props);
-    else getPurchaseData();
+  init ({ params: { type }, purchaseData, replace, showMessage }) {
+    const category = purchaseData.findKey(cd => cd.get('types').has(type))
+    const typeData = purchaseData.getIn([category, 'types', type])
+    if (typeData) {
+      this.setState({ amount: typeData.get('amount'), category })
+    } else {
+      showMessage(`Unknown purchase type "${category}/${type}"`)
+      replace('/pay')
+    }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.purchaseData) this.init(nextProps);
+  componentDidMount () {
+    const { getPurchaseData, purchaseData, setScene } = this.props
+    setScene({ title: 'New Payment', dockSidebar: false })
+    if (purchaseData) this.init(this.props)
+    else getPurchaseData()
   }
 
-  get dataShape() {
-    const { purchaseData } = this.props;
-    const { category } = this.state;
-    return purchaseData.getIn([category, 'shape'], Map()).filter(s => !s.get('generated'));
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.purchaseData) this.init(nextProps)
   }
 
-  get disabledCheckout() {
-    const { amount, purchase } = this.state;
+  get dataShape () {
+    const { purchaseData } = this.props
+    const { category } = this.state
+    return purchaseData.getIn([category, 'shape'], Map()).filter(s => !s.get('generated'))
+  }
+
+  get disabledCheckout () {
+    const { amount, purchase } = this.state
     return !(
       amount > 0 &&
       (purchase.get('person_id') || purchase.get('email') && purchase.get('name')) &&
       this.dataShape.every((s, key) => !s.get('required') || purchase.getIn(['data', key]))
-    );
+    )
   }
 
-  get person() {
+  get person () {
     const { people } = this.props
     const { purchase } = this.state
     const id = purchase.get('person_id')
@@ -97,26 +97,26 @@ class NewPayment extends React.Component {
   }
 
   onCheckout = (source) => {
-    const { buyOther, params: { type }, purchaseData, push, showMessage } = this.props;
-    const { amount, category, purchase } = this.state;
-    const account = purchaseData.getIn([category, 'account'], 'default');
-    const email = purchase.get('email');
-    const item = purchase.merge({ amount, category, type }).filter(v => v).toJS();
-    showMessage(`Charging ${purchase.get('email')} EUR ${amount / 100}...`);
+    const { buyOther, params: { type }, purchaseData, push, showMessage } = this.props
+    const { amount, category, purchase } = this.state
+    const account = purchaseData.getIn([category, 'account'], 'default')
+    const email = purchase.get('email')
+    const item = purchase.merge({ amount, category, type }).filter(v => v).toJS()
+    showMessage(`Charging ${purchase.get('email')} EUR ${amount / 100}...`)
     buyOther(account, email, source, [item], () => {
-      showMessage('Payment successful!');
-      push('/pay');
-    });
+      showMessage('Payment successful!')
+      push('/pay')
+    })
   }
 
-  render() {
-    const { params: { type }, people, purchaseData } = this.props;
-    const { amount, category, purchase, sent } = this.state;
-    const cd = purchaseData && purchaseData.get(category);
-    if (!cd) return null;
-    const title = cd.getIn(['types', type, 'label']);
-    const subtitle = category && category !== title ? category : '';
-    const description = cd.getIn(['types', type, 'description']) || cd.get('description');
+  render () {
+    const { params: { type }, people, purchaseData } = this.props
+    const { amount, category, purchase, sent } = this.state
+    const cd = purchaseData && purchaseData.get(category)
+    if (!cd) return null
+    const title = cd.getIn(['types', type, 'label'])
+    const subtitle = category && category !== title ? category : ''
+    const description = cd.getIn(['types', type, 'description']) || cd.get('description')
     const account = cd.get('account') || 'default'
     return (
       <Row>
@@ -133,7 +133,7 @@ class NewPayment extends React.Component {
             />
             <CardText>
               {description && <div
-                className="html-container"
+                className='html-container'
                 style={{ marginBottom: 32, marginTop: -16 }}
                 dangerouslySetInnerHTML={{ __html: description }}
               />}
@@ -157,10 +157,10 @@ class NewPayment extends React.Component {
                 onClose={() => this.setState({ sent: false })}
               >
                 <RaisedButton
-                  label={ sent ? 'Working...' : 'Pay by card' }
+                  label={sent ? 'Working...' : 'Pay by card'}
                   disabled={this.disabledCheckout}
                   onTouchTap={() => this.setState({ sent: true })}
-                  primary={true}
+                  primary
                   style={{ marginRight: 16 }}
                 />
               </StripeCheckout>
@@ -169,13 +169,13 @@ class NewPayment extends React.Component {
                 <span style={{ paddingLeft: 8, paddingRight: 8 }}>€</span>
                 {cd.get('variableAmount') ? (
                   <TextField
-                    name="amount"
+                    name='amount'
                     onChange={(ev, value) => {
-                      const amount = value ? Math.floor(value * 100) : 0;
-                      this.setState({ amount });
+                      const amount = value ? Math.floor(value * 100) : 0
+                      this.setState({ amount })
                     }}
                     style={{ height: 36, width: 80 }}
-                    type="number"
+                    type='number'
                     value={amount > 0 ? (amount / 100).toFixed(2) : ''}
                   />
                 ) : (
@@ -188,15 +188,19 @@ class NewPayment extends React.Component {
             allowCreate={cd.get('allowCreate')}
             cardStyle={{ marginTop: 20 }}
           />}
-          <div className="bg-text" style={{
-            display: 'block', fontSize: 14, marginLeft: 16, marginTop: 16,
-            maxWidth: '45%', position: 'absolute'
+          <div className='bg-text' style={{
+            display: 'block',
+            fontSize: 14,
+            marginLeft: 16,
+            marginTop: 16,
+            maxWidth: '45%',
+            position: 'absolute'
           }}>
-            <Link to="/pay">&laquo; Return to the main payments page</Link>
+            <Link to='/pay'>&laquo; Return to the main payments page</Link>
           </div>
         </Col>
       </Row>
-    );
+    )
   }
 }
 
@@ -213,4 +217,4 @@ export default connect(
     setScene,
     showMessage
   }
-)(NewPayment);
+)(NewPayment)

@@ -34,92 +34,96 @@ class NominationList extends PureComponent {
     sortDirection: SortDirection.ASC
   }
 
-  get columns() {
-    const { ballots, categories, onShowDetails, showBallotCounts } = this.props;
+  get columns () {
+    const { ballots, categories, onShowDetails, showBallotCounts } = this.props
     const controls = [<Column
       cellRenderer={
         ({ cellData, rowData }) => cellData ? <More
-          onClick={ (ev) => {
-            onShowDetails(rowData);
-            ev.stopPropagation();
-          } }
+          onClick={(ev) => {
+            onShowDetails(rowData)
+            ev.stopPropagation()
+          }}
         /> : ''
       }
       dataKey='canon_id'
       key='canon_id'
       style={{ display: 'flex' }}
       width={20}
-    />];
-    if (showBallotCounts && !ballots.isEmpty()) controls.push(<Column
-      cellDataGetter={ ({ rowData }) => this.ballotCount(rowData) || '' }
-      dataKey='ballotCount'
-      key='ballotCount'
-      label='#'
-      width={30}
-    />);
-    if (categories.length > 1) controls.push(<Column
-      cellDataGetter={ ({ rowData }) => {
-        const category = rowData.get('category');
-        const cm = category && category.match(/^(..).*(Long|Short)$/);
-        return cm ? cm[1] + cm[2] : category;
-      } }
-      dataKey='category'
-      key='category'
-      label='Category'
-      width={80}
-    />);
+    />]
+    if (showBallotCounts && !ballots.isEmpty()) {
+      controls.push(<Column
+        cellDataGetter={({ rowData }) => this.ballotCount(rowData) || ''}
+        dataKey='ballotCount'
+        key='ballotCount'
+        label='#'
+        width={30}
+    />)
+    }
+    if (categories.length > 1) {
+      controls.push(<Column
+        cellDataGetter={({ rowData }) => {
+          const category = rowData.get('category')
+          const cm = category && category.match(/^(..).*(Long|Short)$/)
+          return cm ? cm[1] + cm[2] : category
+        }}
+        dataKey='category'
+        key='category'
+        label='Category'
+        width={80}
+    />)
+    }
     return controls.concat(nominationFields(categories).map(key => <Column
-      cellDataGetter = { ({ dataKey, rowData }) => rowData.getIn(['data', dataKey]) }
+      cellDataGetter={({ dataKey, rowData }) => rowData.getIn(['data', dataKey])}
       dataKey={key}
       flexGrow={1}
       key={key}
       label={key}
       width={100}
-    />));
+    />))
   }
 
-  get list() {
-    const { canon, nominations, query } = this.props;
-    const seenCanon = [];
+  get list () {
+    const { canon, nominations, query } = this.props
+    const seenCanon = []
     return nominations
       .filter(nom => {
-        if (!nom) return false;
+        if (!nom) return false
         if (query) {
-          if (nom.every(v => String(v).toLowerCase().indexOf(query) === -1)) return false;
+          if (nom.every(v => String(v).toLowerCase().indexOf(query) === -1)) return false
         }
-        const ci = nom.get('canon_id');
+        const ci = nom.get('canon_id')
         if (ci) {
-          if (seenCanon.indexOf(ci) !== -1) return false;
-          const nc = nom.get('category');
-          if (!canon.hasIn([nc, ci])) return false;
-          seenCanon.push(ci);
+          if (seenCanon.indexOf(ci) !== -1) return false
+          const nc = nom.get('category')
+          if (!canon.hasIn([nc, ci])) return false
+          seenCanon.push(ci)
         }
-        return true;
+        return true
       })
       .map(nom => {
-        const ci = nom.get('canon_id');
+        const ci = nom.get('canon_id')
         if (ci) {
-          const nc = nom.get('category');
-          return nom.merge(canon.getIn([nc, ci]));
+          const nc = nom.get('category')
+          return nom.merge(canon.getIn([nc, ci]))
         } else {
-          return nom;
+          return nom
         }
-      });
+      })
   }
 
-  ballotCount(nomination) {
-    const { ballots, nominations } = this.props;
-    if (ballots.isEmpty() || !nomination || nomination.isEmpty()) return 0;
-    const ci = nomination.get('canon_id');
+  ballotCount (nomination) {
+    const { ballots, nominations } = this.props
+    if (ballots.isEmpty() || !nomination || nomination.isEmpty()) return 0
+    const ci = nomination.get('canon_id')
     if (ci) {
       return nominations.reduce((sum, nom) => {
         if (nom.get('canon_id') === ci) {
-          sum += countRawBallots(ballots, nom.get('data'));
+          sum += countRawBallots(ballots, nom.get('data'))
         }
-        return sum;
-      }, 0);
+        return sum
+      }, 0)
     } else {
-      return countRawBallots(ballots, nomination.get('data'));
+      return countRawBallots(ballots, nomination.get('data'))
     }
   }
 
@@ -130,40 +134,40 @@ class NominationList extends PureComponent {
   );
 
   onRowClick = (list) => ({ index }) => {
-    this.props.onSelect(list.get(index));
-    this.setState({ hoverPos: index });
+    this.props.onSelect(list.get(index))
+    this.setState({ hoverPos: index })
   }
 
   rowClassName = (nominations, index) => {
-    const cl = [];
-    const nom = index >= 0 && nominations.get(index);
+    const cl = []
+    const nom = index >= 0 && nominations.get(index)
     if (nom) {
-      if (nom.get('disqualified')) cl.push('disqualified');
-      if (this.props.selected.includes(nom)) cl.push('selected');
+      if (nom.get('disqualified')) cl.push('disqualified')
+      if (this.props.selected.includes(nom)) cl.push('selected')
     }
-    return cl.join(' ');
+    return cl.join(' ')
   }
 
-  componentWillReceiveProps(nextProps) {
-    const c0 = this.props.categories;
-    const c1 = nextProps.categories;
+  componentWillReceiveProps (nextProps) {
+    const c0 = this.props.categories
+    const c1 = nextProps.categories
     if (!c0 || !c1 || c0.length !== c1.length) {
-      this.props.setShowBallotCounts(false);
+      this.props.setShowBallotCounts(false)
     } else if (c0 !== c1) {
       for (let i = 0; i < c0.length; ++i) {
-        if (c0[i] !== c1[i]) return this.props.setShowBallotCounts(false);
+        if (c0[i] !== c1[i]) return this.props.setShowBallotCounts(false)
       }
     }
   }
 
-  render() {
-    const { style } = this.props;
-    const { sortBy, sortDirection } = this.state;
+  render () {
+    const { style } = this.props
+    const { sortBy, sortDirection } = this.state
     let list = this.list.sortBy(n => sortBy === 'ballotCount'
       ? this.ballotCount(n)
       : n.getIn(['data', sortBy], '').toLowerCase().trim().replace(/^(?:a|an|the) +/, '')
-    );
-    if (sortDirection === SortDirection.DESC) list = list.reverse();
+    )
+    if (sortDirection === SortDirection.DESC) list = list.reverse()
     return (
       <div
         onKeyDown={this.onKeyDown}
@@ -183,7 +187,7 @@ class NominationList extends PureComponent {
               rowCount={list.size}
               sort={({ sortBy, sortDirection }) => {
                 if (sortBy === 'ballotCount' && this.state.sortBy !== 'ballotCount') {
-                  sortDirection = SortDirection.DESC;
+                  sortDirection = SortDirection.DESC
                 }
                 this.setState({ sortBy, sortDirection })
               }}

@@ -1,14 +1,11 @@
+import Dialog from 'material-ui/Dialog'
+import FlatButton from 'material-ui/FlatButton'
 import PropTypes from 'prop-types'
 import React from 'react'
-import Checkbox from 'material-ui/Checkbox';
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
-import MenuItem from 'material-ui/MenuItem';
-import SelectField from 'material-ui/SelectField';
-import TextField from 'material-ui/TextField';
 
 const LogCell = ({ entry, field }) => {
-  let title = null, text = null
+  let title = null
+  let text = null
   switch (field) {
     case 'time':
       title = entry.timestamp
@@ -45,20 +42,20 @@ export default class MemberLog extends React.Component {
     open: false
   }
 
-  componentWillReceiveProps(props) {
-    if (this.state.log && props.id !== this.props.id) this.setState({ log: null });
+  componentWillReceiveProps (props) {
+    if (this.state.log && props.id !== this.props.id) this.setState({ log: null })
   }
 
   handleOpen = () => {
-    this.setState({ open: true });
+    this.setState({ open: true })
     this.props.getLog(this.props.id)
       .then(log => { this.setState({ log }) })
-      .catch(e => console.error(e));  // TODO: report errors better
+      .catch(e => console.error(e))  // TODO: report errors better
   }
 
   handleClose = () => { this.setState({ open: false }) }
 
-  render() {
+  render () {
     const button = React.Children.only(this.props.children)
     const log = this.state.log || []
     const columns = ['time', 'ID', 'author', 'description']
@@ -68,10 +65,10 @@ export default class MemberLog extends React.Component {
         <Dialog
           contentStyle={{ width: '95%', maxWidth: 'none' }}
           open={this.state.open}
-          autoScrollBodyContent={true}
+          autoScrollBodyContent
           onRequestClose={this.handleClose}
           actions={[
-            <FlatButton key='close' label='Close' onTouchTap={this.handleClose} />,
+            <FlatButton key='close' label='Close' onTouchTap={this.handleClose} />
           ]}
         >
           <table style={{ width: '100%' }}>

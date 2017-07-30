@@ -42,10 +42,10 @@ ReactDOM.render(
           <IndexRedirect to='hugo-admin' />
           <Route path='hugo-admin'>
             <IndexRedirect to='Novel' />
-            <Route path=":category">
+            <Route path=':category'>
               <IndexRedirect to='nominations' />
-              <Route path="finalists" component={Finalists} />
-              <Route path="nominations" component={Canon} />
+              <Route path='finalists' component={Finalists} />
+              <Route path='nominations' component={Canon} />
             </Route>
           </Route>
         </Route>

@@ -1,6 +1,6 @@
 import { List } from 'immutable'
 import PropTypes from 'prop-types'
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import { Col, Row } from 'react-flexbox-grid'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 import { connect } from 'react-redux'
@@ -15,7 +15,6 @@ import NewMemberCard from '../../membership/components/NewMemberCard'
 import KeyRequest from './KeyRequest'
 
 class Index extends Component {
-
   static propTypes = {
     getPrices: PropTypes.func.isRequired,
     getPurchaseData: PropTypes.func.isRequired,
@@ -37,7 +36,7 @@ class Index extends Component {
     if (people.size > 0 && !purchase.get('list')) getPurchaseList()
   }
 
-  get invoiceCards() {
+  get invoiceCards () {
     const { people, purchase } = this.props
     if (!purchase.get('list') || !purchase.get('data')) return []
     const getCategoryData = (category, type) => (
@@ -61,7 +60,7 @@ class Index extends Component {
       })
   }
 
-  get memberCards() {
+  get memberCards () {
     const { people } = this.props
     const hugoCount = people.reduce((sum, m) => (
       sum + (m.get('can_hugo_nominate') || m.get('can_hugo_vote') ? 1 : 0)
@@ -75,31 +74,31 @@ class Index extends Component {
     ))
   }
 
-  render() {
+  render () {
     const { people, purchase, push } = this.props
     const isLoggedIn = !!(people && people.size)
     const upgradePath = people && people.size === 1
       ? `/upgrade/${people.first().get('id')}` : '/upgrade/'
     return <Row style={{ marginBottom: -24 }}>
       <Col xs={12} sm={6} lg={4} lgOffset={2}>
-        {isLoggedIn ? [this.invoiceCards, this.memberCards] : <KeyRequest/>}
+        {isLoggedIn ? [this.invoiceCards, this.memberCards] : <KeyRequest />}
       </Col>
       <Col xs={12} sm={6} lg={4}>
         <NewMemberCard
-          category="all"
-          expandable={true}
+          category='all'
+          expandable
           onSelectType={(type) => push(`/new/${type}`)}
           prices={purchase.get('prices')}
         />
         <NewMemberCard
-          category="upgrade"
+          category='upgrade'
           disabled={!isLoggedIn}
           expandable={isLoggedIn}
           onSelectType={() => push(upgradePath)}
         />
         <NewMemberCard
-          category="daypass"
-          expandable={true}
+          category='daypass'
+          expandable
           onSelectType={(type) => push(`/daypass/${type}`)}
         />
       </Col>

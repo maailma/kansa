@@ -3,7 +3,7 @@ export const memberLookup = (query) => ({
   module: 'kansa',
   type: 'MEMBER_LOOKUP',
   query
-});
+})
 
 export const memberSet = ({ email, people, roles }) => ({
   module: 'kansa',
@@ -11,14 +11,14 @@ export const memberSet = ({ email, people, roles }) => ({
   email,
   people,
   roles
-});
+})
 
 export const memberUpdate = (id, changes) => ({
   module: 'kansa',
   type: 'MEMBER_UPDATE',
   id,
   changes
-});
+})
 
 export const requestSlackInvite = () => ({
   module: 'kansa',

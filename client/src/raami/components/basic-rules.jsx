@@ -40,22 +40,22 @@ export const BasicRules = () => <div>
     dealers room (but you may enter the original of a work for which you are
     selling prints in the print shop or the dealers room).
   </p><p>
-    <b>Copyright</b><br/>
+    <b>Copyright</b><br />
     All artworks must be created by the submitting artist. If the artwork is a
     product of collaboration with other artist(s) that must be clearly
     indicated when submitting said artwork to the art show. The Worldcon 75 art
     show does not accept art for resale.
   </p><p>
-    <b>Reproduction Rights:</b><br/>
+    <b>Reproduction Rights:</b><br />
     Sale of an artwork does not include any reproduction rights. Buyers who
     wish to reproduce an artwork must make arrangements directly with the
     artist.
   </p><p>
-    <b>Awards:</b><br/>
+    <b>Awards:</b><br />
     Only work in the auction gallery or digital gallery (not the print shop),
     including NFS artwork, will be eligible for awards.
   </p><p>
-    <b>Security (aka Turva):</b><br/>
+    <b>Security (aka Turva):</b><br />
     We expect to have marked guards inside the art show area at all times while
     the art show is open. All art leaving the art show area must be marked
     clearly as sold items and have a valid receipt. Unless purchased, artwork
@@ -63,32 +63,32 @@ export const BasicRules = () => <div>
     its sale (e.g., minimum bid) be changed, for the duration of the
     show.
   </p><p>
-    <b>Insurance:</b><br/>
+    <b>Insurance:</b><br />
     Worldcon75 cannot provide insurance coverage for art exhibited in the show,
     so you should ensure that your own insurance will cover your art while it
     is at the show.
   </p><p>
-    <b>Display system:</b><br/>
-    The art show will be built using Messukeskus’s own display wall system. 
-    Standard wall panels are made of white hardboard. 
-    Artwork items can be attached using adhesives, screws or nails. 
-    The wall panels are 100 × 250 cm (of which 100 x 150 cm is optimally usable). 
-    The tables are 70 x 200 cm and we are selling them in half-table units (70 x 100 cm). 
-    The digital gallery will have an attending fee per artist, as it will only be for 
+    <b>Display system:</b><br />
+    The art show will be built using Messukeskus’s own display wall system.
+    Standard wall panels are made of white hardboard.
+    Artwork items can be attached using adhesives, screws or nails.
+    The wall panels are 100 × 250 cm (of which 100 x 150 cm is optimally usable).
+    The tables are 70 x 200 cm and we are selling them in half-table units (70 x 100 cm).
+    The digital gallery will have an attending fee per artist, as it will only be for
     displaying artworks without the possibility to purchase any of them.
     </p><p>
-    <b>Entry Fees and Commission</b><br/>
+      <b>Entry Fees and Commission</b><br />
     Please note that all fees are inclusive of VAT.</p>
-    <ul>
+  <ul>
     <li>€30 per full size panel (100 x 250 cm, of which 100 x 150 cm is optimally usable) (maximum of 4 per artist)</li>
     <li>€15 per half-table (A half-table is 100cm x 70cm.) (Maximum of 8 half-tables per artist)</li>
     <li>Print Shop fee is €1 per item (not per different image)</li>
     <li>Projected Art: €20 per artist (maximum 20 images)</li>
-    </ul>
-    <p>
+  </ul>
+  <p>
     There will be a €20 handling fee, in addition to the cost of postage, for mailing unsold art back to the artist
   </p><p>
-    <b>Mail-in artwork:</b><br/>
+    <b>Mail-in artwork:</b><br />
     space fee + return postage + €20. This also applies to attending artists
     mailing in their work. Due to the substantial effort required for our staff
     to store, unpack, hang, unhang, and re­pack mailed-in art, we will only
@@ -100,7 +100,7 @@ export const BasicRules = () => <div>
   </p><p>
     Worldcon 75 will take a 10% commission on all sales.
   </p><p>
-    <b>Presentation:</b><br/>
+    <b>Presentation:</b><br />
     All two-dimensional (flat) entries in the auction gallery must be matted,
     mounted, or framed, and ready to be hung. Three-dimensional work must
     likewise be display-ready. Work in the printshop must be mounted or matted;
@@ -114,30 +114,29 @@ export const BasicRules = () => <div>
     artist’s name(s). Title and artist name must also be provided for digital
     gallery works so that they can be appropriately displayed.
   </p><p>
-    <b>Payment:</b><br/>
+    <b>Payment:</b><br />
     Worldcon 75 will pay artists for sales of works within 45 days of the end
     of the convention.
   </p><p>
-    <b>Cancellations:</b><br/>
+    <b>Cancellations:</b><br />
     We will refund your fees in full if you cancel your art show booking by
     15th July 2017. Refund after this point is dependent on us being able to
     re-sell the space, and we reserve the right to charge a fee for late
     cancellations.
   </p><p>
-    <b>Disclaimer:</b><br/>
+    <b>Disclaimer:</b><br />
     While we fully intend these to be the policies that actually govern the
     Worldcon 75 art show, we reserve the right to make changes or
     interpretations if unforeseen circumstances arise or for accessibility
     reasons. Any such decisions will be guided by the spirit, rather than the
     letter, of these policies.
   </p>
-</div>;
+</div>
 
 export class BasicRulesDialog extends React.Component {
-
   state = { open: false };
 
-  render() {
+  render () {
     return <span>
       {React.Children.map(
         this.props.children,
@@ -146,14 +145,14 @@ export class BasicRulesDialog extends React.Component {
         })
       )}
       <Dialog
-        autoScrollBodyContent={true}
+        autoScrollBodyContent
         modal={false}
         onRequestClose={() => this.setState({ open: false })}
         open={this.state.open}
-        title="Worldcon 75 Art Show Basic Rules"
+        title='Worldcon 75 Art Show Basic Rules'
       >
         <BasicRules />
       </Dialog>
-    </span>;
+    </span>
   }
 }

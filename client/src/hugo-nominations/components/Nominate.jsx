@@ -4,7 +4,7 @@ import React from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 import { connect } from 'react-redux'
 
-const { Col, Row } = require('react-flexbox-grid');
+import { Col, Row } from 'react-flexbox-grid'
 import Snackbar from 'material-ui/Snackbar'
 
 import { setScene } from '../../app/actions/app'
@@ -18,7 +18,7 @@ import './Nominate.css'
 
 const Messages = connect(
   ({ nominations }) => {
-    const [ category, data ] = nominations.findEntry(data => data.get('error'), null, []);
+    const [ category, data ] = nominations.findEntry(data => data.get('error'), null, [])
     return {
       category,
       error: data ? data.get('error') : ''
@@ -27,14 +27,13 @@ const Messages = connect(
     clearNominationError
   }
 )(({ category, error, clearNominationError }) => <Snackbar
-  open={ !!category }
-  message={ category ? `${category}: ${error}` : '' }
-  onRequestClose={ () => clearNominationError(category) }
-/>);
-
+  open={!!category}
+  message={category ? `${category}: ${error}` : ''}
+  onRequestClose={() => clearNominationError(category)}
+/>)
 
 const NominationsHead = ({ active, name, signature }) => (
-  <Row className="bg-text">
+  <Row className='bg-text'>
     <Col
       xs={10} xsOffset={1}
       lg={8} lgOffset={2}
@@ -67,7 +66,7 @@ const NominationsHead = ({ active, name, signature }) => (
         Nothing has changed about the mechanics of making nominations this year. You can still choose up to five
         nominees in each category. Your nominations are equally weighted – the order in which you list them has no
         effect on the outcome. There are some changes to the way that nominations are tallied to produce the final
-        ballot; they are summarised <a href="http://www.worldcon.fi/wsfs/hugo/" target="_blank">here</a>.
+        ballot; they are summarised <a href='http://www.worldcon.fi/wsfs/hugo/' target='_blank'>here</a>.
       </p>
       <p>
         This year we are trialling a new category, Best Series. If you make nominations for Best Series, it will help us
@@ -92,11 +91,11 @@ const NominationsHead = ({ active, name, signature }) => (
       </p>
       <p>
         If you have difficulties accessing the online ballot, or you have more general questions on the Hugo process,
-        you can e-mail <a href="mailto:hugohelp@worldcon.fi">hugohelp@worldcon.fi</a> for assistance. See <a
-          href="http://www.worldcon.fi/wsfs/hugo/" target="_blank"
+        you can e-mail <a href='mailto:hugohelp@worldcon.fi'>hugohelp@worldcon.fi</a> for assistance. See <a
+          href='http://www.worldcon.fi/wsfs/hugo/' target='_blank'
         >here</a> for more information about the Hugo Awards. The full rules for the Hugo Awards are contained in the <a
-          href="http://www.wsfs.org/wp-content/uploads/2016/10/WSFS-Constitution-as-of-August-22-2016.pdf"
-          target="_blank"
+          href='http://www.wsfs.org/wp-content/uploads/2016/10/WSFS-Constitution-as-of-August-22-2016.pdf'
+          target='_blank'
         >WSFS constitution</a>.
       </p>
       { active ? <p>
@@ -104,11 +103,9 @@ const NominationsHead = ({ active, name, signature }) => (
       </p> : null }
     </Col>
   </Row>
-);
-
+)
 
 class Nominate extends React.Component {
-
   static propTypes = {
     id: PropTypes.number.isRequired,
     person: ImmutablePropTypes.map,
@@ -116,68 +113,67 @@ class Nominate extends React.Component {
     setScene: PropTypes.func.isRequired
   }
 
-  constructor(props) {
-    super(props);
-    const { id, person, setNominator } = props;
-    if (person && id !== person.get('id')) setNominator(person.get('id'));
-    this.state = { signature: '' };
+  constructor (props) {
+    super(props)
+    const { id, person, setNominator } = props
+    if (person && id !== person.get('id')) setNominator(person.get('id'))
+    this.state = { signature: '' }
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { id, person, setNominator } = nextProps;
-    if (person && id !== person.get('id')) setNominator(person.get('id'));
+  componentWillReceiveProps (nextProps) {
+    const { id, person, setNominator } = nextProps
+    if (person && id !== person.get('id')) setNominator(person.get('id'))
   }
 
-  componentDidMount() {
-    this.props.setScene({ title: 'Hugo Nominations', dockSidebar: false });
+  componentDidMount () {
+    this.props.setScene({ title: 'Hugo Nominations', dockSidebar: false })
   }
 
-  render() {
-    const { id, person } = this.props;
-    const { signature } = this.state;
-    const active = person.get('can_hugo_nominate');
+  render () {
+    const { id, person } = this.props
+    const { signature } = this.state
+    const active = person.get('can_hugo_nominate')
     return !id ? <div>Loading...</div>
       : !person ? <div>Nominator not found!</div>
       : <div>
-          <NominationsHead active={active} name={this.name} signature={signature} />
-          <Row>
-            <Col
-              xs={10} xsOffset={1}
-              lg={8} lgOffset={2}
+        <NominationsHead active={active} name={this.name} signature={signature} />
+        <Row>
+          <Col
+            xs={10} xsOffset={1}
+            lg={8} lgOffset={2}
             >
-              { Object.keys(categoryInfo).map(category => (
-                <NominationCategory
-                  active={active}
-                  category={category}
-                  key={category}
-                  signature={signature}
+            { Object.keys(categoryInfo).map(category => (
+              <NominationCategory
+                active={active}
+                category={category}
+                key={category}
+                signature={signature}
                 />
               )) }
-            </Col>
-          </Row>
-          { active ? <SaveAllButton signature={signature} /> : null }
-          <NominationSignature
-            open={active && !signature}
-            setName={ signature => this.setState({ signature }) }
+          </Col>
+        </Row>
+        { active ? <SaveAllButton signature={signature} /> : null }
+        <NominationSignature
+          open={active && !signature}
+          setName={signature => this.setState({ signature })}
           />
-          <Messages />
-        </div>;
+        <Messages />
+      </div>
   }
 
-  get name() {
-    const { person } = this.props;
-    if (!Map.isMap(person)) return '<>';
-    const pna = [person.get('public_first_name'), person.get('public_last_name')];
-    const pns = pna.filter(s => s).join(' ');
-    return pns || person.get('legal_name');
+  get name () {
+    const { person } = this.props
+    if (!Map.isMap(person)) return '<>'
+    const pna = [person.get('public_first_name'), person.get('public_last_name')]
+    const pns = pna.filter(s => s).join(' ')
+    return pns || person.get('legal_name')
   }
-
 }
 
 export default connect(
   ({ app, user }, { params }) => {
-    const id = params && Number(params.id);
-    const people = user.get('people');
+    const id = params && Number(params.id)
+    const people = user.get('people')
     return {
       id: app.get('person'),
       person: people && people.find(p => p.get('id') === id)
@@ -186,4 +182,4 @@ export default connect(
     setNominator,
     setScene
   }
-)(Nominate);
+)(Nominate)

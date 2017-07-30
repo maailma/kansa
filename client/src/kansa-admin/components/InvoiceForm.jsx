@@ -1,20 +1,18 @@
-import { List, Map } from 'immutable'
+import { Map } from 'immutable'
 import MenuItem from 'material-ui/MenuItem'
 import SelectField from 'material-ui/SelectField'
 import TextField from 'material-ui/TextField'
-import PropTypes from 'prop-types'
 import React from 'react'
-import ImmutablePropTypes from 'react-immutable-proptypes'
 
 const styles = {
-  common: { },
+  common: { }
 }
 
 const TypeSelect = ({ category, onChange, paymentData, type }) => {
   const cache = {}
   return (
     <SelectField
-      floatingLabelFixed={true}
+      floatingLabelFixed
       floatingLabelText='Payment type'
       onChange={(ev, idx, type) => {
         let update = cache[type]
@@ -27,7 +25,7 @@ const TypeSelect = ({ category, onChange, paymentData, type }) => {
       {
         paymentData.reduce((list, data, category) => {
           list.push(<MenuItem
-            disabled={true}
+            disabled
             key={category}
             primaryText={`== ${category}`}
             value={category}
@@ -53,9 +51,9 @@ const DataField = ({ field, name, onChange, style = {}, value }) => {
   let label = field.get('label')
   if (field.get('required')) label += ' (Required)'
   return <TextField
-    floatingLabelFixed={true}
+    floatingLabelFixed
     floatingLabelText={label}
-    fullWidth={true}
+    fullWidth
     multiLine={!isNumber}
     name={name}
     onChange={onChange}
@@ -74,15 +72,15 @@ const InvoiceForm = ({
     <div style={{ float: 'right' }}>
       <span style={{ paddingRight: 8 }}>€</span>
       <TextField
-        floatingLabelFixed={true}
-        floatingLabelText="Amount"
-        name="amount"
+        floatingLabelFixed
+        floatingLabelText='Amount'
+        name='amount'
         onChange={(_, value) => {
           const amount = value ? Math.floor(value * 100) : 0
           onChange({ amount })
         }}
         style={{ width: 80 }}
-        type="number"
+        type='number'
         value={amount > 0 ? amount / 100 : ''}
       />
     </div>
@@ -97,30 +95,30 @@ const InvoiceForm = ({
         key={name}
         field={field}
         name={name}
-        onChange={(_, value) => onChange({ data: Object.assign({}, data, { [name]: value })})}
+        onChange={(_, value) => onChange({ data: Object.assign({}, data, { [name]: value }) })}
         value={data && data[name] || ''}
       />
     ))}
     <TextField
-      floatingLabelFixed={true}
-      floatingLabelText="Invoice number"
-      fullWidth={true}
-      name="invoice"
+      floatingLabelFixed
+      floatingLabelText='Invoice number'
+      fullWidth
+      name='invoice'
       onChange={(_, invoice) => onChange({ invoice })}
       style={styles.common}
-      type="number"
+      type='number'
       value={invoice}
     />
     <TextField
-      floatingLabelFixed={true}
-      floatingLabelText="Comments"
-      fullWidth={true}
-      multiLine={true}
-      name="comments"
+      floatingLabelFixed
+      floatingLabelText='Comments'
+      fullWidth
+      multiLine
+      name='comments'
       onChange={(_, comments) => onChange({ comments })}
       rows={2}
       style={styles.common}
-      type="number"
+      type='number'
       value={comments}
     />
   </form>

@@ -1,4 +1,4 @@
-export const HUGO_ADMIN_ROUTE_ROOT = '/hugo-admin';
+export const HUGO_ADMIN_ROUTE_ROOT = '/hugo-admin'
 
 export const categoryGroups = {
   Written: ['Novel', 'Novella', 'Novelette', 'ShortStory', 'RelatedWork'],
@@ -13,4 +13,4 @@ export const categoryGroups = {
   NewWriter: []
 }
 
-export const minFinalistsPerCategory = 6;
+export const minFinalistsPerCategory = 6

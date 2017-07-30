@@ -2,10 +2,10 @@ import React from 'react'
 import Avatar from 'material-ui/Avatar'
 import Gravatar from 'react-gravatar'
 
-const initials = (name) => name.split(/\s+/).map(w => w.charAt(0)).join('');
+const initials = (name) => name.split(/\s+/).map(w => w.charAt(0)).join('')
 
-const MemberAvatar = ({ member, single=false, size=40, style={}, ...props }) => {
-  const name = member.get('legal_name');
+const MemberAvatar = ({ member, single = false, size = 40, style = {}, ...props }) => {
+  const name = member.get('legal_name')
   return <Avatar
     size={size}
     style={Object.assign({
@@ -16,8 +16,8 @@ const MemberAvatar = ({ member, single=false, size=40, style={}, ...props }) => 
     title={name}
     {...props}
   >
-    { single ? <Gravatar default="identicon" email={member.get('email')} size={size} /> : initials(name) }
-  </Avatar>;
+    { single ? <Gravatar default='identicon' email={member.get('email')} size={size} /> : initials(name) }
+  </Avatar>
 }
 
-export default MemberAvatar;
+export default MemberAvatar
