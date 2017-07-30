@@ -1,25 +1,25 @@
-import PropTypes from 'prop-types'
-import React from 'react'
-import { connect } from 'react-redux'
-import { push } from 'react-router-redux'
-
+import IconButton from 'material-ui/IconButton'
+import Menu from 'material-ui/Menu'
+import MenuItem from 'material-ui/MenuItem'
+import Paper from 'material-ui/Paper'
+import Popover from 'material-ui/Popover'
+import RaisedButton from 'material-ui/RaisedButton'
+import TextField from 'material-ui/TextField'
 import BallotCountIcon from 'material-ui/svg-icons/editor/format-list-numbered'
 import CatInfoIcon from 'material-ui/svg-icons/action/info-outline'
 import NominationsIcon from 'material-ui/svg-icons/action/list'
 import FinalistsIcon from 'material-ui/svg-icons/image/filter-6'
-import IconButton from 'material-ui/IconButton'
-import Menu from 'material-ui/Menu'
-import MenuItem from 'material-ui/MenuItem'
-import Popover from 'material-ui/Popover'
-import RaisedButton from 'material-ui/RaisedButton'
-import TextField from 'material-ui/TextField'
+import PropTypes from 'prop-types'
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { push } from 'react-router-redux'
 
-import { categoryInfo } from '../../hugo-nominations/constants';
+import { categoryInfo } from '../../hugo-nominations/constants'
 import { setShowBallotCounts } from '../actions'
-import { HUGO_ADMIN_ROUTE_ROOT, categoryGroups } from '../constants';
+import { HUGO_ADMIN_ROUTE_ROOT, categoryGroups } from '../constants'
 import CategoryInfo from './category-info'
 
-class NominationToolbar extends React.Component {
+class NominationToolbar extends Component {
 
   static propTypes = {
     category: PropTypes.string.isRequired,
@@ -116,53 +116,44 @@ class NominationToolbar extends React.Component {
   }
 
   render() {
-    const { category, query, setQuery } = this.props;
-    const { anchorEl, menuOpen } = this.state;
-
-    return <div
-      style={{
-        alignItems: 'center',
-        background: 'white',
-        display: 'flex',
-        height: 56,
-        left: 0,
-        padding: '0 12px',
-        position: 'fixed',
-        top: 0,
-        zIndex: 1
-      }}
-    >
-      <RaisedButton
-        onTouchTap={this.openMenu}
-        label={category}
-        style={{ marginRight: 12 }}
-      />
-      <Popover
-        open={menuOpen}
-        anchorEl={anchorEl}
-        anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
-        targetOrigin={{ horizontal: 'left', vertical: 'top' }}
-        onRequestClose={ () => this.setState({ menuOpen: false }) }
-      >
-        <Menu>{
-          Object.keys(categoryGroups).reduce((items, gn) => items.concat(
-            this.categoryMenuItem(gn, null),
-            categoryGroups[gn].map(category => this.categoryMenuItem(category, gn))
-          ), [])
-        }</Menu>
-      </Popover>
-      { this.categoryViewButton }
-      { this.showBallotCountButton }
-      { this.categoryInfoButton }
-      {
-        this.currentView === 'nominations' ? <TextField
-          hintText='Search'
-          onChange={ ev => setQuery(ev.target.value) }
-          style={{ paddingLeft: 12 }}
-          value={query}
-        /> : null
-      }
-    </div>
+    const { category, query, setQuery } = this.props
+    const { anchorEl, menuOpen } = this.state
+    return (
+      <Paper className='toolbar'>
+        <div>
+          <RaisedButton
+            onTouchTap={this.openMenu}
+            label={category}
+            style={{ marginRight: 12 }}
+          />
+          <Popover
+            open={menuOpen}
+            anchorEl={anchorEl}
+            anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
+            targetOrigin={{ horizontal: 'left', vertical: 'top' }}
+            onRequestClose={ () => this.setState({ menuOpen: false }) }
+          >
+            <Menu>
+              {Object.keys(categoryGroups).reduce((items, gn) => items.concat(
+                this.categoryMenuItem(gn, null),
+                categoryGroups[gn].map(category => this.categoryMenuItem(category, gn))
+              ), [])}
+            </Menu>
+          </Popover>
+          {this.categoryViewButton}
+          {this.showBallotCountButton}
+          {this.categoryInfoButton}
+          {this.currentView === 'nominations' ? (
+            <TextField
+              hintText='Search'
+              onChange={ ev => setQuery(ev.target.value) }
+              style={{ paddingLeft: 12 }}
+              value={query}
+            />
+          ): null}
+        </div>
+      </Paper>
+    )
   }
 }
 

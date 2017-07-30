@@ -12,8 +12,8 @@ body {
 
 main {
   display: flex;
-  height: calc(100vh - 56px);
-  margin: 56px 12px 0;
+  height: calc(100vh - 48px);
+  margin: 48px 12px 0;
 }
 
 main > * {
@@ -44,6 +44,26 @@ main > * {
     background: #008080;
 }
 
+
+/* nomination-toolbar */
+.toolbar {
+  background-color: rgba(214,206,147,0.3) !important;
+  height: 78px;
+  left: 0;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+}
+.toolbar > div {
+  align-items: center;
+  display: flex;
+  height: 48px;
+  padding: 0 12px;
+  pointer-events: auto;
+  width: 100%;
+}
 
 /* finalist-results */
 .finalist {
