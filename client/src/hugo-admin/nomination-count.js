@@ -102,8 +102,10 @@ export function cleanBallots (category, allBallots, allNominations, canon) {
 
 /**
  * Count the nominations and points for each nomination in `ballots`. In order
- * to avoid dealing with floating-point numbers, the function counts 60 points
- * as the total value of each ballot.
+ * to avoid dealing with floating-point numbers, the function counts either 60
+ * or 315 points as the total value of each ballot. If `sainteLague` is true,
+ * Sainte-Laguë divisors (1, 3, 5, 7, ...) are used instead of the default
+ * divisors (1, 2, 3, 4, ...).
  *
  * This performs the Finalist Selection Process Calculation Phase:
  * > First, the total number of nominations (the number of ballots on which each
@@ -115,15 +117,17 @@ export function cleanBallots (category, allBallots, allNominations, canon) {
  * > point total and number of nominations, shall be used in the Selection and
  * > Elimination Phases.
  *
+ * @param {bool} sainteLague
  * @param {List<Set<Nomination>>} ballots
  * @returns {Map<Nomination, { nominations: number, points: number }>}
  */
-function countNominations (ballots) {
-  const pointsPerBallot = 60  // divisible by 1..6
+function countNominations (sainteLague, ballots) {
+  const pointsPerBallot = sainteLague ? 5*7*9 : 3*4*5
   return Map().withMutations(counts => {
     ballots.forEach(ballot => {
       if (ballot.size > 0) {
-        const nomPoints = pointsPerBallot / ballot.size
+        const divisor = sainteLague ? (2 * ballot.size - 1) : ballot.size
+        const nomPoints = pointsPerBallot / divisor
         ballot.forEach(nom => {
           const count = counts.get(nom)
           if (count) {
@@ -208,18 +212,20 @@ function nominationsForElimination (counts) {
 
 /**
  * Select `numSelected` finalists from `ballots` of canonicalised nominations.
- * If the `log` callback function is set, it's called during each loop.
+ * If the `log` callback function is set, it's called during each loop. If
+ * `sainteLague` is true, Sainte-Laguë divisors are used to distribute points.
  *
  * May return `null` if `ballots` becomes empty, to indicate an error.
  *
  * @param {number} numSelected
+ * @param {bool} sainteLague
  * @param {List<Set<Nomination>>} ballots
  * @param {logger} [log]
  * @returns {Iterable<Nomination> | null}
  */
-export function selectFinalists (numSelected, ballots, log) {
+export function selectFinalists (numSelected, sainteLague, ballots, log) {
   do {
-    const counts = countNominations(ballots)
+    const counts = countNominations(sainteLague, ballots)
     const elimNoms = nominationsForElimination(counts)
     const nextSize = counts.size - elimNoms.size
     if (log) log(ballots, counts, nextSize < numSelected ? Seq() : elimNoms)

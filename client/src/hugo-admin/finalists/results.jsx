@@ -14,6 +14,7 @@ export default class Results extends PureComponent {
     category: PropTypes.string.isRequired,
     log: PropTypes.instanceOf(List).isRequired,
     results: PropTypes.instanceOf(Iterable).isRequired,
+    sainteLague: PropTypes.bool,
     style: PropTypes.object
   }
 
@@ -87,6 +88,11 @@ export default class Results extends PureComponent {
       : '"' + name.replace(/"/g, '""') + '"'
   }
 
+  csvPointValue (points) {
+    const div = this.props.sainteLague ? 315 : 60
+    return points ? (points/div).toFixed(2) : ''
+  }
+
   download = () => {
     const { category, log } = this.props
     const map = Map(log.first().get('counts').reduce(
@@ -119,7 +125,7 @@ export default class Results extends PureComponent {
     const csv = [header.join(',')]
     data.forEach(({ name, nominations, points }) => {
       const row = [name, nominations]
-      for (let i = 0; i < rounds; ++i) row.push(points[i] ? (points[i]/60).toFixed(2) : '')
+      for (let i = 0; i < rounds; ++i) row.push(this.csvPointValue(points[i]))
       csv.push(row.join(','))
     })
     const blob = new Blob([csv.join('\r\n')], { type: 'text/csv;charset=utf-8' })

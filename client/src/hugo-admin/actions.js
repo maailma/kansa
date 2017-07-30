@@ -54,6 +54,12 @@ export const setNominations = (category, nominations) => ({
   nominations
 })
 
+export const setSainteLague = (sainteLague = true) => ({
+  module: 'hugo-admin',
+  type: 'SET_SAINTE_LAGUE',
+  sainteLague
+})
+
 export const setShowBallotCounts = (show = true) => ({
   module: 'hugo-admin',
   type: 'SET_SHOW_BALLOT_COUNTS',

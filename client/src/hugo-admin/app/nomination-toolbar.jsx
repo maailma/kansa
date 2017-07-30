@@ -5,6 +5,7 @@ import Paper from 'material-ui/Paper'
 import Popover from 'material-ui/Popover'
 import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
+import Toggle from 'material-ui/Toggle'
 import BallotCountIcon from 'material-ui/svg-icons/editor/format-list-numbered'
 import CatInfoIcon from 'material-ui/svg-icons/action/info-outline'
 import NominationsIcon from 'material-ui/svg-icons/action/list'
@@ -15,7 +16,7 @@ import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
 import { categoryInfo } from '../../hugo-nominations/constants'
-import { setShowBallotCounts } from '../actions'
+import { setSainteLague, setShowBallotCounts } from '../actions'
 import { HUGO_ADMIN_ROUTE_ROOT, categoryGroups } from '../constants'
 import CategoryInfo from './category-info'
 
@@ -25,6 +26,7 @@ class NominationToolbar extends Component {
     pathname: PropTypes.string.isRequired,
     query: PropTypes.string,
     setQuery: PropTypes.func.isRequired,
+    setSainteLague: PropTypes.func.isRequired,
     setShowBallotCounts: PropTypes.func.isRequired,
     showBallotCounts: PropTypes.bool.isRequired,
     showFinalists: PropTypes.func.isRequired,
@@ -115,7 +117,7 @@ class NominationToolbar extends Component {
   }
 
   render () {
-    const { category, query, setQuery } = this.props
+    const { category, query, sainteLague, setSainteLague, setQuery } = this.props
     const { anchorEl, menuOpen } = this.state
     return (
       <Paper className='toolbar'>
@@ -149,15 +151,29 @@ class NominationToolbar extends Component {
               style={{ paddingLeft: 12 }}
               value={query}
             />
-          ) : null}
+          ) : [
+            <span key='div0'>Divisors:{'\u00a0'} 1, 2, 3, …</span>,
+            <Toggle
+              key='div1'
+              label='1, 3, 5, …'
+              labelPosition='right'
+              onToggle={(_, set) => setSainteLague(set)}
+              style={{ marginLeft: 8, width: 130 }}
+              toggled={sainteLague}
+            />
+          ]}
         </div>
       </Paper>
     )
   }
 }
 
-export default connect(null,
+export default connect(
+  ({ hugoAdmin}) => ({
+    sainteLague: hugoAdmin.get('sainteLague')
+  }),
   {
+    setSainteLague,
     setShowBallotCounts,
     showNominations: category => push(`${HUGO_ADMIN_ROUTE_ROOT}/${category}/nominations`),
     showFinalists: category => push(`${HUGO_ADMIN_ROUTE_ROOT}/${category}/finalists`)

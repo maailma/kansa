@@ -15,7 +15,8 @@ class Finalists extends React.Component {
     allNominations: PropTypes.instanceOf(Map),
     canon: PropTypes.instanceOf(Map).isRequired,
     category: PropTypes.string.isRequired,
-    fetchAllBallots: PropTypes.func.isRequired
+    fetchAllBallots: PropTypes.func.isRequired,
+    sainteLague: PropTypes.bool
   }
 
   constructor (props) {
@@ -29,12 +30,12 @@ class Finalists extends React.Component {
     }
   }
 
-  componentWillReceiveProps (nextProps) {
-    const { allBallots, allNominations, canon, category, fetchAllBallots } = nextProps
+  componentWillReceiveProps ({ allBallots, allNominations, canon, category, fetchAllBallots, sainteLague }) {
     if (
       !allBallots.equals(this.props.allBallots) ||
       !canon.equals(this.props.canon) ||
-      !allNominations.equals(this.props.allNominations)
+      !allNominations.equals(this.props.allNominations) ||
+      sainteLague !== this.props.sainteLague
     ) {
       this.setState({ log: List(), results: null })
       if (allBallots.isEmpty()) {
@@ -47,11 +48,11 @@ class Finalists extends React.Component {
 
   getFinalists () {
     setTimeout(() => {
-      const { allBallots, allNominations, canon, category } = this.props
+      const { allBallots, allNominations, canon, category, sainteLague } = this.props
       const cb = cleanBallots(category, allBallots, allNominations, canon)
-      const results = selectFinalists(minFinalistsPerCategory, cb, this.logSelectionRound)
+      const results = selectFinalists(minFinalistsPerCategory, sainteLague, cb, this.logSelectionRound)
       this.setState({ results })
-    })
+    }, 200)
   }
 
   logSelectionRound = (ballots, counts, next) => {
@@ -60,7 +61,7 @@ class Finalists extends React.Component {
   }
 
   render () {
-    const { category } = this.props
+    const { category, sainteLague } = this.props
     const { log, results } = this.state
     return results ? <div
       style={{ display: 'flex' }}
@@ -69,6 +70,7 @@ class Finalists extends React.Component {
         category={category}
         log={log}
         results={results}
+        sainteLague={sainteLague}
         style={{ flex: '1 1 auto' }}
       />
   </div> : <span style={{ paddingLeft: 12 }}>Counting...</span>
@@ -79,7 +81,8 @@ export default connect(
   ({ hugoAdmin }, { category }) => ({
     allBallots: hugoAdmin.get('ballots'),
     allNominations: hugoAdmin.get('nominations'),
-    canon: hugoAdmin.getIn(['canon', category]) || Map()
+    canon: hugoAdmin.getIn(['canon', category]) || Map(),
+    sainteLague: hugoAdmin.get('sainteLague')
   }), {
     fetchAllBallots
   }

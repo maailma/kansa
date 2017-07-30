@@ -5,6 +5,7 @@ const defaultState = Map({
   canon: Map(),
   error: null,
   nominations: Map(),
+  sainteLague: false,
   showBallotCounts: false
 })
 
@@ -61,6 +62,9 @@ export default (state = defaultState, action) => {
           ([ data, canon_id ]) => fromJS({ canon_id, category, data })
         )) ]
       )))
+
+    case 'SET_SAINTE_LAGUE':
+      return state.set('sainteLague', !!action.sainteLague)
 
     case 'SET_SHOW_BALLOT_COUNTS':
       return state.set('showBallotCounts', !!action.show)
