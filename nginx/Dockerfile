@@ -9,4 +9,4 @@ RUN /usr/local/openresty/luajit/bin/luarocks install lua-resty-jwt
 
 COPY hugo-packet.lua /
 COPY nginx.conf /nginx.conf.template
-COPY admin.html favicon.ico index.html /srv/client/
+COPY favicon.ico hugo-admin.html index.html kansa-admin.html /srv/client/
