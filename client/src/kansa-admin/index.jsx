@@ -71,5 +71,5 @@ render(
       <App api={api} />
     </MuiThemeProvider>
   </Provider>,
-  document.getElementById('app')
+  document.getElementById('react')
 );

@@ -17,3 +17,7 @@ body {
 .user-info li:before { content: " | "; }
 .user-info li:first-child:before { content: ""; }
 .user-info a:hover { cursor: pointer; text-decoration: underline; }
+
+#ursa {
+  display: none;
+}
