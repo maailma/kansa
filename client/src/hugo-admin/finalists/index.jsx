@@ -63,7 +63,7 @@ class Finalists extends React.Component {
     const { category } = this.props;
     const { log, results } = this.state;
     return results ? <div
-      style={{ display: 'flex', height: 'calc(100vh - 56px - 48px)' }}
+      style={{ display: 'flex' }}
     >
       <Results
         category={category}

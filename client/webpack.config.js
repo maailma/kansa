@@ -1,16 +1,18 @@
+const path = require('path');
 const url = require('url');
 const webpack = require('webpack');
 
 const title = process.env.TITLE || 'Worldcon 75';
 
 const cfg = {
-  entry: [
-    './src/index.jsx'
-  ],
+  entry: {
+    bundle: ['./src/index.jsx'],
+    'hugo-admin': ['./src/hugo-admin/index.jsx']
+  },
   output: {
-    path: __dirname + '/dist',
+    path: path.join(__dirname, 'dist'),
     publicPath: '/',
-    filename: "bundle.js"
+    filename: '[name].js'
   },
   module: {
     loaders: [
@@ -46,11 +48,21 @@ if (process.env.NODE_ENV === 'production') {
   console.log((process.env.NODE_ENV || 'development').toUpperCase() + ' build');
   const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-  cfg.entry.push('webpack/hot/dev-server');
+  cfg.entry.bundle.push('webpack/hot/dev-server');
   cfg.plugins.push(new HtmlWebpackPlugin({
+    chunks: ['bundle'],
     inject: 'body',
     template: 'src/index.ejs',
     title
+  }));
+
+  cfg.entry['hugo-admin'].push('webpack/hot/dev-server');
+  cfg.plugins.push(new HtmlWebpackPlugin({
+    chunks: ['hugo-admin'],
+    filename: 'hugo-admin.html',
+    inject: 'body',
+    template: 'src/index.ejs',
+    title: 'Hugo Admin - ' + title
   }));
 
   const apiHost = process.env.API_HOST ||

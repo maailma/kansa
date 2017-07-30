@@ -3,7 +3,6 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { locationShape } from 'react-router'
 
-import { setScene } from '../../app/actions/app'
 import { initHugoAdmin } from '../actions'
 import NominationToolbar from './nomination-toolbar'
 import '../style.css'
@@ -12,7 +11,6 @@ class App extends React.Component {
 
   static propTypes = {
     initHugoAdmin: React.PropTypes.func.isRequired,
-    isAdmin: React.PropTypes.bool.isRequired,
     location: locationShape.isRequired,
     nominations: React.PropTypes.instanceOf(List),
     params: React.PropTypes.shape({
@@ -21,27 +19,22 @@ class App extends React.Component {
     showBallotCounts: React.PropTypes.bool.isRequired
   }
 
-  constructor(props) {
-    super(props);
-    const { initHugoAdmin, isAdmin } = props;
-    if (isAdmin) initHugoAdmin();
-    this.state = {
-      query: ''
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { initHugoAdmin, isAdmin, nominations } = nextProps;
-    if (!nominations && isAdmin) initHugoAdmin();
+  state = {
+    query: ''
   }
 
   componentDidMount() {
-    this.props.setScene({ title: 'Hugo Admin', dockSidebar: false });
+    const { initHugoAdmin } = this.props
+    initHugoAdmin()
+  }
+
+  componentWillReceiveProps ({ initHugoAdmin, nominations }) {
+    if (!nominations) initHugoAdmin()
   }
 
   render() {
-    const { children, isAdmin, location: { pathname }, params: { category }, showBallotCounts } = this.props;
-    const { query } = this.state;
+    const { children, location: { pathname }, params: { category }, showBallotCounts } = this.props
+    const { query } = this.state
     return <div>
       <NominationToolbar
         category={category}
@@ -50,21 +43,20 @@ class App extends React.Component {
         setQuery={ query => this.setState({ query: query.toLowerCase() }) }
         showBallotCounts={showBallotCounts}
       />
-      { isAdmin
-        ? React.Children.map(children, (child) => React.cloneElement(child, { category, query }))
-        : 'Admin rights required'
-      }
+      <main>
+        {React.Children.map(children, (child) => (
+          React.cloneElement(child, { category, query })
+        ))}
+      </main>
     </div>
   }
 }
 
 export default connect(
-  ({ hugoAdmin, user }, { params: { category }}) => ({
-    isAdmin: user.get('hugoAdmin', false),
+  ({ hugoAdmin }, { params: { category }}) => ({
     nominations: hugoAdmin.getIn(['nominations', category]),
     showBallotCounts: hugoAdmin.get('showBallotCounts')
   }), {
-    initHugoAdmin,
-    setScene
+    initHugoAdmin
   }
 )(App)

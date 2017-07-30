@@ -44,7 +44,7 @@ export default class Canon extends React.Component {
     const { selected, show } = this.state;
     if (!category) return null;
     return <div
-      style={{ display: 'flex', height: 'calc(100vh - 56px - 48px)' }}
+      style={{ display: 'flex' }}
     >
       <CanonNominationList
         categories={this.categories}
