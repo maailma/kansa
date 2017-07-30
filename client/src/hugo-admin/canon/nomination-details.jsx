@@ -11,7 +11,6 @@ import DisqualifyUnchecked from 'material-ui/svg-icons/toggle/radio-button-unche
 import { nominationFields } from '../../hugo-nominations/constants'
 import { classify, fetchAllBallots, updateCanonEntry } from '../actions'
 import { countRawBallots } from '../nomination-count';
-import './NominationDetails.css'
 
 const headerHeight = 30;
 const overscanRowCount = 10;

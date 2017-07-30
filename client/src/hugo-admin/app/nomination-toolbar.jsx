@@ -16,7 +16,7 @@ import TextField from 'material-ui/TextField'
 import { categoryInfo } from '../../hugo-nominations/constants';
 import { setShowBallotCounts } from '../actions'
 import { HUGO_ADMIN_ROUTE_ROOT, categoryGroups } from '../constants';
-import CategoryInfo from './CategoryInfo'
+import CategoryInfo from './category-info'
 
 class NominationToolbar extends React.Component {
 

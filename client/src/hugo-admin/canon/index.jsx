@@ -2,9 +2,9 @@ import { List, Map } from 'immutable'
 import React from 'react'
 
 import { categoryGroups } from '../constants';
-import CanonNominationList from './CanonNominationList'
-import NominationDetails from './NominationDetails'
-import NominationMerger from './NominationMerger'
+import CanonNominationList from './nomination-list'
+import NominationDetails from './nomination-details'
+import NominationMerger from './nomination-merger'
 
 export default class Canon extends React.Component {
 

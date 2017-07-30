@@ -5,9 +5,8 @@ import { AutoSizer, Column, SortDirection, Table } from 'react-virtualized'
 import 'react-virtualized/styles.css'
 
 import { nominationFields } from '../../hugo-nominations/constants'
-import './FinalistResults.css'
 
-export default class FinalistResults extends React.Component {
+export default class Results extends React.Component {
   static propTypes = {
     category: React.PropTypes.string.isRequired,
     log: React.PropTypes.instanceOf(List).isRequired,
@@ -75,11 +74,11 @@ export default class FinalistResults extends React.Component {
         <AutoSizer>
           { ({ height, width }) => (
             <Table
-              headerHeight={FinalistResults.headerHeight}
+              headerHeight={Results.headerHeight}
               height={height}
-              overscanRowCount={FinalistResults.overscanRowCount}
+              overscanRowCount={Results.overscanRowCount}
               rowClassName={({ index }) => this.rowClassName(list, index)}
-              rowHeight={FinalistResults.rowHeight}
+              rowHeight={Results.rowHeight}
               rowGetter={({ index }) => list.get(index)}
               rowCount={list.size}
               width={width}

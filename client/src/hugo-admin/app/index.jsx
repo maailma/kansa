@@ -5,9 +5,10 @@ import { locationShape } from 'react-router'
 
 import { setScene } from '../../app/actions/app'
 import { initHugoAdmin } from '../actions'
-import NominationToolbar from './NominationToolbar'
+import NominationToolbar from './nomination-toolbar'
+import '../style.css'
 
-class HugoAdmin extends React.Component {
+class App extends React.Component {
 
   static propTypes = {
     initHugoAdmin: React.PropTypes.func.isRequired,
@@ -66,4 +67,4 @@ export default connect(
     initHugoAdmin,
     setScene
   }
-)(HugoAdmin);
+)(App)

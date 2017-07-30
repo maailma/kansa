@@ -9,9 +9,8 @@ import More from 'material-ui/svg-icons/navigation/more-horiz'
 import { nominationFields } from '../../hugo-nominations/constants'
 import { setShowBallotCounts } from '../actions'
 import { countRawBallots } from '../nomination-count'
-import './CanonNominationList.css'
 
-class CanonNominationList extends React.Component {
+class NominationList extends React.Component {
   static propTypes = {
     ballots: React.PropTypes.instanceOf(Seq).isRequired,
     canon: React.PropTypes.instanceOf(Map).isRequired,
@@ -177,13 +176,13 @@ class CanonNominationList extends React.Component {
         <AutoSizer>
           { ({ height, width }) => (
             <Table
-              headerHeight={CanonNominationList.headerHeight}
+              headerHeight={NominationList.headerHeight}
               height={height}
               noRowsRenderer={this.noRowsRenderer}
               onRowClick={this.onRowClick(list)}
-              overscanRowCount={CanonNominationList.overscanRowCount}
+              overscanRowCount={NominationList.overscanRowCount}
               rowClassName={({ index }) => this.rowClassName(list, index)}
-              rowHeight={CanonNominationList.rowHeight}
+              rowHeight={NominationList.rowHeight}
               rowGetter={({ index }) => list.get(index)}
               rowCount={list.size}
               sort={({ sortBy, sortDirection }) => {
@@ -218,4 +217,4 @@ export default connect(
   }), {
     setShowBallotCounts
   }
-)(CanonNominationList);
+)(NominationList)

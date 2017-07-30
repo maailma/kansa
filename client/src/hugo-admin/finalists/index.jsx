@@ -6,7 +6,7 @@ import { fetchAllBallots } from '../actions'
 import { minFinalistsPerCategory } from '../constants'
 import { cleanBallots, selectFinalists } from '../nomination-count'
 
-import FinalistResults from './FinalistResults'
+import Results from './results'
 
 class Finalists extends React.Component {
 
@@ -65,7 +65,7 @@ class Finalists extends React.Component {
     return results ? <div
       style={{ display: 'flex', height: 'calc(100vh - 56px - 48px)' }}
     >
-      <FinalistResults
+      <Results
         category={category}
         log={log}
         results={results}
