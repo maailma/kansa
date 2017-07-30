@@ -12,7 +12,6 @@ export default function(state = Map(), action) {
       return fromJS({
         email,
         people,
-        hugoAdmin: roles && roles.indexOf('hugo_admin') !== -1,
         memberAdmin: roles && roles.indexOf('member_admin') !== -1
       });
     }

@@ -2,12 +2,10 @@ import React, { PropTypes } from 'react'
 import { IndexRedirect, IndexRoute, Redirect, Route, Router } from 'react-router'
 
 import { keyLogin, tryLogin } from './app/actions/auth'
+import { HUGO_ADMIN_ROUTE_ROOT } from './hugo-admin/constants'
 
 import App from './app/components/App'
 import Index from './app/components/Index'
-import HugoAdmin from './hugo-admin/app'
-import Canon from './hugo-admin/canon'
-import Finalists from './hugo-admin/finalists'
 import Nominate from './hugo-nominations/components/Nominate'
 import Vote from './hugo-votes'
 import NewDaypassForm from './membership/components/NewDaypassForm'
@@ -23,14 +21,9 @@ import ExhibitRegistration from './raami/components/Registration'
 const hugoRoutes = (path, requireAuth) => (
   <Route path={path} >
     <IndexRedirect to="vote" />
-    <Route path="admin" onEnter={requireAuth} component={HugoAdmin}>
-      <IndexRedirect to='Novel' />
-      <Route path=":category">
-        <IndexRedirect to='nominations' />
-        <Route path="finalists" component={Finalists} />
-        <Route path="nominations" component={Canon} />
-      </Route>
-    </Route>
+    <Route path="admin*" onEnter={() => {
+        window.location = HUGO_ADMIN_ROUTE_ROOT
+    }} />
     <Route path="nominate/:id" onEnter={requireAuth} component={Nominate} />
     <Route path="vote">
       <IndexRoute component={Vote} />
