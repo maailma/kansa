@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { connect } from 'react-redux'
-import { AutoSizer, FlexTable, FlexColumn, SortDirection } from 'react-virtualized'
+import { AutoSizer, Column, SortDirection, Table } from 'react-virtualized'
 
 import filterPeople from '../filterPeople'
 import styles from '../styles/MemberTable.css'
@@ -53,7 +53,7 @@ class PaymentTable extends React.Component {
         <div style={{ flex: '1 1 auto' }}>
           <AutoSizer>
             { ({ height, width }) => (
-              <FlexTable
+              <Table
                 key='table'
                 headerClassName={styles.headerColumn}
                 headerHeight={headerHeight}
@@ -70,14 +70,14 @@ class PaymentTable extends React.Component {
                 width={width}
                 onRowClick={ ({ index }) => this.props.onPaymentSelect(list.get(index)) }
               >
-                <FlexColumn dataKey='updated' label='Mod' width={100}
+                <Column dataKey='updated' label='Mod' width={100}
                   cellDataGetter = {({ rowData }) => {
                     const ts = rowData.get('updated') || rowData.get('created')
                     return ts.slice(0, ts.indexOf('T'))
                   }}
                 />
-                <FlexColumn dataKey='status' label='Status' width={80} />
-                <FlexColumn dataKey='amount' label='€' width={50}
+                <Column dataKey='status' label='Status' width={80} />
+                <Column dataKey='amount' label='€' width={50}
                   cellDataGetter = {({ rowData }) => {
                     let amount = rowData.get('amount') / 100
                     const currency = rowData.get('currency', '').toUpperCase()
@@ -85,11 +85,11 @@ class PaymentTable extends React.Component {
                     return amount
                   }}
                 />
-                <FlexColumn dataKey='payment_email' label='From' width={120} flexGrow={1} />
-                <FlexColumn dataKey='person_name' label='Beneficiary' width={120} flexGrow={1} />
-                <FlexColumn dataKey='category' label='Category' width={100} flexGrow={1} />
-                <FlexColumn dataKey='type' label='Type' width={80} flexGrow={1} />
-              </FlexTable>
+                <Column dataKey='payment_email' label='From' width={120} flexGrow={1} />
+                <Column dataKey='person_name' label='Beneficiary' width={120} flexGrow={1} />
+                <Column dataKey='category' label='Category' width={100} flexGrow={1} />
+                <Column dataKey='type' label='Type' width={80} flexGrow={1} />
+              </Table>
             ) }
           </AutoSizer>
         </div>

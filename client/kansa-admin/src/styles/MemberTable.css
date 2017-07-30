@@ -1,17 +1,14 @@
-.FlexTable {
+.ReactVirtualized__Table {
   margin-top: 48px;
   width: 100%;
 }
-.FlexTable__headerRow {
+.ReactVirtualized__Table__headerRow {
   border-bottom: 1px solid #e0e0e0;
   font-size: 0.8em;
   color: rgba(0, 0, 0, 0.4);
   background-color: rgb(221, 236, 148);
 }
-.Grid__cell:nth-child(odd) {
-  background-color: #fafafa;
-}
-.FlexTable__row {
+.ReactVirtualized__Table__row {
   cursor: pointer;
 }
 

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { connect } from 'react-redux'
-import { AutoSizer, FlexTable, FlexColumn, SortDirection } from 'react-virtualized'
+import { AutoSizer, Column, SortDirection, Table } from 'react-virtualized'
 
 import filterPeople from '../filterPeople'
 import styles from '../styles/MemberTable.css'
@@ -77,7 +77,7 @@ class MemberTable extends React.Component {
         <div style={{ flex: '1 1 auto' }}>
           <AutoSizer>
             { ({ height, width }) => (
-              <FlexTable
+              <Table
                 key='table'
                 headerClassName={styles.headerColumn}
                 headerHeight={headerHeight}
@@ -94,20 +94,20 @@ class MemberTable extends React.Component {
                 width={width}
                 onRowClick={ ({ index }) => this.props.onMemberSelect(list.get(index)) }
               >
-                <FlexColumn dataKey='member_number' label='#' width={50} />
-                <FlexColumn dataKey='membership' label='Type' width={80} />
-                <FlexColumn dataKey='legal_name' label='Name' width={120} flexGrow={1} />
-                <FlexColumn dataKey='email' label='Email' width={210} />
-                <FlexColumn dataKey='public_name' label='Public' width={120} flexGrow={1}
+                <Column dataKey='member_number' label='#' width={50} />
+                <Column dataKey='membership' label='Type' width={80} />
+                <Column dataKey='legal_name' label='Name' width={120} flexGrow={1} />
+                <Column dataKey='email' label='Email' width={210} />
+                <Column dataKey='public_name' label='Public' width={120} flexGrow={1}
                   cellDataGetter = { ({ rowData }) => publicName(rowData) }
                 />
-                <FlexColumn dataKey='loc' label='Location' width={120} flexGrow={1}
+                <Column dataKey='loc' label='Location' width={120} flexGrow={1}
                   cellDataGetter = { ({ rowData }) => fullLocation(rowData) }
                 />
-                <FlexColumn dataKey='last_modified' label='Mod' width={90}
+                <Column dataKey='last_modified' label='Mod' width={90}
                   cellDataGetter = { ({ dataKey, rowData }) => rowData.get(dataKey).substr(0,10) }
                 />
-              </FlexTable>
+              </Table>
             ) }
           </AutoSizer>
         </div>
