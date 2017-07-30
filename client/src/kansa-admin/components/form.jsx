@@ -5,7 +5,7 @@ import TextField from 'material-ui/TextField'
 import PropTypes from 'prop-types'
 import React from 'react'
 
-import Member from './Member'
+import { emptyPaperPubsMap, membershipTypes } from './Member'
 
 const styles = {
   common: { marginLeft: '24px' },
@@ -90,7 +90,7 @@ CommentField.propTypes = {
 
 const MembershipSelect = ({ getDefaultValue, getValue, onChange }) => {
   const path = ['membership']
-  const prevIdx = Member.membershipTypes.indexOf(getDefaultValue(path))
+  const prevIdx = membershipTypes.indexOf(getDefaultValue(path))
   return <SelectField
     style={{ marginLeft: '24px' }}
     floatingLabelText='Membership type'
@@ -98,7 +98,7 @@ const MembershipSelect = ({ getDefaultValue, getValue, onChange }) => {
     value={getValue(path) || 'NonMember'}
     onChange={(ev, idx, value) => onChange(path, value)}
   >
-    { Member.membershipTypes.map((type, idx) => (
+    { membershipTypes.map((type, idx) => (
       <MenuItem
         key={type} value={type} primaryText={type}
         disabled={idx < prevIdx}
@@ -114,7 +114,7 @@ const PaperPubsCheckbox = ({ getDefaultValue, getValue, onChange }) => {
     label='Add paper publications'
     checked={!!getValue(path)}
     disabled={!!getDefaultValue(path)}
-    onCheck={(ev, checked) => onChange(path, checked ? Member.emptyPaperPubsMap : null)}
+    onCheck={(ev, checked) => onChange(path, checked ? emptyPaperPubsMap : null)}
   />
 }
 

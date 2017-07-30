@@ -4,7 +4,7 @@ import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 
 import { filterTerms } from '../filterPeople'
-import Member from './Member'
+import { memberFields, membershipTypes } from './Member'
 
 const styleTerm = (src) => src.split('_').map((val, idx) => (idx % 2) ? <i key={idx}>{val}</i> : val)
 
@@ -27,8 +27,8 @@ export const helpText = [
     with results being updated as they're entered.
   </p>,
   <p key='p2'>
-    The accepted values of <i>field</i> include { listKeys(Member.fields) }.
-    Similarly, valid <i>membership</i> types are { listKeys(Member.membershipTypes) }.
+    The accepted values of <i>field</i> include { listKeys(memberFields) }.
+    Similarly, valid <i>membership</i> types are { listKeys(membershipTypes) }.
   </p>,
   <dl key='dl'>{
     filterTerms.reduce((res, term, idx) => res.concat(

@@ -12,6 +12,42 @@ import MemberLog from './MemberLog'
 import NewInvoice from './NewInvoice'
 import Upgrade from './Upgrade'
 
+export const defaultMember = Map({
+  legal_name: '',
+  email: '',
+  badge_name: '',
+  badge_subtitle: '',
+  public_first_name: '',
+  public_last_name: '',
+  country: '',
+  state: '',
+  city: ''
+})
+
+export const memberFields = [
+  'membership', 'legal_name', 'email', 'badge_name', 'badge_subtitle',
+  'public_first_name', 'public_last_name', 'country', 'state', 'city',
+  'paper_pubs'
+]
+
+export const membershipTypes = [
+  'NonMember', 'Exhibitor', 'Supporter', 'KidInTow', 'Child', 'Youth',
+  'FirstWorldcon', 'Adult'
+]
+
+export const emptyPaperPubsMap = Map({ name: '', address: '', country: '' })
+
+export const paperPubsIsValid = (pp) => (
+  !pp || pp.get('name') && pp.get('address') && pp.get('country')
+)
+
+export const memberIsValid = (member) => (
+  Map.isMap(member) &&
+  member.get('legal_name', false) &&
+  member.get('email', false) &&
+  paperPubsIsValid(member.get('paper_pubs'))
+)
+
 class Member extends PureComponent {
   static propTypes = {
     api: PropTypes.object.isRequired,
@@ -37,44 +73,6 @@ class Member extends PureComponent {
     printer: PropTypes.string
   }
 
-  static defaultProps = {
-    member: Map({
-      legal_name: '',
-      email: '',
-      badge_name: '',
-      badge_subtitle: '',
-      public_first_name: '',
-      public_last_name: '',
-      country: '',
-      state: '',
-      city: ''
-    })
-  }
-
-  static fields = [
-    'membership', 'legal_name', 'email', 'badge_name', 'badge_subtitle',
-    'public_first_name', 'public_last_name', 'country', 'state', 'city',
-    'paper_pubs'
-  ]
-
-  static membershipTypes = [
-    'NonMember', 'Exhibitor', 'Supporter', 'KidInTow', 'Child', 'Youth',
-    'FirstWorldcon', 'Adult'
-  ]
-
-  static emptyPaperPubsMap = Map({ name: '', address: '', country: '' })
-
-  static paperPubsIsValid = (pp) => (
-    !pp || pp.get('name') && pp.get('address') && pp.get('country')
-  )
-
-  static isValid = (member) => (
-    Map.isMap(member) &&
-    member.get('legal_name', false) &&
-    member.get('email', false) &&
-    Member.paperPubsIsValid(member.get('paper_pubs'))
-  )
-
   state = {
     member: Map(),
     sent: false
@@ -83,7 +81,7 @@ class Member extends PureComponent {
   componentWillReceiveProps ({ member }) {
     if (member && !member.equals(this.props.member)) {
       this.setState({
-        member: Member.defaultProps.member.merge(member),
+        member: defaultMember.merge(member),
         sent: false
       })
     }
@@ -171,7 +169,7 @@ class Member extends PureComponent {
   }
 
   get valid () {
-    return Member.isValid(this.state.member)
+    return memberIsValid(this.state.member)
   }
 
   save () {
