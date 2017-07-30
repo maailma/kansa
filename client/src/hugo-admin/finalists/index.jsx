@@ -71,7 +71,7 @@ class Finalists extends React.Component {
         results={results}
         style={{ flex: '1 1 auto' }}
       />
-    </div> : <span>Counting...</span>
+  </div> : <span style={{ paddingLeft: 12 }}>Counting...</span>
   }
 }
 

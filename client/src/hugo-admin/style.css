@@ -13,7 +13,7 @@ body {
 main {
   display: flex;
   height: calc(100vh - 48px);
-  margin: 48px 12px 0;
+  margin: 48px 0 0;
 }
 
 main > * {

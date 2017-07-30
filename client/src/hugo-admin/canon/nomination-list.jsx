@@ -128,8 +128,8 @@ class NominationList extends PureComponent {
   }
 
   noRowsRenderer = () => (
-    <div>
-      Loading... Or maybe there are no nominations for { this.props.categories.join('/') }?
+    <div style={{ paddingLeft: 12, paddingTop: 6 }}>
+      Loading nominations for {this.props.categories.join('/')}...
     </div>
   );
 
