@@ -1,4 +1,7 @@
-import { Iterable, List } from 'immutable'
+import { saveAs } from 'file-saver'
+import { Iterable, List, Map } from 'immutable'
+import FloatingActionButton from 'material-ui/FloatingActionButton'
+import FileDownload from 'material-ui/svg-icons/file/file-download'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { AutoSizer, Column, Table } from 'react-virtualized'
@@ -64,6 +67,65 @@ export default class Results extends PureComponent {
     ).toList()
   }
 
+  csvNomineeName (nominee) {
+    const { category } = this.props
+    let key = 'title'
+    switch (category) {
+      case 'EditorLong':
+      case 'EditorShort':
+        key = 'editor'
+        break
+      case 'FanArtist':
+      case 'FanWriter':
+      case 'NewWriter':
+      case 'ProArtist':
+        key = 'author'
+        break
+    }
+    const name = nominee.get(key, '').replace(/\s+/g, ' ').trim()
+    return name.indexOf('"') === -1 && name.indexOf(',') === -1 ? name
+      : '"' + name.replace(/"/g, '""') + '"'
+  }
+
+  download = () => {
+    const { category, log } = this.props
+    const map = Map(log.first().get('counts').reduce(
+      (data, { nominations, points }, nominee) => data.concat([[
+        nominee, {
+          name: this.csvNomineeName(nominee),
+          nominations,
+          points: [points]
+        }
+      ]]), []
+    ))
+    log.shift().forEach(round => {
+      round.get('counts').forEach(({ points }, nominee) => {
+        map.get(nominee).points.push(points)
+      })
+    })
+    const data = map.toList().toJS().sort((a, b) => {
+      if (a.points.length > b.points.length) return -1
+      if (a.points.length < b.points.length) return 1
+      const i = a.points.length - 1
+      if (a.points[i] > b.points[i]) return -1
+      if (a.points[i] < b.points[i]) return 1
+      if (a.nominations > b.nominations) return -1
+      if (a.nominations < b.nominations) return 1
+      return 0
+    })
+    const rounds = data[0].points.length
+    const header = ['Name', 'Nominations']
+    for (let i = 1; i <= rounds; ++i) header.push(i)
+    const csv = [header.join(',')]
+    data.forEach(({ name, nominations, points }) => {
+      const row = [name, nominations]
+      for (let i = 0; i < rounds; ++i) row.push(points[i] ? (points[i]/60).toFixed(2) : '')
+      csv.push(row.join(','))
+    })
+    const blob = new Blob([csv.join('\r\n')], { type: 'text/csv;charset=utf-8' })
+    saveAs(blob, `${category}.csv`)
+  }
+
   render () {
     const { style } = this.props
     const list = this.list
@@ -87,6 +149,12 @@ export default class Results extends PureComponent {
             </Table>
           ) }
         </AutoSizer>
+        <FloatingActionButton
+          onTouchTap={this.download}
+          style={{ position: 'fixed', bottom: 24, right: 24 }}
+        >
+          <FileDownload />
+        </FloatingActionButton>
       </div>
     )
   }

@@ -16,6 +16,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "file-saver": "^1.3.3",
     "flexboxgrid": "^6.3.1",
     "iban": "0.0.8",
     "immutable": "^3.8.1",
@@ -58,7 +59,21 @@
     "webpack-dev-server": "^1.16.5"
   },
   "standard": {
-    "globals": [ "alert", "API_HOST", "Blob", "ENV", "fetch", "FileReader", "ga", "localStorage", "location", "Stripe", "TITLE", "WebSocket", "XMLHttpRequest" ],
+    "globals": [
+      "alert",
+      "API_HOST",
+      "Blob",
+      "ENV",
+      "fetch",
+      "FileReader",
+      "ga",
+      "localStorage",
+      "location",
+      "Stripe",
+      "TITLE",
+      "WebSocket",
+      "XMLHttpRequest"
+    ],
     "parser": "babel-eslint"
   }
 }
