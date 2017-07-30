@@ -1,6 +1,9 @@
 import Promise from 'promise-polyfill'
 if (!window.Promise) window.Promise = Promise;
 
+import injectTapEventPlugin from 'react-tap-event-plugin'
+injectTapEventPlugin();
+
 if (typeof Object.assign != 'function') {
   Object.assign = function(target) {
     'use strict';
