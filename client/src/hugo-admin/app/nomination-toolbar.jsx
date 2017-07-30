@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
@@ -21,14 +22,14 @@ import CategoryInfo from './category-info'
 class NominationToolbar extends React.Component {
 
   static propTypes = {
-    category: React.PropTypes.string.isRequired,
-    pathname: React.PropTypes.string.isRequired,
-    query: React.PropTypes.string,
-    setQuery: React.PropTypes.func.isRequired,
-    setShowBallotCounts: React.PropTypes.func.isRequired,
-    showBallotCounts: React.PropTypes.bool.isRequired,
-    showFinalists: React.PropTypes.func.isRequired,
-    showNominations: React.PropTypes.func.isRequired
+    category: PropTypes.string.isRequired,
+    pathname: PropTypes.string.isRequired,
+    query: PropTypes.string,
+    setQuery: PropTypes.func.isRequired,
+    setShowBallotCounts: PropTypes.func.isRequired,
+    showBallotCounts: PropTypes.bool.isRequired,
+    showFinalists: PropTypes.func.isRequired,
+    showNominations: PropTypes.func.isRequired
   }
 
   state = {

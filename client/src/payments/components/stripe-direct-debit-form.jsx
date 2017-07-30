@@ -1,6 +1,7 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 const { Col, Row } = require('react-flexbox-grid')
-const ImmutablePropTypes = require('react-immutable-proptypes');
+import ImmutablePropTypes from 'react-immutable-proptypes'
 const IBAN = require('iban')
 
 import RaisedButton from 'material-ui/RaisedButton'

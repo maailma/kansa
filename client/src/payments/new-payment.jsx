@@ -1,10 +1,11 @@
 import { Map } from 'immutable'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
 import { push, replace } from 'react-router-redux'
 const { Col, Row } = require('react-flexbox-grid');
-const ImmutablePropTypes = require('react-immutable-proptypes');
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import RaisedButton from 'material-ui/RaisedButton'

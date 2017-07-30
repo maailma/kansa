@@ -1,5 +1,6 @@
-import React, { PropTypes } from 'react'
-const ImmutablePropTypes = require('react-immutable-proptypes');
+import PropTypes from 'prop-types'
+import React from 'react'
+import ImmutablePropTypes from 'react-immutable-proptypes'
 import Divider from 'material-ui/Divider';
 import { List, ListItem, makeSelectable } from 'material-ui/List'
 import EventSeat from 'material-ui/svg-icons/action/event-seat'

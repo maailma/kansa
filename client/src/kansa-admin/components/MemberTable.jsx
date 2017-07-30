@@ -1,7 +1,6 @@
 import { List } from 'immutable'
 import PropTypes from 'prop-types'
-import React from 'react'
-import shallowCompare from 'react-addons-shallow-compare'
+import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { AutoSizer, Column, SortDirection, Table } from 'react-virtualized'
 
@@ -29,7 +28,7 @@ const noRowsRenderer = () => (
   </div>
 );
 
-class MemberTable extends React.Component {
+class MemberTable extends PureComponent {
   static propTypes = {
     list: PropTypes.instanceOf(List).isRequired,
     onMemberSelect: PropTypes.func.isRequired
@@ -51,10 +50,6 @@ class MemberTable extends React.Component {
       case 'loc':          return fullLocation;
       default:             return item => item.get(sortBy, '');
     }
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
   }
 
   render() {

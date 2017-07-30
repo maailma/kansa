@@ -1,4 +1,5 @@
 import { List, Map } from 'immutable'
+import PropTypes from 'prop-types'
 import React from 'react'
 import { connect } from 'react-redux'
 
@@ -11,11 +12,11 @@ import Results from './results'
 class Finalists extends React.Component {
 
   static propTypes = {
-    allBallots: React.PropTypes.instanceOf(Map),
-    allNominations: React.PropTypes.instanceOf(Map),
-    canon: React.PropTypes.instanceOf(Map).isRequired,
-    category: React.PropTypes.string.isRequired,
-    fetchAllBallots: React.PropTypes.func.isRequired
+    allBallots: PropTypes.instanceOf(Map),
+    allNominations: PropTypes.instanceOf(Map),
+    canon: PropTypes.instanceOf(Map).isRequired,
+    category: PropTypes.string.isRequired,
+    fetchAllBallots: PropTypes.func.isRequired
   }
 
   constructor(props) {

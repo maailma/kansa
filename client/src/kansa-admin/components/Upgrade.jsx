@@ -7,7 +7,7 @@ import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 
-const ImmutablePropTypes = require('react-immutable-proptypes');
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import { UpgradeFields, CommentField } from './form';
 import Member from './Member';

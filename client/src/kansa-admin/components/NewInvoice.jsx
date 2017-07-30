@@ -5,7 +5,7 @@ import FlatButton from 'material-ui/FlatButton'
 import FloatingActionButton from 'material-ui/FloatingActionButton'
 import PropTypes from 'prop-types'
 import React from 'react'
-const ImmutablePropTypes = require('react-immutable-proptypes')
+import ImmutablePropTypes from 'react-immutable-proptypes'
 import { connect } from 'react-redux'
 
 import InvoiceForm from './InvoiceForm'

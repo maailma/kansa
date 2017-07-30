@@ -1,4 +1,5 @@
-import React from 'react';
+import PropTypes from 'prop-types'
+import React from 'react'
 import { connect } from 'react-redux'
 const { Col, Row } = require('react-flexbox-grid');
 
@@ -139,17 +140,17 @@ const GalleryCard = ({ artist: { auction, digital, legal, postage, print, waitli
 };
 
 GalleryCard.propTypes = {
-  artist: React.PropTypes.shape({
-    auction: React.PropTypes.number,
-    digital: React.PropTypes.boolean,
-    legal: React.PropTypes.boolean,
-    postage: React.PropTypes.number,
-    print: React.PropTypes.number,
-    waitlist: React.PropTypes.boolean,
-    half: React.PropTypes.number,
+  artist: PropTypes.shape({
+    auction: PropTypes.number,
+    digital: PropTypes.boolean,
+    legal: PropTypes.boolean,
+    postage: PropTypes.number,
+    print: PropTypes.number,
+    waitlist: PropTypes.boolean,
+    half: PropTypes.number,
   }).isRequired,
-  onChange: React.PropTypes.func.isRequired,
-  onSave: React.PropTypes.func.isRequired,
+  onChange: PropTypes.func.isRequired,
+  onSave: PropTypes.func.isRequired,
 }
 
 export default GalleryCard;

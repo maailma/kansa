@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
@@ -8,7 +9,7 @@ import ThumbUp from 'material-ui/svg-icons/action/thumb-up'
 import ContentCreate from 'material-ui/svg-icons/content/create'
 import Palette from 'material-ui/svg-icons/image/palette'
 import LocationCity from 'material-ui/svg-icons/social/location-city'
-const ImmutablePropTypes = require('react-immutable-proptypes')
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import Rocket from '../../lib/rocket-icon'
 import { isWSFSMember } from '../constants'
@@ -44,8 +45,8 @@ class MemberCard extends React.Component {
     member: ImmutablePropTypes.mapContains({
       paper_pubs: ImmutablePropTypes.map
     }),
-    push: React.PropTypes.func.isRequired,
-    showHugoActions: React.PropTypes.bool
+    push: PropTypes.func.isRequired,
+    showHugoActions: PropTypes.bool
   }
 
   get actions() {

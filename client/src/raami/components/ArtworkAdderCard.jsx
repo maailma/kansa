@@ -1,4 +1,5 @@
-import React from 'react';
+import PropTypes from 'prop-types'
+import React from 'react'
 import { connect } from 'react-redux'
 
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
@@ -23,7 +24,7 @@ const ArtworkAdderCard = ({ onAdd, style }) => {
 };
 
 ArtworkAdderCard.propTypes = {
-  onAdd: React.PropTypes.func.isRequired,
+  onAdd: PropTypes.func.isRequired,
 }
 
 export default ArtworkAdderCard;

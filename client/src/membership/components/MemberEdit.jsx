@@ -1,7 +1,8 @@
 import { Map } from 'immutable'
+import PropTypes from 'prop-types'
 import React from 'react'
 import { connect } from 'react-redux'
-const ImmutablePropTypes = require('react-immutable-proptypes');
+import ImmutablePropTypes from 'react-immutable-proptypes'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 
@@ -15,7 +16,7 @@ class MemberEdit extends React.Component {
     member: ImmutablePropTypes.mapContains({
       paper_pubs: ImmutablePropTypes.map
     }).isRequired,
-    memberUpdate: React.PropTypes.func.isRequired,
+    memberUpdate: PropTypes.func.isRequired,
   }
 
   state = {

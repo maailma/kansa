@@ -1,17 +1,17 @@
 import { Iterable, List } from 'immutable'
-import React from 'react'
-import shallowCompare from 'react-addons-shallow-compare'
+import PropTypes from 'prop-types'
+import React, { PureComponent } from 'react'
 import { AutoSizer, Column, SortDirection, Table } from 'react-virtualized'
 import 'react-virtualized/styles.css'
 
 import { nominationFields } from '../../hugo-nominations/constants'
 
-export default class Results extends React.Component {
+export default class Results extends PureComponent {
   static propTypes = {
-    category: React.PropTypes.string.isRequired,
-    log: React.PropTypes.instanceOf(List).isRequired,
-    results: React.PropTypes.instanceOf(Iterable).isRequired,
-    style: React.PropTypes.object
+    category: PropTypes.string.isRequired,
+    log: PropTypes.instanceOf(List).isRequired,
+    results: PropTypes.instanceOf(Iterable).isRequired,
+    style: PropTypes.object
   }
 
   static headerHeight = 30;
@@ -94,9 +94,5 @@ export default class Results extends React.Component {
   rowClassName = (list, index) => {
     const round = list.getIn([index, 'round']);
     return round === '*' ? 'finalist' : '';
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
   }
 }

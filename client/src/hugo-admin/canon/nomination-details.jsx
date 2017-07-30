@@ -1,4 +1,5 @@
 import { List, Map } from 'immutable'
+import PropTypes from 'prop-types'
 import React from 'react'
 import { connect } from 'react-redux'
 import { AutoSizer, Column, Table } from 'react-virtualized'
@@ -19,14 +20,14 @@ const rowHeight = 30;
 class NominationDetails extends React.Component {
 
   static propTypes = {
-    ballots: React.PropTypes.instanceOf(Map),
-    canon: React.PropTypes.instanceOf(Map).isRequired,
-    classify: React.PropTypes.func.isRequired,
-    fetchAllBallots: React.PropTypes.func.isRequired,
-    nominations: React.PropTypes.instanceOf(List).isRequired,
-    selected: React.PropTypes.instanceOf(Map),
-    setSelected: React.PropTypes.func.isRequired,
-    updateCanonEntry: React.PropTypes.func.isRequired
+    ballots: PropTypes.instanceOf(Map),
+    canon: PropTypes.instanceOf(Map).isRequired,
+    classify: PropTypes.func.isRequired,
+    fetchAllBallots: PropTypes.func.isRequired,
+    nominations: PropTypes.instanceOf(List).isRequired,
+    selected: PropTypes.instanceOf(Map),
+    setSelected: PropTypes.func.isRequired,
+    updateCanonEntry: PropTypes.func.isRequired
   }
 
   componentWillReceiveProps(nextProps) {

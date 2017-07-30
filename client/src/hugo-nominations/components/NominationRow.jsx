@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 
@@ -22,18 +23,18 @@ const NominationField = ({ changed, disabled, name, onChange, value }) => <TextF
 />;
 
 NominationField.propTypes = {
-  changed: React.PropTypes.bool,
-  disabled: React.PropTypes.bool,
-  name: React.PropTypes.string.isRequired,
-  onChange: React.PropTypes.func,
-  value: React.PropTypes.string.isRequired
+  changed: PropTypes.bool,
+  disabled: PropTypes.bool,
+  name: PropTypes.string.isRequired,
+  onChange: PropTypes.func,
+  value: PropTypes.string.isRequired
 }
 
 
 class NominationRemoveButton extends React.Component {
   static propTypes = {
-    disabled: React.PropTypes.bool.isRequired,
-    onRemove: React.PropTypes.func
+    disabled: PropTypes.bool.isRequired,
+    onRemove: PropTypes.func
   }
 
   shouldComponentUpdate(nextProps) {
@@ -80,13 +81,13 @@ export const NominationFillerRow = ({ colSpan, fields }) => <Row>
 
 export class NominationRow extends React.Component {
   static propTypes = {
-    active: React.PropTypes.bool.isRequired,
-    colSpan: React.PropTypes.number.isRequired,
+    active: PropTypes.bool.isRequired,
+    colSpan: PropTypes.number.isRequired,
     defaultValues: ImmutablePropTypes.map.isRequired,
-    disabled: React.PropTypes.bool,
-    fields: React.PropTypes.array.isRequired,
-    onChange: React.PropTypes.func,
-    onRemove: React.PropTypes.func,
+    disabled: PropTypes.bool,
+    fields: PropTypes.array.isRequired,
+    onChange: PropTypes.func,
+    onRemove: PropTypes.func,
     values: ImmutablePropTypes.map.isRequired
   }
 

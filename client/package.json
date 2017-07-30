@@ -24,7 +24,6 @@
     "promise-polyfill": "^6.0.2",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
-    "react-addons-shallow-compare": "^15.6.0",
     "react-dom": "^15.6.1",
     "react-event-listener": "^0.4.5",
     "react-file-input": "^0.2.5",

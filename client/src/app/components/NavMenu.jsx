@@ -1,5 +1,6 @@
+import PropTypes from 'prop-types'
 import React from 'react'
-const ImmutablePropTypes = require('react-immutable-proptypes');
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import Divider from 'material-ui/Divider'
 import { List, ListItem, makeSelectable } from 'material-ui/List'
@@ -94,7 +95,7 @@ const NavMenu = ({ currentMember, handleNav, otherMembers }) => {
 
 NavMenu.propTypes = {
   currentMember: ImmutablePropTypes.map,
-  handleNav: React.PropTypes.func.isRequired,
+  handleNav: PropTypes.func.isRequired,
   otherMembers: ImmutablePropTypes.list
 };
 

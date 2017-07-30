@@ -1,5 +1,6 @@
 import { List as ImmutableList, Map as ImmutableMap } from 'immutable'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { connect } from 'react-redux'
 
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
@@ -14,50 +15,46 @@ import * as VotePropTypes from '../proptypes'
 import CategoryList from './category-list'
 import Packet from './packet'
 
-class VoteCategory extends React.Component {
-  static propTypes = {
-    category: PropTypes.oneOf(categories),
-    finalists: VotePropTypes.categoryFinalists.isRequired,
-    packet: VotePropTypes.categoryPacket.isRequired,
-    preference: VotePropTypes.categoryVotes.isRequired,
-    setVotes: PropTypes.func.isRequired
-  }
+const VoteCategory = ({ category, finalists, packet, preference, setVotes }) => (
+  <Card className='body-card'>
+    <CardHeader
+      style={{
+        alignItems: 'flex-start',
+        display: 'flex',
+        flexWrap: 'wrap',
+        paddingBottom: 0
+      }}
+      textStyle={{
+        display: 'block',
+        padding: 0
+      }}
+      title={categoryInfo[category]}
+      titleStyle={{
+        fontSize: 24,
+        fontWeight: 400,
+        textAlign: 'left'
+      }}
+    >
+      <Packet category={category} formats={packet} />
+    </CardHeader>
+    <CardText>
+      <CategoryList
+        finalists={finalists}
+        preference={preference}
+        setPreference={(preference) => {
+          setVotes(ImmutableMap([[category, preference]]));
+        }}
+      />
+    </CardText>
+  </Card>
+)
 
-  render() {
-    const { category, finalists, packet, preference, setVotes } = this.props
-    const { title } = categoryInfo[category]
-    return <Card className='body-card'>
-      <CardHeader
-        style={{
-          alignItems: 'flex-start',
-          display: 'flex',
-          flexWrap: 'wrap',
-          paddingBottom: 0
-        }}
-        textStyle={{
-          display: 'block',
-          padding: 0
-        }}
-        title={title}
-        titleStyle={{
-          fontSize: 24,
-          fontWeight: 400,
-          textAlign: 'left'
-        }}
-      >
-        <Packet category={category} formats={packet} />
-      </CardHeader>
-      <CardText>
-        <CategoryList
-          finalists={finalists}
-          preference={preference}
-          setPreference={(preference) => {
-            setVotes(ImmutableMap([[category, preference]]));
-          }}
-        />
-      </CardText>
-    </Card>
-  }
+VoteCategory.propTypes = {
+  category: PropTypes.oneOf(categories),
+  finalists: VotePropTypes.categoryFinalists.isRequired,
+  packet: VotePropTypes.categoryPacket.isRequired,
+  preference: VotePropTypes.categoryVotes.isRequired,
+  setVotes: PropTypes.func.isRequired
 }
 
 export default connect(

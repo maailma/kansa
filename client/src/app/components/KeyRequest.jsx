@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { connect } from 'react-redux'
 import { Card, CardHeader, CardText } from 'material-ui/Card'
 import RaisedButton from 'material-ui/RaisedButton'

@@ -1,7 +1,6 @@
 import { List } from 'immutable'
 import PropTypes from 'prop-types'
-import React from 'react'
-import shallowCompare from 'react-addons-shallow-compare'
+import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { AutoSizer, Column, SortDirection, Table } from 'react-virtualized'
 
@@ -14,7 +13,7 @@ const noRowsRenderer = () => (
   </div>
 );
 
-class PaymentTable extends React.Component {
+class PaymentTable extends PureComponent {
   static propTypes = {
     list: PropTypes.instanceOf(List).isRequired,
     onPaymentSelect: PropTypes.func.isRequired
@@ -27,10 +26,6 @@ class PaymentTable extends React.Component {
     scrollToIndex: undefined,
     sortBy: 'updated',
     sortDirection: SortDirection.DESC
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
   }
 
   render() {

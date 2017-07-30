@@ -1,6 +1,7 @@
-import React, { PropTypes } from 'react'
-import { connect } from 'react-redux'
 import FlatButton from 'material-ui/FlatButton'
+import PropTypes from 'prop-types'
+import React from 'react'
+import { connect } from 'react-redux'
 
 import { midGray } from '../../theme'
 import { getHugoPacketSeriesExtra } from '../actions'

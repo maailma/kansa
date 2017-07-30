@@ -4,7 +4,7 @@ import SelectField from 'material-ui/SelectField'
 import TextField from 'material-ui/TextField'
 import PropTypes from 'prop-types'
 import React from 'react'
-const ImmutablePropTypes = require('react-immutable-proptypes')
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 const styles = {
   common: { },

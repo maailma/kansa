@@ -1,5 +1,6 @@
-import React, { PropTypes } from 'react'
-const ImmutablePropTypes = require('react-immutable-proptypes')
+import PropTypes from 'prop-types'
+import React from 'react'
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import { Card, CardHeader, CardText } from 'material-ui/Card'
 import Divider from 'material-ui/Divider'

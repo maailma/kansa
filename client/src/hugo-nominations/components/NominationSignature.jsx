@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 
 import Dialog from 'material-ui/Dialog'
@@ -7,8 +8,8 @@ import TextField from 'material-ui/TextField'
 export default class NominationSignature extends React.Component {
 
   static propTypes = {
-    open: React.PropTypes.bool.isRequired,
-    setName: React.PropTypes.func.isRequired
+    open: PropTypes.bool.isRequired,
+    setName: PropTypes.func.isRequired
   }
 
   state = { name: '' }

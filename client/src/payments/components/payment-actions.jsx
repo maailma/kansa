@@ -1,6 +1,7 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { connect } from 'react-redux'
-const ImmutablePropTypes = require('react-immutable-proptypes')
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import { CardActions } from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'

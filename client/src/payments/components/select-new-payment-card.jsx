@@ -1,6 +1,6 @@
 import { List as ImmutableList } from 'immutable'
 import React from 'react'
-const ImmutablePropTypes = require('react-immutable-proptypes');
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import { List, ListItem } from 'material-ui/List'

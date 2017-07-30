@@ -1,11 +1,12 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { connect } from 'react-redux'
 import { push, replace } from 'react-router-redux'
 import { Card, CardActions, CardText } from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
 import Subheader from 'material-ui/Subheader'
 const { Col, Row } = require('react-flexbox-grid')
-const ImmutablePropTypes = require('react-immutable-proptypes')
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import { setScene, showMessage } from '../../app/actions/app'
 import { buyUpgrade, getPrices } from '../../payments/actions'
@@ -34,10 +35,10 @@ class Upgrade extends React.Component {
     }).isRequired,
     people: MemberPropTypes.people,
     prices: PaymentPropTypes.prices,
-    push: React.PropTypes.func.isRequired,
-    replace: React.PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
     setScene: PropTypes.func.isRequired,
-    showMessage: React.PropTypes.func.isRequired
+    showMessage: PropTypes.func.isRequired
   }
 
   static getNextState(props) {

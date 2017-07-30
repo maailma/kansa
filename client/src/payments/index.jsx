@@ -1,5 +1,6 @@
 import { List } from 'immutable'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
 import { push } from 'react-router-redux'

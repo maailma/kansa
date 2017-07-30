@@ -1,5 +1,6 @@
 import { List } from 'immutable'
-import React, { Component, PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React, { Component } from 'react';
 import { Col, Row } from 'react-flexbox-grid'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 import { connect } from 'react-redux'
@@ -38,7 +39,6 @@ class Index extends Component {
 
   get invoiceCards() {
     const { people, purchase } = this.props
-    console.log(purchase)
     if (!purchase.get('list') || !purchase.get('data')) return []
     const getCategoryData = (category, type) => (
       purchase.getIn(['data', category]) || purchase.get('data').find(cd => cd.get('types').some(td => td.get('key') === type))

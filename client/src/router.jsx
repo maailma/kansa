@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { IndexRedirect, IndexRoute, Redirect, Route, Router } from 'react-router'
 
 import { keyLogin, tryLogin } from './app/actions/auth'

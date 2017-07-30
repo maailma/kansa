@@ -1,4 +1,5 @@
-import React from 'react';
+import PropTypes from 'prop-types'
+import React from 'react'
 import { connect } from 'react-redux'
 const { Col, Row } = require('react-flexbox-grid');
 
@@ -14,7 +15,7 @@ import GalleryCard from './GalleryCard'
 class Registration extends React.Component {
 
   static propTypes = {
-    setScene: React.PropTypes.func.isRequired,
+    setScene: PropTypes.func.isRequired,
   }
 
   constructor(props) {

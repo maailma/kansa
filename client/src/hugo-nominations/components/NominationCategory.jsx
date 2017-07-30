@@ -1,4 +1,5 @@
 import { Map } from 'immutable'
+import PropTypes from 'prop-types'
 import React from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 import { connect } from 'react-redux'
@@ -20,11 +21,11 @@ import { NominationFillerRow, NominationRow } from './NominationRow'
 
 class NominationActionsRow extends React.Component {
   static propTypes = {
-    active: React.PropTypes.bool.isRequired,
-    disabled: React.PropTypes.bool.isRequired,
-    onSave: React.PropTypes.func.isRequired,
-    onReset: React.PropTypes.func.isRequired,
-    saveTime: React.PropTypes.instanceOf(Date)
+    active: PropTypes.bool.isRequired,
+    disabled: PropTypes.bool.isRequired,
+    onSave: PropTypes.func.isRequired,
+    onReset: PropTypes.func.isRequired,
+    saveTime: PropTypes.instanceOf(Date)
   }
 
   shouldComponentUpdate(nextProps) {
@@ -106,13 +107,13 @@ const NominationBody = ({ active, colSpan, fields, maxNominations, onChange, onS
 }
 
 NominationBody.propTypes = {
-  active: React.PropTypes.bool.isRequired,
-  colSpan: React.PropTypes.number.isRequired,
-  fields: React.PropTypes.array.isRequired,
-  maxNominations: React.PropTypes.number,
-  onChange: React.PropTypes.func.isRequired,
-  onSave: React.PropTypes.func.isRequired,
-  onReset: React.PropTypes.func.isRequired,
+  active: PropTypes.bool.isRequired,
+  colSpan: PropTypes.number.isRequired,
+  fields: PropTypes.array.isRequired,
+  maxNominations: PropTypes.number,
+  onChange: PropTypes.func.isRequired,
+  onSave: PropTypes.func.isRequired,
+  onReset: PropTypes.func.isRequired,
   state: ImmutablePropTypes.mapContains({
     clientData: ImmutablePropTypes.list.isRequired,
     serverData: ImmutablePropTypes.list.isRequired,

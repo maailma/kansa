@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 import MenuItem from 'material-ui/MenuItem'
 import SelectField from 'material-ui/SelectField'
@@ -44,9 +45,9 @@ export const TextInput = ({ getDefaultValue, getValue, inputRef, label, lc = 'en
   />
 }
 TextInput.propTypes = {
-  getDefaultValue: React.PropTypes.func,
-  getValue: React.PropTypes.func.isRequired,
-  onChange: React.PropTypes.func.isRequired
+  getDefaultValue: PropTypes.func,
+  getValue: PropTypes.func.isRequired,
+  onChange: PropTypes.func.isRequired
 }
 
 export const MembershipSelect = ({ discount, getDefaultValue, getValue, lc = 'en', onChange, prices, style }) => {

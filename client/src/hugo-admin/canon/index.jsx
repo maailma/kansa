@@ -1,4 +1,5 @@
 import { List, Map } from 'immutable'
+import PropTypes from 'prop-types'
 import React from 'react'
 
 import { categoryGroups } from '../constants';
@@ -9,8 +10,8 @@ import NominationMerger from './nomination-merger'
 export default class Canon extends React.Component {
 
   static propTypes = {
-    category: React.PropTypes.string,
-    query: React.PropTypes.string
+    category: PropTypes.string,
+    query: PropTypes.string
   }
 
   state = {

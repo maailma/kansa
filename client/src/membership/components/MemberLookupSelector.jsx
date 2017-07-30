@@ -1,10 +1,11 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import IconButton from 'material-ui/IconButton'
 import { List, ListItem, makeSelectable } from 'material-ui/List'
 import FindReplace from 'material-ui/svg-icons/action/find-replace'
 import Face from 'material-ui/svg-icons/action/face'
 import Search from 'material-ui/svg-icons/action/search'
-const ImmutablePropTypes = require('react-immutable-proptypes');
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import * as MemberPropTypes from '../proptypes'
 import MemberLookupForm from './MemberLookupForm'

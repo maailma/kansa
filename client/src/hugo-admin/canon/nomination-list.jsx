@@ -1,6 +1,6 @@
 import { List, Map, Seq } from 'immutable'
-import React from 'react'
-import shallowCompare from 'react-addons-shallow-compare'
+import PropTypes from 'prop-types'
+import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import { AutoSizer, Column, SortDirection, Table } from 'react-virtualized'
 import 'react-virtualized/styles.css'
@@ -10,19 +10,19 @@ import { nominationFields } from '../../hugo-nominations/constants'
 import { setShowBallotCounts } from '../actions'
 import { countRawBallots } from '../nomination-count'
 
-class NominationList extends React.Component {
+class NominationList extends PureComponent {
   static propTypes = {
-    ballots: React.PropTypes.instanceOf(Seq).isRequired,
-    canon: React.PropTypes.instanceOf(Map).isRequired,
-    categories: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-    nominations: React.PropTypes.instanceOf(Seq).isRequired,
-    onSelect: React.PropTypes.func.isRequired,
-    onShowDetails: React.PropTypes.func.isRequired,
-    query: React.PropTypes.string,
-    selected: React.PropTypes.instanceOf(List).isRequired,
-    setShowBallotCounts: React.PropTypes.func.isRequired,
-    showBallotCounts: React.PropTypes.bool.isRequired,
-    style: React.PropTypes.object
+    ballots: PropTypes.instanceOf(Seq).isRequired,
+    canon: PropTypes.instanceOf(Map).isRequired,
+    categories: PropTypes.arrayOf(PropTypes.string).isRequired,
+    nominations: PropTypes.instanceOf(Seq).isRequired,
+    onSelect: PropTypes.func.isRequired,
+    onShowDetails: PropTypes.func.isRequired,
+    query: PropTypes.string,
+    selected: PropTypes.instanceOf(List).isRequired,
+    setShowBallotCounts: PropTypes.func.isRequired,
+    showBallotCounts: PropTypes.bool.isRequired,
+    style: PropTypes.object
   }
 
   static headerHeight = 30;
@@ -154,10 +154,6 @@ class NominationList extends React.Component {
         if (c0[i] !== c1[i]) return this.props.setShowBallotCounts(false);
       }
     }
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
   }
 
   render() {

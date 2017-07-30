@@ -1,6 +1,7 @@
 import { Map } from 'immutable'
 import Dialog from 'material-ui/Dialog'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 
 import { API_ROOT } from '../../constants'
 

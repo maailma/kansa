@@ -1,8 +1,9 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 const { Col, Row } = require('react-flexbox-grid');
-const ImmutablePropTypes = require('react-immutable-proptypes');
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import { setScene } from '../../app/actions/app'
 import { getPrices } from '../../payments/actions'
@@ -10,10 +11,10 @@ import NewMemberCard from './NewMemberCard'
 
 class NewMemberIndex extends React.Component {
   static propTypes = {
-    getPrices: React.PropTypes.func.isRequired,
+    getPrices: PropTypes.func.isRequired,
     prices: ImmutablePropTypes.map,
-    push: React.PropTypes.func.isRequired,
-    setScene: React.PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
+    setScene: PropTypes.func.isRequired,
   }
 
   constructor(props) {

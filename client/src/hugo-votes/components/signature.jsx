@@ -1,10 +1,11 @@
-import React, { PropTypes } from 'react'
-const ImmutablePropTypes = require('react-immutable-proptypes');
 import { CardActions, CardHeader, CardText } from 'material-ui/Card'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import TextField from 'material-ui/TextField'
-const { Col, Row } = require('react-flexbox-grid');
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Col, Row } from 'react-flexbox-grid'
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 export default class VoteSignature extends React.Component {
 

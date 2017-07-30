@@ -6,7 +6,7 @@ import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import ContentMail from 'material-ui/svg-icons/content/mail'
 const { Col, Row } = require('react-flexbox-grid');
-const ImmutablePropTypes = require('react-immutable-proptypes');
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import { emptyPaperPubsMap } from '../constants'
 import messages from '../messages'

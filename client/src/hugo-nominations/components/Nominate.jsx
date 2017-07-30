@@ -1,4 +1,5 @@
 import { Map } from 'immutable'
+import PropTypes from 'prop-types'
 import React from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 import { connect } from 'react-redux'
@@ -109,10 +110,10 @@ const NominationsHead = ({ active, name, signature }) => (
 class Nominate extends React.Component {
 
   static propTypes = {
-    id: React.PropTypes.number.isRequired,
+    id: PropTypes.number.isRequired,
     person: ImmutablePropTypes.map,
-    setNominator: React.PropTypes.func.isRequired,
-    setScene: React.PropTypes.func.isRequired
+    setNominator: PropTypes.func.isRequired,
+    setScene: PropTypes.func.isRequired
   }
 
   constructor(props) {

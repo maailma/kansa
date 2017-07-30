@@ -1,11 +1,12 @@
 import { Map } from 'immutable'
+import PropTypes from 'prop-types'
 import React from 'react'
 import { connect } from 'react-redux'
 import { push, replace } from 'react-router-redux'
 import { Card, CardActions, CardText } from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
 const { Col, Row } = require('react-flexbox-grid');
-const ImmutablePropTypes = require('react-immutable-proptypes');
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import { setScene, showMessage } from '../../app/actions/app'
 import { buyMembership, getPrices } from '../../payments/actions'
@@ -15,17 +16,17 @@ import MemberForm from './MemberForm'
 
 class NewMemberForm extends React.Component {
   static propTypes = {
-    buyMembership: React.PropTypes.func.isRequired,
-    email: React.PropTypes.string,
-    getPrices: React.PropTypes.func.isRequired,
+    buyMembership: PropTypes.func.isRequired,
+    email: PropTypes.string,
+    getPrices: PropTypes.func.isRequired,
     prices: ImmutablePropTypes.map,
-    params: React.PropTypes.shape({
-      membership: React.PropTypes.string
+    params: PropTypes.shape({
+      membership: PropTypes.string
     }).isRequired,
-    push: React.PropTypes.func.isRequired,
-    replace: React.PropTypes.func.isRequired,
-    setScene: React.PropTypes.func.isRequired,
-    showMessage: React.PropTypes.func.isRequired
+    push: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
+    setScene: PropTypes.func.isRequired,
+    showMessage: PropTypes.func.isRequired
   }
 
   constructor(props) {

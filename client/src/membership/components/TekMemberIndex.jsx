@@ -1,8 +1,9 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 const { Col, Row } = require('react-flexbox-grid');
-const ImmutablePropTypes = require('react-immutable-proptypes');
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import Divider from 'material-ui/Divider';
@@ -78,10 +79,10 @@ class TekMemberTypeList extends React.Component {
 
 class TekMemberIndex extends React.Component {
   static propTypes = {
-    getPrices: React.PropTypes.func.isRequired,
+    getPrices: PropTypes.func.isRequired,
     prices: ImmutablePropTypes.map,
-    push: React.PropTypes.func.isRequired,
-    setScene: React.PropTypes.func.isRequired,
+    push: PropTypes.func.isRequired,
+    setScene: PropTypes.func.isRequired,
   }
 
   constructor(props) {

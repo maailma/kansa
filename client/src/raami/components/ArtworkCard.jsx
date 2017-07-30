@@ -1,4 +1,5 @@
-import React from 'react';
+import PropTypes from 'prop-types'
+import React from 'react'
 
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import Checkbox from 'material-ui/Checkbox';
@@ -12,26 +13,26 @@ import FileInput from 'react-file-input';
 export default class ArtworkCard extends React.Component {
 
   static propTypes = {
-    onDelete: React.PropTypes.func.isRequired,
-    onSave: React.PropTypes.func.isRequired,
-    work: React.PropTypes.shape({
-      title: React.PropTypes.string,
-      width: React.PropTypes.number,
-      height: React.PropTypes.number,
-      depth: React.PropTypes.number,
-      technique: React.PropTypes.string,
-      orientation: React.PropTypes.string,
-      filename: React.PropTypes.string,
-      filedata: React.PropTypes.object,
-      year: React.PropTypes.number,
-      price: React.PropTypes.number,
-      gallery: React.PropTypes.string,
-      start: React.PropTypes.number,
-      sale: React.PropTypes.number,
-      right: React.PropTypes.boolean,
-      copies: React.PropTypes.number,
-      form: React.PropTypes.string,
-      original: React.PropTypes.boolean
+    onDelete: PropTypes.func.isRequired,
+    onSave: PropTypes.func.isRequired,
+    work: PropTypes.shape({
+      title: PropTypes.string,
+      width: PropTypes.number,
+      height: PropTypes.number,
+      depth: PropTypes.number,
+      technique: PropTypes.string,
+      orientation: PropTypes.string,
+      filename: PropTypes.string,
+      filedata: PropTypes.object,
+      year: PropTypes.number,
+      price: PropTypes.number,
+      gallery: PropTypes.string,
+      start: PropTypes.number,
+      sale: PropTypes.number,
+      right: PropTypes.boolean,
+      copies: PropTypes.number,
+      form: PropTypes.string,
+      original: PropTypes.boolean
     })
   };
 

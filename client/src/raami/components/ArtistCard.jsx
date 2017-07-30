@@ -1,4 +1,5 @@
-import React from 'react';
+import PropTypes from 'prop-types'
+import React from 'react'
 import { connect } from 'react-redux'
 
 import Checkbox from 'material-ui/Checkbox';
@@ -111,17 +112,17 @@ const ArtistCard = ({ artist: { agent, continent, description, legal, name, tran
 </Card>;
 
 ArtistCard.propTypes = {
-  artist: React.PropTypes.shape({
-    agent: React.PropTypes.string,
-    continent: React.PropTypes.string,
-    description: React.PropTypes.string,
-    legal: React.PropTypes.boolean,
-    name: React.PropTypes.string,
-    transport: React.PropTypes.string,
-    url: React.PropTypes.string
+  artist: PropTypes.shape({
+    agent: PropTypes.string,
+    continent: PropTypes.string,
+    description: PropTypes.string,
+    legal: PropTypes.boolean,
+    name: PropTypes.string,
+    transport: PropTypes.string,
+    url: PropTypes.string
   }).isRequired,
-  onChange: React.PropTypes.func.isRequired,
-  onSave: React.PropTypes.func.isRequired,
+  onChange: PropTypes.func.isRequired,
+  onSave: PropTypes.func.isRequired,
 };
 
 export default ArtistCard;

@@ -1,8 +1,9 @@
 import { List as ImmutableList } from 'immutable';
+import PropTypes from 'prop-types'
 import React from 'react'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
-const ImmutablePropTypes = require('react-immutable-proptypes');
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import Drawer from 'material-ui/Drawer'
 
@@ -12,13 +13,13 @@ import NavMenu from './NavMenu'
 class NavDrawer extends React.Component {
 
   static propTypes = {
-    docked: React.PropTypes.bool,
-    id: React.PropTypes.number,
-    onRequestChange: React.PropTypes.func.isRequired,
-    open: React.PropTypes.bool,
+    docked: PropTypes.bool,
+    id: PropTypes.number,
+    onRequestChange: PropTypes.func.isRequired,
+    open: PropTypes.bool,
     people: ImmutablePropTypes.list.isRequired,
-    push: React.PropTypes.func.isRequired,
-    width: React.PropTypes.number,
+    push: PropTypes.func.isRequired,
+    width: PropTypes.number,
   };
 
   static currentMember(id, people) {

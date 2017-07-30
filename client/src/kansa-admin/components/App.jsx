@@ -1,6 +1,6 @@
 import { List, Map } from 'immutable';
-import PropTypes from 'prop-types';
-import React from 'react';
+import PropTypes from 'prop-types'
+import React from 'react'
 import { connect } from 'react-redux';
 
 import BarcodeListener from './barcode-listener'

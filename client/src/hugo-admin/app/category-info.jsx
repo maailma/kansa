@@ -1,4 +1,5 @@
 import { Map } from 'immutable'
+import PropTypes from 'prop-types'
 import React from 'react'
 import { connect } from 'react-redux'
 import Dialog from 'material-ui/Dialog'
@@ -9,12 +10,12 @@ import { cleanBallots } from '../nomination-count';
 class CategoryInfo extends React.Component {
 
   static propTypes = {
-    allBallots: React.PropTypes.instanceOf(Map),
-    allNominations: React.PropTypes.instanceOf(Map),
-    canon: React.PropTypes.instanceOf(Map).isRequired,
-    category: React.PropTypes.string,
-    fetchAllBallots: React.PropTypes.func.isRequired,
-    onRequestClose: React.PropTypes.func.isRequired
+    allBallots: PropTypes.instanceOf(Map),
+    allNominations: PropTypes.instanceOf(Map),
+    canon: PropTypes.instanceOf(Map).isRequired,
+    category: PropTypes.string,
+    fetchAllBallots: PropTypes.func.isRequired,
+    onRequestClose: PropTypes.func.isRequired
   }
 
   static ballotSizer(ballots, key) {

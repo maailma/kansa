@@ -1,5 +1,5 @@
-import { PropTypes } from 'react'
-const ImmutablePropTypes = require('react-immutable-proptypes');
+import { PropTypes } from 'prop-types'
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import { categories } from './constants'
 

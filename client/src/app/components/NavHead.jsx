@@ -1,5 +1,6 @@
+import PropTypes from 'prop-types'
 import React from 'react'
-const ImmutablePropTypes = require('react-immutable-proptypes');
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import { JS_ROOT } from '../../constants'
 import headerBg from '../../img/header-bg.jpg'
@@ -58,7 +59,7 @@ const NavHead = ({ currentMember, handleNav, otherMembers }) => <div
 
 NavHead.propTypes = {
   currentMember: ImmutablePropTypes.map,
-  handleNav: React.PropTypes.func.isRequired,
+  handleNav: PropTypes.func.isRequired,
   otherMembers: ImmutablePropTypes.list
 };
 

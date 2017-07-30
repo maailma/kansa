@@ -1,8 +1,9 @@
 import { Map } from 'immutable'
 import FlatButton from 'material-ui/FlatButton'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 const { Col, Row } = require('react-flexbox-grid')
-const ImmutablePropTypes = require('react-immutable-proptypes')
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import { midGray } from '../../theme'
 import { emptyPaperPubsMap, isAttendingMember } from '../constants'

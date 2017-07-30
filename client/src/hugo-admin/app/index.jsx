@@ -1,4 +1,5 @@
 import { List } from 'immutable'
+import PropTypes from 'prop-types'
 import React from 'react'
 import { connect } from 'react-redux'
 import { locationShape } from 'react-router'
@@ -10,13 +11,13 @@ import '../style.css'
 class App extends React.Component {
 
   static propTypes = {
-    initHugoAdmin: React.PropTypes.func.isRequired,
+    initHugoAdmin: PropTypes.func.isRequired,
     location: locationShape.isRequired,
-    nominations: React.PropTypes.instanceOf(List),
-    params: React.PropTypes.shape({
-      category: React.PropTypes.string.isRequired
+    nominations: PropTypes.instanceOf(List),
+    params: PropTypes.shape({
+      category: PropTypes.string.isRequired
     }).isRequired,
-    showBallotCounts: React.PropTypes.bool.isRequired
+    showBallotCounts: PropTypes.bool.isRequired
   }
 
   state = {

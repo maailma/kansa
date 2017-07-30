@@ -1,5 +1,6 @@
 import { Map } from 'immutable'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import Divider from 'material-ui/Divider'
