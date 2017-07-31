@@ -345,5 +345,38 @@
     ],
     "unlisted": true,
     "variableAmount": true
+  },
+  "Ads": {
+    "allowCreate": false,
+    "shape": {},
+    "types": [
+      {
+        "key": "ad-invoice",
+        "label": "Ad invoice"
+      }
+    ],
+    "unlisted": true
+  },
+  "Party space": {
+    "allowCreate": false,
+    "shape": {},
+    "types": [
+      {
+        "key": "party-space",
+        "label": "Party payment"
+      }
+    ],
+    "unlisted": true
+  },
+  "Staff shirt": {
+    "allowCreate": false,
+    "shape": {},
+    "types": [
+      {
+        "key": "staff-shirt",
+        "label": "Staff shirt"
+      }
+    ],
+    "unlisted": true
   }
 }
