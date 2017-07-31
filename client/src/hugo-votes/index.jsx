@@ -12,6 +12,7 @@ import { categoryInfo } from '../hugo-nominations/constants'
 import { getFinalists, setVoter } from './actions'
 import VoteCategory from './components/category'
 import VoteIntro from './components/intro'
+import PostDeadlineContents from './components/post-deadline-contents'
 
 class Vote extends React.Component {
   static propTypes = {
@@ -23,7 +24,8 @@ class Vote extends React.Component {
     setVoter: PropTypes.func.isRequired,
     signature: PropTypes.string,
     soleVoterId: PropTypes.number,
-    voterId: PropTypes.number
+    voterId: PropTypes.number,
+    votingOpen: PropTypes.bool
   }
 
   componentDidMount () {
@@ -43,7 +45,7 @@ class Vote extends React.Component {
   }
 
   render () {
-    const { person, setVoter, signature } = this.props
+    const { person, setVoter, signature, votingOpen } = this.props
     return (
       <div>
         <Row>
@@ -54,14 +56,18 @@ class Vote extends React.Component {
             lg={6} lgOffset={3}
             style={{ paddingTop: 20 }}
           >
-            <VoteIntro
-              person={person}
-              signature={signature}
-              setSignature={signature => setVoter(person.get('id'), signature)}
-            />
+            {votingOpen ? (
+              <VoteIntro
+                person={person}
+                signature={signature}
+                setSignature={signature => setVoter(person.get('id'), signature)}
+              />
+            ) : (
+              <PostDeadlineContents />
+            )}
           </Col>
         </Row>
-        {signature ? (
+        {votingOpen && signature ? (
           <Row>
             <Col
               xs={12}
@@ -111,7 +117,8 @@ export default connect(
       person: id && people && people.find(p => p.get('id') === id) || null,
       signature: hugoVotes.get('signature'),
       soleVoterId: pv && pv.size === 1 && pv.first().get('id') || null,
-      voterId: hugoVotes.get('id')
+      voterId: hugoVotes.get('id'),
+      votingOpen: false  // TODO: parameterise properly
     }
   }, {
     getFinalists,
