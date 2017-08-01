@@ -5,6 +5,7 @@ import { push } from 'react-router-redux'
 
 import { Card, CardHeader, CardActions } from 'material-ui/Card'
 import { List, ListItem } from 'material-ui/List'
+import Receipt from 'material-ui/svg-icons/action/receipt'
 import ThumbUp from 'material-ui/svg-icons/action/thumb-up'
 import ContentCreate from 'material-ui/svg-icons/content/create'
 import Palette from 'material-ui/svg-icons/image/palette'
@@ -14,6 +15,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes'
 import Rocket from '../../lib/rocket-icon'
 import { isWSFSMember } from '../constants'
 import MemberEdit from './MemberEdit'
+import ShowBarcode from './show-barcode'
 
 const badgeName = (member) => (
   member.get('badge_name') || member.get('preferred_name')
@@ -60,18 +62,26 @@ class MemberCard extends React.Component {
         />
       </MemberEdit>
     ]
-    if (member.get('membership') !== 'Adult') {
-      actions.push(
+    if (member.get('membership') !== 'Supporter') actions.push(
+      <ShowBarcode key='bc' memberId={member.get('id')}>
         <Action
-          key='up'
           innerDivStyle={{ paddingLeft: 60 }}
-          leftIcon={<ThumbUp />}
-          onTouchTap={() => push(`/upgrade/${id}`)}
-          primaryText='Upgrade membership'
+          leftIcon={<Receipt />}
+          primaryText='Show registration barcode'
           secondaryText=''
+        />
+      </ShowBarcode>
+    )
+    if (member.get('membership') !== 'Adult') actions.push(
+      <Action
+        key='up'
+        innerDivStyle={{ paddingLeft: 60 }}
+        leftIcon={<ThumbUp />}
+        onTouchTap={() => push(`/upgrade/${id}`)}
+        primaryText='Upgrade membership'
+        secondaryText=''
       />
     )
-    }
     if (showHugoActions && member.get('can_hugo_vote')) {
       actions.push(
         <Action
