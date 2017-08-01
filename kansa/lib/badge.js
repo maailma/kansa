@@ -79,7 +79,7 @@ function getBarcode(req, res, next) {
       FROM people p
       JOIN keys k USING (email)
  LEFT JOIN daypasses d ON (p.id = d.person_id)
-     WHERE p.id=$(id) AND key=$(key) AND membership != 'Supporter'`, { id, key }
+     WHERE p.id=$(id) ${key ? 'AND key=$(key)' : ''} AND membership != 'Supporter'`, { id, key }
   )
     .then(data => {
       const { daypass, days, member_number, membership, name, subtitle } = data
