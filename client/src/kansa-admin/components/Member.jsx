@@ -31,7 +31,7 @@ export const memberFields = [
 ]
 
 export const membershipTypes = [
-  'NonMember', 'Exhibitor', 'Supporter', 'KidInTow', 'Child', 'Youth',
+  'NonMember', 'Exhibitor', 'Helper', 'Supporter', 'KidInTow', 'Child', 'Youth',
   'FirstWorldcon', 'Adult'
 ]
 
