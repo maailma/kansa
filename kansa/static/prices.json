@@ -22,6 +22,10 @@
       "amount": 2000,
       "description": "Trader/Displayer"
     },
+    "Helper": {
+      "amount": 0,
+      "description": "Trader/Displayer"
+    },
     "Supporter": {
       "amount": 3500,
       "description": "Supporting"

@@ -10,7 +10,7 @@ SET ROLE kansa;
 
 CREATE SEQUENCE member_number_seq;
 CREATE TYPE MembershipStatus AS ENUM (
-    'NonMember', 'Exhibitor', 'Supporter', 'KidInTow',
+    'NonMember', 'Exhibitor', 'Helper', 'Supporter', 'KidInTow',
     'Child', 'Youth', 'FirstWorldcon', 'Adult'
 );
 

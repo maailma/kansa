@@ -18,6 +18,7 @@ INSERT INTO People (legal_name, email, membership, member_number, can_hugo_nomin
             ('Fan Supporter', 'supporter@example.com', 'Supporter', 68, true, true),
             ('Dupe Supporter', 'supporter@example.com', 'Supporter', 76, false, false),
             ('Fan Trader', 'trader@example.com', 'Exhibitor', 84, false, false),
+            ('Fan Helper', 'helper@example.com', 'Helper', 92, false, false),
             ('Fan Nominator', 'nominator@example.com', 'NonMember', NULL, true, false);
 
 INSERT INTO Keys
@@ -29,6 +30,7 @@ INSERT INTO Keys
             ('member@example.com', 'key'),
             ('nominator@example.com', 'key'),
             ('trader@example.com', 'key'),
+            ('helper@example.com', 'key'),
             ('supporter@example.com', 'key');
 
 ALTER SEQUENCE member_number_seq RESTART WITH 42;
