@@ -42,7 +42,7 @@ class App extends React.Component {
   handleBarcode = (code) => {
     const { people } = this.props
     if (this.state.member) return this.setState({ filter: '' })
-    const [_, isId, numStr] = code.match(/^.-(i?)(\d+)/)
+    const [_, isId, numStr] = code.match(/^..(i?)(\d+)/)
     const num = Number(numStr)
     const member = isId
       ? people.get(num)
@@ -68,7 +68,7 @@ class App extends React.Component {
     }
     return <BarcodeListener
       onBarcode={this.handleBarcode}
-      pattern={/^[A-Z]-i?\d+$/}
+      pattern={/^[A-Z].i?\d+$/}
     >
       <Toolbar
         filter={filter}
