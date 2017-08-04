@@ -122,9 +122,10 @@ function getAllPrevNames(req, res, next) {
   req.app.locals.db.any(`
     SELECT DISTINCT ON (h.id,h.legal_name)
            h.id,
+           p.member_number,
            h.legal_name AS prev_name,
-           h.timestamp::date AS time_from,
-           l.timestamp::date AS time_to,
+           to_char(h.timestamp, 'YYYY-MM-DD') AS date_from,
+           to_char(l.timestamp, 'YYYY-MM-DD') AS date_to,
            p.legal_name AS curr_name,
            p.email AS curr_email
       FROM past_names h
