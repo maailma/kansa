@@ -24,6 +24,14 @@ CREATE TABLE daypasses (
     day5 bool DEFAULT false
 );
 
+CREATE TABLE badge_and_daypass_prints (
+    person integer REFERENCES people NOT NULL,
+    timestamp timestamptz NOT NULL DEFAULT now(),
+    membership MembershipStatus NOT NULL,
+    member_number damm_code,
+    daypass integer REFERENCES daypasses
+);
+
 CREATE FUNCTION daypass_days(d daypasses) RETURNS bool[] AS $$
 BEGIN
     IF d.status IS NOT NULL THEN

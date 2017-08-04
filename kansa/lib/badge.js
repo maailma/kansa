@@ -3,7 +3,7 @@ const { AuthError } = require('./errors')
 
 const TITLE_MAX_LENGTH = 14
 
-module.exports = { getBadge, getBarcode }
+module.exports = { getBadge, getBarcode, logPrint }
 
 const splitNameInTwain = (name) => {
   name = name.trim()
@@ -114,4 +114,18 @@ function getBarcode(req, res, next) {
       }
       next(error)
     })
+}
+
+function logPrint(req, res, next) {
+  const { member_admin } = req.session.user || {}
+  if (!member_admin) return next(new AuthError())
+  const id = parseInt(req.params.id)
+  req.app.locals.db.one(`
+    INSERT INTO badge_and_daypass_prints (person, membership, member_number, daypass) (
+         SELECT p.id, p.membership, p.member_number, d.id
+           FROM people p LEFT JOIN daypasses d ON (p.id = d.person_id)
+          WHERE p.id = $1
+    ) RETURNING timestamp`, id)
+    .then(({ timestamp }) => res.json({ status: 'success', timestamp }))
+    .catch(next)
 }

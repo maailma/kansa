@@ -87,6 +87,7 @@ router.get('/people/:id/ballot', ballot.getBallot);
 router.get('/people/:id/barcode.:fmt', badge.getBarcode);
 router.get('/people/:id/log', log.getPersonLog);
 router.get('/people/:id/prev-names', people.getPrevNames);
+router.post('/people/:id/print', badge.logPrint);
 router.post('/people/:id/upgrade', upgrade.authUpgradePerson);
 
 router.post('/slack/invite', slack.invite);
