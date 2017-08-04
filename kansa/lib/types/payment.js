@@ -1,16 +1,11 @@
-const Promise = require('bluebird');
-const randomstring = require('randomstring');
-const Stripe = require('stripe');
+const Promise = require('bluebird')
+const Stripe = require('stripe')
 
-const InputError = require('./inputerror');
-const purchaseData = require('../../static/purchase-data.json');
+const purchaseData = require('../../static/purchase-data.json')
+const { generateToken } = require('../siteselect')
+const InputError = require('./inputerror')
 
-const CUSTOM_EMAIL_CATEGORIES = ['New membership', 'Paper publications', 'Upgrade membership'];
-
-const generateToken = () => randomstring.generate({
-  length: 6,
-  charset: 'ABCDEFHJKLMNPQRTUVWXY0123456789'
-});
+const CUSTOM_EMAIL_CATEGORIES = ['New membership', 'Paper publications', 'Upgrade membership']
 
 function checkData(category, data) {
   const { shape = {} } = purchaseData[category];

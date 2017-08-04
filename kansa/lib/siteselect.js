@@ -1,6 +1,25 @@
+const randomstring = require('randomstring')
 const { AuthError, InputError } = require('./errors')
 
 class Siteselect {
+  static generateToken () {
+    return randomstring.generate({
+      length: 6,
+      charset: 'ABCDEFHJKLMNPQRTUVWXY0123456789'
+    })
+  }
+
+  static parseToken (token) {
+    return token && token
+      .trim()
+      .toUpperCase()
+      .replace(/G/g, '6')
+      .replace(/I/g, '1')
+      .replace(/O/g, '0')
+      .replace(/S/g, '5')
+      .replace(/Z/g, '2')
+  }
+
   constructor(db) {
     this.db = db
     this.verifyAccess = this.verifyAccess.bind(this)
@@ -17,7 +36,7 @@ class Siteselect {
   }
 
   findToken (req, res, next) {
-    const { token } = req.params
+    const token = Siteselect.parseToken(req.params.token)
     if (!token) return res.status(404).json({ error: 'not found' })
     this.db.oneOrNone(`SELECT * FROM token_lookup WHERE token=$1`, token)
       .then(data => {
@@ -62,7 +81,7 @@ class Siteselect {
 
   vote (req, res, next) {
     const { id } = req.params
-    const { token } = req.body
+    const token = Siteselect.parseToken(req.body.token)
     let { voter_name, voter_email } = req.body
     this.db.tx(tx => tx.sequence((i, data) => { switch (i) {
       case 0:
