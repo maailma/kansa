@@ -13,4 +13,4 @@ export const categoryGroups = {
   NewWriter: []
 }
 
-export const minFinalistsPerCategory = 5
+export const minFinalistsPerCategory = 6
