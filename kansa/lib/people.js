@@ -110,7 +110,16 @@ function getPeople(req, res, next) {
 
 function getPerson(req, res, next) {
   const id = parseInt(req.params.id)
-  req.app.locals.db.one(`${selectAllPeopleData} WHERE p.id = $1`, id)
+  req.app.locals.db.one(`
+    SELECT DISTINCT ON (p.id)
+           p.*, preferred_name(p),
+           d.status AS daypass, daypass_days(d),
+           b.timestamp AS badge_print_time
+      FROM people p
+ LEFT JOIN daypasses d ON (p.id = d.person_id)
+ LEFT JOIN badge_and_daypass_prints b ON (p.id = b.person)
+     WHERE p.id = $1
+  ORDER BY p.id, b.timestamp`, id)
     .then(data => res.json(data))
     .catch(next)
 }
