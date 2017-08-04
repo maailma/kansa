@@ -70,7 +70,8 @@ class Member extends PureComponent {
         country: PropTypes.string.isRequired
       })
     }),
-    printer: PropTypes.string
+    printer: PropTypes.string,
+    setMember: PropTypes.func.isRequired
   }
 
   state = {
@@ -78,12 +79,15 @@ class Member extends PureComponent {
     sent: false
   }
 
-  componentWillReceiveProps ({ member }) {
+  componentWillReceiveProps ({ api, member, setMember }) {
     if (member && !member.equals(this.props.member)) {
       this.setState({
         member: defaultMember.merge(member),
         sent: false
       })
+      if (!this.props.member) {
+        api.GET(`people/${member.get('id')}`).then(setMember)
+      }
     }
   }
 
@@ -164,7 +168,7 @@ class Member extends PureComponent {
     const m0 = this.props.member
     return this.state.member.filter((value, key) => {
       const v0 = m0.get(key, '')
-      return Map.isMap(value) ? !value.equals(v0) : value !== v0
+      return value && value.equals ? !value.equals(v0) : value !== v0
     })
   }
 
@@ -228,5 +232,7 @@ export default connect(
   ({ registration }) => ({
     locked: registration.get('locked') || false,
     printer: registration.get('printer')
+  }), (dispatch) => ({
+    setMember: (data) => dispatch({ type: 'SET PERSON', data })
   })
 )(Member)
