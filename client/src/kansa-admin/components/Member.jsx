@@ -95,12 +95,8 @@ class Member extends PureComponent {
     const { api, handleClose, locked, member, printer } = this.props
     const { sent } = this.state
     const hasChanges = this.changes.size > 0
-    const email = member.get('email')
     const id = member.get('id')
-    const legal_name = member.get('legal_name')
-    const member_number = member.get('member_number')
     const membership = member.get('membership')
-    const paper_pubs = member.get('paper_pubs')
 
     const actions = [
       <FlatButton key='close' label='Close' onTouchTap={handleClose} />,
@@ -112,11 +108,14 @@ class Member extends PureComponent {
     ]
 
     if (!locked) {
+      const email = member.get('email')
+      const legal_name = member.get('legal_name')
+      const paper_pubs = member.get('paper_pubs')
       actions.unshift(
         <MemberLog key='log'
           getLog={() => api.GET(`people/${id}/log`)}
           id={id}
-      >
+        >
           <FlatButton label='View log' style={{ float: 'left' }} />
         </MemberLog>,
 
@@ -125,7 +124,7 @@ class Member extends PureComponent {
           paper_pubs={paper_pubs}
           name={`${legal_name} <${email}>`}
           upgrade={res => api.POST(`people/${id}/upgrade`, res)}
-      >
+        >
           <FlatButton label='Upgrade' style={{ float: 'left' }} />
         </Upgrade>,
 
@@ -135,30 +134,25 @@ class Member extends PureComponent {
             items: [invoice]
           })}
           person={member}
-      >
+        >
           <FlatButton label='New invoice' style={{ float: 'left' }} />
         </NewInvoice>
-    )
+      )
     }
 
-    if (printer && member_number) {
+    const daypass = member.get('daypass')
+    if (printer && membership !== 'Supporter' && (membership !== 'NonMember' || daypass)) {
+      let label = daypass ? 'Claim daypass' : 'Print badge'
+      if (member.get('badge_print_time')) label = 'Re-' + label
+      if (hasChanges) label = 'Save & ' + label
       actions.unshift(
         <FlatButton
           disabled={sent || !this.valid}
-          label={hasChanges ? 'Save & Print badge' : 'Print badge'}
-          onTouchTap={() => {
-            const [pu, pn] = printer.split('#')
-            return printBadge(pu, pn, this.state.member)
-            .catch(err => {
-              console.error('Badge print failed!', err)
-              window.alert('Badge print failed! ' + (err.message || err.statusText || err.status))
-            })
-            .then(() => hasChanges ? this.save() : null)
-            .then(handleClose)
-          }}
+          label={label}
+          onTouchTap={this.handleBadgePrint}
           style={{ float: 'left' }}
-      />
-    )
+        />
+      )
     }
 
     return actions
@@ -176,6 +170,32 @@ class Member extends PureComponent {
     return memberIsValid(this.state.member)
   }
 
+  handleBadgePrint = () => {
+    const { api, handleClose, member, printer } = this.props
+    const hasChanges = this.changes.size > 0
+    const prev = member.get('badge_print_time')
+    const print = !prev || window.confirm([
+      'Are you sure?', '',
+      member.get('daypass') ? 'Daypass was already claimed at:' : 'Badge was already printed at:',
+      new Date(prev).toLocaleString('en-GB', {
+        hour12: false,
+        weekday: 'long', day: 'numeric', month: 'short', hour: 'numeric', minute: 'numeric'
+      })
+    ].join('\n'))
+    if (print) {
+      const [pu, pn] = printer.split('#')
+      printBadge(pu, pn, this.state.member)
+        .catch(err => {
+          console.error('Badge print failed!', err)
+          window.alert('Badge print failed! ' + (err.message || err.statusText || err.status))
+          throw err
+        })
+        .then(() => api.POST(`people/${member.get('id')}/print`))
+        .then(() => hasChanges ? this.save() : null)
+        .then(handleClose)
+    }
+  }
+
   save () {
     const { api, member } = this.props
     this.setState({ sent: true })
@@ -183,6 +203,7 @@ class Member extends PureComponent {
       .catch(err => {
         console.error('Member save failed!', err)
         window.alert('Member save failed! ' + err.message)
+        throw err
       })
   }
 
