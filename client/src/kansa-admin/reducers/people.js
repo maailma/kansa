@@ -10,7 +10,9 @@ const fixPerson = (person) => {
     person.membership = `DP ${person.daypass} ${days}`
   }
   [
-    'legal_name', 'email', 'public_first_name', 'public_last_name',
+    'legal_name', 'email',
+    'badge_name', 'badge_subtitle',
+    'public_first_name', 'public_last_name',
     'city', 'state', 'country'
   ].forEach(key => {
     if (!person[key]) person[key] = ''

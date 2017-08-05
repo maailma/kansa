@@ -12,6 +12,16 @@ const publicName = (person) => ['public_first_name', 'public_last_name']
   .join(' ')
   .trim()
 
+const name = (person) => {
+  const legal = person.get('legal_name')
+  const pub = publicName(person)
+  const badge = person.get('badge_name')
+  const names = [legal]
+  if (pub && (pub !== legal)) names.push(pub)
+  if (badge && (badge !== pub) && (badge !== legal)) names.push(badge)
+  return names.join(' / ')
+}
+
 const publicSortName = (person) => ['public_last_name', 'public_first_name']
   .map(k => person.get(k))
   .filter(v => !!v)
@@ -90,17 +100,13 @@ class MemberTable extends PureComponent {
                 onRowClick={({ index }) => this.props.onMemberSelect(list.get(index))}
               >
                 <Column dataKey='member_number' label='#' width={50} />
-                <Column dataKey='membership' label='Type' width={80} />
-                <Column dataKey='legal_name' label='Name' width={120} flexGrow={1} />
+                <Column dataKey='membership' label='Type' width={150} />
+                <Column dataKey='legal_name' label='Name' width={240} flexGrow={1}
+                  cellDataGetter={({ rowData }) => name(rowData)}
+                />
                 <Column dataKey='email' label='Email' width={210} />
-                <Column dataKey='public_name' label='Public' width={120} flexGrow={1}
-                  cellDataGetter={({ rowData }) => publicName(rowData)}
-                />
-                <Column dataKey='loc' label='Location' width={120} flexGrow={1}
+                <Column dataKey='loc' label='Location' width={80} flexGrow={1}
                   cellDataGetter={({ rowData }) => fullLocation(rowData)}
-                />
-                <Column dataKey='last_modified' label='Mod' width={90}
-                  cellDataGetter={({ dataKey, rowData }) => rowData.get(dataKey).substr(0, 10)}
                 />
               </Table>
             ) }
