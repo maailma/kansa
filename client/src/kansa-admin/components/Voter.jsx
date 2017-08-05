@@ -3,8 +3,9 @@ import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import TextField from 'material-ui/TextField'
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { Component } from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
+import { connect } from 'react-redux'
 
 import TokenSelector from './TokenSelector'
 
@@ -12,7 +13,7 @@ const styles = {
   noVote: { color: 'black', fontWeight: 'bold', paddingTop: 20, textAlign: 'right' }
 }
 
-export default class Voter extends React.Component {
+class Voter extends Component {
   static propTypes = {
     api: PropTypes.object.isRequired,
     member: ImmutablePropTypes.mapContains({
@@ -26,7 +27,8 @@ export default class Voter extends React.Component {
       state: PropTypes.string,
       city: PropTypes.string
     }),
-    onClose: PropTypes.func.isRequired
+    onClose: PropTypes.func.isRequired,
+    showMessage: PropTypes.func.isRequired
   }
 
   static voterTypes = ['Supporter', 'Youth', 'FirstWorldcon', 'Adult']
@@ -71,14 +73,17 @@ export default class Voter extends React.Component {
   }
 
   vote = () => {
-    const { api, member, onClose } = this.props
-    const { token, voter_name, voter_email } = this.state
+    const { api, member, onClose, showMessage } = this.props
+    const { token } = this.state
+    const voter_name = this.state.voter_name.trim() || member.get('legal_name')
+    const voter_email = this.state.voter_email.trim() || member.get('email')
     this.setState({ sent: true })
     api.POST(`siteselect/voters/${member.get('id')}`, {
       token: token ? token.token : null,
-      voter_name: voter_name.trim() || member.get('legal_name'),
-      voter_email: voter_email.trim() || member.get('email')
+      voter_name,
+      voter_email
     })
+      .then(() => showMessage(`Vote registered for ${voter_name}`))
       .then(onClose)
       .catch(err => {
         console.error(err)
@@ -152,3 +157,9 @@ export default class Voter extends React.Component {
     )
   }
 }
+
+export default connect(
+  null, (dispatch) => ({
+    showMessage: (message) => dispatch({ type: 'SET MESSAGE', message })
+  })
+)(Voter)

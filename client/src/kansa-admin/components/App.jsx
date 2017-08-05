@@ -1,4 +1,5 @@
 import { List, Map } from 'immutable'
+import Snackbar from 'material-ui/Snackbar'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { connect } from 'react-redux'
@@ -11,6 +12,8 @@ import Toolbar from './Toolbar'
 class App extends React.Component {
   static propTypes = {
     api: PropTypes.object.isRequired,
+    hideMessage: PropTypes.func.isRequired,
+    message: PropTypes.string,
     people: PropTypes.instanceOf(List).isRequired,
     user: PropTypes.instanceOf(Map).isRequired
   }
@@ -59,7 +62,7 @@ class App extends React.Component {
   }
 
   render () {
-    const { api, user } = this.props
+    const { api, hideMessage, message, user } = this.props
     const { filter, member, scene } = this.state
     if (!Map.isMap(user) || user.size === 0) {
       return <div>Login required.</div>
@@ -82,7 +85,6 @@ class App extends React.Component {
         ref={ref => { this.toolbar = ref && ref.getWrappedInstance() }}
         scene={scene}
       />
-
       {scene === 'people' ? (
         <PeopleScene
           api={api}
@@ -98,13 +100,23 @@ class App extends React.Component {
           onPaymentSelect={payment => console.log('payment', payment.toJS())}
         />
       )}
+      <Snackbar
+        autoHideDuration={3000}
+        bodyStyle={{ height: 'auto', lineHeight: '22px', opacity: 0.85, paddingBottom: 13, paddingTop: 13 }}
+        message={message}
+        onRequestClose={hideMessage}
+        open={!!message}
+      />
     </BarcodeListener>
   }
 }
 
 export default connect(
-  ({ people, user }) => ({
+  ({ app, people, user }) => ({
+    message: app.get('message'),
     people,
     user
+  }), (dispatch) => ({
+    hideMessage: () => dispatch({ type: 'SET MESSAGE', message: '' })
   })
 )(App)

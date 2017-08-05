@@ -71,7 +71,8 @@ class Member extends PureComponent {
       })
     }),
     printer: PropTypes.string,
-    setMember: PropTypes.func.isRequired
+    setMember: PropTypes.func.isRequired,
+    showMessage: PropTypes.func.isRequired
   }
 
   state = {
@@ -92,7 +93,7 @@ class Member extends PureComponent {
   }
 
   get actions () {
-    const { api, handleClose, locked, member, printer } = this.props
+    const { api, handleClose, locked, member, printer, showMessage } = this.props
     const { sent } = this.state
     const hasChanges = this.changes.size > 0
     const id = member.get('id')
@@ -123,7 +124,9 @@ class Member extends PureComponent {
           membership={membership}
           paper_pubs={paper_pubs}
           name={`${legal_name} <${email}>`}
-          upgrade={res => api.POST(`people/${id}/upgrade`, res)}
+          upgrade={res => api.POST(`people/${id}/upgrade`, res)
+            .then(() => showMessage(`${legal_name} upgraded`))
+          }
         >
           <FlatButton label='Upgrade' style={{ float: 'left' }} />
         </Upgrade>,
@@ -132,7 +135,7 @@ class Member extends PureComponent {
           onSubmit={invoice => api.POST(`purchase/invoice`, {
             email,
             items: [invoice]
-          })}
+          }).then(() => showMessage(`Invoice created for ${legal_name}`))}
           person={member}
         >
           <FlatButton label='New invoice' style={{ float: 'left' }} />
@@ -149,7 +152,9 @@ class Member extends PureComponent {
         <FlatButton
           disabled={sent || !this.valid}
           label={label}
-          onTouchTap={this.handleBadgePrint}
+          onTouchTap={() => this.handleBadgePrint()
+            .then(() => showMessage(`${daypass ? 'Daypass claimed' : 'Badge printed'} for ${member.get('preferred_name')}`))
+          }
           style={{ float: 'left' }}
         />
       )
@@ -182,24 +187,24 @@ class Member extends PureComponent {
         weekday: 'long', day: 'numeric', month: 'short', hour: 'numeric', minute: 'numeric'
       })
     ].join('\n'))
-    if (print) {
-      const [pu, pn] = printer.split('#')
-      printBadge(pu, pn, this.state.member)
-        .catch(err => {
-          console.error('Badge print failed!', err)
-          window.alert('Badge print failed! ' + (err.message || err.statusText || err.status))
-          throw err
-        })
-        .then(() => api.POST(`people/${member.get('id')}/print`))
-        .then(() => hasChanges ? this.save() : null)
-        .then(handleClose)
-    }
+    if (!print) return Promise.reject()
+    const [pu, pn] = printer.split('#')
+    return printBadge(pu, pn, this.state.member)
+      .catch(err => {
+        console.error('Badge print failed!', err)
+        window.alert('Badge print failed! ' + (err.message || err.statusText || err.status))
+        throw err
+      })
+      .then(() => api.POST(`people/${member.get('id')}/print`))
+      .then(() => hasChanges ? this.save() : null)
+      .then(handleClose)
   }
 
   save () {
-    const { api, member } = this.props
+    const { api, member, showMessage } = this.props
     this.setState({ sent: true })
     return api.POST(`people/${member.get('id')}`, this.changes.toJS())
+      .then(() => showMessage(`Data saved for ${member.get('preferred_name')}`))
       .catch(err => {
         console.error('Member save failed!', err)
         window.alert('Member save failed! ' + err.message)
@@ -254,6 +259,7 @@ export default connect(
     locked: registration.get('locked') || false,
     printer: registration.get('printer')
   }), (dispatch) => ({
-    setMember: (data) => dispatch({ type: 'SET PERSON', data })
+    setMember: (data) => dispatch({ type: 'SET PERSON', data }),
+    showMessage: (message) => dispatch({ type: 'SET MESSAGE', message })
   })
 )(Member)
