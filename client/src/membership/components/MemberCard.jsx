@@ -13,7 +13,9 @@ import LocationCity from 'material-ui/svg-icons/social/location-city'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import Rocket from '../../lib/rocket-icon'
-import { isWSFSMember } from '../constants'
+import SlackIcon from '../../lib/slack-icon'
+import { requestSlackInvite } from '../actions'
+import { isAttendingMember, isWSFSMember } from '../constants'
 import MemberEdit from './MemberEdit'
 import ShowBarcode from './show-barcode'
 
@@ -41,13 +43,15 @@ class MemberCard extends React.Component {
       paper_pubs: ImmutablePropTypes.map
     }),
     push: PropTypes.func.isRequired,
+    requestSlackInvite: PropTypes.func.isRequired,
     showHugoActions: PropTypes.bool
   }
 
   get actions () {
-    const { member, push, showHugoActions } = this.props
+    const { member, push, requestSlackInvite, showHugoActions } = this.props
     const id = member.get('id')
     const infoStyle = { color: 'rgba(0, 0, 0, 0.870588)' }
+    const membership = member.get('membership')
     const actions = [
       <MemberEdit key='ed' member={member}>
         <Action
@@ -62,8 +66,8 @@ class MemberCard extends React.Component {
         />
       </MemberEdit>
     ]
-    if (member.get('membership') !== 'Supporter') actions.push(
-      <ShowBarcode key='bc' memberId={member.get('id')}>
+    if (membership !== 'Supporter' && (membership !== 'NonMember' || member.get('daypass'))) actions.push(
+      <ShowBarcode key='bc' memberId={id}>
         <Action
           innerDivStyle={{ paddingLeft: 60 }}
           leftIcon={<Receipt />}
@@ -72,7 +76,7 @@ class MemberCard extends React.Component {
         />
       </ShowBarcode>
     )
-    if (member.get('membership') !== 'Adult') actions.push(
+    if (membership !== 'Adult') actions.push(
       <Action
         key='up'
         innerDivStyle={{ paddingLeft: 60 }}
@@ -90,8 +94,8 @@ class MemberCard extends React.Component {
           leftIcon={<Rocket />}
           onTouchTap={() => push(`/hugo/${id}/vote`)}
           primaryText='Vote for the Hugo Awards'
-      />
-    )
+        />
+      )
     }
     if (showHugoActions && member.get('can_hugo_nominate')) {
       actions.push(
@@ -101,8 +105,8 @@ class MemberCard extends React.Component {
           leftIcon={<Rocket />}
           onTouchTap={() => push(`/hugo/${id}/nominate`)}
           primaryText='Nominate for the Hugo Awards'
-      />
-    )
+        />
+      )
     }
     if (isWSFSMember(member)) {
       actions.push(
@@ -112,16 +116,27 @@ class MemberCard extends React.Component {
           leftIcon={<LocationCity />}
           onTouchTap={() => push(`/pay/ss-token`)}
           primaryText='Buy a site selection token'
-      />,
+        />
+        /*,
         <Action
           key='as'
           innerDivStyle={{ paddingLeft: 60 }}
           leftIcon={<Palette />}
           onTouchTap={() => push(`/exhibition/${id}`)}
           primaryText='Register for the Art Show'
+        />
+        */
+      )
+    }
+    if (isAttendingMember(member)) actions.push(
+      <Action
+        key='slack'
+        innerDivStyle={{ paddingLeft: 60 }}
+        leftIcon={<SlackIcon />}
+        onTouchTap={requestSlackInvite}
+        primaryText='Request Slack invite'
       />
     )
-    }
     return actions
   }
 
@@ -158,5 +173,6 @@ class MemberCard extends React.Component {
 }
 
 export default connect(null, {
-  push
+  push,
+  requestSlackInvite
 })(MemberCard)
