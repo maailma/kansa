@@ -189,7 +189,7 @@ class Member extends PureComponent {
     ].join('\n'))
     if (!print) return Promise.reject()
     const [pu, pn] = printer.split('#')
-    return printBadge(pu, pn, this.state.member)
+    return (member.get('daypass') ? Promise.resolve() : printBadge(pu, pn, this.state.member))
       .catch(err => {
         console.error('Badge print failed!', err)
         window.alert('Badge print failed! ' + (err.message || err.statusText || err.status))
