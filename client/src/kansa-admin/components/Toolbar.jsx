@@ -70,6 +70,7 @@ class SearchBox extends Component {
           underlineShow={false}
           value={filter}
           onChange={(_, value) => onChange(value)}
+          onFocus={ev => ev.target.select()}
           onKeyDown={({ key }) => {
             if (key === 'Enter') onSubmit()
           }}
