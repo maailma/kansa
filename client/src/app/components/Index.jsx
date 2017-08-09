@@ -91,13 +91,13 @@ class Index extends Component {
           <CardHeader
             className='action-head'
             textStyle={{ paddingRight: 0 }}
-            title='Online attending member sales have ended'
+            title='Attending membership sales have ended'
             style={{ fontWeight: 600, marginBottom: 16 }}
           />
           <CardText
             style={{ paddingTop: 0 }}
           >
-            <p>Worldcon 75 has closed all advance day pass and attending membership sales. <a href="http://www.worldcon.fi/news/closure-membership-sales/">Full announcement</a></p>
+            <p>Worldcon 75 has closed all advance day pass and all attending membership sales. <a href="http://www.worldcon.fi/news/closure-membership-sales/">Full announcement</a></p>
           </CardText>
         </Card>
         <NewMemberCard
