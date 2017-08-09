@@ -9,12 +9,7 @@ import App from './app/components/App'
 import Index from './app/components/Index'
 import Nominate from './hugo-nominations/components/Nominate'
 import Vote from './hugo-votes'
-import NewDaypassForm from './membership/components/NewDaypassForm'
 import NewMemberForm from './membership/components/NewMemberForm'
-import NewMemberIndex from './membership/components/NewMemberIndex'
-import TekMemberForm from './membership/components/TekMemberForm'
-import TekMemberIndex from './membership/components/TekMemberIndex'
-import Upgrade from './membership/components/Upgrade'
 import Payments from './payments'
 import NewPayment from './payments/new-payment'
 import ExhibitRegistration from './raami/components/Registration'
@@ -81,17 +76,13 @@ export default class AppRouter extends Route {
           <Redirect from='profile' to='/' />
           <Route path='exhibition/:id' component={ExhibitRegistration} onEnter={this.requireAuth} />
           {hugoRoutes('hugo', this.requireAuth)}
-          <Route path='daypass/:type' component={NewDaypassForm} />
-          <Route path='new' component={NewMemberIndex} />
+          <Redirect from='daypass*' to-='/' />
+          <Redirect from='new' to='/' />
           <Route path='new/:membership' component={NewMemberForm} />
           <Route path='pay' component={Payments} />
           <Route path='pay/:type' component={NewPayment} />
-          <Route path='tek' component={TekMemberIndex} />
-          <Route path='tek/:membership' component={TekMemberForm} />
-          <Route path='upgrade' onEnter={this.requireAuth}>
-            <IndexRoute component={Upgrade} />
-            <Route path=':id' component={Upgrade} />
-          </Route>
+          <Redirect from='tek*' to='/' />
+          <Redirect from='upgrade*' to='/' />
         </Route>
       </Router>
     )

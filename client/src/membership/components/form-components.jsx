@@ -5,8 +5,9 @@ import SelectField from 'material-ui/SelectField'
 import TextField from 'material-ui/TextField'
 
 import { midGray, orange } from '../../theme'
-import { membershipTypes } from '../constants'
 import messages from '../messages'
+
+const membershipTypes = ['Supporter']
 
 export const TextInput = ({ getDefaultValue, getValue, inputRef, label, lc = 'en', onChange, path = [], required, style = {}, ...props }) => {
   if (!Array.isArray(path)) path = [ path ]
