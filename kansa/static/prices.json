@@ -19,7 +19,7 @@
   },
   "memberships": {
     "Exhibitor": {
-      "amount": 2000,
+      "amount": 99500,
       "description": "Trader/Displayer"
     },
     "Helper": {
@@ -35,19 +35,19 @@
       "description": "Kid-in-tow"
     },
     "Child": {
-      "amount": 7500,
+      "amount": 99500,
       "description": "Child"
     },
     "Youth": {
-      "amount": 11000,
+      "amount": 99500,
       "description": "Youth"
     },
     "FirstWorldcon": {
-      "amount": 19500,
+      "amount": 99500,
       "description": "First Worldcon"
     },
     "Adult": {
-      "amount": 19500,
+      "amount": 99500,
       "description": "Adult"
     }
   },

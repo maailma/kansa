@@ -134,19 +134,19 @@
     "types": [
       {
         "key": "Adult",
-        "amount": 19500,
+        "amount": 99500,
         "label": "Adult"
       }, {
         "key": "FirstWorldcon",
-        "amount": 19500,
+        "amount": 99500,
         "label": "First Worldcon"
       }, {
         "key": "Youth",
-        "amount": 11000,
+        "amount": 99500,
         "label": "Youth"
       }, {
         "key": "Child",
-        "amount": 7500,
+        "amount": 99500,
         "label": "Child"
       }, {
         "key": "KidInTow",
