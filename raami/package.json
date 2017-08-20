@@ -1,8 +1,10 @@
 {
   "name": "raami",
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "description": "API for art show",
   "private": true,
   "license": "Apache-2.0",
+  "repository": "worldcon75/api",
   "scripts": {
     "start": "node --debug ./bin/www"
   },
