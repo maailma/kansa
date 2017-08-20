@@ -6,7 +6,7 @@ const startDate = '2015-08-18'
 const src = process.argv[2]
 const csv = src && fs.readFileSync(src, { encoding: 'utf8' })
 const data = csv && csvParseSync(csv, { columns: true, skip_empty_lines: true })
-if (!data) throw new Error('No data!? Usage: node timeline.js data.csv')
+if (!data) throw new Error('No data!? Usage: node index.js data.csv')
 
 const dates = {}
 data.forEach(({ add_date, add_ms, up_date, up_ms }) => {
