@@ -43,7 +43,7 @@ DECLARE
     ct text;
 BEGIN
     cn := coalesce(initcap(trim(c)), '');
-    SELECT country INTO ct FROM countries WHERE entry = cn;
+    SELECT country INTO ct FROM kansa.countries WHERE entry = cn;
     RETURN coalesce(ct, cn);
 END;
 $$ LANGUAGE plpgsql;
