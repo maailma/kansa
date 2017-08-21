@@ -1,14 +1,10 @@
 {
   "name": "hugo-server",
-  "version": "0.1.0",
-  "description": "API for Hugo nominations & votes",
-  "author": "",
+  "version": "1.0.0",
+  "description": "API for Hugo Awards",
   "private": true,
-  "license": "UNLICENSED",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/worldcon75/api.git"
-  },
+  "license": "Apache-2.0",
+  "repository": "worldcon75/api",
   "scripts": {
     "start": "node server"
   },

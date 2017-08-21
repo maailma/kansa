@@ -1,13 +1,10 @@
 {
   "name": "kyyhky",
-  "version": "0.1.0",
-  "description": "Email queuing service for the hugo & kansa servers",
-  "author": "",
+  "version": "1.0.0",
+  "description": "Email queuing & Sendgrid data sync",
+  "private": true,
   "license": "Apache-2.0",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/worldcon75/api.git"
-  },
+  "repository": "worldcon75/api",
   "dependencies": {
     "debug": "^2.6.1",
     "kue": "^0.11.5",

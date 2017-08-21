@@ -1,13 +1,13 @@
 {
   "name": "hugo-importer",
   "version": "1.0.0",
-  "description": "",
-  "main": "import.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
+  "description": "Importer for Hugo nominations",
+  "private": true,
   "license": "Apache-2.0",
+  "repository": "worldcon75/api",
+  "scripts": {
+    "start": "node import.js"
+  },
   "dependencies": {
     "colors": "^1.1.2",
     "csv-parse": "^1.2.0",
