@@ -1,12 +1,17 @@
 {
   "name": "kansa-importer",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Import CSV data to Kansa",
+  "author": "",
   "private": true,
-  "license": "Apache-2.0",
-  "repository": "worldcon75/api",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/worldcon75/api.git"
+  },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "colors": "^1.1.2",

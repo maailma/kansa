@@ -1,10 +1,14 @@
 {
   "name": "kansa-server",
-  "version": "1.0.0",
-  "description": "API for members",
+  "version": "0.1.0",
+  "description": "API & database for members",
+  "author": "",
   "private": true,
-  "license": "Apache-2.0",
-  "repository": "worldcon75/api",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/worldcon75/api.git"
+  },
   "scripts": {
     "start": "node server"
   },
