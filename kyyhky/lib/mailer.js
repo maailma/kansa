@@ -19,7 +19,7 @@ function nominationsString(data) {
 
 function paymentDataString(data, shape, ignored) {
   if (!data) return '';
-  const label = (key) => shape && shape[key] && shape[key].label || key;
+  const label = (key) => shape && (shape.find(s => s.key === key) || {}).label || key;
   return Object.keys(data)
     .filter(key => key && data[key] && !ignored[key])
     .map(key => `${label(key)}: ${data[key]}`)

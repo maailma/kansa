@@ -182,7 +182,7 @@ class Purchase {
       const items = passPeople.map(p => ({
         amount: p.passAmount,
         currency: 'eur',
-        category: 'Day pass',
+        category: 'daypass',
         person_name: p.preferredName,
         type: `daypass-${p.data.membership}`,
         data: p.data
@@ -236,7 +236,7 @@ class Purchase {
       const newMemberPaymentItems = newMembers.map(p => ({
         amount: p.priceAsNewMember,
         currency: 'eur',
-        category: 'New membership',
+        category: 'new_member',
         person_name: p.preferredName,
         type: p.data.membership,
         data: p.data
@@ -246,7 +246,7 @@ class Purchase {
         currency: 'eur',
         person_id: u.id,
         person_name: u.name,
-        category: 'Upgrade membership',
+        category: 'upgrade',
         type: 'upgrade',
         data: { membership: u.membership, paper_pubs: u.paper_pubs || undefined },
       }));

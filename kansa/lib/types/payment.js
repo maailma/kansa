@@ -5,24 +5,18 @@ const purchaseData = require('../../static/purchase-data.json')
 const { generateToken } = require('../siteselect')
 const InputError = require('./inputerror')
 
-const CUSTOM_EMAIL_CATEGORIES = ['New membership', 'Paper publications', 'Upgrade membership']
-
 function checkData(category, data) {
-  const { shape = {} } = purchaseData[category];
-  const missing = Object.keys(shape).filter(key => (
-    shape[key].required && !data[key] && data[key] !== false
-  ));
-  const badType = Object.keys(shape || {}).filter(key => {
+  const { shape = [] } = purchaseData[category];
+  const missing = shape.filter(({ key, required }) => (
+    required && !data[key] && data[key] !== false
+  )).map(({ key }) => key);
+  const badType = shape.filter(({ key, type, values }) => {
     if (missing.indexOf(key) !== -1) return false;
-    const src = shape[key];
     const tgt = data[key];
     if (!tgt) return false;
-    if (src.type && (typeof tgt) !== src.type) return true;
-    if (src.values && (
-      Object.keys(src.values).every(key => tgt !== key)
-    )) return true;
-    return false;
-  });
+    return (type && (typeof tgt) !== type) ||
+      (values && Object.keys(values).every(value => tgt !== value));
+  }).map(({ key }) => key);
   return missing.length || badType.length ? { missing, badType } : null;
 }
 
@@ -143,7 +137,7 @@ class Payment {
         const personIds = Object.keys(this.items.reduce((set, item) => {
           const id = Number(item.person_id);
           if (id > 0 && !item.person_email &&
-            CUSTOM_EMAIL_CATEGORIES.indexOf(item.category) === -1
+            !purchaseData[item.category].custom_email
           ) set[id] = true;
           return set;
         }, {}));

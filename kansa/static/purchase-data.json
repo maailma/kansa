@@ -1,78 +1,89 @@
 {
-  "Advance Supporting Membership Fee for the 2019 Worldcon": {
+  "siteselect": {
+    "label": "Advance Supporting Membership Fee for the 2019 Worldcon",
     "account": "worldcon77",
-    "allowCreate": false,
+    "listed": true,
     "description": "<p>You (or someone else you pay for) will receive a <b>voting token</b> to be entered on the site selection ballot as proof of payment, which will allow you to submit a vote for where the 77th Worldcon will be held in 2019. You can vote in advance by postal mail or in person at Worldcon 75. Your ballot will NOT be counted unless you provide this proof of payment of the Advance Supporting Membership Fee for the 2019 Worldcon. You will receive your voting token via email.</p><p><b>Worldcon Site Selection Ballot</b>: <a href=\"http://www.worldcon.fi/wsfs/site-selection/\" target=\"_blank\">Click here</a> to find a printable copy of the Worldcon Site Selection ballot to download.</p>",
-    "disabled": ["invoice", "comments"],
-    "shape": {
-      "token": {
+    "shape": [
+      {
+        "key": "token",
         "generated": true,
         "label": "Token",
         "required": true,
         "type": "string"
       }
-    },
+    ],
     "types": [{
       "key": "ss-token",
       "amount": 4000,
       "label": "Site Selection Voting Fee"
     }]
   },
-  "Day pass": {
-    "allowCreate": true,
+  "daypass": {
+    "label": "Day pass",
+    "allow_create_account": true,
     "allow_new_email": true,
-    "shape": {
-      "day1": {
+    "shape": [
+      {
+        "key": "day1",
         "label": "Wednesday",
         "type": "boolean"
-      },
-      "day2": {
+      }, {
+        "key": "day2",
         "label": "Thursday",
         "type": "boolean"
-      },
-      "day3": {
+      }, {
+        "key": "day3",
         "label": "Friday",
         "type": "boolean"
-      },
-      "day4": {
+      }, {
+        "key": "day4",
         "label": "Saturday",
         "type": "boolean"
-      },
-      "day5": {
+      }, {
+        "key": "day5",
         "label": "Sunday",
         "type": "boolean"
-      },
-      "legal_name": {
+      }, {
+        "key": "legal_name",
         "label": "Legal name",
         "required": true,
         "type": "string"
-      },
-      "email": {
+      }, {
+        "key": "email",
         "label": "Email",
         "required": true,
         "type": "string"
-      },
-      "public_first_name": {
+      }, {
+        "key": "public_first_name",
         "label": "Public first name",
         "type": "string"
-      },
-      "public_last_name": {
+      }, {
+        "key": "public_last_name",
         "label": "Public last name",
         "type": "string"
-      },
-      "city": {
+      }, {
+        "key": "city",
         "label": "City",
         "type": "string"
-      },
-      "state": {
+      }, {
+        "key": "state",
         "label": "State/province",
         "type": "string"
-      },
-      "country": {
+      }, {
+        "key": "country",
         "label": "Country",
         "type": "string"
+      }, {
+        "key": "invoice",
+        "label": "Invoice number",
+        "type": "string"
+      }, {
+        "key": "comments",
+        "label": "Comments",
+        "type": "string"
       }
-    },
+    ],
     "types": [
       {
         "key": "daypass-Adult",
@@ -84,53 +95,62 @@
         "key": "daypass-Child",
         "label": "Child (from €10/day)"
       }
-    ],
-    "unlisted": true
+    ]
   },
-  "New membership": {
-    "allowCreate": true,
+  "new_member": {
+    "label": "New membership",
+    "allow_create_account": true,
     "allow_new_email": true,
-    "shape": {
-      "membership": {
+    "shape": [
+      {
+        "key": "membership",
         "label": "Membership type",
         "required": true,
         "type": "string"
-      },
-      "legal_name": {
+      }, {
+        "key": "legal_name",
         "label": "Legal name",
         "required": true,
         "type": "string"
-      },
-      "email": {
+      }, {
+        "key": "email",
         "label": "Email",
         "required": true,
         "type": "string"
-      },
-      "public_first_name": {
+      }, {
+        "key": "public_first_name",
         "label": "Public first name",
         "type": "string"
-      },
-      "public_last_name": {
+      }, {
+        "key": "public_last_name",
         "label": "Public last name",
         "type": "string"
-      },
-      "city": {
+      }, {
+        "key": "city",
         "label": "City",
         "type": "string"
-      },
-      "state": {
+      }, {
+        "key": "state",
         "label": "State/province",
         "type": "string"
-      },
-      "country": {
+      }, {
+        "key": "country",
         "label": "Country",
         "type": "string"
-      },
-      "paper_pubs": {
+      }, {
+        "key": "paper_pubs",
         "label": "Paper publications",
         "type": "object"
+      }, {
+        "key": "invoice",
+        "label": "Invoice number",
+        "type": "string"
+      }, {
+        "key": "comments",
+        "label": "Comments",
+        "type": "string"
       }
-    },
+    ],
     "types": [
       {
         "key": "Adult",
@@ -157,45 +177,61 @@
         "amount": 3500,
         "label": "Supporting"
       }
-    ],
-    "unlisted": true
+    ]
   },
-  "Paper publications": {
-    "allowCreate": false,
-    "shape": {
-      "name": {
+  "paper_pubs": {
+    "label": "Paper publications",
+    "shape": [
+      {
+        "key": "name",
         "label": "Paper pubs name",
         "required": true,
         "type": "string"
-      },
-      "address": {
+      }, {
+        "key": "address",
         "label": "Paper pubs address",
         "required": true,
         "type": "string"
-      },
-      "country": {
+      }, {
+        "key": "country",
         "label": "Paper pubs country",
         "required": true,
         "type": "string"
+      }, {
+        "key": "invoice",
+        "label": "Invoice number",
+        "type": "string"
+      }, {
+        "key": "comments",
+        "label": "Comments",
+        "type": "string"
       }
-    },
+    ],
     "types": [
       {
         "key": "paper_pubs",
         "amount": 1000,
         "label": "Paper publications"
       }
-    ],
-    "unlisted": true
+    ]
   },
-  "Exhibits": {
-    "allowCreate": false,
-    "shape": {
-      "count": {
+  "exhibits": {
+    "label": "Exhibits",
+    "shape": [
+      {
+        "key": "count",
         "label": "Number of items",
         "type": "string"
+      }, {
+        "key": "invoice",
+        "label": "Invoice number",
+        "type": "string"
+      }, {
+        "key": "comments",
+        "label": "Comments",
+        "type": "string"
       }
-    },
+    ],
     "types": [
       {
         "key": "art-board",
@@ -270,12 +306,21 @@
         "amount": 2000,
         "label": "Fan table - electricity"
       }
-    ],
-    "unlisted": true
+    ]
   },
-  "Trips And Tours": {
-    "allowCreate": false,
-    "shape": {},
+  "trips_tours": {
+    "label": "Trips And Tours",
+    "shape": [
+      {
+        "key": "invoice",
+        "label": "Invoice number",
+        "type": "string"
+      }, {
+        "key": "comments",
+        "label": "Comments",
+        "type": "string"
+      }
+    ],
     "types": [
       {
         "key": "solar-system-tour",
@@ -297,19 +342,29 @@
         "amount": 3000,
         "label": "Spårakoff Ride (Thursday)"
       }
-    ],
-    "unlisted": true
+    ]
   },
-  "Sponsorship": {
-    "allowCreate": true,
+  "sponsor": {
+    "label": "Sponsorship",
+    "allow_create_account": true,
+    "listed": true,
     "description": "The problem with travelling is the waiting. The long wait for a space elevator capsule or dragon caravan (or for that programme item you really want to see) can get quite dull. Why not sponsor a craft lounge to help con-goers pass the time? Or sponsor a bench, and give weary convention members somewhere to put their feet up when they've spent too long wandering around the halls.",
-    "shape": {
-      "sponsor": {
+    "shape": [
+      {
+        "key": "sponsor",
         "label": "Sponsor name",
         "required": true,
         "type": "string"
+      }, {
+        "key": "invoice",
+        "label": "Invoice number",
+        "type": "string"
+      }, {
+        "key": "comments",
+        "label": "Comments",
+        "type": "string"
       }
-    },
+    ],
     "types": [
       {
         "key": "bench",
@@ -322,61 +377,94 @@
         "description": "<p>The problem with travelling is the waiting. The long wait for a space elevator capsule or dragon caravan (or for that programme item you really want to see) can get quite dull. Why not sponsor a craft lounge to help con-goers pass the time? Origami, knitting, coloring pages, paper constructions—we have a long list of suggestions and we’re open to other ideas too.</p><p>Craft space sponsorships include a sign and a set of themed posters for you to keep. You’re also welcome to keep any left-over craft supplies if you would like (or we will donate them to a good cause).</p><p>For queries, contact <a href=\"mailto:exhibits@worldcon.fi\">exhibits@worldcon.fi</a>. If your sponsorship is received in time, it will be acknowledged on the Worldcon75 website and in the programme book.</p>",
         "label": "Craft lounge"
       }
-    ],
-    "variableAmount": true
+    ]
   },
-  "Upgrade membership": {
-    "allowCreate": false,
-    "shape": {
-      "membership": {
+  "upgrade": {
+    "label": "Upgrade membership",
+    "shape": [
+      {
+        "key": "membership",
         "label": "Membership type",
         "type": "string"
-      },
-      "paper_pubs": {
+      }, {
+        "key": "paper_pubs",
         "label": "Paper publications",
         "type": "object"
+      }, {
+        "key": "invoice",
+        "label": "Invoice number",
+        "type": "string"
+      }, {
+        "key": "comments",
+        "label": "Comments",
+        "type": "string"
       }
-    },
+    ],
     "types": [
       {
         "key": "upgrade",
         "label": "Upgrade"
       }
-    ],
-    "unlisted": true,
-    "variableAmount": true
+    ]
   },
-  "Ads": {
-    "allowCreate": false,
-    "shape": {},
+  "ads": {
+    "label": "Ads",
+    "shape": [
+      {
+        "key": "invoice",
+        "label": "Invoice number",
+        "type": "string"
+      }, {
+        "key": "comments",
+        "label": "Comments",
+        "type": "string"
+      }
+    ],
     "types": [
       {
         "key": "ad-invoice",
         "label": "Ad invoice"
       }
-    ],
-    "unlisted": true
+    ]
   },
-  "Party space": {
-    "allowCreate": false,
-    "shape": {},
+  "party": {
+    "label": "Party space",
+    "shape": [
+      {
+        "key": "invoice",
+        "label": "Invoice number",
+        "type": "string"
+      }, {
+        "key": "comments",
+        "label": "Comments",
+        "type": "string"
+      }
+    ],
     "types": [
       {
         "key": "party-space",
         "label": "Party payment"
       }
-    ],
-    "unlisted": true
+    ]
   },
-  "Staff shirt": {
-    "allowCreate": false,
-    "shape": {},
+  "staff": {
+    "label": "Staff shirt",
+    "shape": [
+      {
+        "key": "invoice",
+        "label": "Invoice number",
+        "type": "string"
+      }, {
+        "key": "comments",
+        "label": "Comments",
+        "type": "string"
+      }
+    ],
     "types": [
       {
         "key": "staff-shirt",
         "label": "Staff shirt"
       }
-    ],
-    "unlisted": true
+    ]
   }
 }

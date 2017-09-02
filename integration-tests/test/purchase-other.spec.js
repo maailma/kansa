@@ -45,7 +45,7 @@ describe('Other purchases', () => {
         .send({
           email: 'nonesuch@example.com',
           source: { id: 'x' },
-          items: [{ amount: 1, category: 'Sponsorship', type: 'bench', data: {} }]
+          items: [{ amount: 1, category: 'sponsor', type: 'bench', data: {} }]
         })
         .expect((res) => {
           const exp = { status: 400, message: 'Bad data: ' };
@@ -64,7 +64,7 @@ describe('Other purchases', () => {
         .send({
           email: 'nonesuch@example.com',
           source: { id: 'x' },
-          items: [{ amount: 1, category: 'Sponsorship', type: 'bench', data: { sponsor: 'y' } }]
+          items: [{ amount: 1, category: 'sponsor', type: 'bench', data: { sponsor: 'y' } }]
         })
         .expect((res) => {
           const exp = { status: 400, message: 'Not a known email address: ' };
@@ -79,7 +79,7 @@ describe('Other purchases', () => {
         .send({
           email: 'admin@example.com',
           source: { id: 'x' },
-          items: [{ amount: 1, person_id: -1, category: 'Sponsorship', type: 'bench', data: { sponsor: 'y' } }]
+          items: [{ amount: 1, person_id: -1, category: 'sponsor', type: 'bench', data: { sponsor: 'y' } }]
         })
         .expect((res) => {
           const exp = { status: 400, message: 'Not a valid person id: ' };
@@ -97,9 +97,10 @@ describe('Other purchases', () => {
       agent.get('/api/purchase/data')
         .expect(200)
         .expect(({ body }) => {
+          const { shape, types } = body && body.new_member || {}
           if (
-            !body || !body.Sponsorship || !body.Sponsorship.types ||
-            body.Sponsorship.types[0].key !== 'bench'
+            !shape || shape.every(({ key }) => key !== 'email') ||
+            !types || types.every(({ key }) => key !== 'Adult')
           ) throw new Error(
             `Bad response! ${JSON.stringify(body)}`
           );
@@ -143,7 +144,7 @@ describe('Other purchases', () => {
             source,
             items: [{
               amount: 4200,
-              category: 'Sponsorship',
+              category: 'sponsor',
               type: 'bench',
               data: { sponsor: testName }
             }]
@@ -192,7 +193,7 @@ describe('Other purchases', () => {
           email,
           items: [{
             amount: 4200,
-            category: 'Sponsorship',
+            category: 'sponsor',
             type: 'bench',
             data: testData
           }]
