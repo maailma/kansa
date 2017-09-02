@@ -63,4 +63,5 @@ services:
       RAAMI_PG_PASSWORD: pwd
     volumes:
       - ./postgres/init/90-dev-people-init.sql:/docker-entrypoint-initdb.d/90-dev-people-init.sql:ro
-      - ./postgres/init/95-hugo-finalists-worldcon75.sql:/docker-entrypoint-initdb.d/95-hugo-finalists-worldcon75.sql:ro
+      - ./postgres/init/95-worldcon75-hugo-finalists.sql:/docker-entrypoint-initdb.d/95-worldcon75-hugo-finalists.sql:ro
+      - ./postgres/init/95-worldcon75-payments.sql:/docker-entrypoint-initdb.d/95-worldcon75-payments.sql:ro
