@@ -14,6 +14,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import Rocket from '../../lib/rocket-icon'
 import SlackIcon from '../../lib/slack-icon'
+import SouvenirBook from '../../lib/souvenir-book'
 import { requestSlackInvite } from '../actions'
 import { isAttendingMember, isWSFSMember } from '../constants'
 import MemberEdit from './MemberEdit'
@@ -101,32 +102,16 @@ class MemberCard extends React.Component {
     if (isWSFSMember(member)) {
       actions.push(
         <Action
-          key='ss'
+          key='sb'
           innerDivStyle={{ paddingLeft: 60 }}
-          leftIcon={<LocationCity />}
-          onTouchTap={() => push(`/pay/ss-token`)}
-          primaryText='Buy a site selection token'
+          leftIcon={<SouvenirBook />}
+          onTouchTap={() => {
+            window.location = '/member-files/souvenir-book.pdf'
+          }}
+          primaryText='Open souvenir book (PDF)'
         />
-        /*,
-        <Action
-          key='as'
-          innerDivStyle={{ paddingLeft: 60 }}
-          leftIcon={<Palette />}
-          onTouchTap={() => push(`/exhibition/${id}`)}
-          primaryText='Register for the Art Show'
-        />
-        */
       )
     }
-    if (isAttendingMember(member)) actions.push(
-      <Action
-        key='slack'
-        innerDivStyle={{ paddingLeft: 60 }}
-        leftIcon={<SlackIcon />}
-        onTouchTap={requestSlackInvite}
-        primaryText='Request Slack invite'
-      />
-    )
     return actions
   }
 
