@@ -13,6 +13,7 @@ services:
       - "4430:443"
     volumes:
       - ./nginx/hugo-packet:/srv/hugo-packet:ro
+      - ./nginx/member-files:/srv/member-files:ro
       - ./nginx/ssl:/ssl:ro
 
   hugo:
@@ -27,6 +28,7 @@ services:
       CORS_ORIGIN: http://localhost:8080
       DATABASE_URL: postgres://kansa:pwd@postgres:5432/api
       DEBUG: kansa:*
+      JWT_SECRET: dev secret
       SESSION_SECRET: dev secret
       SLACK_ORG: worldcon75
       SLACK_REQ_MEMBER: 'true'

@@ -27,6 +27,7 @@ services:
     environment:
       DATABASE_URL:
       DEBUG: kansa:errors
+      JWT_SECRET:
       SESSION_SECRET:
       STRIPE_SECRET_APIKEY:
     restart: always
