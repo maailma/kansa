@@ -7,6 +7,6 @@ RUN apt-get update && \
 
 RUN /usr/local/openresty/luajit/bin/luarocks install lua-resty-jwt
 
-COPY hugo-packet.lua /
+COPY hugo-packet.lua member-files.lua /
 COPY nginx.conf /nginx.conf.template
 COPY favicon.ico hugo-admin.html index.html kansa-admin.html /srv/client/
