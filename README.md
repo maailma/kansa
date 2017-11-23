@@ -42,7 +42,9 @@ Once you have all the services up and running, your development server should be
 `https://localhost:4430/`, including a latest-release front-end client (with code hosted under
 GitHub Pages). You'll need to bypass your browser's complaint about the server's self-singed
 certificate:
-  - **Chrome**: Click on _Advanced_, then _Proceed to example.com_
+  - **Chrome**: Click on _Advanced_, then _Proceed to localhost:4430_. Alternatively, go to
+    `chrome://flags/#allow-insecure-localhost` and enable the option to "Allow invalid certificates
+    for resources loaded from localhost"
   - **Firefox**: Click on _I Understand the Risks_, then _Add Exception...._, then _Get
     Certificate_, and finally _Confirm Security Exception_
   - **IE**: Click on _Continue to this website (not recommended)_
