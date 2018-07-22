@@ -35,6 +35,8 @@ services:
       - tuohi
     expose:
       - "3000"
+    volumes:
+      - ../config/kansa.yaml:/kansa.yaml:ro
 
   raami:
     build: ../raami

@@ -1,4 +1,5 @@
 const fetch = require('node-fetch')
+const config = require('./config');
 const { AuthError } = require('./errors')
 
 const TITLE_MAX_LENGTH = 14
@@ -59,7 +60,7 @@ function getBadge(req, res, next) {
           ltype: 'web'
         })
       }).then(({ body, headers }) => {
-        res.setHeader('Content-Disposition', `inline; filename="w75-badge-${id}.png"`)
+        res.setHeader('Content-Disposition', `inline; filename="${config.id}-badge-${id}.png"`)
         res.setHeader('Content-Type', headers.get('content-type'))
         res.setHeader('Content-Length', headers.get('content-length'))
         body.pipe(res)
@@ -102,7 +103,7 @@ function getBarcode(req, res, next) {
           ltype: 'mail'
         })
       }).then(({ body, headers }) => {
-        res.setHeader('Content-Disposition', `inline; filename="w75-barcode-${id}.${format}"`)
+        res.setHeader('Content-Disposition', `inline; filename="${config.id}-barcode-${id}.${format}"`)
         res.setHeader('Content-Type', headers.get('content-type'))
         res.setHeader('Content-Length', headers.get('content-length'))
         body.pipe(res)

@@ -1,6 +1,7 @@
 const Promise = require('bluebird')
 const Stripe = require('stripe')
 
+const config = require('../config');
 const purchaseData = require('../../static/purchase-data.json')
 const { generateToken } = require('../siteselect')
 const InputError = require('./inputerror')
@@ -64,7 +65,7 @@ class Payment {
 
   // https://stripe.com/docs/api/node#create_charge-statement_descriptor
   // max 22 chars
-  static get statement_descriptor() { return 'Worldcon 75 membership'; }
+  static get statement_descriptor() { return `${config.name} membership`; }
 
   static get table() { return 'payments'; }
 

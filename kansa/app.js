@@ -21,6 +21,7 @@ const admin = require('./lib/admin');
 const badge = require('./lib/badge');
 const Ballot = require('./lib/ballot');
 const ballot = new Ballot(db);
+const config = require('./lib/config');
 const key = require('./lib/key');
 const log = require('./lib/log');
 const { setAllMailRecipients } = require('./lib/mail');
@@ -123,7 +124,7 @@ if (corsOrigins) app.use(cors({
 }));
 app.use(session({
   cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 },  // 30 days
-  name: 'w75',
+  name: config.id,
   resave: false,
   saveUninitialized: false,
   secret: process.env.SESSION_SECRET,

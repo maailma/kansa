@@ -1,12 +1,13 @@
 const fetch = require('node-fetch');
+const config = require('./config');
 
 const ballotData = ({ member_number, legal_name, email, city, state, country, badge_name, paper_pubs, token }) => {
   const address = paper_pubs && paper_pubs.address.split(/[\n\r]+/) || [''];
   return {
     info: {
       Title: 'Ballot for ' + legal_name,
-      Author: 'Worldcon 77 Site Selection',
-      Creator: 'members.worldcon.fi'
+      Author: config.site_selection.name,
+      Creator: config.site_selection.ballot_creator
     },
     fields: {
       'Name': legal_name,
