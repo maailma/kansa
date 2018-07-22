@@ -13,6 +13,7 @@ before_install:
       -f config/docker-compose.dev.yaml
       -p api
       up --build -d
+    - sleep 10  # allow time for postgres db init
     - cd integration-tests
 
 after_failure:
