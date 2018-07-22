@@ -18,6 +18,7 @@ var options = {
 var pgp = require("pg-promise")(options);
 var db = pgp(process.env.DATABASE_URL)
 
+var config = require('./config');
 var routes = require('./routes');
 
 var app = express();
@@ -39,7 +40,7 @@ if (corsOrigins) app.use(cors({
 }));
 app.use(session({
   cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 },  // 30 days
-  name: 'w75',
+  name: config.id,
   resave: false,
   saveUninitialized: false,
   secret: process.env.SESSION_SECRET,

@@ -20,6 +20,7 @@
     "express": "~4.13.1",
     "express-session": "^1.15.0",
     "morgan": "~1.6.1",
-    "pg-promise": "^3.2.3"
+    "pg-promise": "^3.2.3",
+    "yaml": "^1.0.0-rc.7"
   }
 }
