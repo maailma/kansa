@@ -35,7 +35,9 @@ provided that `git`, `docker-compose` and `npm` are already installed:
 ```
 git clone --recursive https://github.com/worldcon75/api.git w75-api
 cd w75-api
-docker-compose up --build -d  # leave out the -d to not detach
+docker-compose \
+  -f config/docker-compose.base.yaml -f config/docker-compose.dev.yaml \
+  -p api up --build -d  # leave out the -d to not detach
 ```
 
 Once you have all the services up and running, your development server should be available at
@@ -63,11 +65,13 @@ The development server is bootstrapped with an admin account `admin@example.com`
 ### Configuration
 
 For production use and otherwise, the services' configuration is controlled by the Docker Compose
-config files. By default, `docker-compose` will include both [docker-compose.yml](docker-compose.yml)
-and [docker-compose.override.yml](docker-compose.override.yml); the former acts as the base config,
-which the latter expands/overrides with development-specific configuration. For production use, the
-base config will instead need to be overridden by [docker-compose.prod.yml](docker-compose.prod.yml)
-(see [`make prod`](Makefile)).
+config files. For development use, run `make` in the project root to include the base config
+[docker-compose.base.yaml](config/docker-compose.base.yaml) and the development config
+[docker-compose.dev.yaml](config/docker-compose.dev.yaml). For production use, the base config will
+instead need to be overridden by `docker-compose.prod.yaml`, which you will need to base on
+[docker-compose.prod-template.yaml](config/docker-compose.prod-template.yaml) and fill with
+appropriate variable values (see [`make prod`](Makefile)). Make sure that your production secrets
+are **not** committed to any repository!
 
 For the most part, services are configured using environment variables, some of which need to match
 across services:
@@ -84,8 +88,8 @@ The particular places that may need manual adjustment are:
   be automatically accepted by browsers or other clients. If you have a signed certificate you can
   use (and therefore a publicly visible address), you'll want to add the certificate files to
   `nginx/ssl/` and adjust the environment values set for the `nginx` service in
-  [docker-compose.override.yml](docker-compose.override.yml) and/or
-  [docker-compose.prod.yml](docker-compose.prod.yml).
+  [docker-compose.override.yaml](config/docker-compose.override.yaml) and/or your
+  `docker-compose.prod.yaml`.
 
 - The `CORS_ORIGIN` variables in the docker-compose config files need to be space-separated lists of
   addresses at which client apps may be hosted, to allow for Cross-Origin Resource Sharing. By

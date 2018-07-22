@@ -1,6 +1,9 @@
 version: '2'
 
-# included by default along with docker-compose.yml
+# docker-compose overlay for development mode
+#
+# To use, run `make` in the project root or directly:
+#   docker-compose -f config/docker-compose.base.yaml -f config/docker-compose.dev.yaml up -d
 
 services:
   nginx:
@@ -12,8 +15,8 @@ services:
     ports:
       - "4430:443"
     volumes:
-      - ./nginx/hugo-packet:/srv/hugo-packet:ro
-      - ./nginx/ssl:/ssl:ro
+      - ../nginx/hugo-packet:/srv/hugo-packet:ro
+      - ../nginx/ssl:/ssl:ro
 
   hugo:
     environment:
@@ -42,7 +45,7 @@ services:
 
   tarra:
     volumes:
-      - ./tarra/fonts:/var/www/html/vendor/tecnickcom/tcpdf/fonts:ro
+      - ../tarra/fonts:/var/www/html/vendor/tecnickcom/tcpdf/fonts:ro
 
   tuohi:
     environment:
@@ -62,6 +65,6 @@ services:
       HUGO_PG_PASSWORD: pwd
       RAAMI_PG_PASSWORD: pwd
     volumes:
-      - ./postgres/init/90-dev-people-init.sql:/docker-entrypoint-initdb.d/90-dev-people-init.sql:ro
-      - ./postgres/init/95-worldcon75-hugo-finalists.sql:/docker-entrypoint-initdb.d/95-worldcon75-hugo-finalists.sql:ro
-      - ./postgres/init/95-worldcon75-payments.sql:/docker-entrypoint-initdb.d/95-worldcon75-payments.sql:ro
+      - ../postgres/init/90-dev-people-init.sql:/docker-entrypoint-initdb.d/90-dev-people-init.sql:ro
+      - ../postgres/init/95-worldcon75-hugo-finalists.sql:/docker-entrypoint-initdb.d/95-worldcon75-hugo-finalists.sql:ro
+      - ../postgres/init/95-worldcon75-payments.sql:/docker-entrypoint-initdb.d/95-worldcon75-payments.sql:ro

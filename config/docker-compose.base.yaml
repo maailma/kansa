@@ -1,13 +1,16 @@
 version: '2'
 
-# For full config, see also docker-compose.{override,prod}.yml
+# docker-compose base layer
+#
+# This config is not sufficient by itself; it's just the base layer.
+# For full config, see also docker-compose.{dev,prod}.yaml
 
 volumes:
   pgdata:
 
 services:
   nginx:
-    build: ./nginx
+    build: ../nginx
     links:
       - hugo
       - kansa
@@ -15,7 +18,7 @@ services:
     entrypoint: /bin/bash -c "envsubst '$$SERVER_NAME $$SSL_CERTIFICATE $$SSL_CERTIFICATE_KEY' < /nginx.conf.template > /usr/local/openresty/nginx/conf/nginx.conf && /usr/local/openresty/bin/openresty -g 'daemon off;'"
 
   hugo:
-    build: ./hugo
+    build: ../hugo
     entrypoint: ./wait-for-it.sh postgres:5432 -- npm start
     links:
       - postgres
@@ -23,7 +26,7 @@ services:
       - "3000"
 
   kansa:
-    build: ./kansa
+    build: ../kansa
     entrypoint: ./wait-for-it.sh postgres:5432 -- npm start
     links:
       - kyyhky
@@ -34,7 +37,7 @@ services:
       - "3000"
 
   raami:
-    build: ./raami
+    build: ../raami
     entrypoint: ./wait-for-it.sh postgres:5432 -- npm start
     links:
       - postgres
@@ -53,10 +56,10 @@ services:
     environment:
       PDF_TEMPLATE_DIR: /templates
     volumes:
-      - ./tuohi/templates:/templates:ro
+      - ../tuohi/templates:/templates:ro
 
   kyyhky:
-    build: ./kyyhky
+    build: ../kyyhky
     entrypoint: ./wait-for-it.sh redis:6379 -- npm start
     environment:
       REDIS_HOST: redis
@@ -82,13 +85,13 @@ services:
       - "5432"
     volumes:
       - pgdata:/pgdata
-      - ./postgres/damm/damm.control:/usr/share/postgresql/9.5/extension/damm.control:ro
-      - ./postgres/damm/damm--1.0.sql:/usr/share/postgresql/9.5/extension/damm--1.0.sql:ro
-      - ./postgres/init/10-admin-init.sql:/docker-entrypoint-initdb.d/10-admin-init.sql:ro
-      - ./postgres/init/20-kansa-init.sql:/docker-entrypoint-initdb.d/20-kansa-init.sql:ro
-      - ./postgres/init/25-day-passes.sql:/docker-entrypoint-initdb.d/25-day-passes.sql:ro
-      - ./postgres/init/25-payments.sql:/docker-entrypoint-initdb.d/25-payments.sql:ro
-      - ./postgres/init/25-public-data.sql:/docker-entrypoint-initdb.d/25-public-data.sql:ro
-      - ./postgres/init/28-siteselection.sql:/docker-entrypoint-initdb.d/28-siteselection.sql:ro
-      - ./postgres/init/30-hugo-init.sql:/docker-entrypoint-initdb.d/30-hugo-init.sql:ro
-      - ./postgres/init/40-raami-init.sql:/docker-entrypoint-initdb.d/40-raami-init.sql:ro
+      - ../postgres/damm/damm.control:/usr/share/postgresql/9.5/extension/damm.control:ro
+      - ../postgres/damm/damm--1.0.sql:/usr/share/postgresql/9.5/extension/damm--1.0.sql:ro
+      - ../postgres/init/10-admin-init.sql:/docker-entrypoint-initdb.d/10-admin-init.sql:ro
+      - ../postgres/init/20-kansa-init.sql:/docker-entrypoint-initdb.d/20-kansa-init.sql:ro
+      - ../postgres/init/25-day-passes.sql:/docker-entrypoint-initdb.d/25-day-passes.sql:ro
+      - ../postgres/init/25-payments.sql:/docker-entrypoint-initdb.d/25-payments.sql:ro
+      - ../postgres/init/25-public-data.sql:/docker-entrypoint-initdb.d/25-public-data.sql:ro
+      - ../postgres/init/28-siteselection.sql:/docker-entrypoint-initdb.d/28-siteselection.sql:ro
+      - ../postgres/init/30-hugo-init.sql:/docker-entrypoint-initdb.d/30-hugo-init.sql:ro
+      - ../postgres/init/40-raami-init.sql:/docker-entrypoint-initdb.d/40-raami-init.sql:ro

@@ -1,7 +1,14 @@
 version: '2'
 
-# Usage:  docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
-# For hints on proper values for environment variables, see docker-compose.override.yml
+# docker-compose overlay for production mode
+#
+# To use, run `make prod` in the project root or directly:
+#   docker-compose -f config/docker-compose.base.yaml -f config/docker-compose.prod.yaml up -d
+#
+# For hints on proper values for environment variables, see docker-compose.dev.yaml.
+# This file is stored in the repository as `docker-compose.prod-template.yaml`, which should
+# be used as the base of your actual `docker-compose.prod.yaml`.
+#
 # DO NOT COMMIT PRODUCTION SECRETS TO ANY REPOSITORY
 
 services:

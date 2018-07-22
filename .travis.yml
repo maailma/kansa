@@ -8,7 +8,11 @@ node_js:
     - "node"
 
 before_install:
-    - docker-compose up --build -d
+    - docker-compose
+      -f config/docker-compose.base.yaml
+      -f config/docker-compose.dev.yaml
+      -p api
+      up --build -d
     - cd integration-tests
 
 after_failure:
