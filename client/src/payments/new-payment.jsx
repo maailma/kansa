@@ -1,4 +1,4 @@
-import { Map } from 'immutable'
+import { List, Map } from 'immutable'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { connect } from 'react-redux'
@@ -77,7 +77,7 @@ class NewPayment extends React.Component {
   get dataShape () {
     const { purchaseData } = this.props
     const { category } = this.state
-    return purchaseData.getIn([category, 'shape'], Map()).filter(s => !s.get('generated'))
+    return purchaseData.getIn([category, 'shape'], List()).filter(s => !s.get('generated'))
   }
 
   get disabledCheckout () {
@@ -138,7 +138,6 @@ class NewPayment extends React.Component {
                 dangerouslySetInnerHTML={{ __html: description }}
               />}
               <NewPaymentForm
-                disabled={cd.get('disabled')}
                 onChange={(update) => this.setState({ purchase: purchase.merge(update) })}
                 people={people}
                 purchase={purchase}
@@ -167,25 +166,12 @@ class NewPayment extends React.Component {
               <div>
                 Amount:
                 <span style={{ paddingLeft: 8, paddingRight: 8 }}>€</span>
-                {cd.get('variableAmount') ? (
-                  <TextField
-                    name='amount'
-                    onChange={(ev, value) => {
-                      const amount = value ? Math.floor(value * 100) : 0
-                      this.setState({ amount })
-                    }}
-                    style={{ height: 36, width: 80 }}
-                    type='number'
-                    value={amount > 0 ? (amount / 100).toFixed(2) : ''}
-                  />
-                ) : (
-                  <span>{(amount / 100).toFixed(2)}</span>
-                )}
+                <span>{(amount / 100).toFixed(2)}</span>
               </div>
             </CardActions>
           </Card>
           {!people && <KeyRequest
-            allowCreate={cd.get('allowCreate')}
+            allowCreate={cd.get('allow_create_account')}
             cardStyle={{ marginTop: 20 }}
           />}
           <div className='bg-text' style={{

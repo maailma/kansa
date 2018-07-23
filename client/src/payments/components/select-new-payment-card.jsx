@@ -14,7 +14,7 @@ const icon = (key) => {
   }
 }
 
-const SelectNewPaymentCard = ({ data, label, onSelect, title }) => {
+const SelectNewPaymentCard = ({ data, onSelect, title }) => {
   const description = data.get('description')
   const items = data.get('types').entrySeq().map(([key, typeData]) => {
     const amount = typeData.get('amount')

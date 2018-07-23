@@ -32,14 +32,13 @@ class PaymentsIndex extends React.Component {
   get nextPurchaseCards () {
     const { purchaseData, push } = this.props
     return purchaseData.entrySeq()
-      .filter(([category, data]) => !data.get('unlisted'))
+      .filter(([category, data]) => data.get('listed'))
       .map(([category, data]) => (
         <SelectNewPaymentCard
           data={data}
           key={category}
-          label={category}
           onSelect={(type) => push(`/pay/${type}`)}
-          title={`New ${category}`}
+          title={`New ${data.get('label') || category}`}
         />
       ))
   }

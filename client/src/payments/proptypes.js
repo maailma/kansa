@@ -2,6 +2,8 @@ import { PropTypes } from 'prop-types'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 
 export const shapeEntry = ImmutablePropTypes.mapContains({
+  generated: PropTypes.bool,
+  key: PropTypes.string.isRequired,
   label: PropTypes.string,
   required: PropTypes.bool,
   type: PropTypes.string.isRequired,
@@ -11,7 +13,7 @@ export const shapeEntry = ImmutablePropTypes.mapContains({
   )
 })
 
-export const shape = ImmutablePropTypes.mapOf(shapeEntry, PropTypes.string)
+export const shape = ImmutablePropTypes.listOf(shapeEntry)
 
 export const type = ImmutablePropTypes.mapContains({
   amount: PropTypes.number,
@@ -21,7 +23,15 @@ export const type = ImmutablePropTypes.mapContains({
 
 export const types = ImmutablePropTypes.orderedMapOf(type, PropTypes.string)
 
-export const categoryData = ImmutablePropTypes.mapContains({ shape, types })
+export const categoryData = ImmutablePropTypes.mapContains({
+  account: PropTypes.string,
+  allow_create_account: PropTypes.bool,
+  description: PropTypes.string,
+  label: PropTypes.string,
+  listed: PropTypes.bool,
+  shape,
+  types
+})
 
 export const data = ImmutablePropTypes.mapOf(categoryData, PropTypes.string)
 

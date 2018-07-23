@@ -4,14 +4,14 @@ import { Col, Row } from 'react-flexbox-grid'
 import { TextInput } from '../../membership/components/form-components'
 import MemberLookupSelector from '../../membership/components/MemberLookupSelector'
 
-const DataField = ({ field, name, onChange, value }) => {
+const DataField = ({ field, onChange, value }) => {
   switch (field.get('type')) {
     case 'number':
       return <TextInput
         getDefaultValue={() => value}
         getValue={() => value}
         label={field.get('label')}
-        name={name}
+        name={field.get('key')}
         onChange={onChange}
         path={[]}
         required={field.get('required')}
@@ -24,7 +24,7 @@ const DataField = ({ field, name, onChange, value }) => {
         getValue={() => value}
         label={field.get('label')}
         multiLine
-        name={name}
+        name={field.get('key')}
         onChange={onChange}
         path={[]}
         required={field.get('required')}
@@ -36,14 +36,12 @@ const DataField = ({ field, name, onChange, value }) => {
 
     default:
       // select(values)
-      return <div>{field.get('label') || name}: {value || '[empty]'}</div>
+      return <div>{field.get('label') || field.get('key')}: {value || '[empty]'}</div>
   }
 }
 
-const NewPaymentForm = ({ disabled, onChange, people, purchase, requireMembership, shape }) => {
+const NewPaymentForm = ({ onChange, people, purchase, requireMembership, shape }) => {
   if (!people || people.size === 0) return null
-  const showComments = !disabled || !disabled.includes('comments')
-  const showInvoice = !disabled || !disabled.includes('invoice')
   return (
     <form>
       <Row>
@@ -59,36 +57,32 @@ const NewPaymentForm = ({ disabled, onChange, people, purchase, requireMembershi
           />
         </Col>
       </Row>
-      {shape && shape.entrySeq().map(([name, field]) => (
+      {shape && shape.map(field => (
         <DataField
-          key={name}
+          key={field.get('key')}
           field={field}
-          name={name}
           onChange={(_, value) => onChange({ data: purchase.get('data').set(name, value) })}
           value={purchase.getIn(['data', name]) || ''}
         />
       ))}
-      {showInvoice && [
-        <TextInput
-          getDefaultValue={() => purchase.get('invoice')}
-          getValue={() => purchase.get('invoice')}
-          key='ii'
-          label='Invoice number'
-          name='invoice'
-          onChange={(_, invoice) => onChange({ invoice })}
-          path={[]}
-        />,
-        <div key='ih' style={{
-          color: 'rgba(0, 0, 0, 0.3)',
-          fontSize: 12,
-          marginTop: -4,
-          textAlign: 'right'
-        }}>
-          If you've received an invoice from Worldcon 75, please include its
-          invoice number here.
-        </div>
-      ]}
-      {showComments && <TextInput
+      <TextInput
+        getDefaultValue={() => purchase.get('invoice')}
+        getValue={() => purchase.get('invoice')}
+        label='Invoice number'
+        name='invoice'
+        onChange={(_, invoice) => onChange({ invoice })}
+        path={[]}
+      />
+      <div style={{
+        color: 'rgba(0, 0, 0, 0.3)',
+        fontSize: 12,
+        marginTop: -4,
+        textAlign: 'right'
+      }}>
+        If you've received an invoice from Worldcon 75, please include its
+        invoice number here.
+      </div>
+      <TextInput
         getDefaultValue={() => purchase.get('comments')}
         getValue={() => purchase.get('comments')}
         label='Comments'
@@ -97,7 +91,7 @@ const NewPaymentForm = ({ disabled, onChange, people, purchase, requireMembershi
         onChange={(_, comments) => onChange({ comments })}
         path={[]}
         rows={2}
-      />}
+      />
     </form>
   )
 }
