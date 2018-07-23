@@ -21,13 +21,13 @@
     "express-session": "^1.15.6",
     "express-ws": "^4.0.0",
     "form-data": "^2.3.2",
-    "jsonwebtoken": "^7.4.0",
+    "jsonwebtoken": "^8.3.0",
     "morgan": "^1.9.0",
-    "node-fetch": "^1.7.3",
+    "node-fetch": "^2.2.0",
     "pg-monitor": "^1.0.0",
     "pg-promise": "^8.4.5",
     "randomstring": "^1.1.5",
-    "stripe": "^4.25.0",
+    "stripe": "^6.3.0",
     "yaml": "^1.0.0-rc.7"
   }
 }
