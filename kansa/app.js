@@ -9,7 +9,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 
 const pgSession = require('connect-pg-simple')(session);
-const pgOptions = { promiseLib: require('bluebird') };
+const pgOptions = {};
 const pgp = require('pg-promise')(pgOptions);
 if (debug.enabled('kansa:db')) {
   const pgMonitor = require('pg-monitor');
@@ -129,7 +129,7 @@ app.use(session({
   saveUninitialized: false,
   secret: process.env.SESSION_SECRET,
   store: new pgSession({
-    pg: pgp.PG,
+    pgPromise: db,
     pruneSessionInterval: 24 * 60 * 60  // 1 day
   })
 }));

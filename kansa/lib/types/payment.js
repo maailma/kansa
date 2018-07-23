@@ -1,4 +1,3 @@
-const Promise = require('bluebird')
 const Stripe = require('stripe')
 
 const config = require('../config');
