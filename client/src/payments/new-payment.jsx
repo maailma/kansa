@@ -85,7 +85,7 @@ class NewPayment extends React.Component {
     return !(
       amount > 0 &&
       (purchase.get('person_id') || purchase.get('email') && purchase.get('name')) &&
-      this.dataShape.every((s, key) => !s.get('required') || purchase.getIn(['data', key]))
+      this.dataShape.every(s => !s.get('required') || purchase.getIn(['data', s.get('key')]))
     )
   }
 

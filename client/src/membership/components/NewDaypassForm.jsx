@@ -1,4 +1,4 @@
-import { Map } from 'immutable'
+import { List, Map } from 'immutable'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Col, Row } from 'react-flexbox-grid'
@@ -90,15 +90,17 @@ class NewDaypassForm extends React.Component {
 
   get dayData () {
     const { daypassData } = this.props
-    return daypassData.get('shape').entrySeq().filter(([key]) => /^day\d+$/.test(key))
+    return daypassData.get('shape')
+      .filter(data => /^day\d+$/.test(data.get('key')))
+      .map(data => ({ day: data.get('key'), label: data.get('label') }))
   }
 
   get description () {
     const { params: { type } } = this.props
     const { person } = this.state
-    const ds = (this.dayData || Map())
-      .filter(([day]) => person.get(day))
-      .map(([_, data]) => data.get('label').substr(0, 3))
+    const ds = (this.dayData || List())
+      .filter(({ day }) => person.get(day))
+      .map(({ label }) => label.substr(0, 3))
       .join('/')
     return `${type} day pass ${ds}`
   }
@@ -138,13 +140,13 @@ class NewDaypassForm extends React.Component {
             </Row>
             <Row style={{ paddingBottom: 20, paddingTop: 6 }}>
               <Col xs={0} sm={2} />
-              {this.dayData.map(([day, data]) => {
+              {this.dayData.map(({ day, label }) => {
                 const selected = person.get(day, false)
                 return (
                   <Col xs={12} sm={4} key={day} style={{ paddingTop: '0.5rem', paddingBottom: '0.5rem' }}>
                     <RaisedButton
                       fullWidth
-                      label={`${data.get('label')} (€${daypassPrices.getIn([type, day]) / 100})`}
+                      label={`${label} (€${daypassPrices.getIn([type, day]) / 100})`}
                       onTouchTap={() => this.setState({ person: person.set(day, !selected) })}
                       primary={selected}
                     />

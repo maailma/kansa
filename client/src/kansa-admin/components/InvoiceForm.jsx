@@ -1,4 +1,4 @@
-import { Map } from 'immutable'
+import { List } from 'immutable'
 import MenuItem from 'material-ui/MenuItem'
 import SelectField from 'material-ui/SelectField'
 import TextField from 'material-ui/TextField'
@@ -26,9 +26,9 @@ const TypeSelect = ({ category, onChange, paymentData, type }) => {
         paymentData.reduce((list, data, category) => {
           list.push(<MenuItem
             disabled
-            key={category}
-            primaryText={`== ${category}`}
-            value={category}
+            key={'cat:' + category}
+            primaryText={`== ${data.get('label') || category}`}
+            value=''
           />)
           data.get('types').forEach(type => {
             const key = type.get('key')
@@ -46,7 +46,7 @@ const TypeSelect = ({ category, onChange, paymentData, type }) => {
   )
 }
 
-const DataField = ({ field, name, onChange, style = {}, value }) => {
+const DataField = ({ field, onChange, style = {}, value }) => {
   const isNumber = field.get('type') === 'number'
   let label = field.get('label')
   if (field.get('required')) label += ' (Required)'
@@ -55,7 +55,7 @@ const DataField = ({ field, name, onChange, style = {}, value }) => {
     floatingLabelText={label}
     fullWidth
     multiLine={!isNumber}
-    name={name}
+    name={field.get('key')}
     onChange={onChange}
     style={{ ...styles.common, ...style }}
     type={isNumber ? 'number' : null}
@@ -90,37 +90,14 @@ const InvoiceForm = ({
       paymentData={paymentData}
       type={type}
     />
-    {paymentData.getIn([category, 'shape'], Map()).entrySeq().map(([name, field]) => (
+    {paymentData.getIn([category, 'shape'], List()).map(field => (
       <DataField
-        key={name}
+        key={field.get('key')}
         field={field}
-        name={name}
         onChange={(_, value) => onChange({ data: Object.assign({}, data, { [name]: value }) })}
         value={data && data[name] || ''}
       />
     ))}
-    <TextField
-      floatingLabelFixed
-      floatingLabelText='Invoice number'
-      fullWidth
-      name='invoice'
-      onChange={(_, invoice) => onChange({ invoice })}
-      style={styles.common}
-      type='number'
-      value={invoice}
-    />
-    <TextField
-      floatingLabelFixed
-      floatingLabelText='Comments'
-      fullWidth
-      multiLine
-      name='comments'
-      onChange={(_, comments) => onChange({ comments })}
-      rows={2}
-      style={styles.common}
-      type='number'
-      value={comments}
-    />
   </form>
 )
 

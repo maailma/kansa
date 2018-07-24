@@ -1,4 +1,4 @@
-import { Map } from 'immutable'
+import { List, Map } from 'immutable'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import PropTypes from 'prop-types'
@@ -36,8 +36,8 @@ class NewInvoice extends React.Component {
     const { amount, category, data, type } = this.state.invoice
     return !category || !type || !amount || !data || !paymentData ||
       paymentData
-        .getIn([category, 'shape'], Map())
-        .some((shape, key) => shape.get('required') && !data[key])
+        .getIn([category, 'shape'], List())
+        .some(shape => shape.get('required') && !data[shape.get('key')])
   }
 
   handleOpen = () => {

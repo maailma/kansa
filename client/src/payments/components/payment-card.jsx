@@ -1,3 +1,4 @@
+import { Map } from 'immutable'
 import PropTypes from 'prop-types'
 import React from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
@@ -91,7 +92,7 @@ const PaymentCard = ({ label, purchase, shape, userIds }) => {
           }
           return (
             <tr key={key}>
-              <td>{shape && shape.getIn([key, 'label']) || key}:</td>
+              <td>{shape && shape.find(s => s.get('key') === key, null, Map()).get('label') || key}:</td>
               <td>{val}</td>
             </tr>
           )

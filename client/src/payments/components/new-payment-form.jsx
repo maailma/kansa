@@ -57,41 +57,27 @@ const NewPaymentForm = ({ onChange, people, purchase, requireMembership, shape }
           />
         </Col>
       </Row>
-      {shape && shape.map(field => (
-        <DataField
-          key={field.get('key')}
+      {shape && shape.map(field => {
+        const name = field.get('key')
+        const df = <DataField
+          key={name}
           field={field}
           onChange={(_, value) => onChange({ data: purchase.get('data').set(name, value) })}
           value={purchase.getIn(['data', name]) || ''}
         />
-      ))}
-      <TextInput
-        getDefaultValue={() => purchase.get('invoice')}
-        getValue={() => purchase.get('invoice')}
-        label='Invoice number'
-        name='invoice'
-        onChange={(_, invoice) => onChange({ invoice })}
-        path={[]}
-      />
-      <div style={{
-        color: 'rgba(0, 0, 0, 0.3)',
-        fontSize: 12,
-        marginTop: -4,
-        textAlign: 'right'
-      }}>
-        If you've received an invoice from Worldcon 75, please include its
-        invoice number here.
-      </div>
-      <TextInput
-        getDefaultValue={() => purchase.get('comments')}
-        getValue={() => purchase.get('comments')}
-        label='Comments'
-        multiLine
-        name='comments'
-        onChange={(_, comments) => onChange({ comments })}
-        path={[]}
-        rows={2}
-      />
+        return name === 'invoice' ? [
+          df,
+          <div key="invoice-help" style={{
+            color: 'rgba(0, 0, 0, 0.3)',
+            fontSize: 12,
+            marginTop: -4,
+            textAlign: 'right'
+          }}>
+            If you've received an invoice from Worldcon 75, please include its
+            invoice number here.
+          </div>
+        ] : df
+      })}
     </form>
   )
 }
