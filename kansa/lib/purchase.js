@@ -1,5 +1,4 @@
 const prices = require('../static/prices.json');
-const purchaseData = require('../static/purchase-data.json');
 const { AuthError, InputError } = require('./errors');
 const Payment = require('./types/payment');
 const Person = require('./types/person');
@@ -54,8 +53,21 @@ class Purchase {
   }
 
   getPurchaseData(req, res, next) {
-    if (!purchaseData) next(new Error('Missing purchase data!?'));
-    res.json(purchaseData);
+    this.db.many(`
+      SELECT c.key, c.label, c.account, c.allow_create_account,
+             c.listed, c.description, f.fields AS shape, t.types
+        FROM payment_categories c
+             LEFT JOIN payment_fields_by_category f USING (key)
+             LEFT JOIN payment_types_by_category t USING (key)
+    `)
+      .then(rows => res.json(rows.reduce((data, row) => {
+        data[row.key] = row
+        delete row.key
+        Object.keys(row)
+          .filter(key => row[key] == null)
+          .forEach(key => { delete row[key] })
+        return data
+      }, {})))
   }
 
   getStripeKeys(req, res, next) {
@@ -101,21 +113,28 @@ class Purchase {
             WHERE stripe_charge_id=$(id) and status!=$(status)
         RETURNING *`, { id, status, updated }
       )
+        .catch(() => res.status(500).end())
         .then(items => {
           res.status(200).end()
-          items.forEach(item => {
+          return Promise.all(items.map(item => {
             console.log('Updated payment', item.id, 'status to', status);
-            const { shape, types } = purchaseData[item.category];
-            const typeData = types.find(td => td.key === item.type);
-            return mailTask('kansa-update-payment', Object.assign({
-              email: item.person_email || item.payment_email,
-              name: item.person_name || null,
-              shape,
-              typeLabel: typeData && typeData.label || item.type
-            }, item));
-          })
+            return this.db.one(`
+              SELECT f.fields AS shape, t.types
+                FROM payment_fields_by_category f
+                     LEFT JOIN payment_types_by_category t USING (key)
+               WHERE key = $1`, item.category
+            )
+              .then(({ shape, types }) => {
+                const typeData = types.find(td => td.key === item.type);
+                return mailTask('kansa-update-payment', Object.assign({
+                  email: item.person_email || item.payment_email,
+                  name: item.person_name || null,
+                  shape,
+                  typeLabel: typeData && typeData.label || item.type
+                }, item));
+              })
+          }))
         })
-        .catch(() => res.status(500).end())
     }
   }
 
@@ -302,17 +321,23 @@ class Purchase {
     new Payment(this.pgp, this.db, account, email, source, items)
       .process()
       .then(items => (
-        Promise.all(items.map(item => {
-          const { shape, types } = purchaseData[item.category];
-          const typeData = types.find(td => td.key === item.type);
-          return mailTask('kansa-new-payment', Object.assign({
-            email: item.person_email || item.payment_email,
-            name: item.person_name || null,
-            mandate_url: source.sepa_debit && source.sepa_debit.mandate_url || null,
-            shape,
-            typeLabel: typeData && typeData.label || item.type
-          }, item));
-        }))
+        Promise.all(items.map(item => this.db.one(`
+            SELECT f.fields AS shape, t.types
+              FROM payment_fields_by_category f
+                    LEFT JOIN payment_types_by_category t USING (key)
+              WHERE key = $1`, item.category
+          )
+            .then(({ shape, types }) => {
+              const typeData = types.find(td => td.key === item.type);
+              return mailTask('kansa-new-payment', Object.assign({
+                email: item.person_email || item.payment_email,
+                name: item.person_name || null,
+                mandate_url: source.sepa_debit && source.sepa_debit.mandate_url || null,
+                shape,
+                typeLabel: typeData && typeData.label || item.type
+              }, item));
+            })
+        ))
           .then(() => res.json({
             status: items[0].status,
             charge_id: items[0].stripe_receipt || items[0].stripe_charge_id

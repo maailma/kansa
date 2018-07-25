@@ -33,7 +33,7 @@ describe('Other purchases', () => {
           items: [{ amount: 1, category: 'x', type: 'y' }]
         })
         .expect((res) => {
-          const exp = { status: 400, message: 'Supported categories: ' };
+          const exp = { status: 400, message: 'Unknown payment category: ' };
           if (res.status !== exp.status) throw new Error(`Bad status: got ${res.status}, expected ${exp.status}`);
           if (res.body.message.indexOf(exp.message) !== 0) throw new Error(`Bad reply: ${JSON.stringify(res.body)}`);
         })

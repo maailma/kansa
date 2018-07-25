@@ -1,12 +1,10 @@
 const Stripe = require('stripe')
 
 const config = require('../config');
-const purchaseData = require('../../static/purchase-data.json')
 const { generateToken } = require('../siteselect')
 const InputError = require('./inputerror')
 
-function checkData(category, data) {
-  const { shape = [] } = purchaseData[category];
+function checkData(shape, data) {
   const missing = shape.filter(({ key, required }) => (
     required && !data[key] && data[key] !== false
   )).map(({ key }) => key);
@@ -19,40 +17,6 @@ function checkData(category, data) {
   }).map(({ key }) => key);
   return missing.length || badType.length ? { missing, badType } : null;
 }
-
-function checkType(category, type) {
-  const types = purchaseData[category].types || [];
-  return types.some(({ key }) => type === key) ? null : types;
-}
-
-function validateItem(item, currency) {
-  if (item.id) return;
-  if (!item.amount || !item.currency || !item.category || !item.type) {
-    throw new InputError('Required parameters: amount, currency, category, type');
-  }
-  if (item.currency !== currency) {
-    throw new InputError('Currencies of all items must match!');
-  }
-  if (!item.person_id && !item.payment_email) {
-    throw new InputError('Either person_id or email is required');
-  }
-  if (!purchaseData[item.category]) {
-    throw new InputError('Supported categories: ' + Object.keys(purchaseData).join(', '));
-  }
-  if (item.status === 'invoice' && (item.stripe_charge_id || item.stripe_receipt || item.stripe_token)) {
-    throw new InputError('Invoice items cannot have associated payment data');
-  }
-  const typeErrors = checkType(item.category, item.type);
-  if (typeErrors) throw new InputError('Supported types: ' + JSON.stringify(typeErrors));
-  switch (item.type) {
-    case 'ss-token':
-      item.data = { token: generateToken() }
-      break;
-  }
-  const dataErrors = checkData(item.category, item.data);
-  if (dataErrors) throw new InputError('Bad data: ' + JSON.stringify(dataErrors));
-}
-
 
 class Payment {
   static get fields() { return [
@@ -73,6 +37,7 @@ class Payment {
     this.db = db;
     this.account = account || 'default';
     this.email = email;
+    this.purchaseData = {};
     this.source = source;
     this.items = items.map(item => ({
       id: item.id || null,
@@ -112,17 +77,69 @@ class Payment {
         reject(new InputError('At least one item is required'));
       } else {
         const currency = this.items[0].currency;
-        this.items.forEach(item => validateItem(item, currency));
+        for (let i = 0; i < this.items.length; ++i) {
+          const item = this.items[i];
+          if (item.id) continue;
+          if (!item.amount || !item.currency || !item.category || !item.type) {
+            return reject(new InputError('Required parameters: amount, currency, category, type'));
+          }
+          if (item.currency !== currency) {
+            return reject(new InputError('Currencies of all items must match!'));
+          }
+          if (!item.person_id && !item.payment_email) {
+            return reject(new InputError('Either person_id or email is required'));
+          }
+          if (item.status === 'invoice' && (item.stripe_charge_id || item.stripe_receipt || item.stripe_token)) {
+            return reject(new InputError('Invoice items cannot have associated payment data'));
+          }
+        }
         resolve();
       }
     })
       .then(() => {
+        const categories = this.items.map(it => it.category).filter(c => c)
+        return categories.length === 0 ? [] : this.db.manyOrNone(`
+          SELECT key, c.allow_create_account, c.custom_email,
+                 f.fields AS shape, t.types
+            FROM payment_categories c
+                 LEFT JOIN payment_fields_by_category f USING (key)
+                 LEFT JOIN payment_types_by_category t USING (key)
+           WHERE key IN ($1:csv)`, [categories]
+        )
+      })
+      .then(rows => {
+        this.purchaseData = rows.reduce((data, row) => {
+          data[row.key] = row
+          return data
+        }, {})
+        this.items.filter(it => !it.id).forEach(item => {
+          const data = this.purchaseData[item.category]
+          if (!data) {
+            throw new InputError('Unknown payment category: ' + JSON.stringify(item.category));
+          }
+          if (data.types && data.types.every(({ key }) => item.type !== key)) {
+            throw new InputError(`Unknown type ${JSON.stringify(item.type)} for payment category ${item.category}`);
+          }
+          switch (item.type) {
+            case 'ss-token':
+              item.data = { token: generateToken() }
+              break;
+          }
+          const dataErrors = checkData(data.shape || [], item.data);
+          if (dataErrors) throw new InputError('Bad data: ' + JSON.stringify(dataErrors));
+        })
+      })
+      .then(() => {
         const itemIds = this.items.map(it => it.id).filter(id => id)
         return itemIds.length === 0 ? null : this.db.many(`
-          SELECT a.id, a.status, amount, currency, person_id,
+          SELECT a.id, a.status, a.amount, a.currency, a.person_id,
                  a.category, a.type, a.data, a.invoice,
-                 p.email AS person_email, preferred_name(p) as person_name
-            FROM Payments a LEFT JOIN People p ON (person_id = p.id)
+                 p.email AS person_email, preferred_name(p) AS person_name,
+                 c.allow_create_account, c.custom_email, t.label AS type_label
+            FROM Payments a
+                 LEFT JOIN People p ON (a.person_id = p.id)
+                 LEFT JOIN payment_categories c ON (a.category = c.key)
+                 LEFT JOIN payment_types t ON (a.type = t.key)
            WHERE a.id in ($1:csv)`, [itemIds]
         ).then(dbItems => {
           dbItems.forEach(dbItem => {
@@ -136,9 +153,10 @@ class Payment {
       .then(() => {
         const personIds = Object.keys(this.items.reduce((set, item) => {
           const id = Number(item.person_id);
-          if (id > 0 && !item.person_email &&
-            !purchaseData[item.category].custom_email
-          ) set[id] = true;
+          if (id > 0 && !item.person_email) {
+            const pd = this.purchaseData[item.category]
+            if (!(pd || item).custom_email) set[id] = true;
+          }
           return set;
         }, {}));
         return personIds.length === 0 ? null
@@ -155,7 +173,10 @@ class Payment {
               }
             }));
       })
-      .then(() => (this.items.every(item => purchaseData[item.category].allow_new_email)
+      .then(() => (this.items.every(item => {
+        const pd = this.purchaseData[item.category]
+        return (pd || item).allow_create_account
+      })
         ? Promise.resolve()
         : this.db.many(`SELECT id FROM People WHERE email=$1`, this.email)
             .catch((error) => Promise.reject(error.message === 'No data returned from the query.'
@@ -183,8 +204,9 @@ class Payment {
     const amount = this.items.reduce((sum, item) => sum + item.amount, 0);
     const currency = this.items[0].currency;
     const labels = this.items.reduce((set, item) => {
-      const typeData = purchaseData[item.category].types.find(type => type.key === item.type);
-      const label = typeData && typeData.label || item.type;
+      const pd = this.purchaseData[item.category]
+      const typeData = pd && pd.types.find(type => type.key === item.type);
+      const label = typeData && typeData.label || item.type_label || item.type;
       set[label] = (set[label] || 0) + 1;
       return set;
     }, {});

@@ -15,7 +15,6 @@ CREATE TABLE payment_categories (
   label text NOT NULL,
   account text,
   allow_create_account boolean,
-  allow_new_email boolean,
   custom_email boolean,
   listed boolean,
   description text,
