@@ -1,5 +1,5 @@
-export default {
-  daypass: require('messageformat?locale=en!./daypass.json'),
-  en: require('messageformat?locale=en!./en.json'),
-  fi: require('messageformat?locale=fi!./fi.json')
-}
+import daypass from './daypass.messages'
+import en from './en.messages'
+import fi from './fi.messages?locale=fi'
+
+export default { daypass, en, fi }

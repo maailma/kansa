@@ -15,20 +15,33 @@ const cfg = {
     publicPath: '/',
     filename: '[name].js'
   },
+  devServer: {
+    contentBase: './dist'
+  },
   module: {
-    loaders: [
-      { test: /\.css$/, loader: 'style!css', exclude: /flexboxgrid/ },
-      { test: /\.css$/, loader: 'style!css?modules', include: /flexboxgrid/, },
-      { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel' },
-      { test: /\.(jpe?g|png|gif|svg)$/i, loader: 'file-loader?name=img/[name].[ext]' }
+    rules: [
+      { test: /\.css$/, exclude: /flexboxgrid/, use: ['style-loader', 'css-loader'] },
+      { test: /\.css$/, include: /flexboxgrid/, use: ['style-loader', {
+        loader: 'css-loader',
+        options: { modules: true }
+      }]},
+      { test: /\.jsx?$/, exclude: /node_modules/, use: 'babel-loader' },
+      { test: /\.(jpe?g|png|gif|svg)$/i, use: {
+        loader: 'file-loader',
+        options: { name: 'img/[name].[ext]' }
+      } },
+      {
+        test: /\bmessages\.json$/,
+        loader: 'messageformat-loader',
+        type: 'javascript/auto',
+        options: { locale: ['en', 'fi'] }
+      }
     ]
   },
   resolve: {
-    extensions: [ '', '.js', '.jsx', '.css' ]
+    extensions: ['.js', '.jsx', '.json']
   },
-  plugins: [
-    new webpack.NoErrorsPlugin()
-  ]
+  plugins: []
 };
 
 const globals = {
@@ -38,15 +51,14 @@ const globals = {
 }
 
 if (process.env.NODE_ENV === 'production') {
-
   console.log('PRODUCTION build\n');
+  cfg.mode = 'production'
   globals['process.env'] = {
     NODE_ENV: JSON.stringify('production')
   }
-
 } else {
-
   console.log((process.env.NODE_ENV || 'development').toUpperCase() + ' build');
+  cfg.mode = 'development'
   const HtmlWebpackPlugin = require('html-webpack-plugin');
 
   cfg.entry.bundle.push('webpack/hot/dev-server');

@@ -1,3 +1,4 @@
+import IBAN from 'iban'
 import RaisedButton from 'material-ui/RaisedButton'
 import PropTypes from 'prop-types'
 import React from 'react'
@@ -7,8 +8,6 @@ import ImmutablePropTypes from 'react-immutable-proptypes'
 import { TextInput } from '../../membership/components/form-components'
 import SelectIbanCountry, { ibanCountries } from './select-iban-country'
 import StripeDirectDebit from './stripe-direct-debit'
-
-const IBAN = require('iban')
 
 const orgName = TITLE
 
