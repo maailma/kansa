@@ -19,14 +19,9 @@ class StripeCheckout extends React.Component {
     stripeKeys: PaymentPropTypes.keys
   }
 
-  componentWillMount () {
+  componentDidMount () {
     const { getStripeKeys, stripeKeys } = this.props
     if (!stripeKeys) getStripeKeys()
-    ReactStripeCheckout.stripeHandler = null
-  }
-
-  componentWillReceiveProps ({ account, stripeKeys }) {
-    if (account !== this.props.account) ReactStripeCheckout.stripeHandler = null
   }
 
   render () {
@@ -40,6 +35,7 @@ class StripeCheckout extends React.Component {
         disabled={disabled}
         email={email}
         name={TITLE}
+        reconfigureOnUpdate={true}
         stripeKey={stripeKeys.get(account || 'default')}
         token={onCheckout}
         triggerEvent='onTouchTap'
