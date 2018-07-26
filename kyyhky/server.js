@@ -1,23 +1,18 @@
 const debug = require('debug')
 const express = require('express')
+const fs = require('fs')
 const http = require('http')
 
 const { messages, rxUpdates } = require('./lib/queues')
 
-const templates = [
-  'hugo-packet-series-extra',
-  'hugo-update-email',
-  'hugo-update-nominations',
-  'hugo-update-votes',
-  'kansa-add-paper-pubs',
-  'kansa-create-account',
-  'kansa-new-daypass',
-  'kansa-new-member',
-  'kansa-new-payment',
-  'kansa-set-key',
-  'kansa-update-payment',
-  'kansa-upgrade-person'
-]
+const templates = fs.readdirSync('./templates')
+  .reduce((ls, fn) => {
+    const m = fn.match(/(.*)\.mustache/)
+    if (m) ls.push(m[1])
+    return ls
+  }, [])
+if (templates.length === 0) throw new Error('Missing message templates!')
+console.log(`Found ${templates.length} message templates`, templates)
 
 // Normalize the port into a number, string, or false.
 const port = (val => {
