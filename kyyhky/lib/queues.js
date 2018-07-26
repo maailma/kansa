@@ -1,23 +1,24 @@
 const Queue = require('bull')
 const debug = require('debug')('kyyhky:server')
 const ContactSync = require('./contact-sync')
-const Mailer = require('./mailer')
+const sendEmail = require('./send-email')
 
 const redis = {
   host: process.env.REDIS_HOST || 'redis',
   port: process.env.REDIS_PORT || 6379
 }
 
-const mailer = new Mailer('/message-templates', '.mustache')
 const messages = new Queue('messages', { redis })
 messages.process('*', (job, done) => {
-  mailer.sendEmail(job.name, job.data, done)
-})
-messages.on('completed', (job, result) => {
-  debug(`Sent ${job.name} to ${result.to}`)
+  sendEmail(job.name, job.data)
+    .then(rx => {
+      debug(`Sent ${job.name} to ${rx}`)
+      done()
+    })
+    .catch(done)
 })
 messages.on('failed', (job, err) => {
-  console.warn(`Job ${job.id} failed to send ${job.name} to ${result.to}:\n`, err);
+  console.warn(`Job ${job.id} failed to send ${job.name} to ${job.data.email}:\n`, err);
 })
 
 const contactSync = new ContactSync()
