@@ -8,7 +8,7 @@ const redis = {
   port: process.env.REDIS_PORT || 6379
 }
 
-const mailer = new Mailer('templates', '.mustache')
+const mailer = new Mailer('/message-templates', '.mustache')
 const messages = new Queue('messages', { redis })
 messages.process('*', (job, done) => {
   mailer.sendEmail(job.name, job.data, done)

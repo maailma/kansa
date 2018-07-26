@@ -1,5 +1,6 @@
 const fs = require('fs');
 const mustache = require('mustache');
+const path = require('path');
 const tfm = require('tiny-frontmatter');
 const wrap = require('wordwrap');
 const { barcodeUri, loginUri } = require('./login-uri');
@@ -46,8 +47,14 @@ class Mailer {
     this.tmplSuffix = tmplSuffix;
   }
 
-  tmplFileName(tmplName) {
-    return [ this.tmplDir, '/', tmplName, this.tmplSuffix ].filter(s => s).join('');
+  getTemplate(tmplName) {
+    const fn = path.resolve(process.cwd(), this.tmplDir, tmplName + this.tmplSuffix)
+    return new Promise((resolve, reject) => {
+      fs.readFile(fn, 'utf8', (err, msgTemplate) => {
+        if (err) reject(err);
+        else resolve(msgTemplate);
+      })
+    })
   }
 
   sgRequest(msgTemplate, data) {
@@ -108,13 +115,13 @@ class Mailer {
         break;
 
     }
-    fs.readFile(this.tmplFileName(tmplName), 'utf8', (err, msgTemplate) => {
-      if (err) return done(err);
-      const request = this.sgRequest(msgTemplate, tmplData);
-      sendgrid.API(request)
-        .then(() => done(null, { to: data.email }))
-        .catch(done)
-    });
+    this.getTemplate(tmplName)
+      .then(msgTemplate => {
+        const request = this.sgRequest(msgTemplate, tmplData);
+        return sendgrid.API(request)
+      })
+      .then(() => done(null, { to: data.email }))
+      .catch(done)
   }
 }
 

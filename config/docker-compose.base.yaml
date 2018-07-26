@@ -73,6 +73,8 @@ services:
       - redis
     expose:
       - "3000"
+    volumes:
+      - ../config/message-templates:/message-templates:ro
 
   redis:
     image: redis:3.2

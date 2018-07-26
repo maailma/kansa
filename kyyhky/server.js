@@ -5,7 +5,7 @@ const http = require('http')
 
 const { messages, rxUpdates } = require('./lib/queues')
 
-const templates = fs.readdirSync('./templates')
+const templates = fs.readdirSync('/message-templates')
   .reduce((ls, fn) => {
     const m = fn.match(/(.*)\.mustache/)
     if (m) ls.push(m[1])
