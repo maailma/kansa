@@ -37,27 +37,30 @@ app.use(express.json({ limit: '50 mb' }))
 
 app.post('/job', (req, res, next) => {
   const { data, options, type } = req.body
-  if (type === 'update-recipients') {
-    rxUpdates.add(data)
+  if (!templates.includes(type)) {
+    return next(new Error(`Unknown job type ${JSON.stringify(type)}`))
+  }
+  if (options && options.delay) {
+    const jobId = `${type}:${data.email}`
+    return messages.getJob(jobId)
+      .then(prev => prev && prev.remove())
+      .then(() => messages.add(type, data, { delay: options.delay, jobId }))
       .then(job => res.json(job.id))
       .catch(next)
   } else {
-    if (!templates.includes(type)) {
-      return next(new Error(`Unknown job type ${JSON.stringify(type)}`))
-    }
-    if (options && options.delay) {
-      const jobId = `${type}:${data.email}`
-      return messages.getJob(jobId)
-        .then(prev => prev && prev.remove())
-        .then(() => messages.add(type, data, { delay: options.delay, jobId }))
-        .then(job => res.json(job.id))
-        .catch(next)
-    } else {
-      messages.add(type, data)
-        .then(job => res.json(job.id))
-        .catch(next)
-    }
+    messages.add(type, data)
+      .then(job => res.json(job.id))
+      .catch(next)
   }
+})
+
+app.post('/update-recipients', (req, res, next) => {
+  if (!Array.isArray(req.body)) {
+    return next(new Error(`Expected array as POST body, but found ${typeof req.body}`))
+  }
+  rxUpdates.add(req.body)
+    .then(job => res.json(job.id))
+    .catch(next)
 })
 
 app.use((req, res) => {

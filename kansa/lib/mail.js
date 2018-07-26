@@ -4,6 +4,14 @@ module.exports = {
   mailTask, setAllMailRecipients, updateMailRecipient
 }
 
+function mailTask(type, data, options = { searchKeys: [] }) {
+  return fetch('http://kyyhky:3000/job', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type, data, options })
+  })
+}
+
 const mailRecipient = (email, res) => {
   const mt = [ 'NonMember', 'KidInTow', 'Exhibitor', 'Helper', 'Child', 'Supporter', 'Youth', 'FirstWorldcon', 'Adult' ]
     // inlined as types/person.js has Supporter < Child
@@ -49,11 +57,11 @@ mailRecipient.selector = `
 LEFT JOIN keys USING (email)
 LEFT JOIN daypasses d ON (p.id = d.person_id)`
 
-function mailTask(type, data, options = { searchKeys: [] }) {
-  return fetch('http://kyyhky:3000/job', {
+function rxUpdateTask(recipients) {
+  return fetch('http://kyyhky:3000/update-recipients', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ type, data, options })
+    body: JSON.stringify(recipients)
   })
 }
 
@@ -67,7 +75,7 @@ function setAllMailRecipients(req, res, next) {
       }, {})
       const emails = Object.keys(er)
       const recipients = emails.map(email => mailRecipient(email, er[email]))
-      return mailTask('update-recipients', recipients).then(() => emails.length)
+      return rxUpdateTask(recipients).then(() => emails.length)
     })
     .then(count => res.json({ success: true, count }))
     .catch(next)
@@ -75,6 +83,6 @@ function setAllMailRecipients(req, res, next) {
 
 function updateMailRecipient(db, email) {
   return db.any(`${mailRecipient.selector} WHERE email ILIKE $1`, email)
-    .then(res => mailTask('update-recipients', [mailRecipient(email, res)]))
+    .then(res => rxUpdateTask([mailRecipient(email, res)]))
     .catch(err => console.error('updateMailRecipient:', err))
 }
