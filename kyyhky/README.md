@@ -1,7 +1,6 @@
 # Kyyhky
 
-An internal mailing service for hugo & kansa, built on [Kue] and its built-in
-REST API. Jobs are automatically removed on completion, and added by:
+An internal mailing service for hugo & kansa, built using [Bull]. Jobs are added by:
 
 ```
 POST /job HTTP/1.1
@@ -16,14 +15,14 @@ Content-Type: application/json
   },
   "options": {
     "delay": <ms>,
-    "searchKeys": [] || ["email"],
     ...
   }
 }
 ```
 
-For more options, see [Kue's documentation].
-
+Adding a delayed job will cancel any previous job that has matching `type` and
+`data.email` values; this is used to throttle Hugo nomination and voting update
+emails so that they're only sent after a set period of inactivity.
 
 ## SendGrid configuration
 
@@ -36,6 +35,7 @@ Furthermore, you should set up your account there with the following
 [custom fields], all of type `text` (These may then be used to define segments
 of the membership for mailings):
 - `membership`, `name`, `login_url`
+- `attending_name_#`, `attending_barcode_url_#` with `#` replaced by each of `1`, `2`, `3`
 - `hugo_name_#`, `hugo_login_url_#` with `#` replaced by each of `1`, `2`, `3`, `4`
 
 All SendGrid API calls are properly throttled. Updates are pushed with the
@@ -65,8 +65,6 @@ Content-Type: application/json
 }
 ```
 
-
-[Kue]: http://automattic.github.io/kue/
-[Kue's documentation]: https://github.com/Automattic/kue/blob/master/Readme.md#post-job
+[Bull]: https://github.com/OptimalBits/bull
 [SendGrid]: https://github.com/sendgrid/sendgrid-nodejs
 [custom fields]: https://sendgrid.com/marketing_campaigns/ui/custom_fields

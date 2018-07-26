@@ -7,7 +7,7 @@ These are the back-end services used by [members.worldcon.fi](https://members.wo
 - **`docker-compose.*`** - Service configuration
 - **`hugo`** - An express.js app providing the Hugo Nominations and Awards parts of the [REST API](docs/index.md)
 - **`kansa`** - An express.js app providing the core parts of the [REST API](docs/index.md)
-- **`kyyhky`** - Internal mailing service for hugo & kansa, using [Kue](http://automattic.github.io/kue/)
+- **`kyyhky`** - Internal mailing service & [SendGrid](https://sendgrid.com/) integration for hugo & kansa
 - **`nginx`** - An SSL-terminating reverse proxy & file server, using [OpenResty](https://openresty.org/)
 - **`postgres`** - Configuration & schemas for our database
 - **`raami`** - An express.js app providing the Art show management part of the [REST API](docs/index.md)
