@@ -4,11 +4,13 @@ module.exports = {
   mailTask, setAllMailRecipients, updateMailRecipient
 }
 
-function mailTask(type, data, options = { searchKeys: [] }) {
-  return fetch('http://kyyhky:3000/job', {
+function mailTask(type, data, delay) {
+  let url = `http://kyyhky:3000/email/${type}`
+  if (delay) url += `?delay=${Number(delay)}` // in minutes
+  return fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ type, data, options })
+    body: JSON.stringify(data)
   })
 }
 

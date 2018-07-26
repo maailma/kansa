@@ -1,28 +1,26 @@
 # Kyyhky
 
-An internal mailing service for hugo & kansa, built using [Bull]. Jobs are added by:
+An internal mailing service for hugo & kansa, built using [Bull]. New messages
+are queued by a `POST /email/:type` request, where `:type` identifies one of
+the known message templates. The content-type must be `application/json` and
+the request body must contain an object that has at least a valid `email` field.
+
+Adding a `delay` query parameter will cancel any previous job that has matching
+`:type` and `email` values; this is used to throttle Hugo nomination and voting
+update emails so that they're only sent after a set period of inactivity, which
+is defined in **minutes**.
 
 ```
-POST /job HTTP/1.1
+POST /email/hugo-update-nominations?delay=30 HTTP/1.1
 Host: kyyhky:3000
 Content-Type: application/json
 
 {
-  "type": "kansa-set-key" || "hugo-update-email" || ...,
-  "data": {
-    "email": <string>,
-    ...
-  },
-  "options": {
-    "delay": <ms>,
-    ...
-  }
+  "email": <string>,
+  "nominations": <array>,
+  ...
 }
 ```
-
-Adding a delayed job will cancel any previous job that has matching `type` and
-`data.email` values; this is used to throttle Hugo nomination and voting update
-emails so that they're only sent after a set period of inactivity.
 
 ## SendGrid configuration
 
@@ -44,25 +42,27 @@ remove an entry (or to change an email address), include an object
 `{ email, delete: true }` in the request:
 
 ```
-POST /job HTTP/1.1
+POST /update-recipients HTTP/1.1
 Host: kyyhky:3000
 Content-Type: application/json
 
-{
-  "type": "update-recipients",
-  "data": [
-    {
-      "email": "member@example.com",
-      "hugo_members": [
-        { "id": 123, "name": "Member" },
-        { "id": 456, "name": "Other Member" }
-      ],
-      "key": "abc123def456",
-      "membership": "Adult",
-      "name": "Member and Other Member"
-    }, ...
-  ]
-}
+[
+  {
+    "email": "new-address@example.com",
+    "hugo_members": [
+      { "id": 123, "name": "Member" },
+      { "id": 456, "name": "Other Member" }
+    ],
+    "key": "abc123def456",
+    "membership": "Adult",
+    "name": "Member and Other Member"
+  },
+  {
+    "email": "old-address@example.com",
+    "delete": true
+  },
+  ...
+]
 ```
 
 [Bull]: https://github.com/OptimalBits/bull

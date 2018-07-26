@@ -1,4 +1,3 @@
-const fetch = require('node-fetch');
 const jwt = require('jsonwebtoken');
 const AuthError = require('./errors').AuthError;
 const InputError = require('./errors').InputError;
@@ -145,10 +144,7 @@ class Vote {
       .then(([ person, votes ]) => sendEmail(
         'hugo-update-votes',
         Object.assign({ memberId: id, votes }, person),
-        {
-          delay: 30 * 60 * 1000,
-          searchKeys: ['email']
-        }
+        30
       ))
       .catch(err => console.error(err));
   }

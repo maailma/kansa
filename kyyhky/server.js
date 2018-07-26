@@ -35,16 +35,21 @@ if (debug.enabled('kyyhky:http')) {
 app.set('port', port);
 app.use(express.json({ limit: '50 mb' }))
 
-app.post('/job', (req, res, next) => {
-  const { data, options, type } = req.body
+app.post('/email/:type', (req, res, next) => {
+  const { type } = req.params
+  const delay = Number(req.query.delay) // in minutes
+  const data = req.body
   if (!templates.includes(type)) {
-    return next(new Error(`Unknown job type ${JSON.stringify(type)}`))
+    return next(new Error(`Unknown email type ${JSON.stringify(type)}`))
   }
-  if (options && options.delay) {
+  if (!data || typeof data !== 'object' || !data.email) {
+    return next(new Error('Sending emails require at least an email address'))
+  }
+  if (delay > 0) {
     const jobId = `${type}:${data.email}`
     return messages.getJob(jobId)
       .then(prev => prev && prev.remove())
-      .then(() => messages.add(type, data, { delay: options.delay, jobId }))
+      .then(() => messages.add(type, data, { delay: delay * 60000, jobId }))
       .then(job => res.json(job.id))
       .catch(next)
   } else {

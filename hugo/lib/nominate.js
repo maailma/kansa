@@ -33,6 +33,7 @@ function getNominations(req, res, next) {
 
 
 function sendNominationEmail(db, id) {
+  const url = 'http://kyyhky:3000/email/hugo-update-nominations?delay=30'
   db.task(t => t.batch([
     t.one(`SELECT
       k.email, k.key, p.legal_name, p.public_first_name AS pfn, p.public_last_name AS pln
@@ -42,22 +43,15 @@ function sendNominationEmail(db, id) {
     t.any(`SELECT DISTINCT ON (category) * FROM Nominations
       WHERE person_id = $1 ORDER BY category, time DESC`, id)
   ]))
-    .then(([ person, nominations ]) => fetch('http://kyyhky:3000/job', {
+    .then(([ person, nominations ]) => fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          type: 'hugo-update-nominations',
-          data: {
-            email: person.email,
-            key: person.key,
-            memberId: id,
-            name: [person.pfn, person.pln].filter(n => n).join(' ').trim() || person.legal_name,
-            nominations
-          },
-          options: {
-            delay: 60 * 60 * 1000,  // 60 min
-            searchKeys: ['email']
-          }
+          email: person.email,
+          key: person.key,
+          memberId: id,
+          name: [person.pfn, person.pln].filter(n => n).join(' ').trim() || person.legal_name,
+          nominations
         })
       }))
     .catch(err => console.error(err));
