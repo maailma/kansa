@@ -21,47 +21,15 @@ const reds = require('reds')  // using kue's dependency to guarantee version mat
 reds.createClient = require('kue/lib/redis').createClient
 const search = reds.createSearch(queue.client.getKey('search'))
 
-const SendGrid = require('sendgrid')
-let sendgrid
-if (process.env.SENDGRID_APIKEY) {
-  sendgrid = SendGrid(process.env.SENDGRID_APIKEY)
-} else {
-  sendgrid = {
-    emptyRequest: (request) => request || {},
-    API: ({ body, method, path }) => {
-      debug('MOCK SendGrid request', method, path)
-      switch (path) {
-        case '/v3/mail/send': {
-          const { content, from, personalizations, subject } = body
-          debug('FROM:', JSON.stringify(from.name), `<${from.email}>`)
-          debug('TO:', JSON.stringify(personalizations[0].to[0]))
-          debug('SUBJECT:', subject)
-          debug('--------\n', content[0] && content[0].value, '\n--------')
-          return Promise.resolve(null)
-        }
-        case '/v3/contactdb/recipients':
-          if (method === 'GET') return Promise.reject({ response: { statusCode: 404 } })
-          debug(body, '\n--------')
-          return Promise.resolve({ body: '{}' })
-        default:
-          return Promise.reject(new Error('Unmocked path!'))
-      }
-    }
-  };
-  console.warn('Using MOCK SendGrid instance -> emails will not be sent!')
-}
-
-
 const ContactSync = require('./lib/contact-sync')
-const contactSync = new ContactSync(sendgrid)
+const contactSync = new ContactSync()
 
 queue.process('update-recipients', (job, done) => {
   contactSync.sync(job.data, done)
 })
 
-
 const Mailer = require('./lib/mailer')
-const mailer = new Mailer('templates', '.mustache', sendgrid)
+const mailer = new Mailer('templates', '.mustache')
 
 queue.on('job complete', (id, result) => {
   kue.Job.get(id, (err, job) => {

@@ -3,6 +3,7 @@ const mustache = require('mustache');
 const tfm = require('tiny-frontmatter');
 const wrap = require('wordwrap');
 const { barcodeUri, loginUri } = require('./login-uri');
+const sendgrid = require('./sendgrid')
 
 const WRAP_WIDTH = 78;
 
@@ -40,8 +41,7 @@ function votesString(data) {
 }
 
 class Mailer {
-  constructor(tmplDir, tmplSuffix, sendgrid) {
-    this.sendgrid = sendgrid;
+  constructor(tmplDir, tmplSuffix) {
     this.tmplDir = tmplDir;
     this.tmplSuffix = tmplSuffix;
   }
@@ -54,7 +54,7 @@ class Mailer {
     const { attributes: { from, fromname, subject }, body } = tfm(msgTemplate);
     const to = [{ email: data.email }];
     if (data.name) to[0].name = data.name;
-    return this.sendgrid.emptyRequest({
+    return sendgrid.emptyRequest({
       method: 'POST',
       path: '/v3/mail/send',
       body: {
@@ -111,7 +111,7 @@ class Mailer {
     fs.readFile(this.tmplFileName(tmplName), 'utf8', (err, msgTemplate) => {
       if (err) return done(err);
       const request = this.sgRequest(msgTemplate, tmplData);
-      this.sendgrid.API(request)
+      sendgrid.API(request)
         .then(() => done(null, { to: data.email }))
         .catch(done)
     });

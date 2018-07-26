@@ -1,6 +1,7 @@
 var ContactImporter = require('sendgrid/lib/helpers/contact-importer/contact-importer')
 const debug = require('debug')('kyyhky:sync')
 const { barcodeUri, loginUri } = require('./login-uri');
+const sendgrid = require('./sendgrid')
 
 const MAX_ATTENDING = process.env.MAX_ATTENDING || 3
 const MAX_HUGO_MEMBERS = process.env.MAX_HUGO_MEMBERS || 4
@@ -12,8 +13,7 @@ const recipient = (src) => {
 }
 
 class ContactSync {
-  constructor(sendgrid) {
-    this.sendgrid = sendgrid
+  constructor() {
     this.contactImporter = new ContactImporter(sendgrid)
     this.fetching = false
     this.queue = null
@@ -38,7 +38,7 @@ class ContactSync {
         throw err
       }
     }
-    next = () => this.sendgrid.API(request).catch(onError)
+    next = () => sendgrid.API(request).catch(onError)
     return throttle(response).then(next)
   }
 
@@ -46,7 +46,7 @@ class ContactSync {
     if (this.fetching) return Promise.reject(new Error('fetching'))
     if (this.recipients) return Promise.resolve(this.recipients)
     this.fetching = true
-    const request = this.sendgrid.emptyRequest({
+    const request = sendgrid.emptyRequest({
       method: 'GET',
       path: '/v3/contactdb/recipients',
       queryParams: {
@@ -134,12 +134,12 @@ class ContactSync {
         debug('update', updates.length, 'and delete', deletes.length)
         if (updates.length) this.contactImporter.push(updates)
         if (deletes.length) {
-          const request = this.sendgrid.emptyRequest({
+          const request = sendgrid.emptyRequest({
             method: 'DELETE',
             path: '/v3/contactdb/recipients',
             body: deletes
           })
-          return this.sendgrid.API(request)
+          return sendgrid.API(request)
         }
       })
       .then(done)
