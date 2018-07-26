@@ -9,37 +9,24 @@ const sendgrid = require('./sendgrid')
 const TEMPLATES_DIR = '/message-templates'
 const WRAP_WIDTH = 78;
 
-function nominationsString(data) {
-  return data.map(({ category, nominations }) => {
-    const ct = category.charAt(0) + category.slice(1).replace(/[A-Z]/g, ' $&');
-    const cn = nominations.map(n => {
-      const ns = Object.keys(n).map(k => n[k]).join('; ');
-      return '  - ' + wrap(WRAP_WIDTH - 4)(ns).replace(/\n/g, '\n    ');
-    });
-    return `${ct}:\n${cn.join('\n')}`;
-  }).join('\n\n');
+function wrapIndented(prefix, str) {
+  return prefix
+    ? wrap(WRAP_WIDTH - prefix.length)(str).replace(/\n/g, '\n' + prefix)
+    : wrap(WRAP_WIDTH)(str)
 }
 
-function paymentDataString(data, shape, ignored) {
-  if (!data) return '';
-  const label = (key) => shape && (shape.find(s => s.key === key) || {}).label || key;
-  return Object.keys(data)
-    .filter(key => key && data[key] && !ignored[key])
-    .map(key => `${label(key)}: ${data[key]}`)
-    .join('\n');
-}
-
-function votesString(data) {
-  return data
-    .map(({ category, finalists }) => ({
-      title: category.charAt(0) + category.slice(1).replace(/[A-Z]/g, ' $&'),
-      votes: finalists && finalists.filter(finalist => finalist).map((finalist, i) => {
-        return `  ${i+1}. ` + wrap(WRAP_WIDTH - 4)(finalist).replace(/\n/g, '\n     ');
-      })
-    }))
-    .filter(({ votes }) => votes && votes.length > 0)
-    .map(({ title, votes }) => `${title}:\n${votes.join('\n')}`)
-    .join('\n\n');
+function applyCustomConfig(name, data) {
+  const fn = path.resolve(process.cwd(), TEMPLATES_DIR, name)
+  return new Promise((resolve, reject) => {
+    try {
+      const customFunction = require(fn)
+      const customName = customFunction(data, wrapIndented)
+      resolve(customName || name)
+    } catch (error) {
+      if (error && error.code === 'MODULE_NOT_FOUND') resolve(name)
+      else reject(error)
+    }
+  })
 }
 
 function getTemplate(name) {
@@ -74,45 +61,13 @@ function sgRequest(msgTemplate, data) {
   });
 }
 
-function sendEmail(tmplName, data) {
-  let tmplData = Object.assign({
-    barcode_uri: barcodeUri(data),
-    login_uri: loginUri(data)
-  }, data);
-  switch (tmplName) {
-
-    case 'hugo-packet-series-extra':
-      tmplData = {
-        email: 'hugos@choiceofgames.com',
-        voter_email: data.email
-      }
-      break;
-
-    case 'hugo-update-nominations':
-      tmplData.nominations = nominationsString(data.nominations);
-      break;
-
-    case 'hugo-update-votes':
-      tmplData.votes = votesString(data.votes);
-      break;
-
-    case 'kansa-new-payment':
-    case 'kansa-update-payment':
-      if (data.type === 'ss-token' && data.status === 'succeeded') {
-        tmplName = 'kansa-new-siteselection-token';
-      }
-      tmplData.data = paymentDataString(data.data, data.shape, { mandate_url: true });
-      tmplData.strAmount = data.currency.toUpperCase() + ' ' + (data.amount / 100).toFixed(2);
-      break;
-
-    case 'kansa-upgrade-person':
-      if (data.paper_pubs) tmplData.membership += ' with paper pubs';
-      break;
-
-  }
-  return getTemplate(tmplName)
-    .then(msgTemplate => {
-      const request = sgRequest(msgTemplate, tmplData);
+function sendEmail(name, data) {
+  data.barcode_uri = barcodeUri(data)
+  data.login_uri = loginUri(data)
+  return applyCustomConfig(name, data)
+    .then(getTemplate)
+    .then(template => {
+      const request = sgRequest(template, data);
       return sendgrid.API(request)
     })
     .then(() => data.email)
