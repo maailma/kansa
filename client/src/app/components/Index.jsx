@@ -64,7 +64,7 @@ class Index extends Component {
   get memberCards () {
     const { people } = this.props
     const hugoCount = people.reduce((sum, m) => (
-      sum + (m.get('can_hugo_nominate') || m.get('can_hugo_vote') ? 1 : 0)
+      sum + (m.get('hugo_nominator') || m.get('hugo_voter') ? 1 : 0)
     ), 0)
     return people.map((member, key) => (
       <MemberCard

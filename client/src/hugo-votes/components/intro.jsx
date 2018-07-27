@@ -25,7 +25,7 @@ const VoteIntro = ({ person, setSignature, signature }) => (
         textStyle={{ paddingRight: 0 }}
         title={`Signing as "${signature}"`}
       />
-    ) : person && person.get('can_hugo_vote') ? (
+    ) : person && person.get('hugo_voter') ? (
       <VoteSignature
         person={person}
         preferredName={preferredName(person)}

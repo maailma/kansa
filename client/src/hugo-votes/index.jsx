@@ -112,7 +112,7 @@ export default connect(
   ({ hugoVotes, user }, { params }) => {
     const id = params && Number(params.id) || null
     const people = user.get('people')
-    const pv = id ? null : people && people.filter(p => p.get('can_hugo_vote'))
+    const pv = id ? null : people && people.filter(p => p.get('hugo_voter'))
     return {
       person: id && people && people.find(p => p.get('id') === id) || null,
       signature: hugoVotes.get('signature'),

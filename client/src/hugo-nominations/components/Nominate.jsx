@@ -132,7 +132,7 @@ class Nominate extends React.Component {
   render () {
     const { id, person } = this.props
     const { signature } = this.state
-    const active = person.get('can_hugo_nominate')
+    const active = person.get('hugo_nominator')
     return !id ? <div>Loading...</div>
       : !person ? <div>Nominator not found!</div>
       : <div>

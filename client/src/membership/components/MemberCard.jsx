@@ -77,7 +77,7 @@ class MemberCard extends React.Component {
         />
       </ShowBarcode>
     )
-    if (showHugoActions && member.get('can_hugo_vote')) {
+    if (showHugoActions && member.get('hugo_voter')) {
       actions.push(
         <Action
           key='hv'
@@ -88,7 +88,7 @@ class MemberCard extends React.Component {
         />
       )
     }
-    if (showHugoActions && member.get('can_hugo_nominate')) {
+    if (showHugoActions && member.get('hugo_nominator')) {
       actions.push(
         <Action
           key='hn'
@@ -126,7 +126,7 @@ class MemberCard extends React.Component {
         .join('/')
       return `${daypass} day pass ${days}`
     }
-    return member.get('can_hugo_nominate') ? 'Hugo nominator' : 'Non-member'
+    return member.get('hugo_nominator') ? 'Hugo nominator' : 'Non-member'
   }
 
   render () {

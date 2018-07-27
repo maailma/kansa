@@ -26,11 +26,11 @@ const linkArtshowRegistration = (currentMember) => {
 }
 
 const linkHugoNominations = (currentMember, otherMembers) => (
-  singleWithKey(currentMember, otherMembers, 'can_hugo_nominate')
+  singleWithKey(currentMember, otherMembers, 'hugo_nominator')
 )
 
 const linkHugoVotes = (currentMember, otherMembers) => (
-  singleWithKey(currentMember, otherMembers, 'can_hugo_vote')
+  singleWithKey(currentMember, otherMembers, 'hugo_voter')
 )
 
 const NavMenu = ({ currentMember, handleNav, otherMembers }) => {
