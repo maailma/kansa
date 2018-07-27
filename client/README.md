@@ -1,21 +1,21 @@
-# Worldcon 75 Member Services Client
+# Kansa Client
 
-These are the front-end clients for [members.worldcon.fi](https://members.worldcon.fi/),
-implemented as single-page react + redux apps. For the back-end code, please see
-[worldcon75/api](https://github.com/worldcon75/api).
+These are the front-end clients for [Kansa](https://github.com/maailma/kansa), a convention member management system.
 
-
-### Getting Started
+## Getting Started
 
 Use `npm install` to fetch the required dependencies, and see [`package.json`](./package.json) for
 the various `npm run` targets; the default `npm start` uses
-[webpack-dev-server](https://webpack.github.io/docs/webpack-dev-server.html) to incrementally
+[webpack-dev-server](https://github.com/webpack/webpack-dev-server#webpack-dev-server) to incrementally
 re-build and serve the client code at `http://localhost:8080/` during development.
 
-To use the client, you'll need a [worldcon75/api](https://github.com/worldcon75/api) server that
+To use the client, you'll need a [Kansa](https://github.com/maailma/kansa) server that
 you can connect to. In development, the server is assumed to run at its default local address
-`https://localhost:4430/`; in production, the default is to use the same host that server the
+`https://localhost:4430/`; in production, the default is to use the same host that serves the
 client code. To specify a different target, use the `API_HOST` environment variable:
+
+The default dev-configured server provides an admin account with which you may log in by visiting:
+<http://localhost:8080/#/login/admin@example.com/key>
 
 ```
 API_HOST=members.worldcon.fi npm start
@@ -30,7 +30,9 @@ self-signed certificate for `localhost`, you'll need to open it directly at `htt
 to trigger your browser's functionality for bypassing the warning. Until you do that, your browser
 will silently block the client's API calls:
 
-  - **Chrome**: Click on _Advanced_, then _Proceed to example.com_
+  - **Chrome**: Click on _Advanced_, then _Proceed to localhost:4430_. Alternatively, go to
+    `chrome://flags/#allow-insecure-localhost` and enable the option to "Allow invalid certificates
+    for resources loaded from localhost"
   - **Firefox**: Click on _I Understand the Risks_, then _Add Exception...._, then _Get
     Certificate_, and finally _Confirm Security Exception_
   - **IE**: Click on _Continue to this website (not recommended)_
@@ -41,11 +43,10 @@ Also important: the API server by default self-hosts a client that uses the late
 production code hosted on GitHub Pages, so you should make sure that after bypassing the certificate
 warning you navigate to your actual client development version, at `http://localhost:8080/`.
 
+## Admin Interfaces
 
-### kansa-admin
-
- Currently, `kansa-admin` is set up to run completely separately from the main `client` interface.
- For development, both use the same server address `http://localhost:8080/` so the back-end CORS
- settings should not need to be updated and authentication cookies can be shared. To use it, it may
- be easier to login first using `client`, or by visiting the API endpoint
- `https://localhost:4430/api/login?email=admin@example.com&key=key` to set the proper auth cookie.
+The Kansa and Hugo admin interfaces are built partly from the same sources as the public-facing site,
+and are a part of the build targets specified in the Webpack config. Both of these require first
+logging in using a login link. In dev mode:
+- <https://localhost:4430/kansa-admin.html>
+- <https://localhost:4430/hugo-admin.html>
