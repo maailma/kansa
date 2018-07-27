@@ -32,7 +32,7 @@ Specifically of interest to Worldcons, Kansa also provides:
 - **Hugo Awards** nomination and voting front-end for members
 - Throttled/delayed email confirmations for nominators and voters
 - Canonicalisation and category correction interface for Hugo admins
-- Detailed reports on nomination and vote counts and resulsts
+- Detailed reports on nomination and vote counts & results
 - Secure hosting for the Hugo packet
 - **Site Selection** token generator for online sales
 - Member-specific Site Selection ballot PDF generator
@@ -140,5 +140,5 @@ The particular places that may need manual adjustment are:
 
 ----
 
-If you'd like to help with this project, please get in touch with us at
-[devops@worldcon.fi](mailto:devops@worldcon.fi).
+If you'd like to help with this project, please fell free to fork it and submit pull requests, or
+get in touch with us at [kansa@maa-ilma.fi](mailto:kansa@maa-ilma.fi).
