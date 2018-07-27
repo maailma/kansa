@@ -228,7 +228,7 @@ data, `member_admin` or `member_list` authority is required.
 {
   id, last_modified, member_number, membership, legal_name, email,
   public_first_name, public_last_name, city, state, country,
-  can_hugo_nominate, can_hugo_vote, can_site_select,
+  can_hugo_nominate, can_hugo_vote,
   paper_pubs: { name, address, country },
   preferred_name, daypass, daypass_days
 }

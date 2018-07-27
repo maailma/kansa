@@ -13,7 +13,7 @@ class Person {
       'email',  // text
       'city', 'state', 'country',  // text
       'badge_name', 'badge_subtitle',  // text
-      'can_hugo_nominate', 'can_hugo_vote', 'can_site_select',  // bool NOT NULL DEFAULT false
+      'can_hugo_nominate', 'can_hugo_vote',  // bool NOT NULL DEFAULT false
       'paper_pubs',  // jsonb
       'daypass',  // string
       'daypass_days'  // int[]
@@ -21,7 +21,7 @@ class Person {
   }
 
   static get boolFields() {
-    return [ 'can_hugo_nominate', 'can_hugo_vote', 'can_site_select' ];
+    return [ 'can_hugo_nominate', 'can_hugo_vote' ];
   }
 
   static hugoVoterType(membership) {

@@ -24,7 +24,6 @@ function getPeopleQuery(req, res, next) {
     case 'membership':
     case 'can_hugo_nominate':
     case 'can_hugo_vote':
-    case 'can_site_select':
       return `${fn} = $(${fn})`;
     default:
       return (Person.fields.indexOf(fn) !== -1) ? `${fn} ILIKE $(${fn})` : 'true';

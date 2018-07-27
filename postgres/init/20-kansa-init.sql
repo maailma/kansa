@@ -30,7 +30,6 @@ CREATE TABLE IF NOT EXISTS People (
     badge_subtitle text,
     can_hugo_nominate bool NOT NULL DEFAULT false,
     can_hugo_vote bool NOT NULL DEFAULT false,
-    can_site_select bool NOT NULL DEFAULT false,
     paper_pubs jsonb
 );
 
