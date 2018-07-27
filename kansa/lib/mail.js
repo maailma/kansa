@@ -41,7 +41,7 @@ const mailRecipient = (email, res) => {
     })
     .map(({ id, name }) => ({ id, name }))
   const hugo_members = res
-    .filter(r => r.can_hugo_nominate || r.can_hugo_vote)
+    .filter(r => r.hugo_nominator || r.hugo_voter)
     .map(({ id, name }) => ({ id, name }))
   return {
     attending,
@@ -54,7 +54,7 @@ const mailRecipient = (email, res) => {
 }
 mailRecipient.selector = `
    SELECT email, key, p.id, membership, preferred_name(p) as name,
-          can_hugo_nominate, can_hugo_vote, d.status AS daypass
+          hugo_nominator, hugo_voter, d.status AS daypass
      FROM people p
 LEFT JOIN keys USING (email)
 LEFT JOIN daypasses d ON (p.id = d.person_id)`

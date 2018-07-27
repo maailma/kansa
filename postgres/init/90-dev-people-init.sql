@@ -6,7 +6,7 @@ INSERT INTO admin.Admins (email, member_admin, member_list, siteselection, hugo_
 
 SET ROLE kansa;
 
-INSERT INTO People (legal_name, email, membership, member_number, can_hugo_nominate, can_hugo_vote)
+INSERT INTO People (legal_name, email, membership, member_number, hugo_nominator, hugo_voter)
      VALUES ('Admin', 'admin@example.com', 'NonMember', NULL, false, false),
             ('Member Admin', 'member-admin@example.com', 'NonMember', NULL, false, false),
             ('Site Selection', 'site-select@example.com', 'NonMember', NULL, false, false),

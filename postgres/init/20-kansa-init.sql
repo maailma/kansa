@@ -28,8 +28,8 @@ CREATE TABLE IF NOT EXISTS People (
     country text,
     badge_name text,
     badge_subtitle text,
-    can_hugo_nominate bool NOT NULL DEFAULT false,
-    can_hugo_vote bool NOT NULL DEFAULT false,
+    hugo_nominator bool,
+    hugo_voter bool,
     paper_pubs jsonb
 );
 
