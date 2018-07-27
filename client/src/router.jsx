@@ -81,7 +81,6 @@ export default class AppRouter extends Route {
           <Route path='new/:membership' component={NewMemberForm} />
           <Route path='pay' component={Payments} />
           <Route path='pay/:type' component={NewPayment} />
-          <Redirect from='tek*' to='/' />
           <Redirect from='upgrade*' to='/' />
         </Route>
       </Router>
