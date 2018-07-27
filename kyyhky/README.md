@@ -2,8 +2,9 @@
 
 An internal mailing service for hugo & kansa, built using [Bull]. New messages
 are queued by a `POST /email/:type` request, where `:type` identifies one of
-the known message templates. The content-type must be `application/json` and
-the request body must contain an object that has at least a valid `email` field.
+the known [message templates](../config/message-templates). The content-type
+must be `application/json` and the request body must contain an object that has
+at least a valid `email` field.
 
 Adding a `delay` query parameter will cancel any previous job that has matching
 `:type` and `email` values; this is used to throttle Hugo nomination and voting
