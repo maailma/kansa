@@ -38,7 +38,6 @@ export const person = ImmutablePropTypes.mapContains({
   country: PropTypes.string,
   can_hugo_nominate: PropTypes.bool,
   can_hugo_vote: PropTypes.bool,
-  can_site_select: PropTypes.bool,
   paper_pubs: paperPubs
 })
 
