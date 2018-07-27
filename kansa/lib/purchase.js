@@ -138,7 +138,7 @@ class Purchase {
     }
   }
 
-  checkUpgrades(reqUpgrades) {
+  checkUpgrades(prices, reqUpgrades) {
     if (reqUpgrades.length === 0) return Promise.resolve([]);
     return this.db.any(`
       SELECT id, email, membership, preferred_name(p) as name, paper_pubs
@@ -167,14 +167,11 @@ class Purchase {
           throw new InputError('Change in at least one of membership and/or paper_pubs is required for upgrade');
         }
 
-        const prevPriceData = prices.memberships[prev.membership]
-        const membershipAmount = upgrade.membership
-          ? prices.memberships[upgrade.membership].amount - (prevPriceData && prevPriceData.amount || 0)
-          : 0;
-        const paperPubsAmount = upgrade.paper_pubs ? prices.PaperPubs.amount : 0;
-
+        let amount = 0
+        if (upgrade.membership) amount += (prices[upgrade.membership] || 0) - (prices[prev.membership] || 0)
+        if (upgrade.paper_pubs) amount += prices.paper_pubs
         return Object.assign({}, upgrade, {
-          amount: membershipAmount + paperPubsAmount,
+          amount,
           email: prev.email,
           name: prev.name,
           paper_pubs: Person.cleanPaperPubs(upgrade.paper_pubs),
@@ -249,17 +246,33 @@ class Purchase {
       new InputError('Non-empty new_members or upgrades is required')
     );
     const newEmailAddresses = {};
-    let charge_id, paymentItems, upgrades;
-    this.checkUpgrades(reqUpgrades).then(_upgrades => {
+    let charge_id, paymentItems, prices, upgrades;
+    return this.db.any(`
+      SELECT key, amount
+        FROM payment_types
+       WHERE category IN ('new_member', 'paper_pubs')
+    `).then(priceRows => {
+      prices = priceRows.reduce((p, { key, amount }) => {
+        p[key] = amount
+        return p
+      }, {})
+      return this.checkUpgrades(prices, reqUpgrades)
+    }).then(_upgrades => {
       upgrades = _upgrades;
-      const newMemberPaymentItems = newMembers.map(p => ({
-        amount: p.priceAsNewMember,
-        currency: 'eur',
-        category: 'new_member',
-        person_name: p.preferredName,
-        type: p.data.membership,
-        data: p.data
-      }));
+      const newMemberPaymentItems = newMembers.map(p => {
+        const { discount, membership: type, paper_pubs, preferredName: person_name } = p.data
+        const pp = paper_pubs ? prices.paper_pubs : 0
+        const da = discount ? discount.amount : 0
+        const amount = (prices[type] || 0) + pp - da
+        return {
+          amount,
+          currency: 'eur',
+          category: 'new_member',
+          person_name,
+          type,
+          data: p.data
+        }
+      });
       const upgradePaymentItems = upgrades.map(u => ({
         amount: u.amount,
         currency: 'eur',
