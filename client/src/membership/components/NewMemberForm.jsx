@@ -31,8 +31,7 @@ class NewMemberForm extends React.Component {
 
   constructor (props) {
     super(props)
-    const { email, getPrices, params: { membership }, prices, replace } = this.props
-    if (membership !== 'Supporter') replace('/')
+    const { email, getPrices, params: { membership }, prices } = this.props
     this.state = {
       member: Map({ email, membership }),
       sent: false,
@@ -42,10 +41,10 @@ class NewMemberForm extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { email, params: { membership }, replace } = nextProps
+    const { email, params: { membership } } = nextProps
     let { member } = this.state
     if (email !== this.props.email) member = member.set('email', email)
-    if (membership !== 'Supporter') replace('/')
+    if (membership !== this.props.params.membership) member = member.set('membership', membership)
     if (!member.equals(this.state.member)) this.setState({ member })
   }
 

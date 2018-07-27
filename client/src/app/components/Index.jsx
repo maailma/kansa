@@ -1,5 +1,4 @@
 import { List } from 'immutable'
-import { Card, CardHeader, CardText } from 'material-ui/Card'
 import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import { Col, Row } from 'react-flexbox-grid'
@@ -85,25 +84,22 @@ class Index extends Component {
         {isLoggedIn ? [this.invoiceCards, this.memberCards] : <KeyRequest />}
       </Col>
       <Col xs={12} sm={6} lg={4}>
-        <Card
-          style={{ marginBottom: 24 }}
-        >
-          <CardHeader
-            className='action-head'
-            textStyle={{ paddingRight: 0 }}
-            title='Attending membership sales have ended'
-            style={{ fontWeight: 600, marginBottom: 16 }}
-          />
-          <CardText
-            style={{ paddingTop: 0 }}
-          >
-            <p>Worldcon 75 has closed all advance day pass and all attending membership sales. <a href="http://www.worldcon.fi/news/closure-membership-sales/">Full announcement</a></p>
-          </CardText>
-        </Card>
         <NewMemberCard
-          category='support'
+          category='all'
+          expandable
           onSelectType={(type) => push(`/new/${type}`)}
           prices={purchase.get('prices')}
+        />
+        <NewMemberCard
+          category='upgrade'
+          disabled={!isLoggedIn}
+          expandable={isLoggedIn}
+          onSelectType={() => push(upgradePath)}
+        />
+        <NewMemberCard
+          category='daypass'
+          expandable
+          onSelectType={(type) => push(`/daypass/${type}`)}
         />
       </Col>
     </Row>

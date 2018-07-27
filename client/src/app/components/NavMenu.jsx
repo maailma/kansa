@@ -87,6 +87,12 @@ const NavMenu = ({ currentMember, handleNav, otherMembers }) => {
       value='/new'
     />
     <ListItem
+      leftIcon={<ThumbUp />}
+      primaryText='Upgrade Membership'
+      style={{ fontSize: 14 }}
+      value='/upgrade'
+    />
+    <ListItem
       leftIcon={<EuroSymbol />}
       primaryText='Payments'
       style={{ fontSize: 14 }}

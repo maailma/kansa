@@ -9,7 +9,10 @@ import App from './app/components/App'
 import Index from './app/components/Index'
 import Nominate from './hugo-nominations/components/Nominate'
 import Vote from './hugo-votes'
+import NewDaypassForm from './membership/components/NewDaypassForm'
 import NewMemberForm from './membership/components/NewMemberForm'
+import NewMemberIndex from './membership/components/NewMemberIndex'
+import Upgrade from './membership/components/Upgrade'
 import Payments from './payments'
 import NewPayment from './payments/new-payment'
 import ExhibitRegistration from './raami/components/Registration'
@@ -76,12 +79,15 @@ export default class AppRouter extends Route {
           <Redirect from='profile' to='/' />
           <Route path='exhibition/:id' component={ExhibitRegistration} onEnter={this.requireAuth} />
           {hugoRoutes('hugo', this.requireAuth)}
-          <Redirect from='daypass*' to-='/' />
-          <Redirect from='new' to='/' />
+          <Route path='daypass/:type' component={NewDaypassForm} />
+          <Route path='new' component={NewMemberIndex} />
           <Route path='new/:membership' component={NewMemberForm} />
           <Route path='pay' component={Payments} />
           <Route path='pay/:type' component={NewPayment} />
-          <Redirect from='upgrade*' to='/' />
+          <Route path='upgrade' onEnter={this.requireAuth}>
+            <IndexRoute component={Upgrade} />
+            <Route path=':id' component={Upgrade} />
+          </Route>
         </Route>
       </Router>
     )
