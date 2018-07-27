@@ -4,7 +4,7 @@
   "description": "Email queuing & Sendgrid data sync",
   "private": true,
   "license": "Apache-2.0",
-  "repository": "worldcon75/api",
+  "repository": "maailma/kansa",
   "dependencies": {
     "bull": "^3.4.4",
     "debug": "^3.1.0",

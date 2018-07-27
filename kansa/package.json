@@ -4,7 +4,7 @@
   "description": "API for members",
   "private": true,
   "license": "Apache-2.0",
-  "repository": "worldcon75/api",
+  "repository": "maailma/kansa",
   "scripts": {
     "start": "node server"
   },
