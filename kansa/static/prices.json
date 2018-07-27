@@ -1,22 +1,4 @@
 {
-  "discounts": {
-    "TEK-Adult": {
-      "amount": 6500,
-      "description": "TEK Adult"
-    },
-    "TEK-FirstWorldcon": {
-      "amount": 500,
-      "description": "TEK First Worldcon"
-    },
-    "TEK-Youth": {
-      "amount": 2000,
-      "description": "TEK Youth"
-    },
-    "TEK-Child": {
-      "amount": 3000,
-      "description": "TEK Child"
-    }
-  },
   "memberships": {
     "Exhibitor": {
       "amount": 2000,

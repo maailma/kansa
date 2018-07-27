@@ -260,16 +260,14 @@ class Purchase {
     }).then(_upgrades => {
       upgrades = _upgrades;
       const newMemberPaymentItems = newMembers.map(p => {
-        const { discount, membership: type, paper_pubs, preferredName: person_name } = p.data
-        const pp = paper_pubs ? prices.paper_pubs : 0
-        const da = discount ? discount.amount : 0
-        const amount = (prices[type] || 0) + pp - da
+        const mp = prices[p.data.membership] || 0
+        const pp = p.data.paper_pubs && prices.paper_pubs || 0
         return {
-          amount,
+          amount: mp + pp,
           currency: 'eur',
           category: 'new_member',
-          person_name,
-          type,
+          person_name: p.data.preferredName,
+          type: p.data.membership,
           data: p.data
         }
       });
