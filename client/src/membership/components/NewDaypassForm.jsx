@@ -194,7 +194,7 @@ class NewDaypassForm extends React.Component {
 export default connect(
   ({ purchase, user }, { params: { type } }) => ({
     email: user.get('email'),
-    daypassData: purchase.getIn(['data', 'Day pass']),
+    daypassData: purchase.getIn(['data', 'daypass']),
     daypassPrices: purchase.get('daypassPrices')
   }), {
     buyDaypass,
