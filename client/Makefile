@@ -18,10 +18,9 @@ release-%:
 	rm -rf $(DIST_DIR)
 	npm run build:prod
 	git checkout $(REL_BRANCH)
-	git merge -s ours --log --no-edit $*
 	git rm -r --ignore-unmatch $*
 	mv $(DIST_DIR) $*
 	git add $*
-	git commit --amend -C HEAD
+	git commit -m "Build $* from commit $(HEAD)"
 	git checkout $*
-	@echo "$(CHK) Done! New merge commit pushed to branch $(VT_HL)$(REL_BRANCH)$(VT0)"
+	@echo "$(CHK) Done! New commit pushed to branch $(VT_HL)$(REL_BRANCH)$(VT0)"
