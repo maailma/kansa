@@ -51,7 +51,7 @@ TextInput.propTypes = {
   onChange: PropTypes.func.isRequired
 }
 
-export const MembershipSelect = ({ discount, getDefaultValue, getValue, lc = 'en', onChange, prices, style }) => {
+export const MembershipSelect = ({ getDefaultValue, getValue, lc = 'en', onChange, prices, style }) => {
   const path = ['membership']
   const prevMembership = getDefaultValue && getDefaultValue(path)
   const prevIdx = membershipTypes.indexOf(prevMembership)
@@ -72,7 +72,6 @@ export const MembershipSelect = ({ discount, getDefaultValue, getValue, lc = 'en
       if (type === 'Helper' && prevMembership !== 'Helper') return null
       if (type === 'FirstWorldcon' && prevMembership !== 'FirstWorldcon') return null
       let amount = prices ? prices.getIn(['memberships', type, 'amount'], -100) : -100
-      if (discount) amount -= prices && prices.getIn(['discounts', `${discount}-${type}`, 'amount']) || 0
       const eurAmount = (amount - prevAmount) / 100
       const label = messages[lc][type] ? messages[lc][type]()
         : prices && prices.getIn(['memberships', type, 'description']) || type
