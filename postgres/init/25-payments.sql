@@ -88,8 +88,3 @@ CREATE TABLE stripe_keys (
     type StripeKeyType NOT NULL,
     key text NOT NULL
 );
-INSERT INTO stripe_keys (name, type, key) VALUES
-('default','pk_test','pk_test_LoOP8RB3gIlLkSYIyM9G6skn'),
-('default','pk_live','pk_live_vSEBxO9ddioYqCGvhVsog4pb'),
-('siteselect','pk_test','pk_test_k9X10O1qQoKXD3MHNQU8KvNw'),
-('siteselect','pk_live','pk_live_xZn2VzgwkIauumoxFI0W3IlF');
