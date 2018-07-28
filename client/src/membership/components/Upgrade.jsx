@@ -200,7 +200,7 @@ class Upgrade extends Component {
             </Row>
             {canAddPaperPubs ? (
               <AddPaperPubs
-                data={data.get('paper_pubs')}
+                data={data}
                 getValue={([pp, key]) => key ? paperPubs.get(key) : paperPubs}
                 onChange={this.onPaperPubsChange}
                 tabIndex={1}

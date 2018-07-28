@@ -74,9 +74,8 @@ export const MembershipSelect = ({ data, getDefaultValue, getValue, lc = 'en', o
       if (messages[lc][type]) {
         label = messages[lc][type]()
       } else {
-        const mt = data && data.getIn(['new_member', 'types'])
-        const t = mt && mt.find(t => t.get('key') === type)
-        label = t && t.get('label') || type
+        const typeLabel = data && data.getIn(['new_member', 'types', type, 'label'])
+        label = typeLabel || type
       }
       return <MenuItem
         key={type}

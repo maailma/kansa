@@ -6,10 +6,11 @@ import { Col, Row } from 'react-flexbox-grid'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import { midGray } from '../../theme'
+import * as PaymentPropTypes from '../../payments/proptypes'
 import { isAttendingMember } from '../constants'
 import messages from '../messages'
 import { TextInput } from './form-components'
-import { paperPubsIsValid, EditPaperPubs } from './paper-pubs'
+import { AddPaperPubs, paperPubsIsValid, EditPaperPubs } from './paper-pubs'
 import PreviewBadge from './preview-badge'
 
 export const hintStyle = {
@@ -20,6 +21,7 @@ export const hintStyle = {
 
 export default class MemberForm extends Component {
   static propTypes = {
+    data: PaymentPropTypes.data,
     lc: PropTypes.string,
     member: ImmutablePropTypes.mapContains({
       paper_pubs: ImmutablePropTypes.map
@@ -40,6 +42,10 @@ export default class MemberForm extends Component {
     this.state = {
       member: props.member || Map()
     }
+  }
+
+  componentDidMount () {
+    this.focusRef && this.focusRef.focus()
   }
 
   componentWillReceiveProps (nextProps) {
@@ -92,7 +98,7 @@ export default class MemberForm extends Component {
   }
 
   render () {
-    const { lc, newMember, tabIndex } = this.props
+    const { data, lc, newMember, tabIndex } = this.props
     const { member } = this.state
     const inputProps = {
       getDefaultValue: this.getDefaultValue,
@@ -172,14 +178,10 @@ export default class MemberForm extends Component {
         <Col xs={12} style={hintStyle}>{this.msg('location_hint')}</Col>
       </Row>
       {newMember ? (
-        <AddPaperPubs data={null /* FIXME */} {...inputProps} />
+        <AddPaperPubs data={data} {...inputProps} />
       ) : this.hasPaperPubs ? (
         <EditPaperPubs {...inputProps} />
       ) : null}
     </form>
-  }
-
-  componentDidMount () {
-    this.focusRef && this.focusRef.focus()
   }
 }

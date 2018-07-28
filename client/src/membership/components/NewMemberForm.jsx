@@ -80,9 +80,8 @@ class NewMemberForm extends React.Component {
     const { data } = this.props
     const { member } = this.state
     const type = member.get('membership')
-    const memberTypes = data && data.getIn(['new_member', 'types'])
-    const mt = memberTypes && memberTypes.find(t => t.get('key') === type)
-    let desc = `New ${mt && mt.get('label') || type} member`
+    const typeLabel = data && data.getIn(['new_member', 'types', type, 'label'])
+    let desc = `New ${typeLabel || type} member`
     if (member.get('paper_pubs')) desc += ' + ' + data.getIn(['paper_pubs', 'label'])
     return desc
   }
@@ -117,6 +116,7 @@ class NewMemberForm extends React.Component {
               </Col>
             </Row>
             <MemberForm
+              data={data}
               member={member}
               newMember
               onChange={(valid, member) => this.setState({ member, valid })}
