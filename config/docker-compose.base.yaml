@@ -96,13 +96,13 @@ services:
       - ../postgres/damm/damm--1.0.sql:/usr/share/postgresql/9.5/extension/damm--1.0.sql:ro
       - ../postgres/init/10-admin-init.sql:/docker-entrypoint-initdb.d/10-admin-init.sql:ro
       - ../postgres/init/20-kansa-init.sql:/docker-entrypoint-initdb.d/20-kansa-init.sql:ro
-      - ../postgres/init/21-kansa-member-types.sql:/docker-entrypoint-initdb.d/21-kansa-member-types.sql:ro
+      - ../config/postgres-init/21-member-types.sql:/docker-entrypoint-initdb.d/21-member-types.sql:ro
       - ../postgres/init/22-kansa-tables.sql:/docker-entrypoint-initdb.d/22-kansa-tables.sql:ro
       - ../postgres/init/25-day-passes.sql:/docker-entrypoint-initdb.d/25-day-passes.sql:ro
       - ../postgres/init/25-payments.sql:/docker-entrypoint-initdb.d/25-payments.sql:ro
       - ../postgres/init/25-public-data.sql:/docker-entrypoint-initdb.d/25-public-data.sql:ro
       - ../postgres/init/28-siteselection.sql:/docker-entrypoint-initdb.d/28-siteselection.sql:ro
       - ../postgres/init/30-hugo-init.sql:/docker-entrypoint-initdb.d/30-hugo-init.sql:ro
-      - ../postgres/init/31-hugo-categories.sql:/docker-entrypoint-initdb.d/31-hugo-categories.sql:ro
+      - ../config/postgres-init/31-hugo-categories.sql:/docker-entrypoint-initdb.d/31-hugo-categories.sql:ro
       - ../postgres/init/32-hugo-tables.sql:/docker-entrypoint-initdb.d/32-hugo-tables.sql:ro
       - ../postgres/init/40-raami-init.sql:/docker-entrypoint-initdb.d/40-raami-init.sql:ro
