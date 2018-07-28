@@ -1,4 +1,3 @@
-const prices = require('../static/prices.json');
 const { AuthError, InputError } = require('./errors');
 const Payment = require('./types/payment');
 const Person = require('./types/person');
@@ -13,7 +12,6 @@ class Purchase {
     this.db = db;
     this.createInvoice = this.createInvoice.bind(this);
     this.getDaypassPrices = this.getDaypassPrices.bind(this);
-    this.getPrices = this.getPrices.bind(this);
     this.getPurchaseData = this.getPurchaseData.bind(this);
     this.getPurchases = this.getPurchases.bind(this);
     this.getStripeKeys = this.getStripeKeys.bind(this);
@@ -45,11 +43,6 @@ class Purchase {
           return map
         }, {})
       ))
-  }
-
-  getPrices(req, res, next) {
-    if (!prices) next(new Error('Missing membership prices!?'));
-    res.json(prices);
   }
 
   getPurchaseData(req, res, next) {

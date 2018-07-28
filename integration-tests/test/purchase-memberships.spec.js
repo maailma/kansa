@@ -45,24 +45,6 @@ describe('Membership purchases', () => {
     });
   });
 
-  context('Prices', function() {
-    const agent = request.agent(host, { ca: cert });
-
-    it('should get prices', (done) => {
-      agent.get('/api/purchase/prices')
-        .expect(200)
-        .expect(({ body }) => {
-          if (
-            !body || !body.memberships || !body.memberships.Adult ||
-            !body.memberships.Adult.amount || !body.memberships.Supporter
-          ) throw new Error(
-            `Bad response! ${JSON.stringify(body)}`
-          );
-        })
-        .end(done);
-    });
-  });
-
   context('New members (using Stripe API)', function() {
     this.timeout(10000);
     const agent = request.agent(host, { ca: cert });

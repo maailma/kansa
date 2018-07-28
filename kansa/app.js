@@ -65,7 +65,6 @@ router.post('/purchase/invoice', purchase.createInvoice);
 router.get('/purchase/keys', purchase.getStripeKeys);
 router.get('/purchase/list', purchase.getPurchases);
 router.post('/purchase/other', purchase.makeOtherPurchase);
-router.get('/purchase/prices', purchase.getPrices);
 router.post('/webhook/stripe', purchase.handleStripeWebhook)
 
 // subsequent routes require authentication
