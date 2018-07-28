@@ -10,10 +10,8 @@ services:
     environment:
       JWT_SECRET: dev secret
       SERVER_NAME: localhost
-      SSL_CERTIFICATE: /ssl/localhost.cert
-      SSL_CERTIFICATE_KEY: /ssl/localhost.key
     ports:
-      - "4430:443"
+      - "4430:80"
     volumes:
       - ../nginx/hugo-packet:/srv/hugo-packet:ro
       - ../nginx/member-files:/srv/member-files:ro

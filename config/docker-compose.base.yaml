@@ -15,7 +15,7 @@ services:
       - hugo
       - kansa
       - raami
-    entrypoint: /bin/bash -c "envsubst '$$SERVER_NAME $$SSL_CERTIFICATE $$SSL_CERTIFICATE_KEY' < /nginx.conf.template > /usr/local/openresty/nginx/conf/nginx.conf && /usr/local/openresty/bin/openresty -g 'daemon off;'"
+    entrypoint: /bin/bash -c "envsubst '$$SERVER_NAME' < /nginx.conf.template > /usr/local/openresty/nginx/conf/nginx.conf && /usr/local/openresty/bin/openresty -g 'daemon off;'"
 
   hugo:
     build: ../hugo
