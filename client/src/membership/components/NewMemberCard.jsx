@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import ImmutablePropTypes from 'react-immutable-proptypes'
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 
+import * as PaymentPropTypes from '../../payments/proptypes'
 import MemberTypeList from './MemberTypeList'
 
 const contents = {
@@ -111,7 +111,7 @@ const contents = {
   }
 }
 
-const NewMemberCard = ({ category, disabled = false, expandable = false, onSelectType, prices }) => {
+const NewMemberCard = ({ category, data, disabled = false, expandable = false, onSelectType }) => {
   const { title, body, memberships } = contents[category]
   return <Card
     style={{ marginBottom: 24 }}
@@ -133,10 +133,10 @@ const NewMemberCard = ({ category, disabled = false, expandable = false, onSelec
     <CardActions style={{ marginLeft: 8, paddingTop: 0 }}>
       <MemberTypeList
         category={category}
+        data={data}
         disabled={disabled}
         memberTypes={memberships}
         onSelectType={onSelectType}
-        prices={prices}
         style={{ paddingTop: 0 }}
       />
     </CardActions>
@@ -145,8 +145,8 @@ const NewMemberCard = ({ category, disabled = false, expandable = false, onSelec
 
 NewMemberCard.propTypes = {
   category: PropTypes.oneOf(Object.keys(contents)).isRequired,
-  onSelectType: PropTypes.func.isRequired,
-  prices: ImmutablePropTypes.map
+  data: PaymentPropTypes.data,
+  onSelectType: PropTypes.func.isRequired
 }
 
 export default NewMemberCard

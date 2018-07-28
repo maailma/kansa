@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types'
-import React from 'react'
-import ImmutablePropTypes from 'react-immutable-proptypes'
+import React, { Component } from 'react'
 import Divider from 'material-ui/Divider'
 import { List, ListItem, makeSelectable } from 'material-ui/List'
 import EventSeat from 'material-ui/svg-icons/action/event-seat'
@@ -10,6 +9,9 @@ import DirectionsWalk from 'material-ui/svg-icons/maps/directions-walk'
 import StarTicket from 'material-ui/svg-icons/maps/local-play'
 import ChildFriendly from 'material-ui/svg-icons/places/child-friendly'
 import SmilingFace from 'material-ui/svg-icons/social/mood'
+
+import getMemberPrice from '../../lib/get-member-price'
+import * as PaymentPropTypes from '../../payments/proptypes'
 
 const SelectableList = makeSelectable(List)
 
@@ -52,30 +54,22 @@ export const memberTypeData = {
   }
 }
 
-export default class MemberTypeList extends React.Component {
+export default class MemberTypeList extends Component {
   static propTypes = {
     canAddPaperPubs: PropTypes.bool,
+    data: PaymentPropTypes.data,
     disabled: PropTypes.bool,
     memberTypes: PropTypes.arrayOf(PropTypes.string),
     onSelectType: PropTypes.func.isRequired,
     prevType: PropTypes.string,
-    prices: ImmutablePropTypes.map,
     selectedType: PropTypes.string,
     style: PropTypes.object
   }
 
-  getAmount (type) {
-    const { prevType, prices } = this.props
-    if (!prices) return -1
-    const prevAmount = prices.getIn(['memberships', prevType, 'amount']) || 0
-    const thisAmount = prices.getIn(['memberships', type, 'amount']) || 0
-    return thisAmount - prevAmount
-  }
-
   listItemProps (type) {
-    const { canAddPaperPubs, category, disabled, prevType } = this.props
+    const { canAddPaperPubs, category, data, disabled, prevType } = this.props
     const { primary, daypass, secondary, icon } = memberTypeData[type]
-    const amount = this.getAmount(type)
+    const amount = getMemberPrice(data, prevType, type, false)
     const isDisabled = disabled || prevType && amount < 0
     const primaryText = category === 'daypass' ? daypass
         : amount < 0 ? primary

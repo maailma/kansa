@@ -1,7 +1,7 @@
 import { Map } from 'immutable'
 import FlatButton from 'material-ui/FlatButton'
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { Component } from 'react'
 import { Col, Row } from 'react-flexbox-grid'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 
@@ -18,7 +18,7 @@ export const hintStyle = {
   marginBottom: 24
 }
 
-export default class MemberForm extends React.Component {
+export default class MemberForm extends Component {
   static propTypes = {
     lc: PropTypes.string,
     member: ImmutablePropTypes.mapContains({
@@ -26,7 +26,6 @@ export default class MemberForm extends React.Component {
     }),
     newMember: PropTypes.bool,
     onChange: PropTypes.func.isRequired,
-    prices: ImmutablePropTypes.map,
     tabIndex: PropTypes.number
   }
 
@@ -93,7 +92,7 @@ export default class MemberForm extends React.Component {
   }
 
   render () {
-    const { lc, newMember, prices, tabIndex } = this.props
+    const { lc, newMember, tabIndex } = this.props
     const { member } = this.state
     const inputProps = {
       getDefaultValue: this.getDefaultValue,
@@ -172,12 +171,7 @@ export default class MemberForm extends React.Component {
         </Col>
         <Col xs={12} style={hintStyle}>{this.msg('location_hint')}</Col>
       </Row>
-      {!newMember && this.hasPaperPubs ? (
-        <EditPaperPubs
-          prices={prices}
-          {...inputProps}
-        />
-      ) : null}
+      {!newMember && this.hasPaperPubs ? <EditPaperPubs {...inputProps} /> : null}
     </form>
   }
 

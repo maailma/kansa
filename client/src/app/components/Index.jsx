@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
 import { setScene } from '../actions/app'
-import { getPrices, getPurchaseData, getPurchaseList } from '../../payments/actions'
+import { getPurchaseData, getPurchaseList } from '../../payments/actions'
 import PaymentCard from '../../payments/components/payment-card'
 import * as PaymentPropTypes from '../../payments/proptypes'
 import MemberCard from '../../membership/components/MemberCard'
@@ -16,7 +16,6 @@ import KeyRequest from './KeyRequest'
 
 class Index extends Component {
   static propTypes = {
-    getPrices: PropTypes.func.isRequired,
     getPurchaseData: PropTypes.func.isRequired,
     getPurchaseList: PropTypes.func.isRequired,
     people: ImmutablePropTypes.list.isRequired,
@@ -26,9 +25,8 @@ class Index extends Component {
   }
 
   componentDidMount () {
-    const { getPrices, getPurchaseData, purchase, setScene } = this.props
+    const { getPurchaseData, purchase, setScene } = this.props
     setScene({ title: 'Memberships', dockSidebar: false })
-    if (!purchase.get('prices')) getPrices()
     if (!purchase.get('data')) getPurchaseData()
   }
 
@@ -44,17 +42,16 @@ class Index extends Component {
     )
     return purchase.get('list')
       .filter(p => p.get('status') === 'invoice')
-      .map((purchase, key) => {
-        const category = purchase.get('category')
-        const type = purchase.get('type')
-        const categoryData = getCategoryData(category, type)
+      .map((p, key) => {
+        const type = p.get('type')
+        const categoryData = getCategoryData(p.get('category'), type)
         return (
           <PaymentCard
             key={key}
             label={categoryData.getIn(['types', type, 'label']) || type}
-            purchase={purchase}
+            purchase={p}
             shape={categoryData.get('shape')}
-            userIds={people.map(p => p.get('id'))}
+            userIds={people.map(pp => pp.get('id'))}
           />
         )
       })
@@ -86,9 +83,9 @@ class Index extends Component {
       <Col xs={12} sm={6} lg={4}>
         <NewMemberCard
           category='all'
+          data={purchase.get('data')}
           expandable
           onSelectType={(type) => push(`/new/${type}`)}
-          prices={purchase.get('prices')}
         />
         <NewMemberCard
           category='upgrade'
@@ -111,7 +108,6 @@ export default connect(
     people: user.get('people') || List(),
     purchase
   }), {
-    getPrices,
     getPurchaseData,
     getPurchaseList,
     push,

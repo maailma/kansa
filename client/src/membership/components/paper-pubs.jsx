@@ -68,9 +68,9 @@ const PaperPubsFields = ({ autoFocus, getDefaultValue, getValue, onChange, ppMsg
   </Paper>
 }
 
-export const AddPaperPubs = ({ getDefaultValue, getValue, lc = 'en', onChange, prices, ...inputProps }) => {
+export const AddPaperPubs = ({ data, getDefaultValue, getValue, lc = 'en', onChange, ...inputProps }) => {
+  const amount = data && data.getIn(['types', 0, 'amount']) || 0
   const ppMsg = messages[lc].paper_pubs
-  const amount = prices && prices.getIn(['PaperPubs', 'amount'], 0)
   const label = ppMsg.label({ amount: amount / 100 })
   const hasPaperPubs = !!getValue(['paper_pubs'])
   return (

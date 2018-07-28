@@ -1,36 +1,32 @@
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 import { Col, Row } from 'react-flexbox-grid'
-import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import { setScene } from '../../app/actions/app'
-import { getPrices } from '../../payments/actions'
+import { getPurchaseData } from '../../payments/actions'
+import * as PaymentPropTypes from '../../payments/proptypes'
 import NewMemberCard from './NewMemberCard'
 
-class NewMemberIndex extends React.Component {
+class NewMemberIndex extends Component {
   static propTypes = {
-    getPrices: PropTypes.func.isRequired,
-    prices: ImmutablePropTypes.map,
+    data: PaymentPropTypes.data,
+    getPurchaseData: PropTypes.func.isRequired,
     push: PropTypes.func.isRequired,
     setScene: PropTypes.func.isRequired
   }
 
-  constructor (props) {
-    super(props)
-    const { getPrices, prices } = this.props
-    if (!prices) getPrices()
-  }
-
   componentDidMount () {
-    this.props.setScene({ title: 'New Membership', dockSidebar: false })
+    const { data, getPurchaseData, setScene } = this.props
+    if (!data) getPurchaseData()
+    setScene({ title: 'New Membership', dockSidebar: false })
   }
 
   onSelectType = (type) => this.props.push(`/new/${type}`);
 
   render () {
-    const { prices, push } = this.props
+    const { data, push } = this.props
     return <Row style={{ marginBottom: -24 }}>
       <Col
         xs={12}
@@ -39,9 +35,9 @@ class NewMemberIndex extends React.Component {
         lg={4} lgOffset={2}
         style={{ paddingLeft: '0.75rem', paddingRight: '0.75rem' }}
       >
-        <NewMemberCard category='attend' onSelectType={this.onSelectType} prices={prices} />
+        <NewMemberCard category='attend' onSelectType={this.onSelectType} data={data} />
         <NewMemberCard category='upgrade' onSelectType={() => push('/upgrade')} />
-        <NewMemberCard category='child' onSelectType={this.onSelectType} prices={prices} />
+        <NewMemberCard category='child' onSelectType={this.onSelectType} data={data} />
       </Col>
       <Col
         xs={12}
@@ -50,7 +46,7 @@ class NewMemberIndex extends React.Component {
         lg={4}
         style={{ paddingLeft: '0.75rem', paddingRight: '0.75rem' }}
       >
-        <NewMemberCard category='support' onSelectType={this.onSelectType} prices={prices} />
+        <NewMemberCard category='support' onSelectType={this.onSelectType} data={data} />
         <NewMemberCard category='daypass' onSelectType={(type) => push(`/daypass/${type}`)} />
       </Col>
     </Row>
@@ -59,9 +55,9 @@ class NewMemberIndex extends React.Component {
 
 export default connect(
   ({ purchase }) => ({
-    prices: purchase.get('prices')
+    data: purchase.get('data')
   }), {
-    getPrices,
+    getPurchaseData,
     push,
     setScene
   }

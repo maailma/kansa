@@ -6,20 +6,21 @@ import { push, replace } from 'react-router-redux'
 import { Card, CardActions, CardText } from 'material-ui/Card'
 import FlatButton from 'material-ui/FlatButton'
 import { Col, Row } from 'react-flexbox-grid'
-import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import { setScene, showMessage } from '../../app/actions/app'
-import { buyMembership, getPrices } from '../../payments/actions'
+import getMemberPrice from '../../lib/get-member-price'
+import { buyMembership, getPurchaseData } from '../../payments/actions'
 import StripeCheckout from '../../payments/components/stripe-checkout'
+import * as PaymentPropTypes from '../../payments/proptypes'
 import { MembershipSelect } from './form-components'
 import MemberForm from './MemberForm'
 
 class NewMemberForm extends React.Component {
   static propTypes = {
     buyMembership: PropTypes.func.isRequired,
+    data: PaymentPropTypes.data,
     email: PropTypes.string,
-    getPrices: PropTypes.func.isRequired,
-    prices: ImmutablePropTypes.map,
+    getPurchaseData: PropTypes.func.isRequired,
     params: PropTypes.shape({
       membership: PropTypes.string
     }).isRequired,
@@ -31,13 +32,18 @@ class NewMemberForm extends React.Component {
 
   constructor (props) {
     super(props)
-    const { email, getPrices, params: { membership }, prices } = this.props
+    const { email, params: { membership } } = props
     this.state = {
       member: Map({ email, membership }),
       sent: false,
       valid: false
     }
-    if (!prices) getPrices()
+  }
+
+  componentDidMount () {
+    const { data, getPurchaseData, setScene } = this.props
+    if (!data) getPurchaseData()
+    setScene({ title: 'New Membership', dockSidebar: false })
   }
 
   componentWillReceiveProps (nextProps) {
@@ -48,16 +54,13 @@ class NewMemberForm extends React.Component {
     if (!member.equals(this.state.member)) this.setState({ member })
   }
 
-  componentDidMount () {
-    this.props.setScene({ title: 'New Membership', dockSidebar: false })
-  }
-
   onCheckout = (token) => {
     const { buyMembership, push, showMessage } = this.props
     const { member } = this.state
+    const amount = this.price
     const email = member.get('email')
-    showMessage(`Charging ${email} EUR ${this.price / 100} ...`)
-    buyMembership(member, this.price, email, token, () => {
+    showMessage(`Charging ${email} EUR ${amount / 100} ...`)
+    buyMembership(member, amount, email, token, () => {
       showMessage('Charge completed; new member registered!')
       push('/')
     })
@@ -74,25 +77,24 @@ class NewMemberForm extends React.Component {
   }
 
   get description () {
-    const { prices } = this.props
+    const { data } = this.props
     const { member } = this.state
-    const msDesc = prices && prices.getIn(['memberships', member.get('membership'), 'description'])
-    const parts = [`New ${msDesc} member`]
-    if (member.get('paper_pubs')) parts.push(prices.getIn(['PaperPubs', 'description']))
-    return parts.join(' + ')
+    const type = member.get('membership')
+    const memberTypes = data && data.getIn(['new_member', 'types'])
+    const mt = memberTypes && memberTypes.find(t => t.get('key') === type)
+    let desc = `New ${mt && mt.get('label') || type} member`
+    if (member.get('paper_pubs')) desc += ' + ' + data.getIn(['paper_pubs', 'label'])
+    return desc
   }
 
   get price () {
-    const { prices } = this.props
-    if (!prices) return 0
+    const { data } = this.props
     const { member } = this.state
-    const msAmount = prices.getIn(['memberships', member.get('membership'), 'amount']) || 0
-    const ppAmount = member.get('paper_pubs') && prices.getIn(['PaperPubs', 'amount']) || 0
-    return msAmount + ppAmount
+    return getMemberPrice(data, null, member.get('membership'), member.get('paper_pubs'))
   }
 
   render () {
-    const { prices, replace } = this.props
+    const { data, replace } = this.props
     const { member, sent, valid } = this.state
     const amount = this.price
 
@@ -108,9 +110,9 @@ class NewMemberForm extends React.Component {
             <Row>
               <Col xs={12}>
                 <MembershipSelect
+                  data={data}
                   getValue={path => member.getIn(path) || ''}
                   onChange={(path, value) => replace(`/new/${value}`)}
-                  prices={prices}
                 />
               </Col>
             </Row>
@@ -118,7 +120,6 @@ class NewMemberForm extends React.Component {
               member={member}
               newMember
               onChange={(valid, member) => this.setState({ member, valid })}
-              prices={prices}
               tabIndex={2}
             />
           </CardText>
@@ -162,11 +163,11 @@ class NewMemberForm extends React.Component {
 
 export default connect(
   ({ purchase, user }) => ({
-    email: user.get('email'),
-    prices: purchase.get('prices')
+    data: purchase.get('data'),
+    email: user.get('email')
   }), {
     buyMembership,
-    getPrices,
+    getPurchaseData,
     push,
     replace,
     setScene,

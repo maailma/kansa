@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { push, replace } from 'react-router-redux'
 import { Card, CardActions, CardText } from 'material-ui/Card'
@@ -8,7 +8,8 @@ import Subheader from 'material-ui/Subheader'
 import { Col, Row } from 'react-flexbox-grid'
 
 import { setScene, showMessage } from '../../app/actions/app'
-import { buyUpgrade, getPrices } from '../../payments/actions'
+import getMemberPrice from '../../lib/get-member-price'
+import { buyUpgrade, getPurchaseData } from '../../payments/actions'
 import StripeCheckout from '../../payments/components/stripe-checkout'
 import * as PaymentPropTypes from '../../payments/proptypes'
 import * as MemberPropTypes from '../proptypes'
@@ -18,16 +19,16 @@ import { AddPaperPubs, paperPubsIsValid } from './paper-pubs'
 
 const UPGRADE_TARGET_TYPES = ['Adult', 'Youth', 'FirstWorldcon', 'Child'];
 
-class Upgrade extends React.Component {
+class Upgrade extends Component {
   static propTypes = {
     buyUpgrade: PropTypes.func.isRequired,
+    data: PaymentPropTypes.data,
     email: PropTypes.string,
-    getPrices: PropTypes.func.isRequired,
+    getPurchaseData: PropTypes.func.isRequired,
     params: PropTypes.shape({
       id: PropTypes.string
     }).isRequired,
     people: MemberPropTypes.people,
-    prices: PaymentPropTypes.prices,
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
     setScene: PropTypes.func.isRequired,
@@ -62,9 +63,9 @@ class Upgrade extends React.Component {
     }, Upgrade.getNextState(props))
   }
 
-  componentWillMount () {
-    const { getPrices, prices, setScene } = this.props
-    if (!prices) getPrices()
+  componentDidMount () {
+    const { data, getPurchaseData, setScene } = this.props
+    if (!data) getPurchaseData()
     setScene({ title: 'Upgrade Membership', dockSidebar: false })
   }
 
@@ -75,21 +76,17 @@ class Upgrade extends React.Component {
   }
 
   get amount () {
-    const { prices } = this.props
+    const { data } = this.props
     const { membership, paperPubs, prevMembership } = this.state
-    if (!prices) return 0
-    const prevAmount = prices.getIn(['memberships', prevMembership, 'amount']) || 0
-    const nextAmount = prices.getIn(['memberships', membership, 'amount']) || 0
-    const ppAmount = paperPubs && prices.getIn(['PaperPubs', 'amount']) || 0
-    return nextAmount - prevAmount + ppAmount
+    return getMemberPrice(data, prevMembership, membership, paperPubs)
   }
 
   get description () {
-    const { prices } = this.props
+    const { data } = this.props
     const { membership, paperPubs, prevMembership } = this.state
     const parts = []
     if (membership !== prevMembership) parts.push(`Upgrade to ${membership}`)
-    if (paperPubs) parts.push(prices.getIn(['PaperPubs', 'description']))
+    if (paperPubs) parts.push(data.getIn(['paper_pubs', 'label']))
     return parts.join(' + ') || 'Member upgrade'
   }
 
@@ -164,7 +161,7 @@ class Upgrade extends React.Component {
   }
 
   render () {
-    const { people, prices } = this.props
+    const { data, people } = this.props
     if (!people) return null
     const { canAddPaperPubs, membership, paperPubs, prevMembership } = this.state
     return <Row>
@@ -193,19 +190,19 @@ class Upgrade extends React.Component {
                 </Subheader>
                 <MemberTypeList
                   canAddPaperPubs={canAddPaperPubs}
+                  data={data}
                   memberTypes={UPGRADE_TARGET_TYPES}
                   onSelectType={(membership) => this.setState({ membership })}
                   prevType={prevMembership}
-                  prices={prices}
                   selectedType={membership}
                   />
               </Col>
             </Row>
             {canAddPaperPubs ? (
               <AddPaperPubs
+                data={data.get('paper_pubs')}
                 getValue={([pp, key]) => key ? paperPubs.get(key) : paperPubs}
                 onChange={this.onPaperPubsChange}
-                prices={prices}
                 tabIndex={1}
               />
             ) : null}
@@ -219,12 +216,12 @@ class Upgrade extends React.Component {
 
 export default connect(
   ({ purchase, user }) => ({
+    data: purchase.get('data'),
     email: user.get('email'),
-    people: user.get('people'),
-    prices: purchase.get('prices')
+    people: user.get('people')
   }), {
     buyUpgrade,
-    getPrices,
+    getPurchaseData,
     push,
     replace,
     setScene,
