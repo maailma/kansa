@@ -77,12 +77,6 @@ export default ({ dispatch }) => (next) => (action) => {
         .catch(handleError)
       } return
 
-      case 'GET_PRICES': {
-        api.GET('purchase/prices')
-        .then(prices => next({ ...action, prices }))
-        .catch(handleError)
-      } return
-
       case 'GET_PURCHASE_DATA': {
         api.GET('purchase/data')
         .then(data => next({ ...action, data }))

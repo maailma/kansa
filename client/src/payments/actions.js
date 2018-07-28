@@ -46,11 +46,6 @@ export const getDaypassPrices = () => ({
   type: 'GET_DAYPASS_PRICES'
 })
 
-export const getPrices = () => ({
-  module: 'kansa',
-  type: 'GET_PRICES'
-})
-
 export const getPurchaseData = () => ({
   module: 'kansa',
   type: 'GET_PURCHASE_DATA'

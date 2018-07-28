@@ -60,20 +60,7 @@ export const purchase = ImmutablePropTypes.mapContains({
 
 export const list = ImmutablePropTypes.listOf(purchase)
 
-export const priceEntry = ImmutablePropTypes.mapContains({
-  amount: PropTypes.number.isRequired,
-  description: PropTypes.string.isRequired
-})
-
-export const memberships = ImmutablePropTypes.mapOf(priceEntry, PropTypes.string)
-
-export const prices = ImmutablePropTypes.mapContains({
-  memberships: memberships.isRequired,
-  PaperPubs: priceEntry.isRequired
-})
-
 export const root = ImmutablePropTypes.mapContains({
   data,
-  list,
-  prices
+  list
 })
