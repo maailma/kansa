@@ -3,12 +3,22 @@ const fs = require('fs');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_APIKEY || 'sk_test_zq022Drx7npYPVEtXAVMaOJT');
 
 const cert = fs.readFileSync('../nginx/ssl/localhost.cert', 'utf8');
-const prices = require('../../kansa/static/prices.json');
 const host = 'https://localhost:4430';
 const adminLoginParams = { email: 'admin@example.com', key: 'key' };
 
 describe('Membership purchases', () => {
-  const agent = request.agent(host, { ca: cert });
+  let agent
+  const prices = { adult: 0, supporter: 0, paperPubs: 0 }
+  before((done) => {
+    agent = request.agent(host, { ca: cert });
+    agent.get('/api/purchase/data')
+      .expect(({ body }) => {
+        prices.adult = body.new_member.types.find(t => t.key === 'Adult').amount
+        prices.supporter = body.new_member.types.find(t => t.key === 'Supporter').amount
+        prices.paperPubs = body.paper_pubs.types[0].amount
+      })
+      .end(done);
+  })
 
   context('Parameters', () => {
     it('should require required parameters', (done) => {
@@ -37,7 +47,7 @@ describe('Membership purchases', () => {
       agent.post('/api/purchase')
         .send({ amount: 1, email: '@', source: { id: 'x' }, new_members: [{ membership: 'Adult', email: '@', legal_name: 'x' }] })
         .expect((res) => {
-          const exp = { status: 400, message: `Amount mismatch: in request 1, calculated ${prices.memberships.Adult.amount}` };
+          const exp = { status: 400, message: `Amount mismatch: in request 1, calculated ${prices.adult}` };
           if (res.status !== exp.status) throw new Error(`Bad status: got ${res.status}, expected ${exp.status}: ${JSON.stringify(res.body)}`);
           if (res.body.message !== exp.message) throw new Error(`Bad reply: ${JSON.stringify(res.body)}`);
         })
@@ -61,7 +71,7 @@ describe('Membership purchases', () => {
       }).then(source => {
         agent.post('/api/purchase')
           .send({
-            amount: prices.memberships.Supporter.amount + prices.memberships.Adult.amount + prices.PaperPubs.amount,
+            amount: prices.supporter + prices.adult + prices.paperPubs,
             email: `${testName}@example.com`,
             source,
             new_members: [
@@ -113,7 +123,7 @@ describe('Membership purchases', () => {
       }).then(source => {
         agent.post('/api/purchase')
           .send({
-            amount: prices.memberships.Adult.amount - prices.memberships.Supporter.amount,
+            amount: prices.adult - prices.supporter,
             email: `${testName}@example.com`,
             source,
             upgrades: [{ id: testId, membership: 'Adult' }]
@@ -139,7 +149,7 @@ describe('Membership purchases', () => {
       }).then(source => {
         agent.post('/api/purchase')
           .send({
-            amount: prices.PaperPubs.amount,
+            amount: prices.paperPubs,
             email: `${testName}@example.com`,
             source,
             upgrades: [{ id: testId, paper_pubs: { name: 'name', address: 'multi\n-line\n-address', country: 'land'} }]
