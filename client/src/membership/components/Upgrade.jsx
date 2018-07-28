@@ -42,8 +42,8 @@ class Upgrade extends Component {
     if (person) {
       const pm = nextState.prevMembership = person.get('membership')
       nextState.membership = UPGRADE_TARGET_TYPES.indexOf(pm) !== -1 ? pm : null
-      nextState.canAddPaperPubs = false
-      nextState.paperPubs = null
+      const cap = nextState.canAddPaperPubs = !person.get('paper_pubs')
+      if (!cap) nextState.paperPubs = null
     } else {
       nextState.canAddPaperPubs = false
       nextState.membership = null

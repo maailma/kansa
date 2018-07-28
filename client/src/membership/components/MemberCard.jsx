@@ -77,14 +77,14 @@ class MemberCard extends React.Component {
         />
       </ShowBarcode>
     )
-    if (membership !== 'Adult') actions.push(
+    if (membership !== 'Adult' || !member.get('paper_pubs')) actions.push(
       <Action
         key='up'
         innerDivStyle={{ paddingLeft: 60 }}
-        leftIcon={<ThumbUp />}
+        leftIcon={<ThumbUp style={{ top: 12 }}/>}
         onTouchTap={() => push(`/upgrade/${id}`)}
         primaryText='Upgrade membership'
-        secondaryText=''
+        secondaryText='and/or add paper publications'
       />
     )
     if (showHugoActions && member.get('hugo_voter')) {

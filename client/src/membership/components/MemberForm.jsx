@@ -171,7 +171,11 @@ export default class MemberForm extends Component {
         </Col>
         <Col xs={12} style={hintStyle}>{this.msg('location_hint')}</Col>
       </Row>
-      {!newMember && this.hasPaperPubs ? <EditPaperPubs {...inputProps} /> : null}
+      {newMember ? (
+        <AddPaperPubs data={null /* FIXME */} {...inputProps} />
+      ) : this.hasPaperPubs ? (
+        <EditPaperPubs {...inputProps} />
+      ) : null}
     </form>
   }
 
