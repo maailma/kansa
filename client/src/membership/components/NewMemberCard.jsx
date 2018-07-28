@@ -10,6 +10,10 @@ const contents = {
     title: 'Buy new membership',
     body: <div>
       <p>
+        Persons who have never been attending or supporting members of any
+        previous Worldcon are eligible for a <b>First Worldcon</b> attending
+        membership of Worldcon 75.
+      </p><p>
         <b>Child</b> members are not eligible to participate in the Hugo Awards
         or Site Selection processes.
       </p><p>
@@ -23,7 +27,7 @@ const contents = {
       </p>
     </div>,
     memberships: [
-      'Adult', 'Youth', '_divider',
+      'FirstWorldcon', 'Youth', 'Adult', '_divider',
       'Child', 'KidInTow', '_divider',
       'Supporter'
     ]
@@ -33,6 +37,10 @@ const contents = {
     title: 'New attending membership',
     body: <div>
       <p>
+        Persons who have never been attending or supporting members of any
+        previous Worldcon are eligible for a <b>First Worldcon</b> attending
+        membership of Worldcon 75.
+      </p><p>
         Persons born on 10 August 1991 or later qualify for <b>Youth</b>{' '}
         attending memberships of Worldcon 75 (€100).
       </p><p>
@@ -41,7 +49,7 @@ const contents = {
         convention.
       </p>
     </div>,
-    memberships: ['Adult', 'Youth']
+    memberships: ['FirstWorldcon', 'Youth', 'Adult']
   },
 
   child: {

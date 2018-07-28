@@ -16,7 +16,7 @@ import MemberLookupSelector from './MemberLookupSelector'
 import MemberTypeList from './MemberTypeList'
 import { AddPaperPubs, paperPubsIsValid } from './paper-pubs'
 
-const UPGRADE_TARGET_TYPES = ['Adult', 'Youth', 'Child']
+const UPGRADE_TARGET_TYPES = ['Adult', 'Youth', 'FirstWorldcon', 'Child'];
 
 class Upgrade extends React.Component {
   static propTypes = {

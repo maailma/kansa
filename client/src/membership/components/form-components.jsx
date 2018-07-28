@@ -69,7 +69,6 @@ export const MembershipSelect = ({ getDefaultValue, getValue, lc = 'en', onChang
       if (type === 'NonMember' && prevMembership !== 'NonMember') return null
       if (type === 'Exhibitor' && prevMembership !== 'Exhibitor') return null
       if (type === 'Helper' && prevMembership !== 'Helper') return null
-      if (type === 'FirstWorldcon' && prevMembership !== 'FirstWorldcon') return null
       let amount = prices ? prices.getIn(['memberships', type, 'amount'], -100) : -100
       const eurAmount = (amount - prevAmount) / 100
       const label = messages[lc][type] ? messages[lc][type]()
