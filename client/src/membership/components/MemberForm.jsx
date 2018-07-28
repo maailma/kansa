@@ -26,6 +26,7 @@ export default class MemberForm extends Component {
     member: ImmutablePropTypes.mapContains({
       paper_pubs: ImmutablePropTypes.map
     }),
+    newDaypass: PropTypes.bool,
     newMember: PropTypes.bool,
     onChange: PropTypes.func.isRequired,
     tabIndex: PropTypes.number
@@ -60,9 +61,9 @@ export default class MemberForm extends Component {
   }
 
   get changes () {
-    const { member, newMember } = this.props
+    const { member, newDaypass, newMember } = this.props
     return this.state.member.filter(
-      newMember || !member
+      newDaypass || newMember || !member
         ? (value) => value
         : (value, key) => {
           let v0 = member.get(key)
@@ -98,7 +99,7 @@ export default class MemberForm extends Component {
   }
 
   render () {
-    const { data, lc, newMember, tabIndex } = this.props
+    const { data, lc, newDaypass, newMember, tabIndex } = this.props
     const { member } = this.state
     const inputProps = {
       getDefaultValue: this.getDefaultValue,
@@ -119,7 +120,7 @@ export default class MemberForm extends Component {
           <div style={hintStyle}>{this.msg('legal_name_hint')}</div>
         </Col>
         <Col xs={12} sm={6}>
-          { newMember ? [
+          { newDaypass || newMember ? [
             <TextInput {...inputProps} key='input' path='email' required />,
             <div key='hint' style={hintStyle}>{this.msg('new_email_hint')}</div>
           ] : [

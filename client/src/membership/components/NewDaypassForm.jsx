@@ -157,7 +157,7 @@ class NewDaypassForm extends React.Component {
             <MemberForm
               lc='daypass'
               member={person}
-              newMember
+              newDaypass
               onChange={(valid, person) => this.setState({ person, valid })}
               tabIndex={2}
             />
