@@ -1,9 +1,12 @@
 process.argv.push('--color');
 const colors = require('colors/safe');
 const fetch = require('fetch-cookie')(require('node-fetch'));
+const https = require('https');
 const csvParse = require('csv-parse');
 const ldj = require('ldjson-stream');
 const PaperPubs = require('./paperpubs');
+
+const agent = new https.Agent({ rejectUnauthorized: false })
 
 const csvOptions = { columns: true, skip_empty_lines: true };
 const DEFAULT_EMAIL = 'registration@worldcon.fi';
@@ -21,7 +24,7 @@ const verbose = process.argv.indexOf('--verbose') !== -1;
 const paperPubs = new PaperPubs(process.argv, csvOptions);
 const sum = { rec: 0, join: 0, upgrade: 0, paper: 0, issueSkip: 0, emailSkip: 0, error: 0 };
 
-fetch(loginUrl)
+fetch(loginUrl, { agent })
   .then(parseResponse)
   .then(res => {
     console.error(`Logged in as ${colors.green(res.email)} on ${colors.green(apiRoot)}\n`);
@@ -130,6 +133,7 @@ function handle(rec, tag) {
 
 function POST(cmd, data) {
   return fetch(`${apiRoot}/${cmd}`, {
+    agent,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
