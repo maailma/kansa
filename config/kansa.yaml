@@ -1,2 +1,11 @@
+# A short alphanumeric identifier, used e.g. as the cookie name, and in some
+# downloaded file names.
 id: w75
+
+# The name of your event/convention
 name: Worldcon 75
+
+# If true, adding mailing address details for a member requires an "upgrade"
+# action that requires payment. If false, paper pubs may be added without any
+# cost.
+paid_paper_pubs: true

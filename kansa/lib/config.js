@@ -6,7 +6,8 @@ const config = YAML.parse(src)
 
 const shape = {
   id: /^\w+$/,
-  name: 'string'
+  name: 'string',
+  paid_paper_pubs: 'boolean'
 }
 
 function checkConfig(key, config, shape) {

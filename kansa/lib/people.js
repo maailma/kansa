@@ -1,3 +1,4 @@
+const config = require('./config');
 const { setKeyChecked } = require('./key');
 const { AuthError, InputError } = require('./errors');
 const { mailTask, updateMailRecipient } = require('./mail')
@@ -226,7 +227,7 @@ function updatePerson(req, res, next) {
   let ppCond = '';
   if (fields.indexOf('paper_pubs') >= 0) try {
     data.paper_pubs = Person.cleanPaperPubs(data.paper_pubs);
-    if (!isMemberAdmin) {
+    if (config.paid_paper_pubs && !isMemberAdmin) {
       if (data.paper_pubs) ppCond = 'AND paper_pubs IS NOT NULL';
       else fields.splice(fields.indexOf('paper_pubs'), 1);
     }

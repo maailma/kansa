@@ -1,3 +1,4 @@
+const config = require('./config');
 const { AuthError, InputError } = require('./errors');
 const Payment = require('./types/payment');
 const Person = require('./types/person');
@@ -155,9 +156,12 @@ class Purchase {
         }
 
         if (upgrade.paper_pubs) {
+          if (!config.paid_paper_pubs) throw new InputError('Paper pubs are not a paid option, so cannot be a part of an upgrade')
           if (prev.paper_pubs) throw new InputError(`${JSON.stringify(upgrade)} already has paper pubs!`);
         } else if (!upgrade.membership) {
-          throw new InputError('Change in at least one of membership and/or paper_pubs is required for upgrade');
+          throw new InputError(`Change in ${
+            config.paid_paper_pubs ? 'at least one of membership and/or paper_pubs' : 'membership'
+          } is required for upgrade`);
         }
 
         let amount = 0
@@ -254,7 +258,7 @@ class Purchase {
       upgrades = _upgrades;
       const newMemberPaymentItems = newMembers.map(p => {
         const mp = prices[p.data.membership] || 0
-        const pp = p.data.paper_pubs && prices.paper_pubs || 0
+        const pp = config.paid_paper_pubs && p.data.paper_pubs && prices.paper_pubs || 0
         return {
           amount: mp + pp,
           currency: 'eur',
