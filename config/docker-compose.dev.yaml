@@ -67,6 +67,6 @@ services:
       HUGO_PG_PASSWORD: pwd
       RAAMI_PG_PASSWORD: pwd
     volumes:
-      - ../config/postgres-init/dev-people.sql:/docker-entrypoint-initdb.d/90-dev-people.sql:ro
-      - ../config/postgres-init/hugo-finalists.sql:/docker-entrypoint-initdb.d/90-hugo-finalists.sql:ro
-      - ../config/postgres-init/payments.sql:/docker-entrypoint-initdb.d/90-payments.sql:ro
+      - ../config/database/dev-people.sql:/docker-entrypoint-initdb.d/90-dev-people.sql:ro
+      - ../config/database/hugo-finalists.sql:/docker-entrypoint-initdb.d/90-hugo-finalists.sql:ro
+      - ../config/database/payments.sql:/docker-entrypoint-initdb.d/90-payments.sql:ro
