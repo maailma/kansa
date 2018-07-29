@@ -6,11 +6,7 @@ const config = YAML.parse(src)
 
 const shape = {
   id: /^\w+$/,
-  name: 'string',
-  site_selection: {
-    ballot_creator: 'string',
-    name: 'string'
-  }
+  name: 'string'
 }
 
 function checkConfig(key, config, shape) {

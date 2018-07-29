@@ -39,6 +39,7 @@ services:
       - "80"
     volumes:
       - ../config/kansa.yaml:/kansa.yaml:ro
+      - ../config/siteselection/ballot-data.js:/ss-ballot-data.js:ro
 
   raami:
     build: ../raami
