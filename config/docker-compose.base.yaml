@@ -82,7 +82,7 @@ services:
       - "6379"
 
   postgres:
-    image: postgres:9.5
+    image: postgres:10.4
     environment:
       PGDATA: /pgdata
       PGUSER: admin
