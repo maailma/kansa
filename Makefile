@@ -18,10 +18,10 @@ update-%:
 stop:
 	$(DC) stop
 
-test: | intergration-tests/node_modules
+test: | integration-tests/node_modules
 	cd integration-tests && npm test
 
-intergration-tests/node_modules:
+integration-tests/node_modules:
 	cd integration-tests && npm install
 
 prod: prod-check
