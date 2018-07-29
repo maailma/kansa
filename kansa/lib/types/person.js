@@ -1,4 +1,3 @@
-const prices = require('../../static/prices.json');
 const util = require('../util');
 
 class Person {
@@ -8,12 +7,12 @@ class Person {
       'last_modified',  // timestamptz DEFAULT now()
       'legal_name',  // text NOT NULL
       'membership',  // MembershipStatus NOT NULL
-      'member_number',  // damm_code
+      'member_number',  // integer
       'public_first_name', 'public_last_name',  // text
       'email',  // text
       'city', 'state', 'country',  // text
       'badge_name', 'badge_subtitle',  // text
-      'can_hugo_nominate', 'can_hugo_vote', 'can_site_select',  // bool NOT NULL DEFAULT false
+      'hugo_nominator', 'hugo_voter',  // bool
       'paper_pubs',  // jsonb
       'daypass',  // string
       'daypass_days'  // int[]
@@ -21,7 +20,7 @@ class Person {
   }
 
   static get boolFields() {
-    return [ 'can_hugo_nominate', 'can_hugo_vote', 'can_site_select' ];
+    return [ 'hugo_nominator', 'hugo_voter' ];
   }
 
   static hugoVoterType(membership) {
@@ -76,13 +75,6 @@ class Person {
   get preferredName() {
     const { legal_name, public_first_name, public_last_name } = this.data;
     return [public_first_name, public_last_name].filter(n => n).join(' ').trim() || legal_name;
-  }
-
-  get priceAsNewMember() {
-    const ms = prices.memberships[this.data.membership]
-    const pp = this.data.paper_pubs ? prices.PaperPubs.amount : 0
-    const da = this.data.discount ? this.data.discount.amount : 0
-    return (ms && ms.amount || 0) + pp - da
   }
 
   get sqlValues() {

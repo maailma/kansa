@@ -22,9 +22,8 @@ function getPeopleQuery(req, res, next) {
       return '(legal_name ILIKE $(name) OR public_first_name ILIKE $(name) OR public_last_name ILIKE $(name))';
     case 'member_number':
     case 'membership':
-    case 'can_hugo_nominate':
-    case 'can_hugo_vote':
-    case 'can_site_select':
+    case 'hugo_nominator':
+    case 'hugo_voter':
       return `${fn} = $(${fn})`;
     default:
       return (Person.fields.indexOf(fn) !== -1) ? `${fn} ILIKE $(${fn})` : 'true';
@@ -245,16 +244,17 @@ function updatePerson(req, res, next) {
          UPDATE People p
             SET ${sqlFields}
           WHERE id=$(id) ${ppCond}
-      RETURNING email AS next_email, (SELECT email AS prev_email FROM prev), can_hugo_nominate, can_hugo_vote, preferred_name(p) as name`,
+      RETURNING email AS next_email, (SELECT email AS prev_email FROM prev),
+                hugo_nominator, hugo_voter, preferred_name(p) as name`,
       data),
     data.email ? tx.oneOrNone(`SELECT key FROM Keys WHERE email=$(email)`, data) : {},
     tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
   ]))
-    .then(([{ can_hugo_nominate, can_hugo_vote, next_email, prev_email, name }, key]) => {
+    .then(([{ hugo_nominator, hugo_voter, next_email, prev_email, name }, key]) => {
       email = next_email;
       if (next_email === prev_email) return {}
       updateMailRecipient(db, prev_email);
-      return !can_hugo_nominate && !can_hugo_vote ? {}
+      return !hugo_nominator && !hugo_voter ? {}
         : key ? { key: key.key, name }
         : setKeyChecked(req, db, data.email).then(({ key }) => ({ key, name }));
     })

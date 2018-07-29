@@ -37,7 +37,7 @@ services:
       SLACK_REQ_MEMBER: 'true'
       SLACK_TOKEN:
       STRIPE_SECRET_APIKEY: sk_test_zq022Drx7npYPVEtXAVMaOJT
-      STRIPE_SECRET_APIKEY_worldcon77: sk_test_35SiP34s6qovtenwPPLguIyY
+      STRIPE_SECRET_APIKEY_siteselect: sk_test_35SiP34s6qovtenwPPLguIyY
 
   raami:
     environment:
@@ -67,6 +67,6 @@ services:
       HUGO_PG_PASSWORD: pwd
       RAAMI_PG_PASSWORD: pwd
     volumes:
-      - ../postgres/init/90-dev-people-init.sql:/docker-entrypoint-initdb.d/90-dev-people-init.sql:ro
-      - ../postgres/init/95-worldcon75-hugo-finalists.sql:/docker-entrypoint-initdb.d/95-worldcon75-hugo-finalists.sql:ro
-      - ../postgres/init/95-worldcon75-payments.sql:/docker-entrypoint-initdb.d/95-worldcon75-payments.sql:ro
+      - ../config/database/dev-people.sql:/docker-entrypoint-initdb.d/90-dev-people.sql:ro
+      - ../config/database/hugo-finalists.sql:/docker-entrypoint-initdb.d/90-hugo-finalists.sql:ro
+      - ../config/database/payments.sql:/docker-entrypoint-initdb.d/90-payments.sql:ro

@@ -41,7 +41,7 @@ function getPublicStats(req, res, next) {
         map[c.country] = Object.keys(c).reduce((cc, k) => {
           if (typeof c[k] === 'number') cc[k] = c[k];
           return cc;
-        }, {});
+        }, map[c.country] || {});
         return map;
       }, {}));
     })

@@ -24,7 +24,7 @@ class Vote {
     if (isNaN(id) || id < 0) return Promise.reject(new InputError('Bad id number'));
     if (!req.session || !req.session.user || !req.session.user.email) return Promise.reject(new AuthError());
     return this.db.oneOrNone(`
-      SELECT email, can_hugo_vote
+      SELECT email, hugo_voter
         FROM kansa.People
        WHERE id = $1`, id
     )
@@ -32,7 +32,7 @@ class Vote {
         if (!data || !req.session.user.hugo_admin && req.session.user.email !== data.email) throw new AuthError();
         return {
           id,
-          voter: !!data.can_hugo_vote
+          voter: !!data.hugo_voter
         };
       });
   }

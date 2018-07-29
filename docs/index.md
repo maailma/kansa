@@ -39,7 +39,6 @@ some relevant data and/or a `message` field.
   * [`GET purchase/keys`](#get-purchasekeys)
   * [`GET purchase/list`](#get-purchaselist)
   * [`POST purchase/other`](#post-purchaseother)
-  * [`GET purchase/prices`](#get-purchaseprices)
 * [Slack](#slack)
   * [`POST slack/invite`](#post-slackinvite)
 
@@ -228,7 +227,7 @@ data, `member_admin` or `member_list` authority is required.
 {
   id, last_modified, member_number, membership, legal_name, email,
   public_first_name, public_last_name, city, state, country,
-  can_hugo_nominate, can_hugo_vote, can_site_select,
+  hugo_nominator, hugo_voter,
   paper_pubs: { name, address, country },
   preferred_name, daypass, daypass_days
 }
@@ -353,23 +352,54 @@ upgraded member.
 
 Current purchase data for non-membership purchases. Top-level keys correspond to
 pre-defined payment categories and their `types`. `shape` values define the
-shapes of the expected `data` object, with matching JS `type`. The
-`{ [key]: label }` object `values` of `shape` defines select/radio options. Keys
-of `shape` with `required: true` need to have a non-empty value in the matching
-request.
+shapes of the expected `data` object, with matching JS `type`. Shape values with
+`required: true` need to have a non-empty value in the matching request.
 
 #### Response
 ```
 {
-  Sponsorship: {
-    shape: {
-      sponsor: {
+  new_member: {
+    label: 'New membership',
+    allow_create_account: true,
+    shape: [
+      {
+        key: membership,
+        type: string,
+        label: 'Membership type'
+      },
+      ...
+    ],
+    types: [
+      {
+        key: 'Adult',
+        label: 'Adult',
+        amount: 19500
+      },
+      ...
+    ]
+  },
+  sponsor: {
+    label: 'Sponsorship',
+    listed: true,
+    description: 'Why not sponsor ...',
+    shape: [
+      {
+        key: 'sponsor',
+        type: 'string',
         label: 'Sponsor name',
-        required: true,
-        type: 'string'
-      }
-    },
-    types: [{ key: 'bench', amount: 20000, label: 'Sponsored bench' }, ...]
+        required: true
+      },
+      ...
+    ],
+    types: [
+      {
+        key: 'bench',
+        label: 'Sponsored bench plaque',
+        amount: 6000,
+        description: '<p>Fannish Tradition ....</p>'
+      },
+      ...
+    ]
   },
   ...
 }
@@ -458,22 +488,6 @@ each item's beneficiary.
 {
   status: 'succeeded' || 'pending' || 'failed',
   charge_id: '...'
-}
-```
-
-### `GET purchase/prices`
-
-Current membership and paper publications prices, with `amount` in EUR cents.
-
-#### Response
-```
-{
-  memberships: {
-    Supporter: { amount: 3500, description: 'Supporting' },
-    ...,
-    Adult: { amount: 12000, description: 'Adult' },
-  },
-  PaperPubs: { amount: 1000, description: 'Paper publications' }
 }
 ```
 

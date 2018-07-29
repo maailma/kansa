@@ -1,4 +1,3 @@
-const prices = require('../static/prices.json');
 const { AuthError, InputError } = require('./errors');
 const Payment = require('./types/payment');
 const Person = require('./types/person');
@@ -13,7 +12,6 @@ class Purchase {
     this.db = db;
     this.createInvoice = this.createInvoice.bind(this);
     this.getDaypassPrices = this.getDaypassPrices.bind(this);
-    this.getPrices = this.getPrices.bind(this);
     this.getPurchaseData = this.getPurchaseData.bind(this);
     this.getPurchases = this.getPurchases.bind(this);
     this.getStripeKeys = this.getStripeKeys.bind(this);
@@ -45,11 +43,6 @@ class Purchase {
           return map
         }, {})
       ))
-  }
-
-  getPrices(req, res, next) {
-    if (!prices) next(new Error('Missing membership prices!?'));
-    res.json(prices);
   }
 
   getPurchaseData(req, res, next) {
@@ -138,7 +131,7 @@ class Purchase {
     }
   }
 
-  checkUpgrades(reqUpgrades) {
+  checkUpgrades(prices, reqUpgrades) {
     if (reqUpgrades.length === 0) return Promise.resolve([]);
     return this.db.any(`
       SELECT id, email, membership, preferred_name(p) as name, paper_pubs
@@ -167,14 +160,11 @@ class Purchase {
           throw new InputError('Change in at least one of membership and/or paper_pubs is required for upgrade');
         }
 
-        const prevPriceData = prices.memberships[prev.membership]
-        const membershipAmount = upgrade.membership
-          ? prices.memberships[upgrade.membership].amount - (prevPriceData && prevPriceData.amount || 0)
-          : 0;
-        const paperPubsAmount = upgrade.paper_pubs ? prices.PaperPubs.amount : 0;
-
+        let amount = 0
+        if (upgrade.membership) amount += (prices[upgrade.membership] || 0) - (prices[prev.membership] || 0)
+        if (upgrade.paper_pubs) amount += prices.paper_pubs
         return Object.assign({}, upgrade, {
-          amount: membershipAmount + paperPubsAmount,
+          amount,
           email: prev.email,
           name: prev.name,
           paper_pubs: Person.cleanPaperPubs(upgrade.paper_pubs),
@@ -249,17 +239,31 @@ class Purchase {
       new InputError('Non-empty new_members or upgrades is required')
     );
     const newEmailAddresses = {};
-    let charge_id, paymentItems, upgrades;
-    this.checkUpgrades(reqUpgrades).then(_upgrades => {
+    let charge_id, paymentItems, prices, upgrades;
+    return this.db.any(`
+      SELECT key, amount
+        FROM payment_types
+       WHERE category IN ('new_member', 'paper_pubs')
+    `).then(priceRows => {
+      prices = priceRows.reduce((p, { key, amount }) => {
+        p[key] = amount
+        return p
+      }, {})
+      return this.checkUpgrades(prices, reqUpgrades)
+    }).then(_upgrades => {
       upgrades = _upgrades;
-      const newMemberPaymentItems = newMembers.map(p => ({
-        amount: p.priceAsNewMember,
-        currency: 'eur',
-        category: 'new_member',
-        person_name: p.preferredName,
-        type: p.data.membership,
-        data: p.data
-      }));
+      const newMemberPaymentItems = newMembers.map(p => {
+        const mp = prices[p.data.membership] || 0
+        const pp = p.data.paper_pubs && prices.paper_pubs || 0
+        return {
+          amount: mp + pp,
+          currency: 'eur',
+          category: 'new_member',
+          person_name: p.data.preferredName,
+          type: p.data.membership,
+          data: p.data
+        }
+      });
       const upgradePaymentItems = upgrades.map(u => ({
         amount: u.amount,
         currency: 'eur',

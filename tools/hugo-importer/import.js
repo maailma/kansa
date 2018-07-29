@@ -78,7 +78,7 @@ fetch(loginUrl)
   .then(parseResponse)
   .then(res => {
     console.error(`Logged in as ${colors.green(res.email)} on ${colors.green(apiRoot)}`);
-    return GET('kansa/people?can_hugo_nominate=true');
+    return GET('kansa/people?hugo_nominator=true');
   })
   .then(people => {
     console.error(`Found ${colors.green(people.length)} nominators`);

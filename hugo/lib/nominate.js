@@ -11,13 +11,13 @@ function access(req) {
   const id = parseInt(req.params.id);
   if (isNaN(id) || id < 0) return Promise.reject(new InputError('Bad id number'));
   if (!req.session || !req.session.user || !req.session.user.email) return Promise.reject(new AuthError());
-  return req.app.locals.db.oneOrNone('SELECT email, can_hugo_nominate, can_hugo_vote FROM kansa.People WHERE id = $1', id)
+  return req.app.locals.db.oneOrNone('SELECT email, hugo_nominator, hugo_voter FROM kansa.People WHERE id = $1', id)
     .then(data => {
       if (!data || !req.session.user.hugo_admin && req.session.user.email !== data.email) throw new AuthError();
       return {
         id,
-        nominator: !!data.can_hugo_nominate,
-        voter: !!data.can_hugo_vote
+        nominator: !!data.hugo_nominator,
+        voter: !!data.hugo_voter
       };
     });
 }
