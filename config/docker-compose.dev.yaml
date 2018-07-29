@@ -68,5 +68,6 @@ services:
       RAAMI_PG_PASSWORD: pwd
     volumes:
       - ../config/database/dev-people.sql:/docker-entrypoint-initdb.d/90-dev-people.sql:ro
+      - ../config/database/fake-people.sql:/docker-entrypoint-initdb.d/91-fake-people.sql:ro
       - ../config/database/hugo-finalists.sql:/docker-entrypoint-initdb.d/90-hugo-finalists.sql:ro
       - ../config/database/payments.sql:/docker-entrypoint-initdb.d/90-payments.sql:ro

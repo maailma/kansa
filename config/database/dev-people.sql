@@ -1,7 +1,7 @@
 INSERT INTO admin.Admins (email, member_admin, member_list, siteselection, hugo_admin, raami_admin, admin_admin)
-     VALUES ('admin@example.com', true, true, true, true, true, true),
+     VALUES ('admin@example.com', true, true, false, true, true, true),
             ('member-admin@example.com', true, false, false, false, false, false),
-            ('site-select@example.com', false, false, true, false, false, false),
+            ('site-select@example.com', false, true, true, false, false, false),
             ('hugo-admin@example.com', false, true, false, true, false, false);
 
 SET ROLE kansa;
