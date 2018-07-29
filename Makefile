@@ -1,17 +1,31 @@
-NAME = api
+NAME = kansa
 BASE_CFG = config/docker-compose.base.yaml
 DEV_CFG = config/docker-compose.dev.yaml
 PROD_CFG = config/docker-compose.prod.yaml
 PROD_CFG_TMPL = config/docker-compose.prod-template.yaml
 
+DC = docker-compose -f $(BASE_CFG) -f $(DEV_CFG) -p $(NAME)
+
 start:
-	docker-compose -f $(BASE_CFG) -f $(DEV_CFG) -p $(NAME) up --build
+	$(DC) up --build
+
+start-detached:
+	$(DC) up -d --build
+
+update-%:
+	$(DC) up -d --build --no-deps $*
 
 stop:
-	docker-compose stop
+	$(DC) stop
+
+test: | intergration-tests/node_modules
+	cd integration-tests && npm test
+
+intergration-tests/node_modules:
+	cd integration-tests && npm install
 
 prod: prod-check
-	docker-compose -f $(BASE_CFG) -f $(PROD_CFG) -p $(NAME) up -d --build
+	$(DC) up -d --build
 
 prod-check: | $(PROD_CFG)
 	@grep '^\s\+[A-Z_]\+:\s*$$' $(PROD_CFG) ;\
