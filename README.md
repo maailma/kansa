@@ -47,10 +47,9 @@ configurable and customisable, so fewer changes in code are required for convent
 
 ### Getting Started
 
-To get a dev environment up and running, first clone this repo with `git clone --recursive`, or run
-`git submodule update --init` after cloning. You'll also need to have
+To get a dev environment up and running, first clone this repo. Then you'll need to have
 [Docker Compose](https://docs.docker.com/compose/) available, as that's used by default for
-container orchestration. Then run `make start` or call `docker-compose` directly:
+container orchestration. To start, run `make start` or call `docker-compose` directly:
 ```
 docker-compose \
   -f config/docker-compose.base.yaml -f config/docker-compose.dev.yaml \

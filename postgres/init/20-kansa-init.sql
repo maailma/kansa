@@ -1,6 +1,5 @@
 \set kansaPwd `echo "$KANSA_PG_PASSWORD"`
 
-CREATE EXTENSION damm WITH SCHEMA public;
 CREATE EXTENSION fuzzystrmatch WITH SCHEMA public;
 
 CREATE USER kansa WITH PASSWORD :'kansaPwd' IN ROLE api_access;

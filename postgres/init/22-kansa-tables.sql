@@ -1,12 +1,12 @@
 SET ROLE kansa;
 
-CREATE SEQUENCE member_number_seq;
+CREATE SEQUENCE member_number_seq START 10;
 
 CREATE TABLE IF NOT EXISTS People (
     id SERIAL PRIMARY KEY,
     last_modified timestamptz DEFAULT now(),
     membership MembershipStatus NOT NULL,
-    member_number damm_code UNIQUE DEFAULT nextdamm('member_number_seq'),
+    member_number integer UNIQUE DEFAULT nextval('member_number_seq'),
     legal_name text NOT NULL,
     public_first_name text,
     public_last_name text,

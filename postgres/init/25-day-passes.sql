@@ -24,7 +24,7 @@ CREATE TABLE badge_and_daypass_prints (
     person integer REFERENCES people NOT NULL,
     timestamp timestamptz NOT NULL DEFAULT now(),
     membership MembershipStatus NOT NULL,
-    member_number damm_code,
+    member_number integer,
     daypass integer REFERENCES daypasses
 );
 

@@ -63,7 +63,7 @@ function upgradeMembership(req, db, data) {
       const prevTypeIdx = Person.membershipTypes.indexOf(prev.membership);
       const nextTypeIdx = Person.membershipTypes.indexOf(data.membership);
       if (nextTypeIdx <= prevTypeIdx) throw new InputError(`Can't "upgrade" from ${prev.membership} to ${data.membership}`);
-      if (!parseInt(prev.member_number)) set.push("member_number=nextdamm('member_number_seq')");
+      if (!parseInt(prev.member_number)) set.push("member_number=nextval('member_number_seq')");
       if (data.paper_pubs) set.push('paper_pubs=$(paper_pubs)');
       return tx.one(`
            UPDATE People

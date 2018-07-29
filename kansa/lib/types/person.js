@@ -7,7 +7,7 @@ class Person {
       'last_modified',  // timestamptz DEFAULT now()
       'legal_name',  // text NOT NULL
       'membership',  // MembershipStatus NOT NULL
-      'member_number',  // damm_code
+      'member_number',  // integer
       'public_first_name', 'public_last_name',  // text
       'email',  // text
       'city', 'state', 'country',  // text

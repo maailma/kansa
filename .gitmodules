@@ -1,3 +1,0 @@
-[submodule "postgres/damm"]
-	path = postgres/damm
-	url = https://github.com/fusiongyro/damm.git

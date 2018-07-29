@@ -92,8 +92,6 @@ services:
       - "5432"
     volumes:
       - pgdata:/pgdata
-      - ../postgres/damm/damm.control:/usr/share/postgresql/9.5/extension/damm.control:ro
-      - ../postgres/damm/damm--1.0.sql:/usr/share/postgresql/9.5/extension/damm--1.0.sql:ro
       - ../postgres/init/10-admin-init.sql:/docker-entrypoint-initdb.d/10-admin-init.sql:ro
       - ../postgres/init/20-kansa-init.sql:/docker-entrypoint-initdb.d/20-kansa-init.sql:ro
       - ../config/postgres-init/21-member-types.sql:/docker-entrypoint-initdb.d/21-member-types.sql:ro
