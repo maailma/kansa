@@ -36,7 +36,7 @@ services:
       - tarra
       - tuohi
     expose:
-      - "3000"
+      - "80"
     volumes:
       - ../config/kansa.yaml:/kansa.yaml:ro
 
