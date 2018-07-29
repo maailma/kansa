@@ -50,6 +50,7 @@ router.get('/public/daypass-stats', cors({ origin: '*' }), publicData.getDaypass
 router.post('/key', key.setKey);
 router.all('/login', user.login);
 
+router.get('/config', (req, res) => res.json(config));
 router.get('/barcode/:key/:id.:fmt', badge.getBarcode);
 router.get('/blank-badge', badge.getBadge);
 

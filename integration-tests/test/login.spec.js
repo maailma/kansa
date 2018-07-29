@@ -54,6 +54,16 @@ describe('Public data', () => {
       })
       .end(done)
   })
+
+  it('Configuration is an object with id, name', (done) => {
+    unlogged.get('/api/config')
+      .expect((res) => {
+        if (res.status !== 200 || !res.body || !res.body.id || !res.body.name) {
+          throw new Error(`Fail! ${JSON.stringify(res.body)}`)
+        }
+      })
+      .end(done)
+  })
 })
 
 describe('Login', () => {

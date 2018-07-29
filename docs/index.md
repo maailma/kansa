@@ -17,6 +17,7 @@ some relevant data and/or a `message` field.
 * [Public information](#public-information)
   * [`GET public/people`](#get-publicpeople)
   * [`GET public/stats`](#get-publicstats)
+  * [`GET config`](#get-config)
 * [Authentication](#authentication)
   * [`POST key`](#post-key)
   * [`GET/POST login`](#getpost-login)
@@ -64,7 +65,6 @@ parameter `csv` is true-ish, returns results as csv rather than json format.
 ]
 ```
 
-
 ### `GET public/stats`
 - Parameters: `csv`
 
@@ -79,6 +79,19 @@ returns results as csv rather than json format.
   '': { Adult: 131, …, total: 262 }
 }
 ```
+
+### `GET config`
+The configuration used by this instance.
+
+#### Response
+```
+{
+  id: 'w75',
+  name: 'Worldcon 75',
+  paid_paper_pubs: true
+}
+```
+
 
 ## Authentication
 
