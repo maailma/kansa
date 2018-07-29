@@ -33,7 +33,7 @@ function getNominations(req, res, next) {
 
 
 function sendNominationEmail(db, id) {
-  const url = 'http://kyyhky:3000/email/hugo-update-nominations?delay=30'
+  const url = 'http://kyyhky/email/hugo-update-nominations?delay=30'
   db.task(t => t.batch([
     t.one(`SELECT
       k.email, k.key, p.legal_name, p.public_first_name AS pfn, p.public_last_name AS pln

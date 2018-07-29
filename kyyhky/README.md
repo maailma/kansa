@@ -13,7 +13,7 @@ is defined in **minutes**.
 
 ```
 POST /email/hugo-update-nominations?delay=30 HTTP/1.1
-Host: kyyhky:3000
+Host: kyyhky
 Content-Type: application/json
 
 {
@@ -44,7 +44,7 @@ remove an entry (or to change an email address), include an object
 
 ```
 POST /update-recipients HTTP/1.1
-Host: kyyhky:3000
+Host: kyyhky
 Content-Type: application/json
 
 [

@@ -5,7 +5,7 @@ module.exports = {
 }
 
 function mailTask(type, data, delay) {
-  let url = `http://kyyhky:3000/email/${type}`
+  let url = `http://kyyhky/email/${type}`
   if (delay) url += `?delay=${Number(delay)}` // in minutes
   return fetch(url, {
     method: 'POST',
@@ -60,7 +60,7 @@ LEFT JOIN keys USING (email)
 LEFT JOIN daypasses d ON (p.id = d.person_id)`
 
 function rxUpdateTask(recipients) {
-  return fetch('http://kyyhky:3000/update-recipients', {
+  return fetch('http://kyyhky/update-recipients', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(recipients)

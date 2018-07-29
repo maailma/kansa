@@ -72,7 +72,7 @@ services:
     links:
       - redis
     expose:
-      - "3000"
+      - "80"
     volumes:
       - ../config/message-templates:/message-templates:ro
 

@@ -20,7 +20,7 @@ const port = (val => {
   return isNaN(port) ? val  // named pipe
     : port >= 0 ? port  // port number
     : false
-})(process.env.PORT || 3000)
+})(process.env.PORT || 80)
 
 const app = express()
 if (debug.enabled('kyyhky:http')) {
