@@ -62,7 +62,7 @@ services:
     environment:
       PDF_TEMPLATE_DIR: /templates
     volumes:
-      - ../tuohi/templates:/templates:ro
+      - ../config/siteselection/ballot.pdf:/templates/ss-ballot.pdf:ro
 
   kyyhky:
     build: ../kyyhky
