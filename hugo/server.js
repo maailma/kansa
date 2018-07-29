@@ -1,7 +1,7 @@
 const debug = require('debug')('db-api:server');
 
 const { app, server } = require('./app');
-const port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(process.env.PORT || '80');
 
 app.set('port', port);
 server.listen(port);

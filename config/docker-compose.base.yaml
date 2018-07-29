@@ -23,7 +23,7 @@ services:
     links:
       - postgres
     expose:
-      - "3000"
+      - "80"
     volumes:
       - ../config/kansa.yaml:/kansa.yaml:ro
 
