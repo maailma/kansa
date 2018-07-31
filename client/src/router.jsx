@@ -15,7 +15,6 @@ import NewMemberIndex from './membership/components/NewMemberIndex'
 import Upgrade from './membership/components/Upgrade'
 import Payments from './payments'
 import NewPayment from './payments/new-payment'
-import ExhibitRegistration from './raami/components/Registration'
 
 const hugoRoutes = (path, requireAuth) => (
   <Route path={path} >
@@ -77,7 +76,6 @@ export default class AppRouter extends Route {
           <IndexRoute component={Index} />
           <Redirect from='login' to='/' />
           <Redirect from='profile' to='/' />
-          <Route path='exhibition/:id' component={ExhibitRegistration} onEnter={this.requireAuth} />
           {hugoRoutes('hugo', this.requireAuth)}
           <Route path='daypass/:type' component={NewDaypassForm} />
           <Route path='new' component={NewMemberIndex} />

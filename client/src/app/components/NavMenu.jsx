@@ -6,7 +6,6 @@ import Divider from 'material-ui/Divider'
 import { List, ListItem, makeSelectable } from 'material-ui/List'
 import EuroSymbol from 'material-ui/svg-icons/action/euro-symbol'
 import ThumbUp from 'material-ui/svg-icons/action/thumb-up'
-import Palette from 'material-ui/svg-icons/image/palette'
 import People from 'material-ui/svg-icons/social/people'
 import PersonAdd from 'material-ui/svg-icons/social/person-add'
 
@@ -19,11 +18,6 @@ const singleWithKey = (currentMember, otherMembers, key) => (
   : otherMembers ? otherMembers.every(m => !m.get(key))
   : true
 )
-
-const linkArtshowRegistration = (currentMember) => {
-  const ms = currentMember && currentMember.get('membership')
-  return ['Supporter', 'Exhibitor', 'Youth', 'FirstWorldcon', 'Adult'].indexOf(ms) !== -1
-}
 
 const linkHugoNominations = (currentMember, otherMembers) => (
   singleWithKey(currentMember, otherMembers, 'hugo_nominator')
@@ -53,15 +47,6 @@ const NavMenu = ({ currentMember, handleNav, otherMembers }) => {
       primaryText='Vote for the Hugo Awards'
       style={{ fontSize: 14 }}
       value={`/hugo/${id}/vote`}
-  />)
-  }
-  if (linkArtshowRegistration(currentMember)) {
-    memberItems.push(<ListItem
-      key='art'
-      leftIcon={<Palette />}
-      primaryText='Register for the Art Show'
-      style={{ fontSize: 14 }}
-      value={`/exhibition/${id}`}
   />)
   }
   if (memberItems.length) {
