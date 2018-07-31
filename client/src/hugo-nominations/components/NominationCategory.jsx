@@ -47,7 +47,7 @@ class NominationActionsRow extends React.Component {
           disabled={disabled}
           disabledBackgroundColor='transparent'
           icon={<ListCheck />}
-          onTouchTap={onSave}
+          onClick={onSave}
           style={{ float: 'right', marginLeft: 15 }}
           title='Save this category'
         />
@@ -56,7 +56,7 @@ class NominationActionsRow extends React.Component {
           disabled={disabled}
           disabledBackgroundColor='transparent'
           icon={<ContentUndo />}
-          onTouchTap={onReset}
+          onClick={onReset}
           style={{ float: 'right', marginLeft: 15 }}
           title='Reset this category'
         />

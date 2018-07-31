@@ -23,7 +23,7 @@ const SelectNewPaymentCard = ({ data, onSelect, title }) => {
     return <ListItem
       key={key}
       leftIcon={icon(key)}
-      onTouchTap={() => onSelect(key)}
+      onClick={() => onSelect(key)}
       primaryText={primary}
     />
   })

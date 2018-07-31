@@ -105,11 +105,11 @@ class Voter extends Component {
     return (
       <Dialog
         actions={[
-          <FlatButton key='close' label='Close' onTouchTap={onClose} />,
+          <FlatButton key='close' label='Close' onClick={onClose} />,
           <FlatButton key='ok'
             label={sent ? 'Working...' : 'Vote'}
             disabled={sent || !this.isVoter || !!(token && (!token.token || token.used))}
-            onTouchTap={this.vote}
+            onClick={this.vote}
           />
         ]}
         autoScrollBodyContent

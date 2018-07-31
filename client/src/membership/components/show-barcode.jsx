@@ -48,7 +48,7 @@ export default class ShowBarcode extends React.Component {
     const { isOpen } = this.state
     return <div>
       {React.Children.map(this.props.children, (child) => (
-        React.cloneElement(child, { onTouchTap: this.handleOpen })
+        React.cloneElement(child, { onClick: this.handleOpen })
       ))}
       <Dialog
         actions={
@@ -65,7 +65,7 @@ export default class ShowBarcode extends React.Component {
       >
         <div style={styles.wrapper}>
           {isOpen && <img
-            onTouchTap={this.handleClose}
+            onClick={this.handleClose}
             src={this.barcodeUrl('png')}
             style={styles.image}
           />}

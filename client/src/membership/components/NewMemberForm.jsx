@@ -140,7 +140,7 @@ class NewMemberForm extends React.Component {
                 <FlatButton
                   label={sent ? 'Working...' : 'Pay by card'}
                   disabled={!valid}
-                  onTouchTap={() => this.setState({ sent: true })}
+                  onClick={() => this.setState({ sent: true })}
                   style={{ flexShrink: 0 }}
                   tabIndex={3}
                 />
@@ -149,7 +149,7 @@ class NewMemberForm extends React.Component {
               <FlatButton
                 label='Sign up'
                 disabled={!valid || amount < 0}
-                onTouchTap={this.onSignup}
+                onClick={this.onSignup}
                 style={{ flexShrink: 0 }}
                 tabIndex={3}
               />

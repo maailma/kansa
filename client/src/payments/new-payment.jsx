@@ -158,7 +158,7 @@ class NewPayment extends React.Component {
                 <RaisedButton
                   label={sent ? 'Working...' : 'Pay by card'}
                   disabled={this.disabledCheckout}
-                  onTouchTap={() => this.setState({ sent: true })}
+                  onClick={() => this.setState({ sent: true })}
                   primary
                   style={{ marginRight: 16 }}
                 />

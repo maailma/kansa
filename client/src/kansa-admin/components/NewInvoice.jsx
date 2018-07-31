@@ -60,7 +60,7 @@ class NewInvoice extends React.Component {
     const { invoice, open, sent } = this.state
     return (
       <div>
-        { React.cloneElement(React.Children.only(children), { onTouchTap: this.handleOpen }) }
+        { React.cloneElement(React.Children.only(children), { onClick: this.handleOpen }) }
         <Dialog
           title='Add new invoice'
           open={open}
@@ -68,11 +68,11 @@ class NewInvoice extends React.Component {
           bodyClassName='invoiceDialog'
           onRequestClose={this.handleClose}
           actions={[
-            <FlatButton key='cancel' label='Cancel' onTouchTap={this.handleClose} />,
+            <FlatButton key='cancel' label='Cancel' onClick={this.handleClose} />,
             <FlatButton key='add'
               label={sent ? 'Working...' : 'Add'}
               disabled={this.disableSubmit}
-              onTouchTap={() => {
+              onClick={() => {
                 this.setState({ sent: true })
                 onSubmit(invoice)
                   .then(res => {

@@ -84,7 +84,7 @@ class StripeDirectDebit extends React.Component {
   }
 
   render () {
-    return <span onTouchTap={this.charge} children={this.props.children} />
+    return <span onClick={this.charge} children={this.props.children} />
   }
 }
 

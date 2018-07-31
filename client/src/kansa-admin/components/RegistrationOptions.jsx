@@ -64,12 +64,12 @@ class RegOptionsDialog extends Component {
     return (
       <Dialog
         actions={[
-          <FlatButton key='close' label='Close' onTouchTap={onClose} />,
+          <FlatButton key='close' label='Close' onClick={onClose} />,
           <FlatButton
             disabled={!passwordChanged && !printerChanged || (!!printer && printer.indexOf('#') === -1)}
             key='apply'
             label='Apply'
-            onTouchTap={this.save}
+            onClick={this.save}
           />
         ]}
         open={open}

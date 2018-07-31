@@ -73,13 +73,13 @@ class MemberEdit extends React.Component {
     const { isOpen } = this.state
 
     return <div>
-      { React.Children.map(children, (child) => React.cloneElement(child, { onTouchTap: this.handleOpen })) }
+      { React.Children.map(children, (child) => React.cloneElement(child, { onClick: this.handleOpen })) }
       <Dialog
         actions={[
           <FlatButton
             key='cancel'
             label='Cancel'
-            onTouchTap={this.handleClose}
+            onClick={this.handleClose}
             primary
             tabIndex={3}
           />,
@@ -87,7 +87,7 @@ class MemberEdit extends React.Component {
             key='ok'
             disabled={!this.canSaveChanges}
             label='Save'
-            onTouchTap={this.saveChanges}
+            onClick={this.saveChanges}
             primary
             tabIndex={2}
           />

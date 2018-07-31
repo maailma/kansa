@@ -61,14 +61,14 @@ export default class MemberLog extends React.Component {
     const columns = ['time', 'ID', 'author', 'description']
     return (
       <div>
-        { React.cloneElement(button, { onTouchTap: this.handleOpen }) }
+        { React.cloneElement(button, { onClick: this.handleOpen }) }
         <Dialog
           contentStyle={{ width: '95%', maxWidth: 'none' }}
           open={this.state.open}
           autoScrollBodyContent
           onRequestClose={this.handleClose}
           actions={[
-            <FlatButton key='close' label='Close' onTouchTap={this.handleClose} />
+            <FlatButton key='close' label='Close' onClick={this.handleClose} />
           ]}
         >
           <table style={{ width: '100%' }}>

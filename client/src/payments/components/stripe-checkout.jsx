@@ -38,7 +38,7 @@ class StripeCheckout extends React.Component {
         reconfigureOnUpdate={true}
         stripeKey={stripeKeys.get(account || 'default')}
         token={onCheckout}
-        triggerEvent='onTouchTap'
+        triggerEvent='onClick'
         zipCode
       >{children}</ReactStripeCheckout>
     )

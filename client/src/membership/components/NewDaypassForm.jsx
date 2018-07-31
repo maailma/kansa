@@ -147,7 +147,7 @@ class NewDaypassForm extends React.Component {
                     <RaisedButton
                       fullWidth
                       label={`${label} (€${daypassPrices.getIn([type, day]) / 100})`}
-                      onTouchTap={() => this.setState({ person: person.set(day, !selected) })}
+                      onClick={() => this.setState({ person: person.set(day, !selected) })}
                       primary={selected}
                     />
                   </Col>
@@ -175,7 +175,7 @@ class NewDaypassForm extends React.Component {
               <RaisedButton
                 label={sent ? 'Working...' : 'Pay by card'}
                 disabled={paymentDisabled}
-                onTouchTap={() => this.setState({ sent: true })}
+                onClick={() => this.setState({ sent: true })}
                 primary
                 style={{ marginRight: 16 }}
                 tabIndex={3}

@@ -151,7 +151,7 @@ class Upgrade extends Component {
           <FlatButton
             label={sent ? 'Working...' : 'Pay by card'}
             disabled={disabled}
-            onTouchTap={() => this.setState({ sent: true })}
+            onClick={() => this.setState({ sent: true })}
             style={{ flexShrink: 0 }}
             tabIndex={2}
           />

@@ -53,7 +53,7 @@ export default class PreviewBadge extends React.Component {
     const { isOpen } = this.state
     return <div>
       {React.Children.map(this.props.children, (child) => (
-        React.cloneElement(child, { onTouchTap: this.handleOpen })
+        React.cloneElement(child, { onClick: this.handleOpen })
       ))}
       <Dialog
         bodyStyle={{ padding: 0 }}
@@ -62,7 +62,7 @@ export default class PreviewBadge extends React.Component {
       >
         <div style={styles.wrapper}>
           {isOpen && <img
-            onTouchTap={this.handleClose}
+            onClick={this.handleClose}
             src={this.badgeImgUrl}
             style={styles.image}
           />}

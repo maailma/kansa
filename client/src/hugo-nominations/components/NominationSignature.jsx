@@ -21,7 +21,7 @@ export default class NominationSignature extends React.Component {
         <FlatButton
           disabled={!name}
           label='OK'
-          onTouchTap={() => setName(name)}
+          onClick={() => setName(name)}
         />
       }
       autoScrollBodyContent

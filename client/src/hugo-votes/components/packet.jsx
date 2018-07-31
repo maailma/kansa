@@ -33,7 +33,7 @@ const Packet = ({ category, formats, getHugoPacketSeriesExtra }) => {
         <div key='extra' style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <FlatButton
             label='Get Steam Token for The Craft Sequence games'
-            onTouchTap={getHugoPacketSeriesExtra}
+            onClick={getHugoPacketSeriesExtra}
             style={{ lineHeight: '33px' }}
           />
         </div>

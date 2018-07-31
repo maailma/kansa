@@ -43,7 +43,7 @@ class NominationRemoveButton extends React.Component {
     const { disabled, onRemove } = this.props
     return <IconButton
       disabled={disabled}
-      onTouchTap={onRemove}
+      onClick={onRemove}
       style={{
         position: 'absolute',
         left: '100%'

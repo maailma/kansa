@@ -63,7 +63,7 @@ export default class Upgrade extends React.Component {
       onChange: this.setStateIn
     }
     return <div>
-      { React.cloneElement(button, { onTouchTap: this.handleOpen }) }
+      { React.cloneElement(button, { onClick: this.handleOpen }) }
       <Dialog
         bodyStyle={{ paddingLeft: 0 }}
         title={'Upgrade ' + name}
@@ -71,11 +71,11 @@ export default class Upgrade extends React.Component {
         autoScrollBodyContent
         onRequestClose={this.handleClose}
         actions={[
-          <FlatButton key='cancel' label='Cancel' onTouchTap={this.handleClose} />,
+          <FlatButton key='cancel' label='Cancel' onClick={this.handleClose} />,
           <FlatButton key='ok'
             label={sent ? 'Working...' : 'Apply'}
             disabled={disabled}
-            onTouchTap={() => {
+            onClick={() => {
               this.setState({ sent: true })
               const res = { comment }
               if (msChanged) res.membership = membership

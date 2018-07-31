@@ -82,7 +82,7 @@ class MemberCard extends React.Component {
         key='up'
         innerDivStyle={{ paddingLeft: 60 }}
         leftIcon={<ThumbUp style={{ top: 12 }}/>}
-        onTouchTap={() => push(`/upgrade/${id}`)}
+        onClick={() => push(`/upgrade/${id}`)}
         primaryText='Upgrade membership'
         secondaryText='and/or add paper publications'
       />
@@ -93,7 +93,7 @@ class MemberCard extends React.Component {
           key='hv'
           innerDivStyle={{ paddingLeft: 60 }}
           leftIcon={<Rocket />}
-          onTouchTap={() => push(`/hugo/${id}/vote`)}
+          onClick={() => push(`/hugo/${id}/vote`)}
           primaryText='Vote for the Hugo Awards'
         />
       )
@@ -104,7 +104,7 @@ class MemberCard extends React.Component {
           key='hn'
           innerDivStyle={{ paddingLeft: 60 }}
           leftIcon={<Rocket />}
-          onTouchTap={() => push(`/hugo/${id}/nominate`)}
+          onClick={() => push(`/hugo/${id}/nominate`)}
           primaryText='Nominate for the Hugo Awards'
         />
       )
@@ -115,7 +115,7 @@ class MemberCard extends React.Component {
           key='sb'
           innerDivStyle={{ paddingLeft: 60 }}
           leftIcon={<SouvenirBook />}
-          onTouchTap={() => {
+          onClick={() => {
             window.location = '/member-files/souvenir-book.pdf'
           }}
           primaryText='Open souvenir book (PDF)'

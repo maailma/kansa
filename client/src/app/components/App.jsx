@@ -39,7 +39,7 @@ const AppBar = ({ email, logout, menuDocked, menuWidth, onOpenMenu, title }) => 
       <IconButton
         disabled={menuDocked}
         iconStyle={menuDocked ? { width: 0 } : null}
-        onTouchTap={onOpenMenu}
+        onClick={onOpenMenu}
         style={menuDocked ? {
           border: 0,
           padding: 0,
@@ -60,7 +60,7 @@ const AppBar = ({ email, logout, menuDocked, menuWidth, onOpenMenu, title }) => 
         className='logoutButton'
         label={<span><span className='logoutHint'>Sign out </span>{email}</span>}
         labelStyle={{ color: darkBlue, textTransform: 'none', verticalAlign: 'initial' }}
-        onTouchTap={logout}
+        onClick={logout}
         primary
         style={{ marginTop: 10, marginRight: 10 }}
       />

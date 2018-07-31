@@ -64,11 +64,11 @@ class RegistrationLock extends Component {
     const { error, open, password } = this.state
     return locked ? (
       <div>
-        {React.cloneElement(children, { onTouchTap: this.open })}
+        {React.cloneElement(children, { onClick: this.open })}
         <Dialog
           actions={[
-            <FlatButton key='cancel' label='Cancel' onTouchTap={this.close} />,
-            <FlatButton key='unlock' label='Unlock' onTouchTap={this.unlock} />
+            <FlatButton key='cancel' label='Cancel' onClick={this.close} />,
+            <FlatButton key='unlock' label='Unlock' onClick={this.unlock} />
           ]}
           onRequestClose={this.close}
           open={open}

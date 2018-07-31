@@ -67,7 +67,7 @@ class KeyRequest extends React.Component {
               primary
               disabled={!validEmail}
               style={{ marginTop: 12 }}
-              onTouchTap={() => keyRequest(email, name)}
+              onClick={() => keyRequest(email, name)}
             />
           </form>
         </CardText>

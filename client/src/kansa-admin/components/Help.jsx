@@ -40,7 +40,7 @@ export const helpText = [
 
 export const HelpDialog = ({ open, handleClose }) => (
   <Dialog
-    actions={<FlatButton label='Close' onTouchTap={handleClose} />}
+    actions={<FlatButton label='Close' onClick={handleClose} />}
     open={open}
     autoScrollBodyContent
     onRequestClose={handleClose}

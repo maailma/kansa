@@ -147,7 +147,7 @@ class NominationDetails extends React.Component {
           icon={disqualified ? <DisqualifyChecked /> : <DisqualifyUnchecked />}
           label='Disqualified'
           labelPosition='after'
-          onTouchTap={() => { this.disqualified = !disqualified }}
+          onClick={() => { this.disqualified = !disqualified }}
           secondary={disqualified}
           style={disqualified ? {} : { color: 'rgba(0, 0, 0, 0.6)' }}
         />

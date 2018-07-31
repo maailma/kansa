@@ -34,7 +34,7 @@ const SaveAllButton = ({ changedCategories, signature, submitNominations }) => (
     >
       <IconButton
         disabled={changedCategories.size == 0}
-        onTouchTap={() => changedCategories.keySeq().forEach(category => submitNominations(category, signature))}
+        onClick={() => changedCategories.keySeq().forEach(category => submitNominations(category, signature))}
         style={{
           transition: transitions.easeOut(),
           position: 'relative',

@@ -87,7 +87,7 @@ export default class MemberLookupSelector extends React.Component {
             rightIconButton={(
               <IconButton
                 iconStyle={{ color: 'rgb(117, 117, 117)' }}
-                onTouchTap={() => {
+                onClick={() => {
                   onChange({ membership: null, name: '', person_id: 0 })
                   this.setState({ foundPerson: null })
                 }}

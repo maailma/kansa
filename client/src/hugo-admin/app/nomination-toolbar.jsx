@@ -43,7 +43,7 @@ class NominationToolbar extends Component {
     const { setQuery, showNominations } = this.props
     return <MenuItem
       key={(group || '') + category}
-      onTouchTap={() => {
+      onClick={() => {
         this.setState({ menuOpen: false })
         showNominations(category)
         setQuery('')
@@ -59,7 +59,7 @@ class NominationToolbar extends Component {
     return [
       <IconButton
         key='cib'
-        onTouchTap={() => this.setState({ infoOpen: true })}
+        onClick={() => this.setState({ infoOpen: true })}
         tooltip={`Show ${category} information`}
       >
         <CatInfoIcon />
@@ -77,13 +77,13 @@ class NominationToolbar extends Component {
     if (!categoryInfo[category]) return null
     return (this.currentView === 'nominations')
       ? <IconButton
-        onTouchTap={() => showFinalists(category)}
+        onClick={() => showFinalists(category)}
         tooltip={`Show ${category} finalists`}
         >
         <FinalistsIcon />
       </IconButton>
       : <IconButton
-        onTouchTap={() => showNominations(category)}
+        onClick={() => showNominations(category)}
         tooltip={`Show ${category} nominations`}
         >
         <NominationsIcon />
@@ -108,7 +108,7 @@ class NominationToolbar extends Component {
     return (
       <IconButton
         iconStyle={showBallotCounts ? { color: 'rgb(0, 188, 212)' } : null}
-        onTouchTap={() => setShowBallotCounts(!showBallotCounts)}
+        onClick={() => setShowBallotCounts(!showBallotCounts)}
         tooltip={`${showBallotCounts ? 'Hide' : 'Show'} ballot counts`}
       >
         <BallotCountIcon />
@@ -123,7 +123,7 @@ class NominationToolbar extends Component {
       <Paper className='toolbar'>
         <div>
           <RaisedButton
-            onTouchTap={this.openMenu}
+            onClick={this.openMenu}
             label={category}
             style={{ marginRight: 12 }}
           />

@@ -8,7 +8,7 @@ import { classify } from '../actions'
 
 const NominationMerger = ({ classify, nominations, onSuccess, selected }) => (
   <FloatingActionButton
-    onTouchTap={() => {
+    onClick={() => {
       const canonIds = selected.map(sel => sel.get('canon_id')).filter(id => !!id)
       let canon = null
       switch (canonIds.size) {

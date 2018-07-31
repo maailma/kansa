@@ -124,7 +124,7 @@ class MemberLookupForm extends React.Component {
           <RaisedButton
             disabled={this.disableSubmit}
             label='Find'
-            onTouchTap={this.submit}
+            onClick={this.submit}
             style={{ flexShrink: 1 }}
           />
         </Col>

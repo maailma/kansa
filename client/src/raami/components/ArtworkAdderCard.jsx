@@ -13,7 +13,7 @@ const ArtworkAdderCard = ({ onAdd, style }) => {
         <ListItem
           innerDivStyle={{ paddingLeft: 60 }}
           leftIcon={<ContentAdd />}
-          onTouchTap={onAdd}
+          onClick={onAdd}
           primaryText='Add new artwork'
           secondaryText='You may edit works later'
         />

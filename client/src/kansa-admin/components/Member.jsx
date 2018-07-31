@@ -100,11 +100,11 @@ class Member extends PureComponent {
     const membership = member.get('membership')
 
     const actions = [
-      <FlatButton key='close' label='Close' onTouchTap={handleClose} />,
+      <FlatButton key='close' label='Close' onClick={handleClose} />,
       <FlatButton key='ok'
         disabled={sent || !hasChanges || !this.valid}
         label={sent ? 'Working...' : 'Apply'}
-        onTouchTap={() => this.save().then(handleClose)}
+        onClick={() => this.save().then(handleClose)}
       />
     ]
 
@@ -152,7 +152,7 @@ class Member extends PureComponent {
         <FlatButton
           disabled={sent || !this.valid}
           label={label}
-          onTouchTap={() => this.handleBadgePrint()
+          onClick={() => this.handleBadgePrint()
             .then(() => showMessage(`${daypass ? 'Daypass claimed' : 'Badge printed'} for ${member.get('preferred_name')}`))
           }
           style={{ float: 'left' }}

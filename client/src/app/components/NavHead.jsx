@@ -37,7 +37,7 @@ const NavAvatars = ({ currentMember, otherMembers }) => <div style={{ display: '
 </div>
 
 const NavHead = ({ currentMember, handleNav, otherMembers }) => <div
-  onTouchTap={() => handleNav('/')}
+  onClick={() => handleNav('/')}
   style={{
     background: `url(${JS_ROOT}${headerBg})  30% 0 / auto 100%  #337ab7`,
     color: '#fff',

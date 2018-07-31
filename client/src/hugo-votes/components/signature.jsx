@@ -41,7 +41,7 @@ export default class VoteSignature extends React.Component {
           <FlatButton
             disabled={!name}
             label='OK'
-            onTouchTap={() => setSignature(name)}
+            onClick={() => setSignature(name)}
           />
         </CardActions>
       </div>

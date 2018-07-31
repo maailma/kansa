@@ -132,13 +132,13 @@ export default class CategoryList extends React.Component {
             className='vote-item'
             key={'p' + idx}
             leftIcon={getIcon(idx, entry)}
-            onTouchTap={(ev) => {
+            onClick={(ev) => {
               if (entry) this.openPopover(ev, idx, entry)
               else this.setPreference(idx, null)
             }}
             rightIconButton={<IconButton
               iconStyle={{ color: 'rgba(0, 0, 0, 0.541176)' }}
-              onTouchTap={() => this.setPreference(idx, null)}
+              onClick={() => this.setPreference(idx, null)}
               tooltip='Remove this entry'
             ><ContentClear /></IconButton>}
             {...this.listItemProps(entry)}
@@ -152,7 +152,7 @@ export default class CategoryList extends React.Component {
             className='vote-item'
             key={'n' + idx}
             leftIcon={<NoNumber />}
-            onTouchTap={(ev) => this.openPopover(ev, -1, entry)}
+            onClick={(ev) => this.openPopover(ev, -1, entry)}
             {...this.listItemProps(entry)}
           />
         ))}

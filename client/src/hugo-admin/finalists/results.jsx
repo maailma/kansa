@@ -156,7 +156,7 @@ export default class Results extends PureComponent {
           ) }
         </AutoSizer>
         <FloatingActionButton
-          onTouchTap={this.download}
+          onClick={this.download}
           style={{ position: 'fixed', bottom: 24, right: 24 }}
         >
           <FileDownload />

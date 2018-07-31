@@ -45,7 +45,7 @@ class NewMember extends Component {
     return (
       <div>
         <FloatingActionButton
-          onTouchTap={this.handleOpen}
+          onClick={this.handleOpen}
           style={{ position: 'fixed', bottom: '24px', right: '24px' }}
         >
           <ContentAdd />
@@ -57,11 +57,11 @@ class NewMember extends Component {
           bodyClassName='memberDialog'
           onRequestClose={this.handleClose}
           actions={[
-            <FlatButton key='cancel' label='Cancel' onTouchTap={this.handleClose} />,
+            <FlatButton key='cancel' label='Cancel' onClick={this.handleClose} />,
             <FlatButton key='add'
               label={sent ? 'Working...' : 'Add'}
               disabled={disabled}
-              onTouchTap={() => {
+              onClick={() => {
                 this.setState({ sent: true })
                 onAdd(member)
                   .then(res => {

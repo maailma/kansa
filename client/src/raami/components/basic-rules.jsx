@@ -141,7 +141,7 @@ export class BasicRulesDialog extends React.Component {
       {React.Children.map(
         this.props.children,
         (child) => React.cloneElement(child, {
-          onTouchTap: () => this.setState({ open: true })
+          onClick: () => this.setState({ open: true })
         })
       )}
       <Dialog

@@ -57,7 +57,7 @@ class SearchBox extends Component {
           tooltip={filter ? 'Clear search' : 'Search'}
           tooltipPosition='bottom-right'
           tooltipStyles={{ top: 24 }}
-          onTouchTap={() => {
+          onClick={() => {
             if (filter) onChange('')
             if (this.searchField) this.searchField.focus()
           }}
@@ -105,11 +105,11 @@ let ToolbarActions = class extends Component {
           >
             <MenuItem primaryText={email} disabled />
             {lockable && <MenuItem primaryText='Lock for Registration'
-              onTouchTap={() => this.regLock.lock()}
+              onClick={() => this.regLock.lock()}
             />}
-            <MenuItem primaryText='Registration options' onTouchTap={() => this.setState({ regOpen: true })} />
-            <MenuItem primaryText='Help' onTouchTap={() => this.setState({ helpOpen: true })} />
-            <MenuItem primaryText='Logout' onTouchTap={onLogout} />
+            <MenuItem primaryText='Registration options' onClick={() => this.setState({ regOpen: true })} />
+            <MenuItem primaryText='Help' onClick={() => this.setState({ helpOpen: true })} />
+            <MenuItem primaryText='Logout' onClick={onLogout} />
           </IconMenu>
         ) : null}
         <HelpDialog
