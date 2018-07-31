@@ -61,7 +61,6 @@ if (process.env.NODE_ENV === 'production') {
   cfg.mode = 'development'
   const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-  cfg.entry.bundle.push('webpack/hot/dev-server');
   cfg.plugins.push(new HtmlWebpackPlugin({
     chunks: ['bundle'],
     inject: 'body',
@@ -69,7 +68,6 @@ if (process.env.NODE_ENV === 'production') {
     title
   }));
 
-  cfg.entry['hugo-admin'].push('webpack/hot/dev-server');
   cfg.plugins.push(new HtmlWebpackPlugin({
     chunks: ['hugo-admin'],
     filename: 'hugo-admin.html',
@@ -78,7 +76,6 @@ if (process.env.NODE_ENV === 'production') {
     title: 'Hugo Admin - ' + title
   }));
 
-  cfg.entry['kansa-admin'].push('webpack/hot/dev-server');
   cfg.plugins.push(new HtmlWebpackPlugin({
     chunks: ['kansa-admin'],
     filename: 'kansa-admin.html',
