@@ -24,7 +24,6 @@
     "react": "^15.6.2",
     "react-dom": "^15.6.2",
     "react-event-listener": "^0.6.1",
-    "react-file-input": "^0.2.5",
     "react-flexbox-grid": "^2.1.2",
     "react-gravatar": "^2.6.3",
     "react-immutable-proptypes": "^2.1.0",
