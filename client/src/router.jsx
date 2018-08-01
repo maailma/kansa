@@ -1,10 +1,8 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { IndexRedirect, IndexRoute, Redirect, Route, Router } from 'react-router'
+import { IndexRedirect, IndexRoute, Route, Router } from 'react-router'
 
 import { keyLogin, tryLogin } from './app/actions/auth'
-import { HUGO_ADMIN_ROUTE_ROOT } from './hugo-admin/constants'
-
 import App from './app/components/App'
 import Index from './app/components/Index'
 import Nominate from './hugo-nominations/components/Nominate'
@@ -15,22 +13,6 @@ import NewMemberIndex from './membership/components/NewMemberIndex'
 import Upgrade from './membership/components/Upgrade'
 import Payments from './payments'
 import NewPayment from './payments/new-payment'
-
-const hugoRoutes = (path, requireAuth) => (
-  <Route path={path} >
-    <IndexRedirect to='vote' />
-    <Route path='admin*' onEnter={() => {
-      window.location = HUGO_ADMIN_ROUTE_ROOT
-    }} />
-    <Route path='nominate/:id' onEnter={requireAuth} component={Nominate} />
-    <Route path='vote'>
-      <IndexRoute component={Vote} />
-      <Route path=':id' component={Vote} />
-    </Route>
-    <Redirect from=':id/nominate' to='nominate/:id' />
-    <Redirect from=':id/vote' to='vote/:id' />
-  </Route>
-)
 
 export default class AppRouter extends Route {
   static contextTypes = {
@@ -67,25 +49,22 @@ export default class AppRouter extends Route {
   }
 
   render () {
-    const { history } = this.props
     return (
-      <Router history={history}>
-        <Route path='/login/:email/:key' onEnter={this.doLogin} />
-        <Route path='/login/:email/:key/:id' onEnter={this.doLogin} />
+      <Router history={this.props.history}>
+        <Route path='/login/:email/:key(/:id)' onEnter={this.doLogin} />
         <Route path='/' component={App} onChange={this.scrollUpOnChange} onEnter={this.checkAuth} >
           <IndexRoute component={Index} />
-          <Redirect from='login' to='/' />
-          <Redirect from='profile' to='/' />
-          {hugoRoutes('hugo', this.requireAuth)}
+          <Route path='hugo' >
+            <IndexRedirect to='vote' />
+            <Route path='nominate/:id' onEnter={this.requireAuth} component={Nominate} />
+            <Route path='vote(/:id)' component={Vote} />
+          </Route>
           <Route path='daypass/:type' component={NewDaypassForm} />
           <Route path='new' component={NewMemberIndex} />
           <Route path='new/:membership' component={NewMemberForm} />
           <Route path='pay' component={Payments} />
           <Route path='pay/:type' component={NewPayment} />
-          <Route path='upgrade' onEnter={this.requireAuth}>
-            <IndexRoute component={Upgrade} />
-            <Route path=':id' component={Upgrade} />
-          </Route>
+          <Route path='upgrade(/:id)' component={Upgrade} onEnter={this.requireAuth} />
         </Route>
       </Router>
     )

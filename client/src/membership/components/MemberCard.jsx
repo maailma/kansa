@@ -93,8 +93,8 @@ class MemberCard extends React.Component {
           key='hv'
           innerDivStyle={{ paddingLeft: 60 }}
           leftIcon={<Rocket />}
-          onClick={() => push(`/hugo/${id}/vote`)}
-          primaryText='Vote for the Hugo Awards'
+          onClick={() => push(`/hugo/vote/${id}`)}
+          primaryText="Vote for the Hugo Awards"
         />
       )
     }
@@ -104,8 +104,8 @@ class MemberCard extends React.Component {
           key='hn'
           innerDivStyle={{ paddingLeft: 60 }}
           leftIcon={<Rocket />}
-          onClick={() => push(`/hugo/${id}/nominate`)}
-          primaryText='Nominate for the Hugo Awards'
+          onClick={() => push(`/hugo/nominate/${id}`)}
+          primaryText="Nominate for the Hugo Awards"
         />
       )
     }

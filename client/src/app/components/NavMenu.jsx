@@ -37,7 +37,7 @@ const NavMenu = ({ currentMember, handleNav, otherMembers }) => {
       leftIcon={<Rocket />}
       primaryText='Nominate for the Hugo Awards'
       style={{ fontSize: 14 }}
-      value={`/hugo/${id}/nominate`}
+      value={`/hugo/nominate/${id}`}
   />)
   }
   if (linkHugoVotes(currentMember, otherMembers)) {
@@ -46,7 +46,7 @@ const NavMenu = ({ currentMember, handleNav, otherMembers }) => {
       leftIcon={<Rocket />}
       primaryText='Vote for the Hugo Awards'
       style={{ fontSize: 14 }}
-      value={`/hugo/${id}/vote`}
+      value={`/hugo/vote/${id}`}
   />)
   }
   if (memberItems.length) {
