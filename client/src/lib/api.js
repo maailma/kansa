@@ -1,6 +1,7 @@
 import 'whatwg-fetch'
+import { API_ROOT } from '../constants'
 
-export default class API {
+class API {
   constructor (root) {
     this.root = root  // [scheme]://[host]:[port]/[path]/
   }
@@ -60,3 +61,5 @@ export default class API {
       .then(response => API.parse(response))
   }
 }
+
+export default new API(API_ROOT)

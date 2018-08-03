@@ -1,8 +1,7 @@
 import { showMessage } from '../app/actions/app'
 import { getVotes, setPacket, setServerData, submitVotes } from './actions'
 import { API_ROOT } from '../constants'
-import API from '../lib/api'
-const api = new API(API_ROOT)
+import api from '../lib/api'
 
 const submitDelay = 15 * 1000
 let submitTimeout = null

@@ -1,10 +1,8 @@
 import { setPerson } from '../app/actions/app'
 import { getNominations } from './actions'
-import { API_ROOT } from '../constants'
 import { nominationFields } from './constants'
 
-import API from '../lib/api'
-const api = new API(API_ROOT)
+import api from '../lib/api'
 
 function setNominator (dispatch, { person }) {
   if (!person) throw new Error(`Required parameter: person <${person}>`)

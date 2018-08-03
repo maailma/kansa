@@ -1,12 +1,9 @@
 import { Map } from 'immutable'
 import { push, replace } from 'react-router-redux'
 
-import API from '../lib/api'
+import api from '../lib/api'
 import { showMessage } from '../app/actions/app'
 import { memberSet } from './actions'
-import { API_ROOT } from '../constants'
-
-const api = new API(API_ROOT)
 
 export default ({ dispatch }) => (next) => (action) => {
   const handleError = (error) => next({ ...action, error })

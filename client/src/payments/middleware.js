@@ -1,9 +1,6 @@
-import API from '../lib/api'
+import api from '../lib/api'
 import { memberSet } from '../membership/actions'
 import { getPurchaseList } from './actions'
-import { API_ROOT } from '../constants'
-
-const api = new API(API_ROOT)
 
 export default ({ dispatch }) => (next) => (action) => {
   const handleError = (error) => next({ ...action, error })

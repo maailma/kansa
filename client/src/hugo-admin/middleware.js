@@ -1,9 +1,6 @@
 import { Map } from 'immutable'
+import api from '../lib/api'
 import { addCanon, addClassification, fetchAllBallots, setCanon, setNominations } from './actions'
-import { API_ROOT } from '../constants'
-
-import API from '../lib/api'
-const api = new API(API_ROOT)
 
 let ws = null
 
