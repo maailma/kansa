@@ -10,7 +10,7 @@ import { createStore } from 'redux'
 import 'react-virtualized/styles.css'
 import './styles/app.css'
 
-import API from './api'
+import API from '../lib/api'
 import App from './components/App'
 import { loadRegistrationState } from './components/RegistrationOptions'
 import reducers from './reducers'
