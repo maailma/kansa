@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import EventListener from 'react-event-listener'
 import FlatButton from 'material-ui/FlatButton'
@@ -8,6 +8,8 @@ import Snackbar from 'material-ui/Snackbar'
 import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar'
 import Menu from 'material-ui/svg-icons/navigation/menu'
 
+import api from '../../lib/api'
+import { ConfigProvider } from '../../lib/config-context'
 import Worldcon75 from '../../lib/worldcon75'
 import { darkBlue } from '../../theme'
 import { hideMessage } from '../actions/app'
@@ -90,13 +92,17 @@ const AppBar = ({
   </Paper>
 )
 
-class App extends React.Component {
+class App extends Component {
   constructor(props) {
     super(props)
     this.state = Object.assign(
-      { menuOpen: false },
+      { config: null, menuOpen: false },
       getMenuState(props.allowMenuDocked)
     )
+  }
+
+  componentDidMount() {
+    api.GET('config').then(config => this.setState({ config }))
   }
 
   componentWillReceiveProps(nextProps) {
@@ -165,13 +171,15 @@ class App extends React.Component {
 
   render() {
     return (
-      <EventListener onResize={this.handleResize} target="window">
-        <div>
-          {this.renderHeader()}
-          <main>{this.props.children}</main>
-          {this.renderFooter()}
-        </div>
-      </EventListener>
+      <ConfigProvider value={this.state.config}>
+        <EventListener onResize={this.handleResize} target="window">
+          <div>
+            {this.renderHeader()}
+            <main>{this.props.children}</main>
+            {this.renderFooter()}
+          </div>
+        </EventListener>
+      </ConfigProvider>
     )
   }
 }
