@@ -13,7 +13,15 @@ import * as PaymentPropTypes from '../proptypes'
 import StripeCheckout from './stripe-checkout'
 
 const PaymentActions = ({ buyOther, purchase, showMessage, userIds }) => {
-  const { amount, id, invoice, payment_email, person_id, status, type } = purchase.toJS()
+  const {
+    amount,
+    id,
+    invoice,
+    payment_email,
+    person_id,
+    status,
+    type
+  } = purchase.toJS()
   const account = 'default'
   const actions = []
   switch (status) {
@@ -23,23 +31,23 @@ const PaymentActions = ({ buyOther, purchase, showMessage, userIds }) => {
           <StripeCheckout
             account={account}
             amount={amount}
-            currency='EUR'
+            currency="EUR"
             description={`Invoice #${invoice || id}`}
             email={payment_email}
-            key='invoice'
-            onCheckout={(source) => {
+            key="invoice"
+            onCheckout={source => {
               showMessage(`Charging ${payment_email} EUR ${amount / 100}...`)
               buyOther(account, payment_email, source, [{ id }], () => {
                 showMessage('Payment successful!')
               })
             }}
-        >
+          >
             <FlatButton
-              label='Pay by card'
+              label="Pay by card"
               style={{ color: 'white', fontWeight: 'bold' }}
-          />
+            />
           </StripeCheckout>
-      )
+        )
       }
       break
 
@@ -50,21 +58,19 @@ const PaymentActions = ({ buyOther, purchase, showMessage, userIds }) => {
             actions.push(
               <FlatButton
                 href={`${API_ROOT}people/${person_id}/ballot`}
-                key='ss-token'
-                label='Download personal ballot'
+                key="ss-token"
+                label="Download personal ballot"
                 primary
-                target='_blank'
-            />
-          )
+                target="_blank"
+              />
+            )
           }
           break
       }
       break
   }
-  return (actions.length === 0) ? null : (
-    <CardActions style={{ display: 'flex' }}>
-      {actions}
-    </CardActions>
+  return actions.length === 0 ? null : (
+    <CardActions style={{ display: 'flex' }}>{actions}</CardActions>
   )
 }
 
@@ -74,7 +80,8 @@ PaymentActions.propTypes = {
 }
 
 export default connect(
-  null, {
+  null,
+  {
     buyOther,
     showMessage
   }

@@ -34,7 +34,7 @@ class NewPayment extends React.Component {
     showMessage: PropTypes.func.isRequired
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     const { email = '', people } = props
     this.state = {
@@ -52,7 +52,7 @@ class NewPayment extends React.Component {
     }
   }
 
-  init ({ params: { type }, purchaseData, replace, showMessage }) {
+  init({ params: { type }, purchaseData, replace, showMessage }) {
     const category = purchaseData.findKey(cd => cd.get('types').has(type))
     const typeData = purchaseData.getIn([category, 'types', type])
     if (typeData) {
@@ -63,45 +63,59 @@ class NewPayment extends React.Component {
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const { getPurchaseData, purchaseData, setScene } = this.props
     setScene({ title: 'New Payment', dockSidebar: false })
     if (purchaseData) this.init(this.props)
     else getPurchaseData()
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (nextProps.purchaseData) this.init(nextProps)
   }
 
-  get dataShape () {
+  get dataShape() {
     const { purchaseData } = this.props
     const { category } = this.state
-    return purchaseData.getIn([category, 'shape'], List()).filter(s => !s.get('generated'))
+    return purchaseData
+      .getIn([category, 'shape'], List())
+      .filter(s => !s.get('generated'))
   }
 
-  get disabledCheckout () {
+  get disabledCheckout() {
     const { amount, purchase } = this.state
     return !(
       amount > 0 &&
-      (purchase.get('person_id') || purchase.get('email') && purchase.get('name')) &&
-      this.dataShape.every(s => !s.get('required') || purchase.getIn(['data', s.get('key')]))
+      (purchase.get('person_id') ||
+        (purchase.get('email') && purchase.get('name'))) &&
+      this.dataShape.every(
+        s => !s.get('required') || purchase.getIn(['data', s.get('key')])
+      )
     )
   }
 
-  get person () {
+  get person() {
     const { people } = this.props
     const { purchase } = this.state
     const id = purchase.get('person_id')
-    return people && id && people.find(p => p.get('id') === id) || null
+    return (people && id && people.find(p => p.get('id') === id)) || null
   }
 
-  onCheckout = (source) => {
-    const { buyOther, params: { type }, purchaseData, push, showMessage } = this.props
+  onCheckout = source => {
+    const {
+      buyOther,
+      params: { type },
+      purchaseData,
+      push,
+      showMessage
+    } = this.props
     const { amount, category, purchase } = this.state
     const account = purchaseData.getIn([category, 'account'], 'default')
     const email = purchase.get('email')
-    const item = purchase.merge({ amount, category, type }).filter(v => v).toJS()
+    const item = purchase
+      .merge({ amount, category, type })
+      .filter(v => v)
+      .toJS()
     showMessage(`Charging ${purchase.get('email')} EUR ${amount / 100}...`)
     buyOther(account, email, source, [item], () => {
       showMessage('Payment successful!')
@@ -109,22 +123,23 @@ class NewPayment extends React.Component {
     })
   }
 
-  render () {
-    const { params: { type }, people, purchaseData } = this.props
+  render() {
+    const {
+      params: { type },
+      people,
+      purchaseData
+    } = this.props
     const { amount, category, purchase, sent } = this.state
     const cd = purchaseData && purchaseData.get(category)
     if (!cd) return null
     const title = cd.getIn(['types', type, 'label'])
     const subtitle = category && category !== title ? category : ''
-    const description = cd.getIn(['types', type, 'description']) || cd.get('description')
+    const description =
+      cd.getIn(['types', type, 'description']) || cd.get('description')
     const account = cd.get('account') || 'default'
     return (
       <Row>
-        <Col
-          xs={12}
-          sm={8} smOffset={2}
-          lg={6} lgOffset={3}
-        >
+        <Col xs={12} sm={8} smOffset={2} lg={6} lgOffset={3}>
           <Card>
             <CardHeader
               title={title}
@@ -132,24 +147,35 @@ class NewPayment extends React.Component {
               style={{ fontWeight: 600 }}
             />
             <CardText>
-              {description && <div
-                className='html-container'
-                style={{ marginBottom: 32, marginTop: -16 }}
-                dangerouslySetInnerHTML={{ __html: description }}
-              />}
+              {description && (
+                <div
+                  className="html-container"
+                  style={{ marginBottom: 32, marginTop: -16 }}
+                  dangerouslySetInnerHTML={{ __html: description }}
+                />
+              )}
               <NewPaymentForm
-                onChange={(update) => this.setState({ purchase: purchase.merge(update) })}
+                onChange={update =>
+                  this.setState({ purchase: purchase.merge(update) })
+                }
                 people={people}
                 purchase={purchase}
                 requireMembership={cd.get('requireMembership')}
                 shape={this.dataShape}
               />
             </CardText>
-            <CardActions style={{ alignItems: 'center', display: 'flex', flexWrap: 'wrap', padding: 16 }}>
+            <CardActions
+              style={{
+                alignItems: 'center',
+                display: 'flex',
+                flexWrap: 'wrap',
+                padding: 16
+              }}
+            >
               <StripeCheckout
                 account={account}
                 amount={amount}
-                currency='EUR'
+                currency="EUR"
                 description={title}
                 email={purchase.get('email')}
                 onCheckout={this.onCheckout}
@@ -170,19 +196,24 @@ class NewPayment extends React.Component {
               </div>
             </CardActions>
           </Card>
-          {!people && <KeyRequest
-            allowCreate={cd.get('allow_create_account')}
-            cardStyle={{ marginTop: 20 }}
-          />}
-          <div className='bg-text' style={{
-            display: 'block',
-            fontSize: 14,
-            marginLeft: 16,
-            marginTop: 16,
-            maxWidth: '45%',
-            position: 'absolute'
-          }}>
-            <Link to='/pay'>&laquo; Return to the main payments page</Link>
+          {!people && (
+            <KeyRequest
+              allowCreate={cd.get('allow_create_account')}
+              cardStyle={{ marginTop: 20 }}
+            />
+          )}
+          <div
+            className="bg-text"
+            style={{
+              display: 'block',
+              fontSize: 14,
+              marginLeft: 16,
+              marginTop: 16,
+              maxWidth: '45%',
+              position: 'absolute'
+            }}
+          >
+            <Link to="/pay">&laquo; Return to the main payments page</Link>
           </div>
         </Col>
       </Row>
@@ -195,7 +226,8 @@ export default connect(
     email: user.get('email'),
     people: user.get('people'),
     purchaseData: purchase.get('data')
-  }), {
+  }),
+  {
     buyOther,
     getPurchaseData,
     push,

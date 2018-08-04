@@ -12,8 +12,14 @@ import * as VotePropTypes from '../proptypes'
 import CategoryList from './category-list'
 import Packet from './packet'
 
-const VoteCategory = ({ category, finalists, packet, preference, setVotes }) => (
-  <Card className='body-card'>
+const VoteCategory = ({
+  category,
+  finalists,
+  packet,
+  preference,
+  setVotes
+}) => (
+  <Card className="body-card">
     <CardHeader
       style={{
         alignItems: 'flex-start',
@@ -38,7 +44,7 @@ const VoteCategory = ({ category, finalists, packet, preference, setVotes }) => 
       <CategoryList
         finalists={finalists}
         preference={preference}
-        setPreference={(preference) => {
+        setPreference={preference => {
           setVotes(ImmutableMap([[category, preference]]))
         }}
       />
@@ -58,10 +64,12 @@ export default connect(
   ({ hugoVotes }, { category }) => ({
     finalists: hugoVotes.getIn(['finalists', category]) || ImmutableMap(),
     packet: hugoVotes.getIn(['packet', category]) || ImmutableMap(),
-    preference: hugoVotes.getIn(['clientVotes', category]) ||
+    preference:
+      hugoVotes.getIn(['clientVotes', category]) ||
       hugoVotes.getIn(['serverVotes', category]) ||
       ImmutableList()
-  }), {
+  }),
+  {
     setVotes
   }
 )(VoteCategory)

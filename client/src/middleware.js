@@ -7,7 +7,12 @@ import membership from './membership/middleware'
 import payments from './payments/middleware'
 import logger from './app/middleware'
 
-export default (history) => applyMiddleware(
-  hugoNominations, hugoVotes, membership, payments, logger,
-  routerMiddleware(history)
-)
+export default history =>
+  applyMiddleware(
+    hugoNominations,
+    hugoVotes,
+    membership,
+    payments,
+    logger,
+    routerMiddleware(history)
+  )

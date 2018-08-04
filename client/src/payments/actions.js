@@ -29,7 +29,15 @@ export const buyOther = (account, email, source, items, callback) => ({
   source
 })
 
-export const buyUpgrade = (id, membership, paper_pubs, amount, email, source, callback) => ({
+export const buyUpgrade = (
+  id,
+  membership,
+  paper_pubs,
+  amount,
+  email,
+  source,
+  callback
+) => ({
   module: 'kansa',
   type: 'BUY_UPGRADE',
   amount,

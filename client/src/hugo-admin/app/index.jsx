@@ -23,32 +23,39 @@ class App extends React.Component {
     query: ''
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const { initHugoAdmin } = this.props
     initHugoAdmin()
   }
 
-  componentWillReceiveProps ({ initHugoAdmin, nominations }) {
+  componentWillReceiveProps({ initHugoAdmin, nominations }) {
     if (!nominations) initHugoAdmin()
   }
 
-  render () {
-    const { children, location: { pathname }, params: { category }, showBallotCounts } = this.props
+  render() {
+    const {
+      children,
+      location: { pathname },
+      params: { category },
+      showBallotCounts
+    } = this.props
     const { query } = this.state
-    return <div>
-      <NominationToolbar
-        category={category}
-        pathname={pathname}
-        query={query}
-        setQuery={query => this.setState({ query: query.toLowerCase() })}
-        showBallotCounts={showBallotCounts}
-      />
-      <main>
-        {React.Children.map(children, (child) => (
-          React.cloneElement(child, { category, query })
-        ))}
-      </main>
-    </div>
+    return (
+      <div>
+        <NominationToolbar
+          category={category}
+          pathname={pathname}
+          query={query}
+          setQuery={query => this.setState({ query: query.toLowerCase() })}
+          showBallotCounts={showBallotCounts}
+        />
+        <main>
+          {React.Children.map(children, child =>
+            React.cloneElement(child, { category, query })
+          )}
+        </main>
+      </div>
+    )
   }
 }
 
@@ -56,7 +63,8 @@ export default connect(
   ({ hugoAdmin }, { params: { category } }) => ({
     nominations: hugoAdmin.getIn(['nominations', category]),
     showBallotCounts: hugoAdmin.get('showBallotCounts')
-  }), {
+  }),
+  {
     initHugoAdmin
   }
 )(App)

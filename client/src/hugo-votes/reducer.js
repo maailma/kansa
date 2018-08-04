@@ -17,13 +17,19 @@ export default (state = defaultState, action) => {
   if (action.module !== 'hugo-votes') return state
   switch (action.type) {
     case 'GET_FINALISTS':
-      return state.set('finalists', Map(
-        Object.keys(action.finalists).map(category => {
-          const map = action.finalists[category].map(finalist => [finalist.id, Map(finalist)])
-          map.push([noAwardEntry.get('id'), noAwardEntry])
-          return [category, Map(map)]
-        })
-      ))
+      return state.set(
+        'finalists',
+        Map(
+          Object.keys(action.finalists).map(category => {
+            const map = action.finalists[category].map(finalist => [
+              finalist.id,
+              Map(finalist)
+            ])
+            map.push([noAwardEntry.get('id'), noAwardEntry])
+            return [category, Map(map)]
+          })
+        )
+      )
 
     case 'GET_VOTES':
       return state.set('clientVotes', Map())

@@ -27,7 +27,7 @@ class RegistrationLock extends Component {
     this.setState({ error: null, open: true, password: '' })
   }
 
-  save (locked) {
+  save(locked) {
     const { dispatch } = this.props
     try {
       localStorage.setItem('reg-lock', locked ? '1' : '')
@@ -51,7 +51,7 @@ class RegistrationLock extends Component {
     }
   }
 
-  componentDidUpdate (_, { open }) {
+  componentDidUpdate(_, { open }) {
     if (this.state.open && !open) {
       setTimeout(() => {
         if (this.inputRef) this.inputRef.focus()
@@ -59,7 +59,7 @@ class RegistrationLock extends Component {
     }
   }
 
-  render () {
+  render() {
     const { children, locked } = this.props
     const { error, open, password } = this.state
     return locked ? (
@@ -67,24 +67,28 @@ class RegistrationLock extends Component {
         {React.cloneElement(children, { onClick: this.open })}
         <Dialog
           actions={[
-            <FlatButton key='cancel' label='Cancel' onClick={this.close} />,
-            <FlatButton key='unlock' label='Unlock' onClick={this.unlock} />
+            <FlatButton key="cancel" label="Cancel" onClick={this.close} />,
+            <FlatButton key="unlock" label="Unlock" onClick={this.unlock} />
           ]}
           onRequestClose={this.close}
           open={open}
         >
-          <form onSubmit={ev => {
-            ev.preventDefault()
-            this.unlock()
-          }}>
+          <form
+            onSubmit={ev => {
+              ev.preventDefault()
+              this.unlock()
+            }}
+          >
             <TextField
               errorText={error}
               floatingLabelFixed
-              floatingLabelText='Password required for admin features'
+              floatingLabelText="Password required for admin features"
               fullWidth
               onChange={(_, password) => this.setState({ password })}
-              ref={ref => { this.inputRef = ref }}
-              type='password'
+              ref={ref => {
+                this.inputRef = ref
+              }}
+              type="password"
               value={password}
             />
           </form>
@@ -98,5 +102,8 @@ export default connect(
   ({ registration }) => ({
     locked: registration.get('locked') || false,
     password: registration.get('password') || ''
-  }), null, null, { withRef: true }
+  }),
+  null,
+  null,
+  { withRef: true }
 )(RegistrationLock)

@@ -3,7 +3,7 @@ import Promise from 'promise-polyfill'
 if (!window.Promise) window.Promise = Promise
 
 if (typeof Object.assign !== 'function') {
-  Object.assign = function (target) {
+  Object.assign = function(target) {
     'use strict'
     if (target == null) {
       throw new TypeError('Cannot convert undefined or null to object')

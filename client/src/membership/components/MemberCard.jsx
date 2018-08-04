@@ -20,22 +20,17 @@ import { isAttendingMember, isWSFSMember } from '../constants'
 import MemberEdit from './MemberEdit'
 import ShowBarcode from './show-barcode'
 
-const badgeName = (member) => (
+const badgeName = member =>
   member.get('badge_name') || member.get('preferred_name')
-)
 
-const publicName = (member) => (
+const publicName = member =>
   [member.get('public_first_name'), member.get('public_last_name')]
     .filter(n => n)
     .join(' ')
     .trim()
-)
 
-const Action = (props) => (
-  <ListItem
-    innerDivStyle={{ paddingLeft: 60 }}
-    {...props}
-  />
+const Action = props => (
+  <ListItem innerDivStyle={{ paddingLeft: 60 }} {...props} />
 )
 
 class MemberCard extends React.Component {
@@ -48,49 +43,59 @@ class MemberCard extends React.Component {
     showHugoActions: PropTypes.bool
   }
 
-  get actions () {
+  get actions() {
     const { member, push, requestSlackInvite, showHugoActions } = this.props
     const id = member.get('id')
     const infoStyle = { color: 'rgba(0, 0, 0, 0.870588)' }
     const membership = member.get('membership')
     const actions = [
-      <MemberEdit key='ed' member={member}>
+      <MemberEdit key="ed" member={member}>
         <Action
           innerDivStyle={{ paddingLeft: 60 }}
           leftIcon={<ContentCreate style={{ top: 12 }} />}
-          primaryText='Edit personal information'
-          secondaryText={<p>
-            Badge name: <span style={infoStyle}>{badgeName(member)}</span><br />
-            Public name: <span style={infoStyle}>{publicName(member) || '[not set]'}</span><br />
-          </p>}
+          primaryText="Edit personal information"
+          secondaryText={
+            <p>
+              Badge name: <span style={infoStyle}>{badgeName(member)}</span>
+              <br />
+              Public name:{' '}
+              <span style={infoStyle}>{publicName(member) || '[not set]'}</span>
+              <br />
+            </p>
+          }
           secondaryTextLines={2}
         />
       </MemberEdit>
     ]
-    if (membership !== 'Supporter' && (membership !== 'NonMember' || member.get('daypass'))) actions.push(
-      <ShowBarcode key='bc' memberId={id}>
+    if (
+      membership !== 'Supporter' &&
+      (membership !== 'NonMember' || member.get('daypass'))
+    )
+      actions.push(
+        <ShowBarcode key="bc" memberId={id}>
+          <Action
+            innerDivStyle={{ paddingLeft: 60 }}
+            leftIcon={<Receipt />}
+            primaryText="Show registration barcode"
+            secondaryText=""
+          />
+        </ShowBarcode>
+      )
+    if (membership !== 'Adult' || !member.get('paper_pubs'))
+      actions.push(
         <Action
+          key="up"
           innerDivStyle={{ paddingLeft: 60 }}
-          leftIcon={<Receipt />}
-          primaryText='Show registration barcode'
-          secondaryText=''
+          leftIcon={<ThumbUp style={{ top: 12 }} />}
+          onClick={() => push(`/upgrade/${id}`)}
+          primaryText="Upgrade membership"
+          secondaryText="and/or add paper publications"
         />
-      </ShowBarcode>
-    )
-    if (membership !== 'Adult' || !member.get('paper_pubs')) actions.push(
-      <Action
-        key='up'
-        innerDivStyle={{ paddingLeft: 60 }}
-        leftIcon={<ThumbUp style={{ top: 12 }}/>}
-        onClick={() => push(`/upgrade/${id}`)}
-        primaryText='Upgrade membership'
-        secondaryText='and/or add paper publications'
-      />
-    )
+      )
     if (showHugoActions && member.get('hugo_voter')) {
       actions.push(
         <Action
-          key='hv'
+          key="hv"
           innerDivStyle={{ paddingLeft: 60 }}
           leftIcon={<Rocket />}
           onClick={() => push(`/hugo/vote/${id}`)}
@@ -101,7 +106,7 @@ class MemberCard extends React.Component {
     if (showHugoActions && member.get('hugo_nominator')) {
       actions.push(
         <Action
-          key='hn'
+          key="hn"
           innerDivStyle={{ paddingLeft: 60 }}
           leftIcon={<Rocket />}
           onClick={() => push(`/hugo/nominate/${id}`)}
@@ -112,23 +117,24 @@ class MemberCard extends React.Component {
     if (isWSFSMember(member)) {
       actions.push(
         <Action
-          key='sb'
+          key="sb"
           innerDivStyle={{ paddingLeft: 60 }}
           leftIcon={<SouvenirBook />}
           onClick={() => {
             window.location = '/member-files/souvenir-book.pdf'
           }}
-          primaryText='Open souvenir book (PDF)'
+          primaryText="Open souvenir book (PDF)"
         />
       )
     }
     return actions
   }
 
-  get title () {
+  get title() {
     const { member } = this.props
     const membership = member.get('membership', 'NonMember')
-    if (membership !== 'NonMember') return `${membership} member #${member.get('member_number')}`
+    if (membership !== 'NonMember')
+      return `${membership} member #${member.get('member_number')}`
     const daypass = member.get('daypass')
     if (daypass) {
       const days = ['Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -139,25 +145,28 @@ class MemberCard extends React.Component {
     return member.get('hugo_nominator') ? 'Hugo nominator' : 'Non-member'
   }
 
-  render () {
+  render() {
     const { member } = this.props
     if (!member) return null
-    return <Card style={{ marginBottom: 18 }}>
-      <CardHeader
-        title={member.get('legal_name')}
-        style={{ fontWeight: 600 }}
-        subtitle={this.title}
-      />
-      <CardActions style={{ marginLeft: 8, paddingTop: 0 }}>
-        <List style={{ paddingTop: 0 }}>
-          {this.actions}
-        </List>
-      </CardActions>
-    </Card>
+    return (
+      <Card style={{ marginBottom: 18 }}>
+        <CardHeader
+          title={member.get('legal_name')}
+          style={{ fontWeight: 600 }}
+          subtitle={this.title}
+        />
+        <CardActions style={{ marginLeft: 8, paddingTop: 0 }}>
+          <List style={{ paddingTop: 0 }}>{this.actions}</List>
+        </CardActions>
+      </Card>
+    )
   }
 }
 
-export default connect(null, {
-  push,
-  requestSlackInvite
-})(MemberCard)
+export default connect(
+  null,
+  {
+    push,
+    requestSlackInvite
+  }
+)(MemberCard)

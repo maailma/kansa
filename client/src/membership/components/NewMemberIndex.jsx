@@ -17,46 +17,69 @@ class NewMemberIndex extends Component {
     setScene: PropTypes.func.isRequired
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const { data, getPurchaseData, setScene } = this.props
     if (!data) getPurchaseData()
     setScene({ title: 'New Membership', dockSidebar: false })
   }
 
-  onSelectType = (type) => this.props.push(`/new/${type}`);
+  onSelectType = type => this.props.push(`/new/${type}`)
 
-  render () {
+  render() {
     const { data, push } = this.props
-    return <Row style={{ marginBottom: -24 }}>
-      <Col
-        xs={12}
-        sm={6}
-        md={5} mdOffset={1}
-        lg={4} lgOffset={2}
-        style={{ paddingLeft: '0.75rem', paddingRight: '0.75rem' }}
-      >
-        <NewMemberCard category='attend' onSelectType={this.onSelectType} data={data} />
-        <NewMemberCard category='upgrade' onSelectType={() => push('/upgrade')} />
-        <NewMemberCard category='child' onSelectType={this.onSelectType} data={data} />
-      </Col>
-      <Col
-        xs={12}
-        sm={6}
-        md={5}
-        lg={4}
-        style={{ paddingLeft: '0.75rem', paddingRight: '0.75rem' }}
-      >
-        <NewMemberCard category='support' onSelectType={this.onSelectType} data={data} />
-        <NewMemberCard category='daypass' onSelectType={(type) => push(`/daypass/${type}`)} />
-      </Col>
-    </Row>
+    return (
+      <Row style={{ marginBottom: -24 }}>
+        <Col
+          xs={12}
+          sm={6}
+          md={5}
+          mdOffset={1}
+          lg={4}
+          lgOffset={2}
+          style={{ paddingLeft: '0.75rem', paddingRight: '0.75rem' }}
+        >
+          <NewMemberCard
+            category="attend"
+            onSelectType={this.onSelectType}
+            data={data}
+          />
+          <NewMemberCard
+            category="upgrade"
+            onSelectType={() => push('/upgrade')}
+          />
+          <NewMemberCard
+            category="child"
+            onSelectType={this.onSelectType}
+            data={data}
+          />
+        </Col>
+        <Col
+          xs={12}
+          sm={6}
+          md={5}
+          lg={4}
+          style={{ paddingLeft: '0.75rem', paddingRight: '0.75rem' }}
+        >
+          <NewMemberCard
+            category="support"
+            onSelectType={this.onSelectType}
+            data={data}
+          />
+          <NewMemberCard
+            category="daypass"
+            onSelectType={type => push(`/daypass/${type}`)}
+          />
+        </Col>
+      </Row>
+    )
   }
 }
 
 export default connect(
   ({ purchase }) => ({
     data: purchase.get('data')
-  }), {
+  }),
+  {
     getPurchaseData,
     push,
     setScene

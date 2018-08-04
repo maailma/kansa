@@ -6,7 +6,7 @@ import { showMessage } from '../../app/actions/app'
 import { getStripeKeys } from '../actions'
 
 let stripeLoading = false
-const loadStripe = (done) => {
+const loadStripe = done => {
   if (typeof Stripe !== 'undefined') return done()
   stripeLoading = true
   const script = document.createElement('script')
@@ -16,7 +16,7 @@ const loadStripe = (done) => {
     stripeLoading = false
     done()
   }
-  script.onerror = (event) => {
+  script.onerror = event => {
     stripeLoading = false
     done(event)
   }
@@ -40,11 +40,11 @@ class StripeDirectDebit extends React.Component {
     stripeKey: PropTypes.string
   }
 
-  componentWillMount () {
+  componentWillMount() {
     if (!this.props.stripeKey) this.props.getStripeKeys()
   }
 
-  componentDidMount () {
+  componentDidMount() {
     if (!stripeLoading) {
       loadStripe(err => {
         const { showMessage, stripeKey } = this.props
@@ -58,7 +58,7 @@ class StripeDirectDebit extends React.Component {
     }
   }
 
-  componentWillReceiveProps ({ stripeKey }) {
+  componentWillReceiveProps({ stripeKey }) {
     if (stripeKey !== this.props.stripeKey && typeof Stripe !== 'undefined') {
       Stripe.setPublishableKey(stripeKey)
     }
@@ -66,24 +66,29 @@ class StripeDirectDebit extends React.Component {
 
   charge = () => {
     const { iban, onCharge, owner, showMessage } = this.props
-    Stripe.source.create({
-      type: 'sepa_debit',
-      currency: 'eur',
-      sepa_debit: { iban },
-      owner
-    }, (status, response) => {
-      if (response.error) {
-        showMessage(response.error.message)
-        console.error('Stripe source creation failed', response.error)
-      } else if (response.status === 'chargeable') {
-        onCharge(response)
-      } else {
-        showMessage('Error: Account not chargeable? status: ' + response.status)
+    Stripe.source.create(
+      {
+        type: 'sepa_debit',
+        currency: 'eur',
+        sepa_debit: { iban },
+        owner
+      },
+      (status, response) => {
+        if (response.error) {
+          showMessage(response.error.message)
+          console.error('Stripe source creation failed', response.error)
+        } else if (response.status === 'chargeable') {
+          onCharge(response)
+        } else {
+          showMessage(
+            'Error: Account not chargeable? status: ' + response.status
+          )
+        }
       }
-    })
+    )
   }
 
-  render () {
+  render() {
     return <span onClick={this.charge} children={this.props.children} />
   }
 }
@@ -91,7 +96,8 @@ class StripeDirectDebit extends React.Component {
 export default connect(
   ({ purchase }) => ({
     stripeKey: purchase.getIn(['keys', 'default'])
-  }), {
+  }),
+  {
     getStripeKeys,
     showMessage
   }

@@ -16,7 +16,8 @@ import { loadRegistrationState } from './components/RegistrationOptions'
 import reducers from './reducers'
 
 const store = createStore(reducers, loadRegistrationState())
-api.GET('user')
+api
+  .GET('user')
   .then(data => store.dispatch({ type: 'LOGIN', data }))
   .then(() => api.GET('people'))
   .then(data => store.dispatch({ type: 'INIT PEOPLE', data }))

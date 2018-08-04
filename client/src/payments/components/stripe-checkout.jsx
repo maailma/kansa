@@ -19,28 +19,43 @@ class StripeCheckout extends React.Component {
     stripeKeys: PaymentPropTypes.keys
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const { getStripeKeys, stripeKeys } = this.props
     if (!stripeKeys) getStripeKeys()
   }
 
-  render () {
-    const { account, amount, children, currency, description, disabled, email, onCheckout, onClose, stripeKeys } = this.props
-    return stripeKeys && (
-      <ReactStripeCheckout
-        amount={amount}
-        closed={onClose}
-        currency={currency || 'EUR'}
-        description={description}
-        disabled={disabled}
-        email={email}
-        name={TITLE}
-        reconfigureOnUpdate={true}
-        stripeKey={stripeKeys.get(account || 'default')}
-        token={onCheckout}
-        triggerEvent='onClick'
-        zipCode
-      >{children}</ReactStripeCheckout>
+  render() {
+    const {
+      account,
+      amount,
+      children,
+      currency,
+      description,
+      disabled,
+      email,
+      onCheckout,
+      onClose,
+      stripeKeys
+    } = this.props
+    return (
+      stripeKeys && (
+        <ReactStripeCheckout
+          amount={amount}
+          closed={onClose}
+          currency={currency || 'EUR'}
+          description={description}
+          disabled={disabled}
+          email={email}
+          name={TITLE}
+          reconfigureOnUpdate={true}
+          stripeKey={stripeKeys.get(account || 'default')}
+          token={onCheckout}
+          triggerEvent="onClick"
+          zipCode
+        >
+          {children}
+        </ReactStripeCheckout>
+      )
     )
   }
 }
@@ -48,7 +63,8 @@ class StripeCheckout extends React.Component {
 export default connect(
   ({ purchase }) => ({
     stripeKeys: purchase.get('keys')
-  }), {
+  }),
+  {
     getStripeKeys
   }
 )(StripeCheckout)

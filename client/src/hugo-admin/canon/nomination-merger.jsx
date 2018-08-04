@@ -9,7 +9,9 @@ import { classify } from '../actions'
 const NominationMerger = ({ classify, nominations, onSuccess, selected }) => (
   <FloatingActionButton
     onClick={() => {
-      const canonIds = selected.map(sel => sel.get('canon_id')).filter(id => !!id)
+      const canonIds = selected
+        .map(sel => sel.get('canon_id'))
+        .filter(id => !!id)
       let canon = null
       switch (canonIds.size) {
         case 0:
@@ -24,23 +26,24 @@ const NominationMerger = ({ classify, nominations, onSuccess, selected }) => (
         default:
           canon = canonIds.first()
           const otherIds = canonIds.rest()
-          selected = selected
-            .filterNot(sel => sel.get('canon_id'))
-            .concat(nominations
+          selected = selected.filterNot(sel => sel.get('canon_id')).concat(
+            nominations
               .valueSeq()
               .flatten(true)
               .filter(nom => {
                 const ci = nom.get('canon_id')
                 return ci && otherIds.contains(ci)
               })
-            )
+          )
           // TODO: remove empty canonicalisations
           break
       }
-      const categories = Object.keys(selected.reduce((categories, sel) => {
-        categories[sel.get('category')] = true
-        return categories
-      }, {}))
+      const categories = Object.keys(
+        selected.reduce((categories, sel) => {
+          categories[sel.get('category')] = true
+          return categories
+        }, {})
+      )
       categories.forEach(category => {
         const catData = selected
           .filter(sel => sel.get('category') === category)
@@ -63,7 +66,8 @@ const NominationMerger = ({ classify, nominations, onSuccess, selected }) => (
 export default connect(
   ({ hugoAdmin }) => ({
     nominations: hugoAdmin.get('nominations')
-  }), {
+  }),
+  {
     classify
   }
 )(NominationMerger)

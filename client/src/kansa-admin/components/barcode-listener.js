@@ -34,11 +34,7 @@ export default class BarcodeListener extends PureComponent {
     }
   }
 
-  render () {
-    return (
-      <div onKeyDown={this.handleKeyDown}>
-        {this.props.children}
-      </div>
-    )
+  render() {
+    return <div onKeyDown={this.handleKeyDown}>{this.props.children}</div>
   }
 }

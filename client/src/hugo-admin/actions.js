@@ -1,4 +1,10 @@
-export const addCanon = ({ category, id, nomination, disqualified, relocated }) => ({
+export const addCanon = ({
+  category,
+  id,
+  nomination,
+  disqualified,
+  relocated
+}) => ({
   module: 'hugo-admin',
   type: 'ADD_CANON',
   category,
@@ -29,7 +35,7 @@ export const fetchAllBallots = () => ({
   type: 'FETCH_ALL_BALLOTS'
 })
 
-export const fetchBallots = (category) => ({
+export const fetchBallots = category => ({
   module: 'hugo-admin',
   type: 'FETCH_BALLOTS',
   category

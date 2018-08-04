@@ -21,15 +21,18 @@ import { fromJS, List, Map } from 'immutable'
 
 import { categoryInfo } from '../constants'
 
-const defaultState = Map(Object.keys(categoryInfo).map(
-  category => [category, Map({
-    clientData: List(),
-    serverData: List(),
-    serverTime: null,
-    isFetching: false,
-    error: null
-  })]
-))
+const defaultState = Map(
+  Object.keys(categoryInfo).map(category => [
+    category,
+    Map({
+      clientData: List(),
+      serverData: List(),
+      serverTime: null,
+      isFetching: false,
+      error: null
+    })
+  ])
+)
 
 export default (state = defaultState, action) => {
   if (action.module !== 'hugo-nominations') return state
@@ -37,7 +40,7 @@ export default (state = defaultState, action) => {
   // console.log(category, 'STATE', state.get(category).toJS());
   // console.log(category, 'ACTION', action);
   if (!categoryInfo[category]) {
-    return (type === 'SET_NOMINATOR') ? defaultState : state
+    return type === 'SET_NOMINATOR' ? defaultState : state
   }
   if (error) return state.mergeIn([category], { isFetching: false, error })
   switch (type) {
@@ -47,16 +50,21 @@ export default (state = defaultState, action) => {
       if (!List.isList(serverData)) {
         return state.mergeIn([category], {
           isFetching: false,
-          error: `Server error! Expected an array of nominations, but instead got: ${JSON.stringify(nominations)}`
+          error: `Server error! Expected an array of nominations, but instead got: ${JSON.stringify(
+            nominations
+          )}`
         })
       }
-      return state.set(category, Map({
-        clientData: serverData,
-        serverData,
-        serverTime: time,
-        isFetching: false,
-        error: null
-      }))
+      return state.set(
+        category,
+        Map({
+          clientData: serverData,
+          serverData,
+          serverTime: time,
+          isFetching: false,
+          error: null
+        })
+      )
 
     case 'EDIT_NOMINATIONS':
       const { index, nomination } = action
@@ -69,14 +77,19 @@ export default (state = defaultState, action) => {
           throw new Error(`${JSON.stringify(index)} is not a valid index`)
         }
         if (nomination && !Map.isMap(nomination)) {
-          throw new Error(`${JSON.stringify(nomination)} is not a valid nomination object`)
+          throw new Error(
+            `${JSON.stringify(nomination)} is not a valid nomination object`
+          )
         }
         const cleanNomination = nomination && nomination.filter(value => value)
         return cleanNomination && cleanNomination.size
           ? state.setIn([category, 'clientData', index], cleanNomination)
           : state.deleteIn([category, 'clientData', index])
       } catch (e) {
-        return state.setIn([category, 'error'], `Editing nomination failed! ${e.message}`)
+        return state.setIn(
+          [category, 'error'],
+          `Editing nomination failed! ${e.message}`
+        )
       }
 
     case 'RESET_NOMINATIONS':

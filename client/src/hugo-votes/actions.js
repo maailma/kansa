@@ -13,7 +13,7 @@ export const getVotes = () => ({
   type: 'GET_VOTES'
 })
 
-export const setPacket = (packet) => ({
+export const setPacket = packet => ({
   module: 'hugo-votes',
   type: 'SET_PACKET',
   packet
@@ -33,7 +33,7 @@ export const setVoter = (id, signature) => ({
   signature
 })
 
-export const setVotes = (votes) => ({
+export const setVotes = votes => ({
   module: 'hugo-votes',
   type: 'SET_VOTES',
   votes

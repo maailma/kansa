@@ -7,10 +7,7 @@ export const shapeEntry = ImmutablePropTypes.mapContains({
   label: PropTypes.string,
   required: PropTypes.bool,
   type: PropTypes.string.isRequired,
-  values: ImmutablePropTypes.mapOf(
-    PropTypes.string,
-    PropTypes.string
-  )
+  values: ImmutablePropTypes.mapOf(PropTypes.string, PropTypes.string)
 })
 
 export const shape = ImmutablePropTypes.listOf(shapeEntry)

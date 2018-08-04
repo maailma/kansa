@@ -31,13 +31,13 @@ class RegOptionsDialog extends Component {
     printer: PropTypes.string
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     const { password, printer } = props
     this.state = { password, printer }
   }
 
-  componentWillReceiveProps ({ password, printer }) {
+  componentWillReceiveProps({ password, printer }) {
     if (password !== this.state.password) this.setState({ password })
     if (printer !== this.state.printer) this.setState({ printer })
   }
@@ -56,7 +56,7 @@ class RegOptionsDialog extends Component {
     }
   }
 
-  render () {
+  render() {
     const { onClose, open } = this.props
     const { password, printer } = this.state
     const passwordChanged = this.props.password !== password
@@ -64,11 +64,14 @@ class RegOptionsDialog extends Component {
     return (
       <Dialog
         actions={[
-          <FlatButton key='close' label='Close' onClick={onClose} />,
+          <FlatButton key="close" label="Close" onClick={onClose} />,
           <FlatButton
-            disabled={!passwordChanged && !printerChanged || (!!printer && printer.indexOf('#') === -1)}
-            key='apply'
-            label='Apply'
+            disabled={
+              (!passwordChanged && !printerChanged) ||
+              (!!printer && printer.indexOf('#') === -1)
+            }
+            key="apply"
+            label="Apply"
             onClick={this.save}
           />
         ]}
@@ -78,17 +81,17 @@ class RegOptionsDialog extends Component {
       >
         <TextField
           floatingLabelFixed
-          floatingLabelText='Password for accessing adming features'
+          floatingLabelText="Password for accessing adming features"
           fullWidth
           onChange={(_, password) => this.setState({ password })}
-          type='password'
+          type="password"
           underlineFocusStyle={passwordChanged ? styles.changed : {}}
           underlineStyle={passwordChanged ? styles.changed : {}}
           value={password}
         />
         <TextField
           floatingLabelFixed
-          floatingLabelText='Badge printer URI (server-path#printer-name)'
+          floatingLabelText="Badge printer URI (server-path#printer-name)"
           fullWidth
           onChange={(_, printer) => this.setState({ printer })}
           underlineFocusStyle={printerChanged ? styles.changed : {}}
@@ -100,9 +103,7 @@ class RegOptionsDialog extends Component {
   }
 }
 
-export default connect(
-  ({ registration }) => ({
-    password: registration.get('password') || '',
-    printer: registration.get('printer') || ''
-  })
-)(RegOptionsDialog)
+export default connect(({ registration }) => ({
+  password: registration.get('password') || '',
+  printer: registration.get('printer') || ''
+}))(RegOptionsDialog)

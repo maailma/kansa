@@ -17,7 +17,7 @@ class MemberLookupForm extends React.Component {
     onQueryResults: PropTypes.func.isRequired
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       email: '',
@@ -30,7 +30,7 @@ class MemberLookupForm extends React.Component {
     }
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     const query = this.state.query
     const results = nextProps.lookupData.get(query)
     if (results && !results.equals(this.state.results)) {
@@ -39,22 +39,22 @@ class MemberLookupForm extends React.Component {
     }
   }
 
-  get disableSubmit () {
+  get disableSubmit() {
     const { email, name } = this.state
-    return !(name || email && /.@./.test(email))
+    return !(name || (email && /.@./.test(email)))
   }
 
-  get gotMultipleResults () {
+  get gotMultipleResults() {
     const { results } = this.state
     return results && results.get('status') === 'multiple'
   }
 
-  get gotNoResults () {
+  get gotNoResults() {
     const { results } = this.state
     return results && results.get('status') === 'not found'
   }
 
-  get query () {
+  get query() {
     const { email, member_number, name } = this.state
     const query = {}
     if (email && /.@./.test(email)) query.email = email.trim()
@@ -78,7 +78,7 @@ class MemberLookupForm extends React.Component {
     }
   }
 
-  render () {
+  render() {
     const { style } = this.props
     const { email, member_number, name } = this.state
     return (
@@ -86,7 +86,7 @@ class MemberLookupForm extends React.Component {
         <Col xs={12} md={6}>
           <TextField
             autoFocus
-            hintText='Name'
+            hintText="Name"
             fullWidth
             onBlur={this.submit}
             onChange={(ev, name) => this.setState({ name })}
@@ -95,7 +95,7 @@ class MemberLookupForm extends React.Component {
         </Col>
         <Col xs={12} md={6}>
           <TextField
-            hintText='Email address'
+            hintText="Email address"
             fullWidth
             onBlur={this.submit}
             onChange={(ev, email) => this.setState({ email })}
@@ -104,43 +104,50 @@ class MemberLookupForm extends React.Component {
         </Col>
 
         <Col xs={6}>
-          {member_number || this.gotMultipleResults ? <TextField
-            hintText='Member number'
-            fullWidth
-            onBlur={this.submit}
-            onChange={(ev, member_number) => this.setState({ member_number })}
-            type='number'
-            value={member_number}
-          /> : null}
+          {member_number || this.gotMultipleResults ? (
+            <TextField
+              hintText="Member number"
+              fullWidth
+              onBlur={this.submit}
+              onChange={(ev, member_number) => this.setState({ member_number })}
+              type="number"
+              value={member_number}
+            />
+          ) : null}
         </Col>
 
-        <Col xs={6} style={{
-          alignItems: 'flex-end',
-          display: 'flex',
-          height: 40,
-          justifyContent: 'flex-end',
-          marginBottom: 8
-        }}>
+        <Col
+          xs={6}
+          style={{
+            alignItems: 'flex-end',
+            display: 'flex',
+            height: 40,
+            justifyContent: 'flex-end',
+            marginBottom: 8
+          }}
+        >
           <RaisedButton
             disabled={this.disableSubmit}
-            label='Find'
+            label="Find"
             onClick={this.submit}
             style={{ flexShrink: 1 }}
           />
         </Col>
 
-        <Col xs={12} style={{
-          color: 'rgba(0, 0, 0, 0.3)',
-          fontSize: 'smaller',
-          textAlign: 'right'
-        }}>
-          {
-            this.gotMultipleResults ? 'Multiple matches found. Please add more details.'
-            : this.gotNoResults ? 'No matches found.'
-            : null
-          }
+        <Col
+          xs={12}
+          style={{
+            color: 'rgba(0, 0, 0, 0.3)',
+            fontSize: 'smaller',
+            textAlign: 'right'
+          }}
+        >
+          {this.gotMultipleResults
+            ? 'Multiple matches found. Please add more details.'
+            : this.gotNoResults
+              ? 'No matches found.'
+              : null}
         </Col>
-
       </Row>
     )
   }
@@ -149,7 +156,8 @@ class MemberLookupForm extends React.Component {
 export default connect(
   ({ lookup }) => ({
     lookupData: lookup
-  }), {
+  }),
+  {
     memberLookup
   }
 )(MemberLookupForm)

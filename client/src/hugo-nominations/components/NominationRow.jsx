@@ -7,19 +7,21 @@ import ContentClear from 'material-ui/svg-icons/content/clear'
 import TextField from 'material-ui/TextField'
 import { Col, Row } from 'react-flexbox-grid'
 
-const NominationField = ({ changed, disabled, name, onChange, value }) => <TextField
-  className={'NominationField' + (changed ? ' changed' : '')}
-  disabled={disabled}
-  fullWidth
-  multiLine
-  name={name}
-  onChange={onChange}
-  underlineDisabledStyle={{
-    borderBottomStyle: 'dashed',
-    borderBottomWidth: 1
-  }}
-  value={value}
-/>
+const NominationField = ({ changed, disabled, name, onChange, value }) => (
+  <TextField
+    className={'NominationField' + (changed ? ' changed' : '')}
+    disabled={disabled}
+    fullWidth
+    multiLine
+    name={name}
+    onChange={onChange}
+    underlineDisabledStyle={{
+      borderBottomStyle: 'dashed',
+      borderBottomWidth: 1
+    }}
+    value={value}
+  />
+)
 
 NominationField.propTypes = {
   changed: PropTypes.bool,
@@ -35,45 +37,49 @@ class NominationRemoveButton extends React.Component {
     onRemove: PropTypes.func
   }
 
-  shouldComponentUpdate (nextProps) {
+  shouldComponentUpdate(nextProps) {
     return nextProps.disabled !== this.props.disabled
   }
 
-  render () {
+  render() {
     const { disabled, onRemove } = this.props
-    return <IconButton
-      disabled={disabled}
-      onClick={onRemove}
-      style={{
-        position: 'absolute',
-        left: '100%'
-      }}
-      tooltip='Remove nomination'
-      tooltipStyles={{ top: 24 }}
-    >
-      <ContentClear />
-    </IconButton>
+    return (
+      <IconButton
+        disabled={disabled}
+        onClick={onRemove}
+        style={{
+          position: 'absolute',
+          left: '100%'
+        }}
+        tooltip="Remove nomination"
+        tooltipStyles={{ top: 24 }}
+      >
+        <ContentClear />
+      </IconButton>
+    )
   }
 }
 
-export const NominationFillerRow = ({ colSpan, fields }) => <Row>
-  {
-    fields.map(field => <Col key={field} xs={colSpan}>
-      <TextField
-        className='NominationField NominationLink'
-        disabled
-        fullWidth
-        name={field}
-        style={{ cursor: 'default' }}
-        underlineDisabledStyle={{
-          borderBottomStyle: 'dashed',
-          borderBottomWidth: 1
-        }}
-        value=''
-      />
-    </Col>)
-  }
-</Row>
+export const NominationFillerRow = ({ colSpan, fields }) => (
+  <Row>
+    {fields.map(field => (
+      <Col key={field} xs={colSpan}>
+        <TextField
+          className="NominationField NominationLink"
+          disabled
+          fullWidth
+          name={field}
+          style={{ cursor: 'default' }}
+          underlineDisabledStyle={{
+            borderBottomStyle: 'dashed',
+            borderBottomWidth: 1
+          }}
+          value=""
+        />
+      </Col>
+    ))}
+  </Row>
+)
 
 export class NominationRow extends React.Component {
   static propTypes = {
@@ -87,30 +93,45 @@ export class NominationRow extends React.Component {
     values: ImmutablePropTypes.map.isRequired
   }
 
-  shouldComponentUpdate (nextProps) {
+  shouldComponentUpdate(nextProps) {
     const { defaultValues, disabled, values } = this.props
-    return nextProps.disabled !== disabled || !defaultValues.equals(nextProps.defaultValues) || !values.equals(nextProps.values)
+    return (
+      nextProps.disabled !== disabled ||
+      !defaultValues.equals(nextProps.defaultValues) ||
+      !values.equals(nextProps.values)
+    )
   }
 
-  render () {
-    const { active, colSpan, defaultValues, disabled, fields, onChange, onRemove, values } = this.props
-    return <Row bottom='xs'>
-      {
-        fields.map(field => <Col
-          key={field}
-          className='NominationFieldCell'
-          xs={colSpan}
-        >
-          <NominationField
-            changed={values.get(field, '') != defaultValues.get(field, '')}
-            disabled={disabled}
-            name={field}
-            onChange={active ? ev => onChange(field, ev.target.value) : () => {}}
-            value={values.get(field, '')}
-          />
-        </Col>)
-      }
-      { !active || values.isEmpty() ? null : <NominationRemoveButton disabled={disabled} onRemove={onRemove} /> }
-    </Row>
+  render() {
+    const {
+      active,
+      colSpan,
+      defaultValues,
+      disabled,
+      fields,
+      onChange,
+      onRemove,
+      values
+    } = this.props
+    return (
+      <Row bottom="xs">
+        {fields.map(field => (
+          <Col key={field} className="NominationFieldCell" xs={colSpan}>
+            <NominationField
+              changed={values.get(field, '') != defaultValues.get(field, '')}
+              disabled={disabled}
+              name={field}
+              onChange={
+                active ? ev => onChange(field, ev.target.value) : () => {}
+              }
+              value={values.get(field, '')}
+            />
+          </Col>
+        ))}
+        {!active || values.isEmpty() ? null : (
+          <NominationRemoveButton disabled={disabled} onRemove={onRemove} />
+        )}
+      </Row>
+    )
   }
 }

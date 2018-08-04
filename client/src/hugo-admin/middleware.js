@@ -1,12 +1,18 @@
 import { Map } from 'immutable'
 import api from '../lib/api'
-import { addCanon, addClassification, fetchAllBallots, setCanon, setNominations } from './actions'
+import {
+  addCanon,
+  addClassification,
+  fetchAllBallots,
+  setCanon,
+  setNominations
+} from './actions'
 
 let ws = null
 
-export default ({ dispatch, getState }) => (next) => (action) => {
+export default ({ dispatch, getState }) => next => action => {
   if (action.error || action.module !== 'hugo-admin') return next(action)
-  const handleError = (src) => (error) => dispatch({ ...src, error })
+  const handleError = src => error => dispatch({ ...src, error })
   switch (action.type) {
     case 'CLASSIFY': {
       const { canon, category, nominations } = action
@@ -24,32 +30,37 @@ export default ({ dispatch, getState }) => (next) => (action) => {
             break
         }
       }
-      return api.POST('hugo/admin/classify', payload)
+      return api
+        .POST('hugo/admin/classify', payload)
         .then(() => next(action))
         .catch(handleError(action))
     }
 
     case 'FETCH_ALL_BALLOTS': {
-      return api.GET('hugo/admin/ballots')
+      return api
+        .GET('hugo/admin/ballots')
         .then(data => next({ ...action, data }))
         .catch(handleError(action))
     }
 
     case 'FETCH_BALLOTS': {
-      return api.GET(`hugo/admin/ballots/${action.category}`)
+      return api
+        .GET(`hugo/admin/ballots/${action.category}`)
         .then(data => next({ ...action, data }))
         .catch(handleError(action))
     }
 
     case 'INIT_HUGO_ADMIN': {
       if (!ws) {
-        ws = new WebSocket(`wss://${API_HOST || location.host}/api/hugo/admin/canon-updates`)
-        ws.onmessage = (msg) => {
+        ws = new WebSocket(
+          `wss://${API_HOST || location.host}/api/hugo/admin/canon-updates`
+        )
+        ws.onmessage = msg => {
           const { canon, classification } = JSON.parse(msg.data)
           if (canon) dispatch(addCanon(canon))
           if (classification) dispatch(addClassification(classification))
         }
-        ws.onclose = (event) => {
+        ws.onclose = event => {
           dispatch({
             type: 'WebSocket',
             error: { message: `closed (code ${event.code})`, event }
@@ -57,10 +68,12 @@ export default ({ dispatch, getState }) => (next) => (action) => {
           ws = null
         }
       }
-      api.GET('hugo/admin/canon')
+      api
+        .GET('hugo/admin/canon')
         .then(canon => dispatch(setCanon(null, canon)))
         .catch(handleError(setCanon()))
-      api.GET('hugo/admin/nominations')
+      api
+        .GET('hugo/admin/nominations')
         .then(nominations => dispatch(setNominations(null, nominations)))
         .catch(handleError(setNominations()))
       break
@@ -78,12 +91,13 @@ export default ({ dispatch, getState }) => (next) => (action) => {
     case 'UPDATE_CANON_ENTRY': {
       const { canon_id, category, nomination } = action
       const { data, disqualified, relocated } = nomination.toJS()
-      return api.POST(`hugo/admin/canon/${canon_id}`, {
-        category,
-        nomination: data,
-        disqualified,
-        relocated
-      })
+      return api
+        .POST(`hugo/admin/canon/${canon_id}`, {
+          category,
+          nomination: data,
+          disqualified,
+          relocated
+        })
         .catch(handleError(action))
     }
   }

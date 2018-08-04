@@ -7,4 +7,11 @@ import people from './people'
 import registration from './registration'
 import user from './user'
 
-export default combineReducers({ app, paymentData, payments, people, registration, user })
+export default combineReducers({
+  app,
+  paymentData,
+  payments,
+  people,
+  registration,
+  user
+})

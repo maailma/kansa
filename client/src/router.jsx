@@ -22,11 +22,11 @@ export default class AppRouter extends Route {
     }).isRequired
   }
 
-  get dispatch () {
+  get dispatch() {
     return this.context.store.dispatch
   }
 
-  get userEmail () {
+  get userEmail() {
     return this.context.store.getState().user.get('email')
   }
 
@@ -36,7 +36,7 @@ export default class AppRouter extends Route {
   }
 
   doLogin = ({ location: { query }, params: { email, key, id } }) => {
-    const next = query && query.next || (id ? `/hugo/vote/${id}` : null)
+    const next = (query && query.next) || (id ? `/hugo/vote/${id}` : null)
     this.dispatch(keyLogin(email, key, next))
   }
 
@@ -48,23 +48,36 @@ export default class AppRouter extends Route {
     if (action !== 'POP') window.scrollTo(0, 0)
   }
 
-  render () {
+  render() {
     return (
       <Router history={this.props.history}>
-        <Route path='/login/:email/:key(/:id)' onEnter={this.doLogin} />
-        <Route path='/' component={App} onChange={this.scrollUpOnChange} onEnter={this.checkAuth} >
+        <Route path="/login/:email/:key(/:id)" onEnter={this.doLogin} />
+        <Route
+          path="/"
+          component={App}
+          onChange={this.scrollUpOnChange}
+          onEnter={this.checkAuth}
+        >
           <IndexRoute component={Index} />
-          <Route path='hugo' >
-            <IndexRedirect to='vote' />
-            <Route path='nominate/:id' onEnter={this.requireAuth} component={Nominate} />
-            <Route path='vote(/:id)' component={Vote} />
+          <Route path="hugo">
+            <IndexRedirect to="vote" />
+            <Route
+              path="nominate/:id"
+              onEnter={this.requireAuth}
+              component={Nominate}
+            />
+            <Route path="vote(/:id)" component={Vote} />
           </Route>
-          <Route path='daypass/:type' component={NewDaypassForm} />
-          <Route path='new' component={NewMemberIndex} />
-          <Route path='new/:membership' component={NewMemberForm} />
-          <Route path='pay' component={Payments} />
-          <Route path='pay/:type' component={NewPayment} />
-          <Route path='upgrade(/:id)' component={Upgrade} onEnter={this.requireAuth} />
+          <Route path="daypass/:type" component={NewDaypassForm} />
+          <Route path="new" component={NewMemberIndex} />
+          <Route path="new/:membership" component={NewMemberForm} />
+          <Route path="pay" component={Payments} />
+          <Route path="pay/:type" component={NewPayment} />
+          <Route
+            path="upgrade(/:id)"
+            component={Upgrade}
+            onEnter={this.requireAuth}
+          />
         </Route>
       </Router>
     )

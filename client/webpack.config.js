@@ -1,8 +1,8 @@
-const path = require('path');
-const url = require('url');
-const webpack = require('webpack');
+const path = require('path')
+const url = require('url')
+const webpack = require('webpack')
 
-const title = process.env.TITLE || 'Worldcon 75';
+const title = process.env.TITLE || 'Worldcon 75'
 
 const cfg = {
   entry: {
@@ -20,16 +20,30 @@ const cfg = {
   },
   module: {
     rules: [
-      { test: /\.css$/, exclude: /flexboxgrid/, use: ['style-loader', 'css-loader'] },
-      { test: /\.css$/, include: /flexboxgrid/, use: ['style-loader', {
-        loader: 'css-loader',
-        options: { modules: true }
-      }]},
+      {
+        test: /\.css$/,
+        exclude: /flexboxgrid/,
+        use: ['style-loader', 'css-loader']
+      },
+      {
+        test: /\.css$/,
+        include: /flexboxgrid/,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: { modules: true }
+          }
+        ]
+      },
       { test: /\.jsx?$/, exclude: /node_modules/, use: 'babel-loader' },
-      { test: /\.(jpe?g|png|gif|svg)$/i, use: {
-        loader: 'file-loader',
-        options: { name: 'img/[name].[ext]' }
-      } },
+      {
+        test: /\.(jpe?g|png|gif|svg)$/i,
+        use: {
+          loader: 'file-loader',
+          options: { name: 'img/[name].[ext]' }
+        }
+      },
       {
         test: /\bmessages\.json$/,
         loader: 'messageformat-loader',
@@ -42,7 +56,7 @@ const cfg = {
     extensions: ['.js', '.jsx', '.json']
   },
   plugins: []
-};
+}
 
 const globals = {
   API_HOST: JSON.stringify(''),
@@ -51,44 +65,52 @@ const globals = {
 }
 
 if (process.env.NODE_ENV === 'production') {
-  console.log('PRODUCTION build\n');
+  console.log('PRODUCTION build\n')
   cfg.mode = 'production'
   globals['process.env'] = {
     NODE_ENV: JSON.stringify('production')
   }
 } else {
-  console.log((process.env.NODE_ENV || 'development').toUpperCase() + ' build');
+  console.log((process.env.NODE_ENV || 'development').toUpperCase() + ' build')
   cfg.mode = 'development'
-  const HtmlWebpackPlugin = require('html-webpack-plugin');
+  const HtmlWebpackPlugin = require('html-webpack-plugin')
 
-  cfg.plugins.push(new HtmlWebpackPlugin({
-    chunks: ['bundle'],
-    inject: 'body',
-    template: 'src/index.ejs',
-    title
-  }));
+  cfg.plugins.push(
+    new HtmlWebpackPlugin({
+      chunks: ['bundle'],
+      inject: 'body',
+      template: 'src/index.ejs',
+      title
+    })
+  )
 
-  cfg.plugins.push(new HtmlWebpackPlugin({
-    chunks: ['hugo-admin'],
-    filename: 'hugo-admin.html',
-    inject: 'body',
-    template: 'src/index.ejs',
-    title: 'Hugo Admin - ' + title
-  }));
+  cfg.plugins.push(
+    new HtmlWebpackPlugin({
+      chunks: ['hugo-admin'],
+      filename: 'hugo-admin.html',
+      inject: 'body',
+      template: 'src/index.ejs',
+      title: 'Hugo Admin - ' + title
+    })
+  )
 
-  cfg.plugins.push(new HtmlWebpackPlugin({
-    chunks: ['kansa-admin'],
-    filename: 'kansa-admin.html',
-    inject: 'body',
-    template: 'src/index.ejs',
-    title: 'Kansa Admin - ' + title
-  }));
+  cfg.plugins.push(
+    new HtmlWebpackPlugin({
+      chunks: ['kansa-admin'],
+      filename: 'kansa-admin.html',
+      inject: 'body',
+      template: 'src/index.ejs',
+      title: 'Kansa Admin - ' + title
+    })
+  )
 
-  const apiHost = process.env.API_HOST ||
-    (process.env.DOCKER_HOST && url.parse(process.env.DOCKER_HOST).hostname || 'localhost') + ':4430';
-  globals.API_HOST = JSON.stringify(apiHost);
-  console.log('Using API host', apiHost, '\n');
+  const apiHost =
+    process.env.API_HOST ||
+    ((process.env.DOCKER_HOST && url.parse(process.env.DOCKER_HOST).hostname) ||
+      'localhost') + ':4430'
+  globals.API_HOST = JSON.stringify(apiHost)
+  console.log('Using API host', apiHost, '\n')
 }
-cfg.plugins.push(new webpack.DefinePlugin(globals));
+cfg.plugins.push(new webpack.DefinePlugin(globals))
 
-module.exports = cfg;
+module.exports = cfg

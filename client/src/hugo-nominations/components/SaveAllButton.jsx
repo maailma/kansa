@@ -12,7 +12,7 @@ import { submitNominations } from '../actions'
 const SaveAllButton = ({ changedCategories, signature, submitNominations }) => (
   <Paper
     circle
-    className='SaveAllButton'
+    className="SaveAllButton"
     style={{
       opacity: changedCategories.size ? 1 : 0,
       transition: transitions.easeOut(),
@@ -34,7 +34,11 @@ const SaveAllButton = ({ changedCategories, signature, submitNominations }) => (
     >
       <IconButton
         disabled={changedCategories.size == 0}
-        onClick={() => changedCategories.keySeq().forEach(category => submitNominations(category, signature))}
+        onClick={() =>
+          changedCategories
+            .keySeq()
+            .forEach(category => submitNominations(category, signature))
+        }
         style={{
           transition: transitions.easeOut(),
           position: 'relative',
@@ -45,8 +49,8 @@ const SaveAllButton = ({ changedCategories, signature, submitNominations }) => (
           textAlign: 'center',
           verticalAlign: 'bottom'
         }}
-        tooltip='Click here to save all categories'
-        tooltipPosition='top-left'
+        tooltip="Click here to save all categories"
+        tooltipPosition="top-left"
         tooltipStyles={{
           fontSize: 12,
           right: 64,
@@ -61,8 +65,11 @@ const SaveAllButton = ({ changedCategories, signature, submitNominations }) => (
 
 export default connect(
   ({ nominations }) => ({
-    changedCategories: nominations.filterNot(data => data.get('clientData').equals(data.get('serverData')))
-  }), {
+    changedCategories: nominations.filterNot(data =>
+      data.get('clientData').equals(data.get('serverData'))
+    )
+  }),
+  {
     submitNominations
   }
 )(SaveAllButton)

@@ -6,7 +6,7 @@ const defaultState = Map({
   printer: ''
 })
 
-export default function (state = defaultState, action) {
+export default function(state = defaultState, action) {
   if (action.error) return state
   switch (action.type) {
     case 'SET REG LOCK':

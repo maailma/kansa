@@ -41,24 +41,26 @@ class NominationToolbar extends Component {
 
   categoryMenuItem = (category, group) => {
     const { setQuery, showNominations } = this.props
-    return <MenuItem
-      key={(group || '') + category}
-      onClick={() => {
-        this.setState({ menuOpen: false })
-        showNominations(category)
-        setQuery('')
-      }}
-      primaryText={group ? `- ${category}` : category}
-    />
+    return (
+      <MenuItem
+        key={(group || '') + category}
+        onClick={() => {
+          this.setState({ menuOpen: false })
+          showNominations(category)
+          setQuery('')
+        }}
+        primaryText={group ? `- ${category}` : category}
+      />
+    )
   }
 
-  get categoryInfoButton () {
+  get categoryInfoButton() {
     const { category } = this.props
     const { infoOpen } = this.state
     if (!categoryInfo[category]) return null
     return [
       <IconButton
-        key='cib'
+        key="cib"
         onClick={() => this.setState({ infoOpen: true })}
         tooltip={`Show ${category} information`}
       >
@@ -66,43 +68,45 @@ class NominationToolbar extends Component {
       </IconButton>,
       <CategoryInfo
         category={infoOpen ? category : null}
-        key='cid'
+        key="cid"
         onRequestClose={() => this.setState({ infoOpen: false })}
       />
     ]
   }
 
-  get categoryViewButton () {
+  get categoryViewButton() {
     const { category, showFinalists, showNominations } = this.props
     if (!categoryInfo[category]) return null
-    return (this.currentView === 'nominations')
-      ? <IconButton
+    return this.currentView === 'nominations' ? (
+      <IconButton
         onClick={() => showFinalists(category)}
         tooltip={`Show ${category} finalists`}
-        >
+      >
         <FinalistsIcon />
       </IconButton>
-      : <IconButton
+    ) : (
+      <IconButton
         onClick={() => showNominations(category)}
         tooltip={`Show ${category} nominations`}
-        >
+      >
         <NominationsIcon />
       </IconButton>
+    )
   }
 
-  get currentView () {
+  get currentView() {
     return this.props.pathname.replace(/.*\//, '')
   }
 
-  openMenu = (event) => {
+  openMenu = event => {
     event.preventDefault()
     this.setState({
       menuOpen: true,
       anchorEl: event.currentTarget
     })
-  };
+  }
 
-  get showBallotCountButton () {
+  get showBallotCountButton() {
     const { setShowBallotCounts, showBallotCounts } = this.props
     if (this.currentView !== 'nominations') return null
     return (
@@ -116,11 +120,17 @@ class NominationToolbar extends Component {
     )
   }
 
-  render () {
-    const { category, query, sainteLague, setSainteLague, setQuery } = this.props
+  render() {
+    const {
+      category,
+      query,
+      sainteLague,
+      setSainteLague,
+      setQuery
+    } = this.props
     const { anchorEl, menuOpen } = this.state
     return (
-      <Paper className='toolbar'>
+      <Paper className="toolbar">
         <div>
           <RaisedButton
             onClick={this.openMenu}
@@ -135,10 +145,16 @@ class NominationToolbar extends Component {
             onRequestClose={() => this.setState({ menuOpen: false })}
           >
             <Menu>
-              {Object.keys(categoryGroups).reduce((items, gn) => items.concat(
-                this.categoryMenuItem(gn, null),
-                categoryGroups[gn].map(category => this.categoryMenuItem(category, gn))
-              ), [])}
+              {Object.keys(categoryGroups).reduce(
+                (items, gn) =>
+                  items.concat(
+                    this.categoryMenuItem(gn, null),
+                    categoryGroups[gn].map(category =>
+                      this.categoryMenuItem(category, gn)
+                    )
+                  ),
+                []
+              )}
             </Menu>
           </Popover>
           {this.categoryViewButton}
@@ -146,22 +162,27 @@ class NominationToolbar extends Component {
           {this.categoryInfoButton}
           {this.currentView === 'nominations' ? (
             <TextField
-              hintText='Search'
+              hintText="Search"
               onChange={ev => setQuery(ev.target.value)}
               style={{ paddingLeft: 12 }}
               value={query}
             />
-          ) : [
-            <span key='div0'>Divisors:{'\u00a0'} 1, 2, 3, …</span>,
-            <Toggle
-              key='div1'
-              label='1, 3, 5, …'
-              labelPosition='right'
-              onToggle={(_, set) => setSainteLague(set)}
-              style={{ marginLeft: 8, width: 130 }}
-              toggled={sainteLague}
-            />
-          ]}
+          ) : (
+            [
+              <span key="div0">
+                Divisors:
+                {'\u00a0'} 1, 2, 3, …
+              </span>,
+              <Toggle
+                key="div1"
+                label="1, 3, 5, …"
+                labelPosition="right"
+                onToggle={(_, set) => setSainteLague(set)}
+                style={{ marginLeft: 8, width: 130 }}
+                toggled={sainteLague}
+              />
+            ]
+          )}
         </div>
       </Paper>
     )
@@ -169,13 +190,15 @@ class NominationToolbar extends Component {
 }
 
 export default connect(
-  ({ hugoAdmin}) => ({
+  ({ hugoAdmin }) => ({
     sainteLague: hugoAdmin.get('sainteLague')
   }),
   {
     setSainteLague,
     setShowBallotCounts,
-    showNominations: category => push(`${HUGO_ADMIN_ROUTE_ROOT}/${category}/nominations`),
-    showFinalists: category => push(`${HUGO_ADMIN_ROUTE_ROOT}/${category}/finalists`)
+    showNominations: category =>
+      push(`${HUGO_ADMIN_ROUTE_ROOT}/${category}/nominations`),
+    showFinalists: category =>
+      push(`${HUGO_ADMIN_ROUTE_ROOT}/${category}/finalists`)
   }
 )(NominationToolbar)

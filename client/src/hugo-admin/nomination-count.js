@@ -25,7 +25,7 @@ import { maxNominationsPerCategory } from '../hugo-nominations/constants'
  * @param {Nomination} nomination
  * @returns {number}
  */
-export function countRawBallots (rawBallots, nomination) {
+export function countRawBallots(rawBallots, nomination) {
   return rawBallots.reduce((res, ballot) => {
     if (ballot.includes(nomination)) ++res
     return res
@@ -41,7 +41,7 @@ export function countRawBallots (rawBallots, nomination) {
  * @param {Map<canon_id, Map<{ data: Nomination, disqualified: bool, relocated: string }>>} canon
  * @returns {List<Set<Nomination>>}
  */
-export function cleanBallots (category, allBallots, allNominations, canon) {
+export function cleanBallots(category, allBallots, allNominations, canon) {
   const ballots = allBallots.get(category).withMutations(ballots => {
     allNominations.forEach((nominations, cat) => {
       nominations.forEach(nomination => {
@@ -61,7 +61,10 @@ export function cleanBallots (category, allBallots, allNominations, canon) {
               // canonicalise nomination within category
               ballots.forEach((ballot, id) => {
                 if (ballot.includes(nd)) {
-                  ballots.set(id, ballot.map(nom => nd.equals(nom) ? cd.get('data') : nom))
+                  ballots.set(
+                    id,
+                    ballot.map(nom => (nd.equals(nom) ? cd.get('data') : nom))
+                  )
                 }
               })
             }
@@ -86,8 +89,11 @@ export function cleanBallots (category, allBallots, allNominations, canon) {
               } else {
                 console.log(
                   `Dropping mis-categorisation by #${id} due to full ballot of`,
-                  cd.toJS(), `from ${cat}`, srcBallot.toJS(),
-                  `to ${category}`, tgtBallot.toJS()
+                  cd.toJS(),
+                  `from ${cat}`,
+                  srcBallot.toJS(),
+                  `to ${category}`,
+                  tgtBallot.toJS()
                 )
               }
             }
@@ -121,12 +127,12 @@ export function cleanBallots (category, allBallots, allNominations, canon) {
  * @param {List<Set<Nomination>>} ballots
  * @returns {Map<Nomination, { nominations: number, points: number }>}
  */
-function countNominations (sainteLague, ballots) {
-  const pointsPerBallot = sainteLague ? 5*7*9 : 3*4*5
+function countNominations(sainteLague, ballots) {
+  const pointsPerBallot = sainteLague ? 5 * 7 * 9 : 3 * 4 * 5
   return Map().withMutations(counts => {
     ballots.forEach(ballot => {
       if (ballot.size > 0) {
-        const divisor = sainteLague ? (2 * ballot.size - 1) : ballot.size
+        const divisor = sainteLague ? 2 * ballot.size - 1 : ballot.size
         const nomPoints = pointsPerBallot / divisor
         ballot.forEach(nom => {
           const count = counts.get(nom)
@@ -157,15 +163,15 @@ function countNominations (sainteLague, ballots) {
  * @param {Map<Nomination, { nominations: number, points: number }>} counts
  * @returns {Map<Nomination, { nominations: number, points: number }>}
  */
-function nominationsWithLeastPoints (counts) {
+function nominationsWithLeastPoints(counts) {
   if (counts.size <= 2) return counts
   let ptLimit = counts.minBy(count => count.points).points
   let selected = counts.filter(count => count.points === ptLimit)
   if (selected.size < 2) {
-    ptLimit = counts.toSeq()
+    ptLimit = counts
+      .toSeq()
       .filter(count => count.points > ptLimit)
-      .minBy(count => count.points)
-      .points
+      .minBy(count => count.points).points
     selected = counts.filter(count => count.points <= ptLimit)
   }
   return selected
@@ -187,7 +193,7 @@ function nominationsWithLeastPoints (counts) {
  * @param {Map<Nomination, { nominations: number, points: number }>} counts
  * @returns {Map<Nomination, { nominations: number, points: number }>}
  */
-function nominationsWithLeastNominations (counts) {
+function nominationsWithLeastNominations(counts) {
   const nomLimit = counts.minBy(count => count.nominations).nominations
   let selected = counts.filter(count => count.nominations === nomLimit)
   if (selected.size > 1) {
@@ -204,7 +210,7 @@ function nominationsWithLeastNominations (counts) {
  * @param {Map<Nomination, { nominations: number, points: number }>} counts
  * @returns {Seq.Indexed<Nomination>}
  */
-function nominationsForElimination (counts) {
+function nominationsForElimination(counts) {
   const leastPoints = nominationsWithLeastPoints(counts)
   const leastNoms = nominationsWithLeastNominations(leastPoints)
   return leastNoms.keySeq()
@@ -223,7 +229,7 @@ function nominationsForElimination (counts) {
  * @param {logger} [log]
  * @returns {Iterable<Nomination> | null}
  */
-export function selectFinalists (numSelected, sainteLague, ballots, log) {
+export function selectFinalists(numSelected, sainteLague, ballots, log) {
   do {
     const counts = countNominations(sainteLague, ballots)
     const elimNoms = nominationsForElimination(counts)

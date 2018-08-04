@@ -9,7 +9,7 @@ const BADGE_HEIGHT = 299
 
 const styles = {
   wrapper: {
-    paddingBottom: (100 * BADGE_HEIGHT / BADGE_WIDTH).toFixed(2) + '%',
+    paddingBottom: ((100 * BADGE_HEIGHT) / BADGE_WIDTH).toFixed(2) + '%',
     position: 'relative',
     width: '100%'
   },
@@ -35,7 +35,7 @@ export default class PreviewBadge extends React.Component {
     isOpen: false
   }
 
-  get badgeImgUrl () {
+  get badgeImgUrl() {
     const { memberId, name, subtitle } = this.props
     const path = memberId ? `people/${memberId}/badge` : 'blank-badge'
     const q = []
@@ -49,25 +49,29 @@ export default class PreviewBadge extends React.Component {
 
   handleOpen = () => this.setState({ isOpen: true })
 
-  render () {
+  render() {
     const { isOpen } = this.state
-    return <div>
-      {React.Children.map(this.props.children, (child) => (
-        React.cloneElement(child, { onClick: this.handleOpen })
-      ))}
-      <Dialog
-        bodyStyle={{ padding: 0 }}
-        onRequestClose={this.handleClose}
-        open={isOpen}
-      >
-        <div style={styles.wrapper}>
-          {isOpen && <img
-            onClick={this.handleClose}
-            src={this.badgeImgUrl}
-            style={styles.image}
-          />}
-        </div>
-      </Dialog>
-    </div>
+    return (
+      <div>
+        {React.Children.map(this.props.children, child =>
+          React.cloneElement(child, { onClick: this.handleOpen })
+        )}
+        <Dialog
+          bodyStyle={{ padding: 0 }}
+          onRequestClose={this.handleClose}
+          open={isOpen}
+        >
+          <div style={styles.wrapper}>
+            {isOpen && (
+              <img
+                onClick={this.handleClose}
+                src={this.badgeImgUrl}
+                style={styles.image}
+              />
+            )}
+          </div>
+        </Dialog>
+      </div>
+    )
   }
 }

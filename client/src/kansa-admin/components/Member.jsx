@@ -25,28 +25,41 @@ export const defaultMember = Map({
 })
 
 export const memberFields = [
-  'membership', 'legal_name', 'email', 'badge_name', 'badge_subtitle',
-  'public_first_name', 'public_last_name', 'country', 'state', 'city',
+  'membership',
+  'legal_name',
+  'email',
+  'badge_name',
+  'badge_subtitle',
+  'public_first_name',
+  'public_last_name',
+  'country',
+  'state',
+  'city',
   'paper_pubs'
 ]
 
 export const membershipTypes = [
-  'NonMember', 'Exhibitor', 'Helper', 'Supporter', 'KidInTow', 'Child', 'Youth',
-  'FirstWorldcon', 'Adult'
+  'NonMember',
+  'Exhibitor',
+  'Helper',
+  'Supporter',
+  'KidInTow',
+  'Child',
+  'Youth',
+  'FirstWorldcon',
+  'Adult'
 ]
 
 export const emptyPaperPubsMap = Map({ name: '', address: '', country: '' })
 
-export const paperPubsIsValid = (pp) => (
-  !pp || pp.get('name') && pp.get('address') && pp.get('country')
-)
+export const paperPubsIsValid = pp =>
+  !pp || (pp.get('name') && pp.get('address') && pp.get('country'))
 
-export const memberIsValid = (member) => (
+export const memberIsValid = member =>
   Map.isMap(member) &&
   member.get('legal_name', false) &&
   member.get('email', false) &&
   paperPubsIsValid(member.get('paper_pubs'))
-)
 
 class Member extends PureComponent {
   static propTypes = {
@@ -80,7 +93,7 @@ class Member extends PureComponent {
     sent: false
   }
 
-  componentWillReceiveProps ({ api, member, setMember }) {
+  componentWillReceiveProps({ api, member, setMember }) {
     if (member && !member.equals(this.props.member)) {
       this.setState({
         member: defaultMember.merge(member),
@@ -92,16 +105,24 @@ class Member extends PureComponent {
     }
   }
 
-  get actions () {
-    const { api, handleClose, locked, member, printer, showMessage } = this.props
+  get actions() {
+    const {
+      api,
+      handleClose,
+      locked,
+      member,
+      printer,
+      showMessage
+    } = this.props
     const { sent } = this.state
     const hasChanges = this.changes.size > 0
     const id = member.get('id')
     const membership = member.get('membership')
 
     const actions = [
-      <FlatButton key='close' label='Close' onClick={handleClose} />,
-      <FlatButton key='ok'
+      <FlatButton key="close" label="Close" onClick={handleClose} />,
+      <FlatButton
+        key="ok"
         disabled={sent || !hasChanges || !this.valid}
         label={sent ? 'Working...' : 'Apply'}
         onClick={() => this.save().then(handleClose)}
@@ -113,38 +134,47 @@ class Member extends PureComponent {
       const legal_name = member.get('legal_name')
       const paper_pubs = member.get('paper_pubs')
       actions.unshift(
-        <MemberLog key='log'
-          getLog={() => api.GET(`people/${id}/log`)}
-          id={id}
-        >
-          <FlatButton label='View log' style={{ float: 'left' }} />
+        <MemberLog key="log" getLog={() => api.GET(`people/${id}/log`)} id={id}>
+          <FlatButton label="View log" style={{ float: 'left' }} />
         </MemberLog>,
 
-        <Upgrade key='upgrade'
+        <Upgrade
+          key="upgrade"
           membership={membership}
           paper_pubs={paper_pubs}
           name={`${legal_name} <${email}>`}
-          upgrade={res => api.POST(`people/${id}/upgrade`, res)
-            .then(() => showMessage(`${legal_name} upgraded`))
+          upgrade={res =>
+            api
+              .POST(`people/${id}/upgrade`, res)
+              .then(() => showMessage(`${legal_name} upgraded`))
           }
         >
-          <FlatButton label='Upgrade' style={{ float: 'left' }} />
+          <FlatButton label="Upgrade" style={{ float: 'left' }} />
         </Upgrade>,
 
-        <NewInvoice key='invoice'
-          onSubmit={invoice => api.POST(`purchase/invoice`, {
-            email,
-            items: [invoice]
-          }).then(() => showMessage(`Invoice created for ${legal_name}`))}
+        <NewInvoice
+          key="invoice"
+          onSubmit={invoice =>
+            api
+              .POST(`purchase/invoice`, {
+                email,
+                items: [invoice]
+              })
+              .then(() => showMessage(`Invoice created for ${legal_name}`))
+          }
           person={member}
         >
-          <FlatButton label='New invoice' style={{ float: 'left' }} />
+          <FlatButton label="New invoice" style={{ float: 'left' }} />
         </NewInvoice>
       )
     }
 
     const daypass = member.get('daypass')
-    if (printer && membership !== 'Supporter' && (membership !== 'NonMember' || daypass)) {
+    if (
+      printer &&
+      membership !== 'Supporter' &&
+      (membership !== 'NonMember' || daypass)
+    ) {
       let label = daypass ? 'Claim daypass' : 'Print badge'
       if (member.get('badge_print_time')) label = 'Re-' + label
       if (hasChanges) label = 'Save & ' + label
@@ -152,8 +182,14 @@ class Member extends PureComponent {
         <FlatButton
           disabled={sent || !this.valid}
           label={label}
-          onClick={() => this.handleBadgePrint()
-            .then(() => showMessage(`${daypass ? 'Daypass claimed' : 'Badge printed'} for ${member.get('preferred_name')}`))
+          onClick={() =>
+            this.handleBadgePrint().then(() =>
+              showMessage(
+                `${
+                  daypass ? 'Daypass claimed' : 'Badge printed'
+                } for ${member.get('preferred_name')}`
+              )
+            )
           }
           style={{ float: 'left' }}
         />
@@ -163,7 +199,7 @@ class Member extends PureComponent {
     return actions
   }
 
-  get changes () {
+  get changes() {
     const m0 = this.props.member
     return this.state.member.filter((value, key) => {
       const v0 = m0.get(key, '')
@@ -171,7 +207,7 @@ class Member extends PureComponent {
     })
   }
 
-  get valid () {
+  get valid() {
     return memberIsValid(this.state.member)
   }
 
@@ -179,31 +215,48 @@ class Member extends PureComponent {
     const { api, handleClose, member, printer } = this.props
     const hasChanges = this.changes.size > 0
     const prev = member.get('badge_print_time')
-    const print = !prev || window.confirm([
-      'Are you sure?', '',
-      member.get('daypass') ? 'Daypass was already claimed at:' : 'Badge was already printed at:',
-      new Date(prev).toLocaleString('en-GB', {
-        hour12: false,
-        weekday: 'long', day: 'numeric', month: 'short', hour: 'numeric', minute: 'numeric'
-      })
-    ].join('\n'))
+    const print =
+      !prev ||
+      window.confirm(
+        [
+          'Are you sure?',
+          '',
+          member.get('daypass')
+            ? 'Daypass was already claimed at:'
+            : 'Badge was already printed at:',
+          new Date(prev).toLocaleString('en-GB', {
+            hour12: false,
+            weekday: 'long',
+            day: 'numeric',
+            month: 'short',
+            hour: 'numeric',
+            minute: 'numeric'
+          })
+        ].join('\n')
+      )
     if (!print) return Promise.reject()
     const [pu, pn] = printer.split('#')
-    return (member.get('daypass') ? Promise.resolve() : printBadge(pu, pn, this.state.member))
+    return (member.get('daypass')
+      ? Promise.resolve()
+      : printBadge(pu, pn, this.state.member)
+    )
       .catch(err => {
         console.error('Badge print failed!', err)
-        window.alert('Badge print failed! ' + (err.message || err.statusText || err.status))
+        window.alert(
+          'Badge print failed! ' + (err.message || err.statusText || err.status)
+        )
         throw err
       })
       .then(() => api.POST(`people/${member.get('id')}/print`))
-      .then(() => hasChanges ? this.save() : null)
+      .then(() => (hasChanges ? this.save() : null))
       .then(handleClose)
   }
 
-  save () {
+  save() {
     const { api, member, showMessage } = this.props
     this.setState({ sent: true })
-    return api.POST(`people/${member.get('id')}`, this.changes.toJS())
+    return api
+      .POST(`people/${member.get('id')}`, this.changes.toJS())
       .then(() => showMessage(`Data saved for ${member.get('preferred_name')}`))
       .catch(err => {
         console.error('Member save failed!', err)
@@ -212,45 +265,53 @@ class Member extends PureComponent {
       })
   }
 
-  render () {
+  render() {
     const { handleClose, member } = this.props
     if (!member) return null
     const membership = member.get('membership', 'NonMember')
     const formProps = {
       getDefaultValue: path => member.getIn(path, ''),
       getValue: path => this.state.member.getIn(path, null),
-      onChange: (path, value) => this.setState({ member: this.state.member.setIn(path, value) })
+      onChange: (path, value) =>
+        this.setState({ member: this.state.member.setIn(path, value) })
     }
 
-    return <Dialog
-      actions={this.actions}
-      title={<div title={'ID: ' + member.get('id')}>
-        <div style={{
-          color: 'rgba(0, 0, 0, 0.3)',
-          float: 'right',
-          fontSize: 11,
-          fontStyle: 'italic',
-          lineHeight: 'normal',
-          textAlign: 'right'
-        }}>
-          Last modified<br />
-          { member.get('last_modified') }
-        </div>
-        {
-          membership === 'NonMember' ? 'Non-member'
-            : /^DP/.test(membership) ? membership.replace(/^DP/, 'Day pass:')
-            : `Member #${member.get('member_number')} (${membership})`
+    return (
+      <Dialog
+        actions={this.actions}
+        title={
+          <div title={'ID: ' + member.get('id')}>
+            <div
+              style={{
+                color: 'rgba(0, 0, 0, 0.3)',
+                float: 'right',
+                fontSize: 11,
+                fontStyle: 'italic',
+                lineHeight: 'normal',
+                textAlign: 'right'
+              }}
+            >
+              Last modified
+              <br />
+              {member.get('last_modified')}
+            </div>
+            {membership === 'NonMember'
+              ? 'Non-member'
+              : /^DP/.test(membership)
+                ? membership.replace(/^DP/, 'Day pass:')
+                : `Member #${member.get('member_number')} (${membership})`}
+          </div>
         }
-      </div>}
-      open
-      autoScrollBodyContent
-      bodyClassName='memberDialog'
-      onRequestClose={handleClose}
-    >
-      <CommonFields {...formProps} />
-      <br />
-      <PaperPubsFields {...formProps} />
-    </Dialog>
+        open
+        autoScrollBodyContent
+        bodyClassName="memberDialog"
+        onRequestClose={handleClose}
+      >
+        <CommonFields {...formProps} />
+        <br />
+        <PaperPubsFields {...formProps} />
+      </Dialog>
+    )
   }
 }
 
@@ -258,8 +319,9 @@ export default connect(
   ({ registration }) => ({
     locked: registration.get('locked') || false,
     printer: registration.get('printer')
-  }), (dispatch) => ({
-    setMember: (data) => dispatch({ type: 'SET PERSON', data }),
-    showMessage: (message) => dispatch({ type: 'SET MESSAGE', message })
+  }),
+  dispatch => ({
+    setMember: data => dispatch({ type: 'SET PERSON', data }),
+    showMessage: message => dispatch({ type: 'SET MESSAGE', message })
   })
 )(Member)

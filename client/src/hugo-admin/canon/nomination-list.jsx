@@ -25,71 +25,95 @@ class NominationList extends PureComponent {
     style: PropTypes.object
   }
 
-  static headerHeight = 30;
-  static overscanRowCount = 10;
-  static rowHeight = 30;
+  static headerHeight = 30
+  static overscanRowCount = 10
+  static rowHeight = 30
 
   state = {
     sortBy: '',
     sortDirection: SortDirection.ASC
   }
 
-  get columns () {
+  get columns() {
     const { ballots, categories, onShowDetails, showBallotCounts } = this.props
-    const controls = [<Column
-      cellRenderer={
-        ({ cellData, rowData }) => cellData ? <More
-          onClick={(ev) => {
-            onShowDetails(rowData)
-            ev.stopPropagation()
-          }}
-        /> : ''
-      }
-      dataKey='canon_id'
-      key='canon_id'
-      style={{ display: 'flex' }}
-      width={20}
-    />]
+    const controls = [
+      <Column
+        cellRenderer={({ cellData, rowData }) =>
+          cellData ? (
+            <More
+              onClick={ev => {
+                onShowDetails(rowData)
+                ev.stopPropagation()
+              }}
+            />
+          ) : (
+            ''
+          )
+        }
+        dataKey="canon_id"
+        key="canon_id"
+        style={{ display: 'flex' }}
+        width={20}
+      />
+    ]
     if (showBallotCounts && !ballots.isEmpty()) {
-      controls.push(<Column
-        cellDataGetter={({ rowData }) => this.ballotCount(rowData) || ''}
-        dataKey='ballotCount'
-        key='ballotCount'
-        label='#'
-        width={30}
-    />)
+      controls.push(
+        <Column
+          cellDataGetter={({ rowData }) => this.ballotCount(rowData) || ''}
+          dataKey="ballotCount"
+          key="ballotCount"
+          label="#"
+          width={30}
+        />
+      )
     }
     if (categories.length > 1) {
-      controls.push(<Column
-        cellDataGetter={({ rowData }) => {
-          const category = rowData.get('category')
-          const cm = category && category.match(/^(..).*(Long|Short)$/)
-          return cm ? cm[1] + cm[2] : category
-        }}
-        dataKey='category'
-        key='category'
-        label='Category'
-        width={80}
-    />)
+      controls.push(
+        <Column
+          cellDataGetter={({ rowData }) => {
+            const category = rowData.get('category')
+            const cm = category && category.match(/^(..).*(Long|Short)$/)
+            return cm ? cm[1] + cm[2] : category
+          }}
+          dataKey="category"
+          key="category"
+          label="Category"
+          width={80}
+        />
+      )
     }
-    return controls.concat(nominationFields(categories).map(key => <Column
-      cellDataGetter={({ dataKey, rowData }) => rowData.getIn(['data', dataKey])}
-      dataKey={key}
-      flexGrow={1}
-      key={key}
-      label={key}
-      width={100}
-    />))
+    return controls.concat(
+      nominationFields(categories).map(key => (
+        <Column
+          cellDataGetter={({ dataKey, rowData }) =>
+            rowData.getIn(['data', dataKey])
+          }
+          dataKey={key}
+          flexGrow={1}
+          key={key}
+          label={key}
+          width={100}
+        />
+      ))
+    )
   }
 
-  get list () {
+  get list() {
     const { canon, nominations, query } = this.props
     const seenCanon = []
     return nominations
       .filter(nom => {
         if (!nom) return false
         if (query) {
-          if (nom.every(v => String(v).toLowerCase().indexOf(query) === -1)) return false
+          if (
+            nom.every(
+              v =>
+                String(v)
+                  .toLowerCase()
+                  .indexOf(query) === -1
+            )
+          )
+            return false
         }
         const ci = nom.get('canon_id')
         if (ci) {
@@ -111,7 +135,7 @@ class NominationList extends PureComponent {
       })
   }
 
-  ballotCount (nomination) {
+  ballotCount(nomination) {
     const { ballots, nominations } = this.props
     if (ballots.isEmpty() || !nomination || nomination.isEmpty()) return 0
     const ci = nomination.get('canon_id')
@@ -129,11 +153,12 @@ class NominationList extends PureComponent {
 
   noRowsRenderer = () => (
     <div style={{ paddingLeft: 12, paddingTop: 6 }}>
-      Loading nominations for {this.props.categories.join('/')}...
+      Loading nominations for {this.props.categories.join('/')}
+      ...
     </div>
-  );
+  )
 
-  onRowClick = (list) => ({ index }) => {
+  onRowClick = list => ({ index }) => {
     this.props.onSelect(list.get(index))
     this.setState({ hoverPos: index })
   }
@@ -148,7 +173,7 @@ class NominationList extends PureComponent {
     return cl.join(' ')
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     const c0 = this.props.categories
     const c1 = nextProps.categories
     if (!c0 || !c1 || c0.length !== c1.length) {
@@ -160,21 +185,24 @@ class NominationList extends PureComponent {
     }
   }
 
-  render () {
+  render() {
     const { style } = this.props
     const { sortBy, sortDirection } = this.state
-    let list = this.list.sortBy(n => sortBy === 'ballotCount'
-      ? this.ballotCount(n)
-      : n.getIn(['data', sortBy], '').toLowerCase().trim().replace(/^(?:a|an|the) +/, '')
+    let list = this.list.sortBy(
+      n =>
+        sortBy === 'ballotCount'
+          ? this.ballotCount(n)
+          : n
+              .getIn(['data', sortBy], '')
+              .toLowerCase()
+              .trim()
+              .replace(/^(?:a|an|the) +/, '')
     )
     if (sortDirection === SortDirection.DESC) list = list.reverse()
     return (
-      <div
-        onKeyDown={this.onKeyDown}
-        style={style}
-      >
+      <div onKeyDown={this.onKeyDown} style={style}>
         <AutoSizer>
-          { ({ height, width }) => (
+          {({ height, width }) => (
             <Table
               headerHeight={NominationList.headerHeight}
               height={height}
@@ -186,7 +214,10 @@ class NominationList extends PureComponent {
               rowGetter={({ index }) => list.get(index)}
               rowCount={list.size}
               sort={({ sortBy, sortDirection }) => {
-                if (sortBy === 'ballotCount' && this.state.sortBy !== 'ballotCount') {
+                if (
+                  sortBy === 'ballotCount' &&
+                  this.state.sortBy !== 'ballotCount'
+                ) {
                   sortDirection = SortDirection.DESC
                 }
                 this.setState({ sortBy, sortDirection })
@@ -195,9 +226,9 @@ class NominationList extends PureComponent {
               sortDirection={sortDirection}
               width={width}
             >
-              { this.columns }
+              {this.columns}
             </Table>
-          ) }
+          )}
         </AutoSizer>
       </div>
     )
@@ -206,15 +237,20 @@ class NominationList extends PureComponent {
 
 export default connect(
   ({ hugoAdmin }, { categories }) => ({
-    ballots: hugoAdmin.get('ballots')
+    ballots: hugoAdmin
+      .get('ballots')
       .filter((_, cat) => categories.indexOf(cat) !== -1)
-      .valueSeq().flatten(true),
+      .valueSeq()
+      .flatten(true),
     canon: hugoAdmin.get('canon'),
-    nominations: hugoAdmin.get('nominations')
+    nominations: hugoAdmin
+      .get('nominations')
       .filter((_, cat) => categories.indexOf(cat) !== -1)
-      .valueSeq(true).flatten(true),
+      .valueSeq(true)
+      .flatten(true),
     showBallotCounts: hugoAdmin.get('showBallotCounts')
-  }), {
+  }),
+  {
     setShowBallotCounts
   }
 )(NominationList)

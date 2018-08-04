@@ -1,11 +1,14 @@
 import { fromJS, List } from 'immutable'
 
-export default function (state = List(), action) {
+export default function(state = List(), action) {
   if (action.error) return state
   switch (action.type) {
     case 'INIT PAYMENTS':
       if (!Array.isArray(action.data)) {
-        console.warn(`${action.type} expects array data (got ${typeof action.data})`, action.data)
+        console.warn(
+          `${action.type} expects array data (got ${typeof action.data})`,
+          action.data
+        )
         return state
       }
       return fromJS(action.data)

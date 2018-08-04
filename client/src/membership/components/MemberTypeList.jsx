@@ -50,7 +50,7 @@ export const memberTypeData = {
   Upgrade: {
     primary: 'Upgrade membership',
     secondary: 'and/or add paper publications',
-    icon: <ThumbUp/>
+    icon: <ThumbUp />
   }
 }
 
@@ -66,18 +66,29 @@ export default class MemberTypeList extends Component {
     style: PropTypes.object
   }
 
-  listItemProps (type) {
+  listItemProps(type) {
     const { canAddPaperPubs, category, data, disabled, prevType } = this.props
     const { primary, daypass, secondary, icon } = memberTypeData[type]
     const amount = getMemberPrice(data, prevType, type, false)
-    const isDisabled = disabled || prevType && amount < 0
-    const primaryText = category === 'daypass' ? daypass
-        : amount < 0 ? primary
-        : amount > 0 ? `${primary} (€${amount / 100})`
-        : !prevType ? `${primary} (free)`
-        : canAddPaperPubs ? 'No membership upgrade' : 'No upgrade available';
-    const secondaryText = !prevType || amount ? secondary
-        : canAddPaperPubs ? 'Just add paper publications' : 'Already has paper publications';
+    const isDisabled = disabled || (prevType && amount < 0)
+    const primaryText =
+      category === 'daypass'
+        ? daypass
+        : amount < 0
+          ? primary
+          : amount > 0
+            ? `${primary} (€${amount / 100})`
+            : !prevType
+              ? `${primary} (free)`
+              : canAddPaperPubs
+                ? 'No membership upgrade'
+                : 'No upgrade available'
+    const secondaryText =
+      !prevType || amount
+        ? secondary
+        : canAddPaperPubs
+          ? 'Just add paper publications'
+          : 'Already has paper publications'
     return {
       disabled: isDisabled,
       innerDivStyle: { paddingLeft: 60 },
@@ -89,7 +100,7 @@ export default class MemberTypeList extends Component {
     }
   }
 
-  render () {
+  render() {
     const { memberTypes, onSelectType, selectedType, style } = this.props
     return (
       <SelectableList
@@ -97,13 +108,17 @@ export default class MemberTypeList extends Component {
         style={style}
         value={selectedType}
       >
-        {memberTypes.map((type, i) => (
-          type === '_divider' ? (
-            <Divider key={'div' + i} style={{ marginTop: 8, marginBottom: 8, marginLeft: 60 }} />
-          ) : (
-            <ListItem key={type} {...this.listItemProps(type)} />
-          )
-        ))}
+        {memberTypes.map(
+          (type, i) =>
+            type === '_divider' ? (
+              <Divider
+                key={'div' + i}
+                style={{ marginTop: 8, marginBottom: 8, marginLeft: 60 }}
+              />
+            ) : (
+              <ListItem key={type} {...this.listItemProps(type)} />
+            )
+        )}
       </SelectableList>
     )
   }

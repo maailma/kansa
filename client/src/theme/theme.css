@@ -1,11 +1,16 @@
 @import 'https://fonts.googleapis.com/css?family=Open+Sans:300,400,600';
 
-* { box-sizing:border-box; }
+* {
+  box-sizing: border-box;
+}
 
-html { height: 100%; }
+html {
+  height: 100%;
+}
 
 body {
-  background: url(https://maailma.github.io/kansa-client/master/img/bg-aurora.jpg) center top / cover no-repeat fixed #005383;
+  background: url(https://maailma.github.io/kansa-client/master/img/bg-aurora.jpg)
+    center top / cover no-repeat fixed #005383;
   font-family: 'Open Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   margin: 0;
@@ -33,7 +38,6 @@ main {
   }
 }
 
-
 h1 {
   color: #fc7c39;
   font-size: 36px;
@@ -42,10 +46,18 @@ h1 {
   text-shadow: 0 0 2px #fc7c39;
 }
 
-h2 { color: #fc7c39; font-size: 24px }
-h3 { color: #fc7c39; font-size: 18px }
+h2 {
+  color: #fc7c39;
+  font-size: 24px;
+}
+h3 {
+  color: #fc7c39;
+  font-size: 18px;
+}
 
-:-moz-ui-invalid { box-shadow: none }
+:-moz-ui-invalid {
+  box-shadow: none;
+}
 
 .bg-text {
   color: white;
@@ -55,11 +67,19 @@ a {
   color: #00a1ff;
   text-decoration: none;
 }
-a:active { color: #fc7c39 }
-a:hover { text-decoration: underline }
+a:active {
+  color: #fc7c39;
+}
+a:hover {
+  text-decoration: underline;
+}
 
-.action-head { background-color: #3da9d4 !important }
-.action-head * { color: white !important }
+.action-head {
+  background-color: #3da9d4 !important;
+}
+.action-head * {
+  color: white !important;
+}
 
 .body-card {
   margin: 30px 0;
@@ -76,17 +96,17 @@ a:hover { text-decoration: underline }
 }
 
 div.upload {
-	min-height: 100px;
-	display: block;
+  min-height: 100px;
+  display: block;
 }
 
 span.upload input {
-    margin: 10px;
-    padding: 10px;
-    text-align: center;
-    font-size: 18px;
-    border: 0px;
-    opacity: 0.7
+  margin: 10px;
+  padding: 10px;
+  text-align: center;
+  font-size: 18px;
+  border: 0px;
+  opacity: 0.7;
 }
 
 .logo {
@@ -119,14 +139,18 @@ span.upload input {
   opacity: 0;
   transition: opacity 450ms;
 }
-.logoutButton:hover .logoutHint { opacity: 1 }
+.logoutButton:hover .logoutHint {
+  opacity: 1;
+}
 
 .vote-intro h3 {
   font-size: 18px;
   font-weight: 400;
   margin: 36px 0 0;
 }
-.vote-intro h3:first-child { margin-top: 16px }
+.vote-intro h3:first-child {
+  margin-top: 16px;
+}
 
 .vote-intro .disabled {
   border-bottom: 1px solid #808080;

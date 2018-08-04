@@ -7,11 +7,7 @@ import { AutoSizer, Column, SortDirection, Table } from 'react-virtualized'
 import filterPeople from '../filterPeople'
 import styles from '../styles/MemberTable.css'
 
-const noRowsRenderer = () => (
-  <div className={styles.noRows}>
-    Loading...
-  </div>
-)
+const noRowsRenderer = () => <div className={styles.noRows}>Loading...</div>
 
 class PaymentTable extends PureComponent {
   static propTypes = {
@@ -28,7 +24,7 @@ class PaymentTable extends PureComponent {
     sortDirection: SortDirection.DESC
   }
 
-  render () {
+  render() {
     const {
       headerHeight,
       overscanRowCount,
@@ -41,15 +37,17 @@ class PaymentTable extends PureComponent {
     const list = this.props.list
       .filter(item => item)
       .sortBy(item => item.get(sortBy, ''))
-      .update(list => sortDirection === SortDirection.DESC ? list.reverse() : list)
+      .update(
+        list => (sortDirection === SortDirection.DESC ? list.reverse() : list)
+      )
 
     return (
       <div style={{ display: 'flex', height: 'calc(100vh - 48px)' }}>
         <div style={{ flex: '1 1 auto' }}>
           <AutoSizer>
-            { ({ height, width }) => (
+            {({ height, width }) => (
               <Table
-                key='table'
+                key="table"
                 headerClassName={styles.headerColumn}
                 headerHeight={headerHeight}
                 height={height}
@@ -59,20 +57,30 @@ class PaymentTable extends PureComponent {
                 rowGetter={({ index }) => list.get(index)}
                 rowCount={list.size}
                 scrollToIndex={scrollToIndex}
-                sort={({ sortBy, sortDirection }) => this.setState({ sortBy, sortDirection })}
+                sort={({ sortBy, sortDirection }) =>
+                  this.setState({ sortBy, sortDirection })
+                }
                 sortBy={sortBy}
                 sortDirection={sortDirection}
                 width={width}
-                onRowClick={({ index }) => this.props.onPaymentSelect(list.get(index))}
+                onRowClick={({ index }) =>
+                  this.props.onPaymentSelect(list.get(index))
+                }
               >
-                <Column dataKey='updated' label='Mod' width={100}
+                <Column
+                  dataKey="updated"
+                  label="Mod"
+                  width={100}
                   cellDataGetter={({ rowData }) => {
                     const ts = rowData.get('updated') || rowData.get('created')
                     return ts.slice(0, ts.indexOf('T'))
                   }}
                 />
-                <Column dataKey='status' label='Status' width={80} />
-                <Column dataKey='amount' label='€' width={50}
+                <Column dataKey="status" label="Status" width={80} />
+                <Column
+                  dataKey="amount"
+                  label="€"
+                  width={50}
                   cellDataGetter={({ rowData }) => {
                     let amount = rowData.get('amount') / 100
                     const currency = rowData.get('currency', '').toUpperCase()
@@ -80,12 +88,27 @@ class PaymentTable extends PureComponent {
                     return amount
                   }}
                 />
-                <Column dataKey='payment_email' label='From' width={120} flexGrow={1} />
-                <Column dataKey='person_name' label='Beneficiary' width={120} flexGrow={1} />
-                <Column dataKey='category' label='Category' width={100} flexGrow={1} />
-                <Column dataKey='type' label='Type' width={80} flexGrow={1} />
+                <Column
+                  dataKey="payment_email"
+                  label="From"
+                  width={120}
+                  flexGrow={1}
+                />
+                <Column
+                  dataKey="person_name"
+                  label="Beneficiary"
+                  width={120}
+                  flexGrow={1}
+                />
+                <Column
+                  dataKey="category"
+                  label="Category"
+                  width={100}
+                  flexGrow={1}
+                />
+                <Column dataKey="type" label="Type" width={80} flexGrow={1} />
               </Table>
-            ) }
+            )}
           </AutoSizer>
         </div>
       </div>
@@ -93,8 +116,6 @@ class PaymentTable extends PureComponent {
   }
 }
 
-export default connect(
-  ({ payments }, { filter }) => ({
-    list: filterPeople(payments, filter)
-  })
-)(PaymentTable)
+export default connect(({ payments }, { filter }) => ({
+  list: filterPeople(payments, filter)
+}))(PaymentTable)

@@ -8,18 +8,17 @@ import MemberTable from './MemberTable'
 import NewMember from './NewMember'
 import Voter from './Voter'
 
-const PeopleScene = ({ api, filter, member, onMemberSelect, siteselection }) => (
+const PeopleScene = ({
+  api,
+  filter,
+  member,
+  onMemberSelect,
+  siteselection
+}) => (
   <div>
-    <MemberTable
-      filter={filter}
-      onMemberSelect={onMemberSelect}
-    />
+    <MemberTable filter={filter} onMemberSelect={onMemberSelect} />
     {siteselection ? (
-      <Voter
-        api={api}
-        member={member}
-        onClose={() => onMemberSelect(null)}
-      />
+      <Voter api={api} member={member} onClose={() => onMemberSelect(null)} />
     ) : (
       <Member
         api={api}
@@ -27,9 +26,7 @@ const PeopleScene = ({ api, filter, member, onMemberSelect, siteselection }) => 
         member={member}
       />
     )}
-    <NewMember
-      onAdd={member => api.POST('people', member.toJS())}
-    />
+    <NewMember onAdd={member => api.POST('people', member.toJS())} />
   </div>
 )
 
@@ -41,8 +38,6 @@ PeopleScene.propTypes = {
   siteselection: PropTypes.bool
 }
 
-export default connect(
-  ({ user }) => ({
-    siteselection: user.get('siteselection') || false
-  })
-)(PeopleScene)
+export default connect(({ user }) => ({
+  siteselection: user.get('siteselection') || false
+}))(PeopleScene)

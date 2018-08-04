@@ -27,14 +27,22 @@ const SelectableList = makeSelectable(List)
 
 const getIcon = (n, entry) => {
   switch (n) {
-    case 0: return entry ? <Number1 /> : <Blank1 />
-    case 1: return entry ? <Number2 /> : <Blank2 />
-    case 2: return entry ? <Number3 /> : <Blank3 />
-    case 3: return entry ? <Number4 /> : <Blank4 />
-    case 4: return entry ? <Number5 /> : <Blank5 />
-    case 5: return entry ? <Number6 /> : <Blank6 />
-    case 6: return entry ? <Number7 /> : <Blank7 />
-    default: return <NoNumber />
+    case 0:
+      return entry ? <Number1 /> : <Blank1 />
+    case 1:
+      return entry ? <Number2 /> : <Blank2 />
+    case 2:
+      return entry ? <Number3 /> : <Blank3 />
+    case 3:
+      return entry ? <Number4 /> : <Blank4 />
+    case 4:
+      return entry ? <Number5 /> : <Blank5 />
+    case 5:
+      return entry ? <Number6 /> : <Blank6 />
+    case 6:
+      return entry ? <Number7 /> : <Blank7 />
+    default:
+      return <NoNumber />
   }
 }
 
@@ -52,28 +60,35 @@ export default class CategoryList extends React.Component {
     popOpen: false
   }
 
-  getActionText (idx) {
+  getActionText(idx) {
     const { popIdx, popEntry } = this.state
     switch (idx) {
-      case popIdx: return this.getPrimaryText(popEntry)
-      case -1: return 'Remove from ballot'
-      default: return `Move to position ${idx + 1}`
+      case popIdx:
+        return this.getPrimaryText(popEntry)
+      case -1:
+        return 'Remove from ballot'
+      default:
+        return `Move to position ${idx + 1}`
     }
   }
 
-  getPrimaryText (entry) {
-    return entry ? entry.get('title', '[title]') : <span style={{ color: 'rgba(0, 0, 0, 0.541176)' }}>[No entry]</span>
+  getPrimaryText(entry) {
+    return entry ? (
+      entry.get('title', '[title]')
+    ) : (
+      <span style={{ color: 'rgba(0, 0, 0, 0.541176)' }}>[No entry]</span>
+    )
   }
 
-  getSecondaryText (entry) {
+  getSecondaryText(entry) {
     return entry ? entry.get('subtitle', '') : 'Tap to remove'
   }
 
-  listItemProps = (entry) => ({
+  listItemProps = entry => ({
     primaryText: this.getPrimaryText(entry),
     secondaryText: this.getSecondaryText(entry),
     secondaryTextLines: 1
-  });
+  })
 
   openPopover = (event, idx, entry) => {
     event.preventDefault()
@@ -119,28 +134,34 @@ export default class CategoryList extends React.Component {
     this.props.setPreference(preference)
   }
 
-  render () {
+  render() {
     const { finalists, preference } = this.props
     const { popAnchor, popEntry, popIdx, popOpen } = this.state
     const pFinalists = preference.map(fi => finalists.get(fi))
-    const npFinalists = finalists.toList().filter(entry => !pFinalists.includes(entry))
+    const npFinalists = finalists
+      .toList()
+      .filter(entry => !pFinalists.includes(entry))
 
     return (
       <List>
         {pFinalists.map((entry, idx) => (
           <ListItem
-            className='vote-item'
+            className="vote-item"
             key={'p' + idx}
             leftIcon={getIcon(idx, entry)}
-            onClick={(ev) => {
+            onClick={ev => {
               if (entry) this.openPopover(ev, idx, entry)
               else this.setPreference(idx, null)
             }}
-            rightIconButton={<IconButton
-              iconStyle={{ color: 'rgba(0, 0, 0, 0.541176)' }}
-              onClick={() => this.setPreference(idx, null)}
-              tooltip='Remove this entry'
-            ><ContentClear /></IconButton>}
+            rightIconButton={
+              <IconButton
+                iconStyle={{ color: 'rgba(0, 0, 0, 0.541176)' }}
+                onClick={() => this.setPreference(idx, null)}
+                tooltip="Remove this entry"
+              >
+                <ContentClear />
+              </IconButton>
+            }
             {...this.listItemProps(entry)}
           />
         ))}
@@ -149,10 +170,10 @@ export default class CategoryList extends React.Component {
 
         {npFinalists.map((entry, idx) => (
           <ListItem
-            className='vote-item'
+            className="vote-item"
             key={'n' + idx}
             leftIcon={<NoNumber />}
-            onClick={(ev) => this.openPopover(ev, -1, entry)}
+            onClick={ev => this.openPopover(ev, -1, entry)}
             {...this.listItemProps(entry)}
           />
         ))}

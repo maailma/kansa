@@ -11,7 +11,7 @@ export const keyRequest = (email, name) => ({
   name
 })
 
-export const tryLogin = (callback) => ({
+export const tryLogin = callback => ({
   type: 'TRY_LOGIN',
   callback
 })

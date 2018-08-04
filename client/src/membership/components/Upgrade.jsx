@@ -17,7 +17,7 @@ import MemberLookupSelector from './MemberLookupSelector'
 import MemberTypeList from './MemberTypeList'
 import { AddPaperPubs, paperPubsIsValid } from './paper-pubs'
 
-const UPGRADE_TARGET_TYPES = ['Adult', 'Youth', 'FirstWorldcon', 'Child'];
+const UPGRADE_TARGET_TYPES = ['Adult', 'Youth', 'FirstWorldcon', 'Child']
 
 class Upgrade extends Component {
   static propTypes = {
@@ -35,14 +35,15 @@ class Upgrade extends Component {
     showMessage: PropTypes.func.isRequired
   }
 
-  static getNextState (props) {
+  static getNextState(props) {
     const nextState = {}
     const id = Number(props.params.id)
-    const person = id && props.people && props.people.find(p => p.get('id') === id)
+    const person =
+      id && props.people && props.people.find(p => p.get('id') === id)
     if (person) {
-      const pm = nextState.prevMembership = person.get('membership')
+      const pm = (nextState.prevMembership = person.get('membership'))
       nextState.membership = UPGRADE_TARGET_TYPES.indexOf(pm) !== -1 ? pm : null
-      const cap = nextState.canAddPaperPubs = !person.get('paper_pubs')
+      const cap = (nextState.canAddPaperPubs = !person.get('paper_pubs'))
       if (!cap) nextState.paperPubs = null
     } else {
       nextState.canAddPaperPubs = false
@@ -52,36 +53,39 @@ class Upgrade extends Component {
     return nextState
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
-    this.state = Object.assign({
-      canAddPaperPubs: false,
-      membership: null,
-      paperPubs: null,
-      prevMembership: null,
-      sent: false
-    }, Upgrade.getNextState(props))
+    this.state = Object.assign(
+      {
+        canAddPaperPubs: false,
+        membership: null,
+        paperPubs: null,
+        prevMembership: null,
+        sent: false
+      },
+      Upgrade.getNextState(props)
+    )
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const { data, getPurchaseData, setScene } = this.props
     if (!data) getPurchaseData()
     setScene({ title: 'Upgrade Membership', dockSidebar: false })
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (nextProps.params.id !== this.props.params.id) {
       this.setState(Upgrade.getNextState(nextProps))
     }
   }
 
-  get amount () {
+  get amount() {
     const { data } = this.props
     const { membership, paperPubs, prevMembership } = this.state
     return getMemberPrice(data, prevMembership, membership, paperPubs)
   }
 
-  get description () {
+  get description() {
     const { data } = this.props
     const { membership, paperPubs, prevMembership } = this.state
     const parts = []
@@ -90,19 +94,24 @@ class Upgrade extends Component {
     return parts.join(' + ') || 'Member upgrade'
   }
 
-  get disabledCheckout () {
+  get disabledCheckout() {
     const { paperPubs, prevMembership, sent } = this.state
-    return sent || !prevMembership || this.amount <= 0 || !paperPubsIsValid(paperPubs)
+    return (
+      sent ||
+      !prevMembership ||
+      this.amount <= 0 ||
+      !paperPubsIsValid(paperPubs)
+    )
   }
 
-  get id () {
+  get id() {
     return Number(this.props.params.id) || 0
   }
 
-  get person () {
+  get person() {
     const { people } = this.props
     const id = this.id
-    return id && people && people.find(p => p.get('id') === id) || null
+    return (id && people && people.find(p => p.get('id') === id)) || null
   }
 
   onSelectMember = ({ membership, person_id }) => {
@@ -130,22 +139,35 @@ class Upgrade extends Component {
     })
   }
 
-  renderActions () {
+  renderActions() {
     const { prevMembership, sent } = this.state
     const amount = this.amount
     const disabled = this.disabledCheckout
     return (
-      <CardActions style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: 16, paddingBottom: 16 }}>
-        <div style={{ color: 'rgba(0, 0, 0, 0.5)', paddingTop: 8, paddingRight: 16 }}>
+      <CardActions
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          paddingRight: 16,
+          paddingBottom: 16
+        }}
+      >
+        <div
+          style={{
+            color: 'rgba(0, 0, 0, 0.5)',
+            paddingTop: 8,
+            paddingRight: 16
+          }}
+        >
           {prevMembership && amount > 0 ? `Total: €${amount / 100}` : ''}
         </div>
         <StripeCheckout
           amount={amount}
-          currency='EUR'
+          currency="EUR"
           description={this.description}
           disabled={disabled}
           email={this.props.email}
-          onCheckout={(token) => this.onPurchase(amount, token)}
+          onCheckout={token => this.onPurchase(amount, token)}
           onClose={() => this.setState({ sent: false })}
         >
           <FlatButton
@@ -160,57 +182,64 @@ class Upgrade extends Component {
     )
   }
 
-  render () {
+  render() {
     const { data, people } = this.props
     if (!people) return null
-    const { canAddPaperPubs, membership, paperPubs, prevMembership } = this.state
-    return <Row>
-      <Col
-        xs={12}
-        sm={10} smOffset={1}
-        lg={8} lgOffset={2}
-        style={{ paddingTop: 20 }}
-      >
-        <Card>
-          <CardText>
-            <Row>
-              <Col xs={12} sm={6}>
-                <Subheader>
-                  Membership to upgrade:
-                </Subheader>
-                <MemberLookupSelector
-                  onChange={this.onSelectMember}
-                  people={people}
-                  selectedPersonId={this.id}
-                />
-              </Col>
-              <Col xs={12} sm={6}>
-                <Subheader>
-                  Upgrade to:
-                </Subheader>
-                <MemberTypeList
-                  canAddPaperPubs={canAddPaperPubs}
-                  data={data}
-                  memberTypes={UPGRADE_TARGET_TYPES}
-                  onSelectType={(membership) => this.setState({ membership })}
-                  prevType={prevMembership}
-                  selectedType={membership}
+    const {
+      canAddPaperPubs,
+      membership,
+      paperPubs,
+      prevMembership
+    } = this.state
+    return (
+      <Row>
+        <Col
+          xs={12}
+          sm={10}
+          smOffset={1}
+          lg={8}
+          lgOffset={2}
+          style={{ paddingTop: 20 }}
+        >
+          <Card>
+            <CardText>
+              <Row>
+                <Col xs={12} sm={6}>
+                  <Subheader>Membership to upgrade:</Subheader>
+                  <MemberLookupSelector
+                    onChange={this.onSelectMember}
+                    people={people}
+                    selectedPersonId={this.id}
                   />
-              </Col>
-            </Row>
-            {canAddPaperPubs ? (
-              <AddPaperPubs
-                data={data}
-                getValue={([pp, key]) => key ? paperPubs.get(key) : paperPubs}
-                onChange={this.onPaperPubsChange}
-                tabIndex={1}
-              />
-            ) : null}
-          </CardText>
-          { this.renderActions() }
-        </Card>
-      </Col>
-    </Row>
+                </Col>
+                <Col xs={12} sm={6}>
+                  <Subheader>Upgrade to:</Subheader>
+                  <MemberTypeList
+                    canAddPaperPubs={canAddPaperPubs}
+                    data={data}
+                    memberTypes={UPGRADE_TARGET_TYPES}
+                    onSelectType={membership => this.setState({ membership })}
+                    prevType={prevMembership}
+                    selectedType={membership}
+                  />
+                </Col>
+              </Row>
+              {canAddPaperPubs ? (
+                <AddPaperPubs
+                  data={data}
+                  getValue={([pp, key]) =>
+                    key ? paperPubs.get(key) : paperPubs
+                  }
+                  onChange={this.onPaperPubsChange}
+                  tabIndex={1}
+                />
+              ) : null}
+            </CardText>
+            {this.renderActions()}
+          </Card>
+        </Col>
+      </Row>
+    )
   }
 }
 
@@ -219,7 +248,8 @@ export default connect(
     data: purchase.get('data'),
     email: user.get('email'),
     people: user.get('people')
-  }), {
+  }),
+  {
     buyUpgrade,
     getPurchaseData,
     push,

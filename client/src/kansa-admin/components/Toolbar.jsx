@@ -22,7 +22,12 @@ import RegOptionsDialog from './RegistrationOptions'
 const SceneTabs = ({ onChange, value }) => (
   <div style={{ position: 'relative' }}>
     <Tabs
-      inkBarStyle={{ position: 'absolute', bottom: 'auto', marginTop: 0, top: 0 }}
+      inkBarStyle={{
+        position: 'absolute',
+        bottom: 'auto',
+        marginTop: 0,
+        top: 0
+      }}
       onChange={onChange}
       value={value}
     >
@@ -30,42 +35,42 @@ const SceneTabs = ({ onChange, value }) => (
         buttonStyle={{ color: 'rgba(0,0,0,0.4)', padding: '0 16px' }}
         icon={<PeopleIcon />}
         style={{ color: 'rgba(0,0,0,0.4)' }}
-        title='People'
-        value='people'
+        title="People"
+        value="people"
       />
       <Tab
         buttonStyle={{ padding: '0 16px' }}
         icon={<PaymentsIcon />}
-        title='Payments'
-        value='payments'
+        title="Payments"
+        value="payments"
       />
     </Tabs>
   </div>
 )
 
 class SearchBox extends Component {
-  focus () {
+  focus() {
     if (this.searchField) this.searchField.focus()
   }
 
-  render () {
+  render() {
     const { filter, onChange, onSubmit } = this.props
     return (
       <ToolbarGroup style={{ flexGrow: 1 }}>
         <IconButton
           iconStyle={{ fill: `rgba(0, 0, 0, ${filter ? '0.6' : '0.4'})` }}
           tooltip={filter ? 'Clear search' : 'Search'}
-          tooltipPosition='bottom-right'
+          tooltipPosition="bottom-right"
           tooltipStyles={{ top: 24 }}
           onClick={() => {
             if (filter) onChange('')
             if (this.searchField) this.searchField.focus()
           }}
         >
-          { filter ? <ContentClear /> : <ActionSearch /> }
+          {filter ? <ContentClear /> : <ActionSearch />}
         </IconButton>
         <TextField
-          hintText='Search'
+          hintText="Search"
           style={{ flexGrow: 1 }}
           underlineShow={false}
           value={filter}
@@ -74,7 +79,9 @@ class SearchBox extends Component {
           onKeyDown={({ key }) => {
             if (key === 'Enter') onSubmit()
           }}
-          ref={ref => { this.searchField = ref }}
+          ref={ref => {
+            this.searchField = ref
+          }}
         />
       </ToolbarGroup>
     )
@@ -87,29 +94,46 @@ let ToolbarActions = class extends Component {
     regOpen: false
   }
 
-  render () {
+  render() {
     const { email, lockable, locked, onLogout } = this.props
     const { helpOpen, regOpen } = this.state
     return (
       <ToolbarGroup lastChild>
         <RegistrationLock
-          ref={ref => { this.regLock = ref && ref.getWrappedInstance() }}
+          ref={ref => {
+            this.regLock = ref && ref.getWrappedInstance()
+          }}
         >
-          <IconButton><LockClosed /></IconButton>
+          <IconButton>
+            <LockClosed />
+          </IconButton>
         </RegistrationLock>
         {!locked ? (
           <IconMenu
-            iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}
+            iconButtonElement={
+              <IconButton>
+                <MoreVertIcon />
+              </IconButton>
+            }
             anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
             targetOrigin={{ horizontal: 'right', vertical: 'top' }}
           >
             <MenuItem primaryText={email} disabled />
-            {lockable && <MenuItem primaryText='Lock for Registration'
-              onClick={() => this.regLock.lock()}
-            />}
-            <MenuItem primaryText='Registration options' onClick={() => this.setState({ regOpen: true })} />
-            <MenuItem primaryText='Help' onClick={() => this.setState({ helpOpen: true })} />
-            <MenuItem primaryText='Logout' onClick={onLogout} />
+            {lockable && (
+              <MenuItem
+                primaryText="Lock for Registration"
+                onClick={() => this.regLock.lock()}
+              />
+            )}
+            <MenuItem
+              primaryText="Registration options"
+              onClick={() => this.setState({ regOpen: true })}
+            />
+            <MenuItem
+              primaryText="Help"
+              onClick={() => this.setState({ helpOpen: true })}
+            />
+            <MenuItem primaryText="Logout" onClick={onLogout} />
           </IconMenu>
         ) : null}
         <HelpDialog
@@ -125,13 +149,11 @@ let ToolbarActions = class extends Component {
   }
 }
 
-ToolbarActions = connect(
-  ({ registration, user }) => ({
-    email: user.get('email'),
-    locked: registration.get('locked') || false,
-    lockable: !!registration.get('password')
-  })
-)(ToolbarActions)
+ToolbarActions = connect(({ registration, user }) => ({
+  email: user.get('email'),
+  locked: registration.get('locked') || false,
+  lockable: !!registration.get('password')
+}))(ToolbarActions)
 
 class KansaToolbar extends Component {
   static propTypes = {
@@ -140,22 +162,38 @@ class KansaToolbar extends Component {
     onLogout: PropTypes.func.isRequired
   }
 
-  focus () {
+  focus() {
     if (this.searchBox) this.searchBox.focus()
   }
 
-  render () {
-    const { filter, onFilterChange, onLogout, onSceneChange, onSubmitFilter, scene, siteselection } = this.props
+  render() {
+    const {
+      filter,
+      onFilterChange,
+      onLogout,
+      onSceneChange,
+      onSubmitFilter,
+      scene,
+      siteselection
+    } = this.props
     return (
       <Toolbar
-        style={{ position: 'fixed', zIndex: 1, height: 48, width: '100%', backgroundColor: 'rgb(221, 236, 148)' }}
+        style={{
+          position: 'fixed',
+          zIndex: 1,
+          height: 48,
+          width: '100%',
+          backgroundColor: 'rgb(221, 236, 148)'
+        }}
       >
         {siteselection ? (
           <ToolbarGroup firstChild>
-            <LocationCity style={{ color: 'rgba(0, 0, 0, 0.6)', padding: 12 }} />
+            <LocationCity
+              style={{ color: 'rgba(0, 0, 0, 0.6)', padding: 12 }}
+            />
             <ToolbarTitle
               style={{ lineHeight: '48px', paddingRight: 16 }}
-              text='Site selection'
+              text="Site selection"
             />
           </ToolbarGroup>
         ) : (
@@ -171,7 +209,9 @@ class KansaToolbar extends Component {
           filter={filter}
           onChange={onFilterChange}
           onSubmit={onSubmitFilter}
-          ref={ref => { this.searchBox = ref }}
+          ref={ref => {
+            this.searchBox = ref
+          }}
         />
         {siteselection ? null : <ToolbarActions onLogout={onLogout} />}
       </Toolbar>
@@ -182,5 +222,8 @@ class KansaToolbar extends Component {
 export default connect(
   ({ user }) => ({
     siteselection: !!user.get('siteselection')
-  }), null, null, { withRef: true }
+  }),
+  null,
+  null,
+  { withRef: true }
 )(KansaToolbar)

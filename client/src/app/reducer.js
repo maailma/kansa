@@ -7,10 +7,13 @@ const defaultState = Map({
   title: TITLE
 })
 
-export default function (state = defaultState, action) {
+export default function(state = defaultState, action) {
   if (action.error) {
     const message = action.error.message || action.error.status
-    return state.set('message', `${action.type} error` + (message ? `: ${message}` : ''))
+    return state.set(
+      'message',
+      `${action.type} error` + (message ? `: ${message}` : '')
+    )
   }
   switch (action.type) {
     case 'DOCK_SIDEBAR':

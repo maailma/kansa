@@ -24,33 +24,35 @@ class MemberEdit extends React.Component {
     sent: false
   }
 
-  get canSaveChanges () {
+  get canSaveChanges() {
     const { changes, isOpen, sent } = this.state
     return isOpen && !sent && Map.isMap(changes) && changes.size > 0
   }
 
-  get title () {
+  get title() {
     const { member } = this.props
     return member.get('membership', 'NonMember') !== 'NonMember'
       ? `Edit member #${member.get('member_number')}`
-      : member.get('daypass') ? `Edit ${member.get('daypass')} day pass holder`
-      : 'Edit non-member'
+      : member.get('daypass')
+        ? `Edit ${member.get('daypass')} day pass holder`
+        : 'Edit non-member'
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     const { isOpen, sent } = this.state
     if (isOpen && sent && !nextProps.member.equals(this.props.member)) {
       this.handleClose()
     }
   }
 
-  handleClose = () => this.setState({ isOpen: false });
+  handleClose = () => this.setState({ isOpen: false })
 
-  handleOpen = () => this.setState({
-    changes: null,
-    isOpen: true,
-    sent: false
-  });
+  handleOpen = () =>
+    this.setState({
+      changes: null,
+      isOpen: true,
+      sent: false
+    })
 
   saveChanges = () => {
     const { member, memberUpdate } = this.props
@@ -61,56 +63,63 @@ class MemberEdit extends React.Component {
     }
   }
 
-  shouldComponentUpdate (nextProps, nextState) {
+  shouldComponentUpdate(nextProps, nextState) {
     if (nextState.changes !== this.state.changes) return true
     if (nextState.isOpen !== this.state.isOpen) return true
     if (!nextProps.member.equals(this.props.member)) return true
     return false
   }
 
-  render () {
+  render() {
     const { member, children } = this.props
     const { isOpen } = this.state
 
-    return <div>
-      { React.Children.map(children, (child) => React.cloneElement(child, { onClick: this.handleOpen })) }
-      <Dialog
-        actions={[
-          <FlatButton
-            key='cancel'
-            label='Cancel'
-            onClick={this.handleClose}
-            primary
-            tabIndex={3}
-          />,
-          <FlatButton
-            key='ok'
-            disabled={!this.canSaveChanges}
-            label='Save'
-            onClick={this.saveChanges}
-            primary
-            tabIndex={2}
+    return (
+      <div>
+        {React.Children.map(children, child =>
+          React.cloneElement(child, { onClick: this.handleOpen })
+        )}
+        <Dialog
+          actions={[
+            <FlatButton
+              key="cancel"
+              label="Cancel"
+              onClick={this.handleClose}
+              primary
+              tabIndex={3}
+            />,
+            <FlatButton
+              key="ok"
+              disabled={!this.canSaveChanges}
+              label="Save"
+              onClick={this.saveChanges}
+              primary
+              tabIndex={2}
+            />
+          ]}
+          autoScrollBodyContent
+          onRequestClose={this.handleClose}
+          open={isOpen}
+          title={this.title}
+          titleStyle={{ color: orange, textShadow: 'none' }}
+        >
+          <MemberForm
+            lc={member.get('daypass') ? 'daypass' : 'en'}
+            member={member}
+            onChange={(valid, changes) => {
+              if (valid) this.setState({ changes })
+            }}
+            tabIndex={1}
           />
-        ]}
-        autoScrollBodyContent
-        onRequestClose={this.handleClose}
-        open={isOpen}
-        title={this.title}
-        titleStyle={{ color: orange, textShadow: 'none' }}
-      >
-        <MemberForm
-          lc={member.get('daypass') ? 'daypass' : 'en'}
-          member={member}
-          onChange={(valid, changes) => {
-            if (valid) this.setState({ changes })
-          }}
-          tabIndex={1}
-        />
-      </Dialog>
-    </div>
+        </Dialog>
+      </div>
+    )
   }
 }
 
-export default connect(null, {
-  memberUpdate
-})(MemberEdit)
+export default connect(
+  null,
+  {
+    memberUpdate
+  }
+)(MemberEdit)

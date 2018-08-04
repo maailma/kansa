@@ -1,4 +1,4 @@
-export const setPerson = (person) => ({
+export const setPerson = person => ({
   type: 'SET_PERSON',
   person
 })
@@ -9,7 +9,7 @@ export const setScene = ({ title = '', dockSidebar = true }) => ({
   title
 })
 
-export const showMessage = (message) => ({
+export const showMessage = message => ({
   type: 'SHOW_MESSAGE',
   message
 })

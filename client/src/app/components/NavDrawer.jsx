@@ -19,17 +19,19 @@ class NavDrawer extends React.Component {
     people: ImmutablePropTypes.list.isRequired,
     push: PropTypes.func.isRequired,
     width: PropTypes.number
-  };
+  }
 
-  static currentMember (id, people) {
+  static currentMember(id, people) {
     if (!people || people.size === 0) return null
     if (people.size === 1) return people.first()
     if (id) return people.find(p => p.get('id') === id)
-    const nonKids = people.filter(p => ['KidInTow', 'Child'].indexOf(p.get('membership')) === -1)
+    const nonKids = people.filter(
+      p => ['KidInTow', 'Child'].indexOf(p.get('membership')) === -1
+    )
     return nonKids.size === 1 ? nonKids.first() : null
   }
 
-  static otherMembers (currentMember, people) {
+  static otherMembers(currentMember, people) {
     if (!people || people.size === 0) return null
     const id = currentMember && currentMember.get('id')
     if (!id) return people
@@ -37,7 +39,7 @@ class NavDrawer extends React.Component {
     return om.size > 0 ? om : null
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     const { id, people } = this.props
     const currentMember = NavDrawer.currentMember(id, people)
@@ -48,7 +50,7 @@ class NavDrawer extends React.Component {
     }
   }
 
-  componentWillReceiveProps ({ id, people }) {
+  componentWillReceiveProps({ id, people }) {
     const currentMember = NavDrawer.currentMember(id, people)
     const otherMembers = NavDrawer.otherMembers(currentMember, people)
     this.setState({
@@ -57,13 +59,13 @@ class NavDrawer extends React.Component {
     })
   }
 
-  handleNav = (val) => {
+  handleNav = val => {
     const { onRequestChange, push } = this.props
     push(val)
     onRequestChange(false)
   }
 
-  render () {
+  render() {
     const { docked, onRequestChange, open, width } = this.props
     const { currentMember, otherMembers } = this.state
 
@@ -92,7 +94,8 @@ class NavDrawer extends React.Component {
 export default connect(
   ({ user }) => ({
     people: user.get('people') || ImmutableList()
-  }), {
+  }),
+  {
     push
   }
 )(NavDrawer)

@@ -1,8 +1,12 @@
 @import 'https://fonts.googleapis.com/css?family=Open+Sans:300,400,600';
 
-* { box-sizing:border-box; }
+* {
+  box-sizing: border-box;
+}
 
-html { height: 100%; }
+html {
+  height: 100%;
+}
 
 body {
   font-family: 'Open Sans', sans-serif;
@@ -26,28 +30,28 @@ main > * {
 
 /* react-virtualized tables */
 
-[role="grid"] {
-    outline: none;
+[role='grid'] {
+  outline: none;
 }
 
-[role="row"] {
-    cursor: pointer;
-    outline: none;
+[role='row'] {
+  cursor: pointer;
+  outline: none;
 }
 
-[role="row"].disqualified, [role="row"].disqualified svg {
-    color: rgba(0, 0, 0, 0.3) !important;
-    text-decoration: line-through;
+[role='row'].disqualified,
+[role='row'].disqualified svg {
+  color: rgba(0, 0, 0, 0.3) !important;
+  text-decoration: line-through;
 }
 
-[role="row"].selected {
-    background: #008080;
+[role='row'].selected {
+  background: #008080;
 }
-
 
 /* nomination-toolbar */
 .toolbar {
-  background-color: rgba(214,206,147,0.3) !important;
+  background-color: rgba(214, 206, 147, 0.3) !important;
   height: 78px;
   left: 0;
   pointer-events: none;
@@ -67,23 +71,22 @@ main > * {
 
 /* finalist-results */
 .finalist {
-    background: #eea236;
+  background: #eea236;
 }
-
 
 /* canon-nomination-list */
 .canon-entry > * {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .canon-entry > *:first-child {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 .drop-nom {
-    visibility: hidden;
+  visibility: hidden;
 }
 
 .ReactVirtualized__Table__row:hover .drop-nom {
-    visibility: visible;
+  visibility: visible;
 }

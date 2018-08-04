@@ -1,5 +1,5 @@
 // query: Map({ email, member_number, name })
-export const memberLookup = (query) => ({
+export const memberLookup = query => ({
   module: 'kansa',
   type: 'MEMBER_LOOKUP',
   query

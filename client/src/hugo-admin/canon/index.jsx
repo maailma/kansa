@@ -18,20 +18,20 @@ export default class Canon extends React.Component {
     show: null
   }
 
-  get categories () {
+  get categories() {
     const { category } = this.props
     const cg = categoryGroups[category]
     return !cg || cg.length === 0 ? [category] : cg
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     const { category, query } = this.props
     if (nextProps.category !== category || nextProps.query !== query) {
       this.setState({ selected: this.state.selected.clear() })
     }
   }
 
-  onSelect = (item) => {
+  onSelect = item => {
     if (Map.isMap(item)) {
       const s = this.state.selected
       const i = s.indexOf(item)
@@ -39,31 +39,31 @@ export default class Canon extends React.Component {
     }
   }
 
-  render () {
+  render() {
     const { category, query } = this.props
     const { selected, show } = this.state
     if (!category) return null
-    return <div
-      style={{ display: 'flex' }}
-    >
-      <CanonNominationList
-        categories={this.categories}
-        onSelect={this.onSelect}
-        onShowDetails={selected => this.setState({ show: selected })}
-        query={query}
-        selected={selected}
-        style={{ flex: '1 1 auto' }}
-      />
-      {
-        selected.size >= 2 ? <NominationMerger
-          onSuccess={() => this.setState({ selected: selected.clear() })}
+    return (
+      <div style={{ display: 'flex' }}>
+        <CanonNominationList
+          categories={this.categories}
+          onSelect={this.onSelect}
+          onShowDetails={selected => this.setState({ show: selected })}
+          query={query}
           selected={selected}
-        /> : null
-      }
-      <NominationDetails
-        setSelected={show => this.setState({ show })}
-        selected={show}
-      />
-    </div>
+          style={{ flex: '1 1 auto' }}
+        />
+        {selected.size >= 2 ? (
+          <NominationMerger
+            onSuccess={() => this.setState({ selected: selected.clear() })}
+            selected={selected}
+          />
+        ) : null}
+        <NominationDetails
+          setSelected={show => this.setState({ show })}
+          selected={show}
+        />
+      </div>
+    )
   }
 }

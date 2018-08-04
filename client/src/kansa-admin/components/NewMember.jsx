@@ -30,9 +30,11 @@ class NewMember extends Component {
     })
   }
 
-  handleClose = () => { this.setState({ open: false }) }
+  handleClose = () => {
+    this.setState({ open: false })
+  }
 
-  render () {
+  render() {
     const { enabled, onAdd } = this.props
     const { member, open, sent } = this.state
     if (!enabled) return null
@@ -40,7 +42,8 @@ class NewMember extends Component {
     const formProps = {
       getDefaultValue: () => '',
       getValue: path => member.getIn(path, null),
-      onChange: (path, value) => this.setState({ member: member.setIn(path, value) })
+      onChange: (path, value) =>
+        this.setState({ member: member.setIn(path, value) })
     }
     return (
       <div>
@@ -51,14 +54,19 @@ class NewMember extends Component {
           <ContentAdd />
         </FloatingActionButton>
         <Dialog
-          title='Add new member'
+          title="Add new member"
           open={open}
           autoScrollBodyContent
-          bodyClassName='memberDialog'
+          bodyClassName="memberDialog"
           onRequestClose={this.handleClose}
           actions={[
-            <FlatButton key='cancel' label='Cancel' onClick={this.handleClose} />,
-            <FlatButton key='add'
+            <FlatButton
+              key="cancel"
+              label="Cancel"
+              onClick={this.handleClose}
+            />,
+            <FlatButton
+              key="add"
               label={sent ? 'Working...' : 'Add'}
               disabled={disabled}
               onClick={() => {
@@ -84,8 +92,6 @@ class NewMember extends Component {
   }
 }
 
-export default connect(
-  ({ registration, user }) => ({
-    enabled: Boolean(user.get('member_admin') && !registration.get('locked'))
-  })
-)(NewMember)
+export default connect(({ registration, user }) => ({
+  enabled: Boolean(user.get('member_admin') && !registration.get('locked'))
+}))(NewMember)

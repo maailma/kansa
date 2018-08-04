@@ -28,15 +28,22 @@ class Vote extends React.Component {
     votingOpen: PropTypes.bool
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const { getFinalists, setScene } = this.props
     getFinalists()
     setScene({ title: 'Hugo Award Voting', dockSidebar: false })
     this.componentWillReceiveProps(this.props)
   }
 
-  componentWillReceiveProps ({ params, person, replace, setVoter, soleVoterId, voterId }) {
-    const personId = person && person.get('id') || null
+  componentWillReceiveProps({
+    params,
+    person,
+    replace,
+    setVoter,
+    soleVoterId,
+    voterId
+  }) {
+    const personId = (person && person.get('id')) || null
     if (personId !== voterId) setVoter(personId, null)
     if (!person) {
       if (params.id) replace('/hugo/vote')
@@ -44,23 +51,28 @@ class Vote extends React.Component {
     }
   }
 
-  render () {
+  render() {
     const { person, setVoter, signature, votingOpen } = this.props
     return (
       <div>
         <Row>
           <Col
             xs={12}
-            sm={10} smOffset={1}
-            md={8} mdOffset={2}
-            lg={6} lgOffset={3}
+            sm={10}
+            smOffset={1}
+            md={8}
+            mdOffset={2}
+            lg={6}
+            lgOffset={3}
             style={{ paddingTop: 20 }}
           >
             {votingOpen ? (
               <VoteIntro
                 person={person}
                 signature={signature}
-                setSignature={signature => setVoter(person.get('id'), signature)}
+                setSignature={signature =>
+                  setVoter(person.get('id'), signature)
+                }
               />
             ) : (
               <PostDeadlineContents />
@@ -71,15 +83,17 @@ class Vote extends React.Component {
           <Row>
             <Col
               xs={12}
-              md={10} mdOffset={1}
-              lg={8} lgOffset={2}
+              md={10}
+              mdOffset={1}
+              lg={8}
+              lgOffset={2}
               style={{ marginBottom: -30 }}
             >
               {Object.keys(categoryInfo).map(category => (
                 <VoteCategory category={category} key={category} />
               ))}
               <div
-                className='bg-text'
+                className="bg-text"
                 style={{
                   fontSize: 14,
                   marginTop: -14,
@@ -93,11 +107,9 @@ class Vote extends React.Component {
                   seconds. You will receive a confirmation email of your votes
                   thirty minutes after your last change.
                 </p>
+                <p>Thank you for voting in the 2017 Hugo Awards!</p>
                 <p>
-                  Thank you for voting in the 2017 Hugo Awards!
-                </p>
-                <p>
-                  <Link to='/'>&laquo; Return to the main member page</Link>
+                  <Link to="/">&laquo; Return to the main member page</Link>
                 </p>
               </div>
             </Col>
@@ -110,17 +122,18 @@ class Vote extends React.Component {
 
 export default connect(
   ({ hugoVotes, user }, { params }) => {
-    const id = params && Number(params.id) || null
+    const id = (params && Number(params.id)) || null
     const people = user.get('people')
     const pv = id ? null : people && people.filter(p => p.get('hugo_voter'))
     return {
-      person: id && people && people.find(p => p.get('id') === id) || null,
+      person: (id && people && people.find(p => p.get('id') === id)) || null,
       signature: hugoVotes.get('signature'),
-      soleVoterId: pv && pv.size === 1 && pv.first().get('id') || null,
+      soleVoterId: (pv && pv.size === 1 && pv.first().get('id')) || null,
       voterId: hugoVotes.get('id'),
-      votingOpen: false  // TODO: parameterise properly
+      votingOpen: false // TODO: parameterise properly
     }
-  }, {
+  },
+  {
     getFinalists,
     replace,
     setScene,

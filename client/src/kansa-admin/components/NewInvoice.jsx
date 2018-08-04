@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 
 import InvoiceForm from './InvoiceForm'
 
-const preferredName = (person) => {
+const preferredName = person => {
   if (!Map.isMap(person)) return '<>'
   const pna = [person.get('public_first_name'), person.get('public_last_name')]
   return pna.filter(s => s).join(' ') || person.get('legal_name')
@@ -31,13 +31,19 @@ class NewInvoice extends React.Component {
     sent: false
   }
 
-  get disableSubmit () {
+  get disableSubmit() {
     const { paymentData } = this.props
     const { amount, category, data, type } = this.state.invoice
-    return !category || !type || !amount || !data || !paymentData ||
+    return (
+      !category ||
+      !type ||
+      !amount ||
+      !data ||
+      !paymentData ||
       paymentData
         .getIn([category, 'shape'], List())
         .some(shape => shape.get('required') && !data[shape.get('key')])
+    )
   }
 
   handleOpen = () => {
@@ -53,23 +59,32 @@ class NewInvoice extends React.Component {
     })
   }
 
-  handleClose = () => { this.setState({ open: false }) }
+  handleClose = () => {
+    this.setState({ open: false })
+  }
 
-  render () {
+  render() {
     const { children, onSubmit, paymentData } = this.props
     const { invoice, open, sent } = this.state
     return (
       <div>
-        { React.cloneElement(React.Children.only(children), { onClick: this.handleOpen }) }
+        {React.cloneElement(React.Children.only(children), {
+          onClick: this.handleOpen
+        })}
         <Dialog
-          title='Add new invoice'
+          title="Add new invoice"
           open={open}
           autoScrollBodyContent
-          bodyClassName='invoiceDialog'
+          bodyClassName="invoiceDialog"
           onRequestClose={this.handleClose}
           actions={[
-            <FlatButton key='cancel' label='Cancel' onClick={this.handleClose} />,
-            <FlatButton key='add'
+            <FlatButton
+              key="cancel"
+              label="Cancel"
+              onClick={this.handleClose}
+            />,
+            <FlatButton
+              key="add"
               label={sent ? 'Working...' : 'Add'}
               disabled={this.disableSubmit}
               onClick={() => {
@@ -86,7 +101,11 @@ class NewInvoice extends React.Component {
         >
           <InvoiceForm
             invoice={invoice}
-            onChange={update => this.setState({ invoice: Object.assign({}, this.state.invoice, update) })}
+            onChange={update =>
+              this.setState({
+                invoice: Object.assign({}, this.state.invoice, update)
+              })
+            }
             paymentData={paymentData}
           />
         </Dialog>
@@ -95,8 +114,6 @@ class NewInvoice extends React.Component {
   }
 }
 
-export default connect(
-  ({ paymentData }) => ({
-    paymentData
-  })
-)(NewInvoice)
+export default connect(({ paymentData }) => ({
+  paymentData
+}))(NewInvoice)

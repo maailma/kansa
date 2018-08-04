@@ -7,7 +7,7 @@ const defaultState = Map({
   list: null
 })
 
-export default function (state = defaultState, action) {
+export default function(state = defaultState, action) {
   if (action.error || action.module !== 'kansa') return state
   switch (action.type) {
     case 'GET_DAYPASS_PRICES':
@@ -17,13 +17,20 @@ export default function (state = defaultState, action) {
       const { data } = action
       Object.keys(data).forEach(category => {
         const cd = data[category]
-        cd.types = OrderedMap(cd.types ? cd.types.map(td => [td.key, fromJS(td)]) : [])
+        cd.types = OrderedMap(
+          cd.types ? cd.types.map(td => [td.key, fromJS(td)]) : []
+        )
       })
       return state.set('data', fromJS(data))
 
     case 'GET_PURCHASE_LIST':
       const { list } = action
-      return state.set('list', fromJS(list).sortBy(p => p.get('updated') || p.get('created')).reverse())
+      return state.set(
+        'list',
+        fromJS(list)
+          .sortBy(p => p.get('updated') || p.get('created'))
+          .reverse()
+      )
 
     case 'GET_STRIPE_KEYS':
       const { keys } = action

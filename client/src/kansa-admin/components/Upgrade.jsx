@@ -7,7 +7,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes'
 import { UpgradeFields, CommentField } from './form'
 import { paperPubsIsValid } from './Member'
 
-function getIn (obj, path, unset) {
+function getIn(obj, path, unset) {
   const val = obj[path[0]]
   if (typeof val === 'undefined') return unset
   return path.length <= 1 ? val : val.getIn(path.slice(1), unset)
@@ -42,7 +42,9 @@ export default class Upgrade extends React.Component {
     })
   }
 
-  handleClose = () => { this.setState({ open: false }) }
+  handleClose = () => {
+    this.setState({ open: false })
+  }
 
   setStateIn = (path, value) => {
     const key = path[0]
@@ -50,53 +52,63 @@ export default class Upgrade extends React.Component {
     return this.setState({ [key]: value })
   }
 
-  render () {
+  render() {
     const { children, membership: prevMembership, name, upgrade } = this.props
     const { comment, membership, paper_pubs, sent, open } = this.state
     const button = React.Children.only(children)
     const msChanged = membership !== prevMembership
-    const disabled = sent || !comment || (!msChanged && !paper_pubs) ||
-        !paperPubsIsValid(paper_pubs)
+    const disabled =
+      sent ||
+      !comment ||
+      (!msChanged && !paper_pubs) ||
+      !paperPubsIsValid(paper_pubs)
     const formProps = {
       getDefaultValue: path => getIn(this.props, path, null),
       getValue: path => getIn(this.state, path, ''),
       onChange: this.setStateIn
     }
-    return <div>
-      { React.cloneElement(button, { onClick: this.handleOpen }) }
-      <Dialog
-        bodyStyle={{ paddingLeft: 0 }}
-        title={'Upgrade ' + name}
-        open={open}
-        autoScrollBodyContent
-        onRequestClose={this.handleClose}
-        actions={[
-          <FlatButton key='cancel' label='Cancel' onClick={this.handleClose} />,
-          <FlatButton key='ok'
-            label={sent ? 'Working...' : 'Apply'}
-            disabled={disabled}
-            onClick={() => {
-              this.setState({ sent: true })
-              const res = { comment }
-              if (msChanged) res.membership = membership
-              if (paper_pubs) res.paper_pubs = paper_pubs.toJS()
-              upgrade(res)
-                .then(res => {
-                  console.log('Member upgraded', res)
-                  this.handleClose()
-                })
-                .catch(err => {
-                  console.error('Member upgrade failed!', err)
-                  window.alert('Member upgrade failed! ' + err.message)
-                })
-            }}
-          />
-        ]}
-      >
-        <UpgradeFields {...formProps} />
-        <br />
-        <CommentField {...formProps} />
-      </Dialog>
-    </div>
+    return (
+      <div>
+        {React.cloneElement(button, { onClick: this.handleOpen })}
+        <Dialog
+          bodyStyle={{ paddingLeft: 0 }}
+          title={'Upgrade ' + name}
+          open={open}
+          autoScrollBodyContent
+          onRequestClose={this.handleClose}
+          actions={[
+            <FlatButton
+              key="cancel"
+              label="Cancel"
+              onClick={this.handleClose}
+            />,
+            <FlatButton
+              key="ok"
+              label={sent ? 'Working...' : 'Apply'}
+              disabled={disabled}
+              onClick={() => {
+                this.setState({ sent: true })
+                const res = { comment }
+                if (msChanged) res.membership = membership
+                if (paper_pubs) res.paper_pubs = paper_pubs.toJS()
+                upgrade(res)
+                  .then(res => {
+                    console.log('Member upgraded', res)
+                    this.handleClose()
+                  })
+                  .catch(err => {
+                    console.error('Member upgrade failed!', err)
+                    window.alert('Member upgrade failed! ' + err.message)
+                  })
+              }}
+            />
+          ]}
+        >
+          <UpgradeFields {...formProps} />
+          <br />
+          <CommentField {...formProps} />
+        </Dialog>
+      </div>
+    )
   }
 }

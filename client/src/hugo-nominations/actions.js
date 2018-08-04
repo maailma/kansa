@@ -1,4 +1,4 @@
-export const setNominator = (person) => ({
+export const setNominator = person => ({
   module: 'hugo-nominations',
   type: 'SET_NOMINATOR',
   person
@@ -27,7 +27,7 @@ export const submitNominations = (category, signature) => ({
   signature
 })
 
-export const resetNominations = (category) => ({
+export const resetNominations = category => ({
   module: 'hugo-nominations',
   type: 'RESET_NOMINATIONS',
   category
@@ -40,7 +40,7 @@ export const submitNominationError = (category, error) => ({
   error
 })
 
-export const clearNominationError = (category) => ({
+export const clearNominationError = category => ({
   module: 'hugo-nominations',
   type: 'CLEAR_NOMINATIONS_ERROR',
   category

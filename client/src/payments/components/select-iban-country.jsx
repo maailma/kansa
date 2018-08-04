@@ -103,4 +103,4 @@ const items = Object.keys(ibanCountries).map(label => {
   return <MenuItem key={value} value={value} primaryText={label} />
 })
 
-export default (props) => <SelectField {...props}>{items}</SelectField>
+export default props => <SelectField {...props}>{items}</SelectField>
