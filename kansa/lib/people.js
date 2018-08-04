@@ -228,8 +228,11 @@ function updatePerson(req, res, next) {
   if (fields.indexOf('paper_pubs') >= 0) try {
     data.paper_pubs = Person.cleanPaperPubs(data.paper_pubs);
     if (config.paid_paper_pubs && !isMemberAdmin) {
-      if (data.paper_pubs) ppCond = 'AND paper_pubs IS NOT NULL';
-      else fields.splice(fields.indexOf('paper_pubs'), 1);
+      if (!data.paper_pubs) {
+        const message = 'Removing paid paper publications is not allowed'
+        return res.status(400).json({ status: 'error', message })
+      }
+      ppCond = 'AND paper_pubs IS NOT NULL';
     }
   } catch (e) {
     return res.status(400).json({ status: 'error', message: 'paper_pubs: ' + e.message });
