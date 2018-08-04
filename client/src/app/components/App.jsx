@@ -96,7 +96,7 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = Object.assign(
-      { config: null, menuOpen: false },
+      { config: {}, menuOpen: false },
       getMenuState(props.allowMenuDocked)
     )
   }

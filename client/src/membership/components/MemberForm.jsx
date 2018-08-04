@@ -10,7 +10,7 @@ import * as PaymentPropTypes from '../../payments/proptypes'
 import { isAttendingMember } from '../constants'
 import messages from '../messages'
 import { TextInput } from './form-components'
-import { AddPaperPubs, paperPubsIsValid, EditPaperPubs } from './paper-pubs'
+import PaperPubs, { paperPubsIsValid } from './paper-pubs'
 import PreviewBadge from './preview-badge'
 
 export const hintStyle = {
@@ -79,10 +79,6 @@ export default class MemberForm extends Component {
   getDefaultValue = path =>
     (this.props.member && this.props.member.getIn(path)) || ''
   getValue = path => this.state.member.getIn(path) || ''
-
-  get hasPaperPubs() {
-    return !!this.state.member.get('paper_pubs')
-  }
 
   get isValid() {
     return MemberForm.isValid(this.state.member)
@@ -223,11 +219,7 @@ export default class MemberForm extends Component {
             {this.msg('location_hint')}
           </Col>
         </Row>
-        {newMember ? (
-          <AddPaperPubs data={data} {...inputProps} />
-        ) : this.hasPaperPubs ? (
-          <EditPaperPubs {...inputProps} />
-        ) : null}
+        <PaperPubs data={data} newMember={newMember} {...inputProps} />
       </form>
     )
   }

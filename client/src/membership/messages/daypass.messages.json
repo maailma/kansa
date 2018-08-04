@@ -15,10 +15,9 @@
     "name": "Paper pubs name",
     "address": "Paper pubs address",
     "country": "Paper pubs country",
-    "label": "Add paper publications (€{amount})",
-    "new_hint": "By default, we'll be in touch with you electronically to let you know how our preparations are progressing. If you'd prefer to receive our progress reports and other publications by post, select this option (note the additional fee).",
-    "new_hint2": "We'll need to know where to send your mail. Please enter your address details here as you'd wish them to be printed onto a postal label.",
-    "edit_hint": "For paper publications, we'll need to know where to send your mail. Please enter your address details here as you'd wish them to be printed onto a postal label."
+    "label": "Send paper publications{paid_paper_pubs, select, true{ (€{amount})} other{}}",
+    "hint_checkbox": "By default, we'll be in touch with you electronically to let you know how our preparations are progressing. If you'd prefer to receive our progress reports and other publications by post, select this option{paid_paper_pubs, select, true{ (note the additional fee)} other{}}.",
+    "hint_fields": "For paper publications, we'll need to know where to send your mail. Please enter your address details as you'd wish them to be printed onto a postal label."
   },
   "membership_type": "Membership type",
   "required": "Required",

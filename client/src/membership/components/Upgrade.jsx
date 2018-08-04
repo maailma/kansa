@@ -15,7 +15,7 @@ import * as PaymentPropTypes from '../../payments/proptypes'
 import * as MemberPropTypes from '../proptypes'
 import MemberLookupSelector from './MemberLookupSelector'
 import MemberTypeList from './MemberTypeList'
-import { AddPaperPubs, paperPubsIsValid } from './paper-pubs'
+import PaperPubs, { paperPubsIsValid } from './paper-pubs'
 
 const UPGRADE_TARGET_TYPES = ['Adult', 'Youth', 'FirstWorldcon', 'Child']
 
@@ -225,7 +225,7 @@ class Upgrade extends Component {
                 </Col>
               </Row>
               {canAddPaperPubs ? (
-                <AddPaperPubs
+                <PaperPubs
                   data={data}
                   getValue={([pp, key]) =>
                     key ? paperPubs.get(key) : paperPubs

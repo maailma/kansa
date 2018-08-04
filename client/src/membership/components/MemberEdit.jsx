@@ -6,6 +6,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 
+import { ConfigConsumer, ConfigProvider } from '../../lib/config-context'
 import { orange } from '../../theme'
 import { memberUpdate } from '../actions'
 import MemberForm from './MemberForm'
@@ -74,45 +75,53 @@ class MemberEdit extends React.Component {
     const { member, children } = this.props
     const { isOpen } = this.state
 
+    // FIXME: The material-ui 0.20 <Dialog> does not allow context to pass
+    // through like it should; hence this Consumer/Dialog/Provider hack.
     return (
-      <div>
-        {React.Children.map(children, child =>
-          React.cloneElement(child, { onClick: this.handleOpen })
+      <ConfigConsumer>
+        {config => (
+          <div>
+            {React.Children.map(children, child =>
+              React.cloneElement(child, { onClick: this.handleOpen })
+            )}
+            <Dialog
+              actions={[
+                <FlatButton
+                  key="cancel"
+                  label="Cancel"
+                  onClick={this.handleClose}
+                  primary
+                  tabIndex={3}
+                />,
+                <FlatButton
+                  key="ok"
+                  disabled={!this.canSaveChanges}
+                  label="Save"
+                  onClick={this.saveChanges}
+                  primary
+                  tabIndex={2}
+                />
+              ]}
+              autoScrollBodyContent
+              onRequestClose={this.handleClose}
+              open={isOpen}
+              title={this.title}
+              titleStyle={{ color: orange, textShadow: 'none' }}
+            >
+              <ConfigProvider value={config}>
+                <MemberForm
+                  lc={member.get('daypass') ? 'daypass' : 'en'}
+                  member={member}
+                  onChange={(valid, changes) => {
+                    if (valid) this.setState({ changes })
+                  }}
+                  tabIndex={1}
+                />
+              </ConfigProvider>
+            </Dialog>
+          </div>
         )}
-        <Dialog
-          actions={[
-            <FlatButton
-              key="cancel"
-              label="Cancel"
-              onClick={this.handleClose}
-              primary
-              tabIndex={3}
-            />,
-            <FlatButton
-              key="ok"
-              disabled={!this.canSaveChanges}
-              label="Save"
-              onClick={this.saveChanges}
-              primary
-              tabIndex={2}
-            />
-          ]}
-          autoScrollBodyContent
-          onRequestClose={this.handleClose}
-          open={isOpen}
-          title={this.title}
-          titleStyle={{ color: orange, textShadow: 'none' }}
-        >
-          <MemberForm
-            lc={member.get('daypass') ? 'daypass' : 'en'}
-            member={member}
-            onChange={(valid, changes) => {
-              if (valid) this.setState({ changes })
-            }}
-            tabIndex={1}
-          />
-        </Dialog>
-      </div>
+      </ConfigConsumer>
     )
   }
 }

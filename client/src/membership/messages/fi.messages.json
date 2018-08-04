@@ -15,10 +15,9 @@
     "name": "Nimi",
     "address": "Osoite",
     "country": "Maa",
-    "label": "Haluan julkaisut painettuna postitse (€{amount})",
-    "new_hint": "Olemme sinuun yhteydessä pääsääntöisesti sähköisesti antaaksemme tietoa valmistelujemme edistymisestä. Mikäli haluat lisäksi Progress Reportit ja muut julkaisut painettuina versioina ja postitettuna, valitse tämä kohta. Huomaathan, että tämä vaihtoehto sisältää lisämaksun.",
-    "new_hint2": "Ole hyvä ja anna osoitetietosi kuten haluat ne tulostettavan osoitetarraan.",
-    "edit_hint": ""
+    "label": "Haluan julkaisut painettuna postitse{paid_paper_pubs, select, true{ ({amount}€)} other{}}",
+    "hint_checkbox": "Olemme sinuun yhteydessä pääsääntöisesti sähköisesti antaaksemme tietoa valmistelujemme edistymisestä. Mikäli haluat lisäksi Progress Reportit ja muut julkaisut painettuina versioina ja postitettuna, valitse tämä kohta.{paid_paper_pubs, select, true{ Huomaathan, että tämä vaihtoehto sisältää lisämaksun.} other{}}",
+    "hint_fields": "Ole hyvä ja syötä osoitetietosi kuten haluat ne tulostettavan osoitetarraan."
   },
   "membership_type": "Jäsenyyden tyyppi",
   "Supporter": "Worldcon-tukijäsenyys",

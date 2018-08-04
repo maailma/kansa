@@ -1,4 +1,5 @@
 import { Map } from 'immutable'
+import PropTypes from 'prop-types'
 import React from 'react'
 import Checkbox from 'material-ui/Checkbox'
 import Divider from 'material-ui/Divider'
@@ -7,6 +8,8 @@ import TextField from 'material-ui/TextField'
 import ContentMail from 'material-ui/svg-icons/content/mail'
 import { Col, Row } from 'react-flexbox-grid'
 
+import { ConfigConsumer } from '../../lib/config-context'
+import * as PaymentPropTypes from '../../payments/proptypes'
 import { emptyPaperPubsMap } from '../constants'
 import messages from '../messages'
 import { hintStyle } from './MemberForm'
@@ -86,58 +89,93 @@ const PaperPubsFields = ({
   )
 }
 
-export const AddPaperPubs = ({
-  data,
-  getDefaultValue,
-  getValue,
-  lc = 'en',
-  onChange,
-  ...inputProps
-}) => {
+const PaperPubsCheckbox = ({ data, ppMsg, paid_paper_pubs, ...props }) => {
   const amount =
     (data && data.getIn(['paper_pubs', 'types', 'paper_pubs', 'amount'])) || 0
-  const ppMsg = messages[lc].paper_pubs
-  const label = ppMsg.label({ amount: amount / 100 })
-  const hasPaperPubs = !!getValue(['paper_pubs'])
+  const label = ppMsg.label({
+    amount: amount / 100,
+    paid_paper_pubs
+  })
   return (
-    <Row style={{ paddingTop: 16 }}>
-      <Col xs={12} sm={6}>
-        <Checkbox
-          checkedIcon={<ContentMail />}
-          disabled={!amount}
-          label={label}
-          checked={hasPaperPubs}
-          onCheck={(ev, checked) =>
-            onChange(['paper_pubs'], checked ? emptyPaperPubsMap : null)
-          }
-          style={{ marginBottom: 4 }}
-          {...inputProps}
-        />
-        <div style={hintStyle}>{ppMsg.new_hint()}</div>
-        {hasPaperPubs ? <div style={hintStyle}>{ppMsg.new_hint2()}</div> : null}
-      </Col>
-      {hasPaperPubs ? (
-        <Col xs={12} sm={6}>
-          <PaperPubsFields
-            autoFocus
-            getValue={getValue}
-            onChange={onChange}
-            ppMsg={ppMsg}
-            {...inputProps}
-          />
-        </Col>
-      ) : null}
-    </Row>
+    <Checkbox
+      checkedIcon={<ContentMail />}
+      disabled={paid_paper_pubs && !amount}
+      label={label}
+      style={{ marginBottom: 4 }}
+      {...props}
+    />
   )
 }
 
-export const EditPaperPubs = ({ lc = 'en', ...inputProps }) => (
-  <Row style={{ paddingTop: 16 }}>
-    <Col xs={12} sm={6}>
-      <PaperPubsFields ppMsg={messages[lc].paper_pubs} {...inputProps} />
-    </Col>
-    <Col xs={12} sm={6} style={hintStyle}>
-      {messages[lc].paper_pubs.edit_hint()}
-    </Col>
-  </Row>
+const PaperPubs = ({
+  data,
+  getDefaultValue,
+  getValue,
+  lc,
+  newMember,
+  onChange,
+  tabIndex
+}) => (
+  <ConfigConsumer>
+    {({ paid_paper_pubs }) => {
+      const hasPaperPubs = !!getValue(['paper_pubs'])
+      const prevPaperPubs =
+        !newMember && getDefaultValue && getDefaultValue(['paper_pubs'])
+      if (!newMember && paid_paper_pubs && !prevPaperPubs) return null
+      const ppMsg = (messages[lc] || messages.en).paper_pubs
+      return (
+        <Row style={{ paddingTop: 16 }}>
+          {newMember || !paid_paper_pubs ? (
+            <Col xs={12} sm={6}>
+              <PaperPubsCheckbox
+                checked={hasPaperPubs}
+                data={data}
+                onCheck={(ev, checked) =>
+                  onChange(
+                    ['paper_pubs'],
+                    checked ? prevPaperPubs || emptyPaperPubsMap : null
+                  )
+                }
+                ppMsg={ppMsg}
+                paid_paper_pubs={paid_paper_pubs}
+                tabIndex={tabIndex}
+              />
+              <div style={hintStyle}>{ppMsg.hint_checkbox({ paid: true })}</div>
+              {hasPaperPubs ? (
+                <div style={hintStyle}>{ppMsg.hint_fields()}</div>
+              ) : null}
+            </Col>
+          ) : (
+            <Col xs={12} sm={6} style={hintStyle}>
+              {ppMsg.hint_fields()}
+            </Col>
+          )}
+          {hasPaperPubs ? (
+            <Col xs={12} sm={6}>
+              <PaperPubsFields
+                autoFocus={!prevPaperPubs && hasPaperPubs}
+                getDefaultValue={getDefaultValue}
+                getValue={getValue}
+                onChange={onChange}
+                ppMsg={ppMsg}
+                tabIndex={tabIndex}
+              />
+            </Col>
+          ) : null}
+        </Row>
+      )
+    }}
+  </ConfigConsumer>
 )
+
+PaperPubs.propTypes = {
+  data: PaymentPropTypes.data,
+  getDefaultValue: PropTypes.func,
+  getValue: PropTypes.func.isRequired,
+  lc: PropTypes.string,
+  newMember: PropTypes.bool,
+  onChange: PropTypes.func.isRequired,
+  tabIndex: PropTypes.number
+}
+
+export default PaperPubs
