@@ -9,7 +9,7 @@ import { paperPubsIsValid } from './Member'
 
 function getIn(obj, path, unset) {
   const val = obj[path[0]]
-  if (typeof val === 'undefined') return unset
+  if (val == null) return unset
   return path.length <= 1 ? val : val.getIn(path.slice(1), unset)
 }
 
