@@ -7,7 +7,7 @@ import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 
 import { ConfigConsumer, ConfigProvider } from '../../lib/config-context'
-import { orange } from '../../theme'
+import { accent1Color } from '../../theme/colors'
 import { memberUpdate } from '../actions'
 import MemberForm from './MemberForm'
 
@@ -106,7 +106,7 @@ class MemberEdit extends React.Component {
               onRequestClose={this.handleClose}
               open={isOpen}
               title={this.title}
-              titleStyle={{ color: orange, textShadow: 'none' }}
+              titleStyle={{ color: accent1Color, textShadow: 'none' }}
             >
               <ConfigProvider value={config}>
                 <MemberForm

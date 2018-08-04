@@ -11,7 +11,7 @@ import Menu from 'material-ui/svg-icons/navigation/menu'
 import api from '../../lib/api'
 import { ConfigProvider } from '../../lib/config-context'
 import Worldcon75 from '../../lib/worldcon75'
-import { darkBlue } from '../../theme'
+import { primary2Color } from '../../theme/colors'
 import { hideMessage } from '../actions/app'
 import { logout } from '../actions/auth'
 import NavDrawer from './NavDrawer'
@@ -79,7 +79,7 @@ const AppBar = ({
             </span>
           }
           labelStyle={{
-            color: darkBlue,
+            color: primary2Color,
             textTransform: 'none',
             verticalAlign: 'initial'
           }}

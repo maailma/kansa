@@ -2,7 +2,7 @@ import FlatButton from 'material-ui/FlatButton'
 import React from 'react'
 import { connect } from 'react-redux'
 
-import { midGray } from '../../theme'
+import { disabledColor } from '../../theme/colors'
 import { getHugoPacketSeriesExtra } from '../actions'
 import { categoryPacket } from '../proptypes'
 
@@ -18,7 +18,7 @@ const Packet = ({ category, formats, getHugoPacketSeriesExtra }) => {
     >
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <div
-          style={{ color: midGray, fontSize: 14, marginRight: 8, marginTop: 8 }}
+          style={{ color: disabledColor, fontSize: 14, marginRight: 8, marginTop: 8 }}
         >
           Download packet
         </div>

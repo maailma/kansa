@@ -5,7 +5,7 @@ import React, { Component } from 'react'
 import { Col, Row } from 'react-flexbox-grid'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 
-import { midGray } from '../../theme'
+import { disabledColor } from '../../theme/colors'
 import * as PaymentPropTypes from '../../payments/proptypes'
 import { isAttendingMember } from '../constants'
 import messages from '../messages'
@@ -14,7 +14,7 @@ import PaperPubs, { paperPubsIsValid } from './paper-pubs'
 import PreviewBadge from './preview-badge'
 
 export const hintStyle = {
-  color: midGray,
+  color: disabledColor,
   fontSize: 13,
   marginBottom: 24
 }

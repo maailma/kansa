@@ -11,6 +11,12 @@ import 'react-virtualized/styles.css'
 import './styles/app.css'
 
 import api from '../lib/api'
+import {
+  accent1Color,
+  primary1Color,
+  primary2Color,
+  disabledColor
+} from '../theme/colors'
 import App from './components/App'
 import { loadRegistrationState } from './components/RegistrationOptions'
 import reducers from './reducers'
@@ -35,30 +41,20 @@ api
   .then(data => store.dispatch({ type: 'SET PAYMENT DATA', data }))
   .catch(e => console.error(e))
 
-const orange = '#fc7c39'
-const lightBlue = '#3da9d4'
-const darkBlue = '#005383'
-const midGray = '#808080'
-
 const theme = getMuiTheme({
   fontFamily: '"Open Sans", sans-serif',
   card: {
-    titleColor: orange,
-    subtitleColor: midGray
+    titleColor: accent1Color,
+    subtitleColor: disabledColor
   },
-  palette: {
-    primary1Color: lightBlue,
-    primary2Color: darkBlue,
-    accent1Color: orange,
-    disabledColor: midGray
-  },
+  palette: { primary1Color, primary2Color, accent1Color, disabledColor },
   tabs: {
     backgroundColor: 'transparent',
     selectedTextColor: 'rgba(0,0,0,0.6)',
     textColor: 'rgba(0,0,0,0.4)'
   },
   textField: {
-    errorColor: orange
+    errorColor: accent1Color
   }
 })
 

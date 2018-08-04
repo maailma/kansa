@@ -6,7 +6,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes'
 import { Card, CardHeader, CardText } from 'material-ui/Card'
 import Divider from 'material-ui/Divider'
 
-import { orange, lightBlue } from '../../theme'
+import { accent1Color, primary1Color } from '../../theme/colors'
 import * as PaymentPropTypes from '../proptypes'
 import PaymentActions from './payment-actions'
 
@@ -18,7 +18,7 @@ const PaymentCardHeader = ({ amount, status, subtitle, title, updated }) => {
     amountColor = 'rgba(0, 0, 0, 0.870588)'
     statusColor = 'rgb(128,128,128)'
     subtitleColor = 'rgb(128,128,128)'
-    titleColor = orange
+    titleColor = accent1Color
   } else {
     amountColor = 'rgba(255,255,255,0.5)'
     statusColor = 'white'
@@ -69,7 +69,7 @@ const PaymentCard = ({ label, purchase, shape, userIds }) => {
     updated
   } = purchase.toJS()
   const backgroundColor =
-    status === 'succeeded' ? 'white' : status === 'failed' ? orange : lightBlue
+    status === 'succeeded' ? 'white' : status === 'failed' ? accent1Color : primary1Color
   return (
     <Card style={{ backgroundColor, marginBottom: 18 }}>
       <PaymentCardHeader
@@ -87,7 +87,7 @@ const PaymentCard = ({ label, purchase, shape, userIds }) => {
                 <td>Error:</td>
                 <td
                   style={{
-                    color: status === 'succeeded' ? orange : 'white',
+                    color: status === 'succeeded' ? accent1Color : 'white',
                     fontWeight: 'bold'
                   }}
                 >

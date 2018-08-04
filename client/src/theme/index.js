@@ -1,27 +1,23 @@
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 
-import './theme.css'
 import '../img/bg-aurora.jpg'
 import '../img/ursa.png'
-
-export const orange = '#fc7c39'
-export const lightBlue = '#3da9d4'
-export const darkBlue = '#005383'
-export const midGray = '#808080'
+import './theme.css'
+import {
+  accent1Color,
+  primary1Color,
+  primary2Color,
+  disabledColor
+} from './colors'
 
 export const theme = getMuiTheme({
   fontFamily: '"Open Sans", sans-serif',
   card: {
-    titleColor: orange,
-    subtitleColor: midGray
+    titleColor: accent1Color,
+    subtitleColor: disabledColor
   },
-  palette: {
-    primary1Color: lightBlue,
-    primary2Color: darkBlue,
-    accent1Color: orange,
-    disabledColor: midGray
-  },
+  palette: { primary1Color, primary2Color, accent1Color, disabledColor },
   textField: {
-    errorColor: orange
+    errorColor: accent1Color
   }
 })

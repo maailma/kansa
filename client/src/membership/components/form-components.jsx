@@ -5,7 +5,7 @@ import SelectField from 'material-ui/SelectField'
 import TextField from 'material-ui/TextField'
 
 import getMemberPrice from '../../lib/get-member-price'
-import { midGray, orange } from '../../theme'
+import { disabledColor, accent1Color } from '../../theme/colors'
 import { membershipTypes } from '../constants'
 import messages from '../messages'
 
@@ -37,16 +37,16 @@ export const TextInput = ({
   const ulStyle = {}
   if (required && !value) {
     ulStyle.borderBottomWidth = 2
-    ulStyle.borderColor = midGray
+    ulStyle.borderColor = disabledColor
   } else if (getDefaultValue && value !== getDefaultValue(path)) {
-    ulStyle.borderColor = orange
+    ulStyle.borderColor = accent1Color
   }
   return (
     <TextField
       floatingLabelText={label}
       floatingLabelFixed
       floatingLabelStyle={{
-        color: value ? midGray : 'rgba(0, 0, 0, 0.870588)'
+        color: value ? disabledColor : 'rgba(0, 0, 0, 0.870588)'
       }}
       fullWidth
       style={style}
