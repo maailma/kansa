@@ -5,7 +5,8 @@ import TextField from 'material-ui/TextField'
 import PropTypes from 'prop-types'
 import React from 'react'
 
-import { emptyPaperPubsMap, membershipTypes } from './Member'
+import { emptyPaperPubsMap } from '../../membership/constants'
+import { membershipTypes } from './Member'
 
 const styles = {
   common: { marginLeft: '24px' },

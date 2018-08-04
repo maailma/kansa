@@ -19,9 +19,20 @@ export const hintStyle = {
   marginBottom: 24
 }
 
+const PreviewBadgeButton = ({ member, style }) => (
+  <PreviewBadge
+    memberId={member.get('id')}
+    name={member.get('badge_name') || member.get('preferred_name')}
+    subtitle={member.get('badge_subtitle') || member.get('country')}
+  >
+    <FlatButton label="Preview" primary style={style} />
+  </PreviewBadge>
+)
+
 export default class MemberForm extends Component {
   static propTypes = {
     data: PaymentPropTypes.data,
+    isAdmin: PropTypes.bool,
     lc: PropTypes.string,
     member: ImmutablePropTypes.mapContains({
       paper_pubs: ImmutablePropTypes.map
@@ -102,7 +113,7 @@ export default class MemberForm extends Component {
   }
 
   render() {
-    const { data, lc, newDaypass, newMember, tabIndex } = this.props
+    const { data, isAdmin, lc, newDaypass, newMember, tabIndex } = this.props
     const { member } = this.state
     const inputProps = {
       getDefaultValue: this.getDefaultValue,
@@ -123,10 +134,12 @@ export default class MemberForm extends Component {
               path="legal_name"
               required
             />
-            <div style={hintStyle}>{this.msg('legal_name_hint')}</div>
+            {!isAdmin && (
+              <div style={hintStyle}>{this.msg('legal_name_hint')}</div>
+            )}
           </Col>
           <Col xs={12} sm={6}>
-            {newDaypass || newMember
+            {isAdmin || newDaypass || newMember
               ? [
                   <TextInput
                     {...inputProps}
@@ -134,9 +147,11 @@ export default class MemberForm extends Component {
                     path="email"
                     required
                   />,
-                  <div key="hint" style={hintStyle}>
-                    {this.msg('new_email_hint')}
-                  </div>
+                  !isAdmin && (
+                    <div key="hint" style={hintStyle}>
+                      {this.msg('new_email_hint')}
+                    </div>
+                  )
                 ]
               : [
                   <TextInput
@@ -157,7 +172,7 @@ export default class MemberForm extends Component {
         </Row>
         {lc !== 'daypass' &&
           isAttendingMember(member) && (
-            <Row>
+            <Row style={{ alignItems: 'flex-end' }}>
               <Col xs={12} sm={6}>
                 <TextInput
                   hintText={member.get('preferred_name')}
@@ -167,31 +182,29 @@ export default class MemberForm extends Component {
                   {...inputProps}
                 />
               </Col>
-              <Col xs={12} sm={6}>
+              <Col xs={12} sm={isAdmin ? 3 : 6} md={isAdmin ? 4 : 6}>
                 <TextInput
                   {...inputProps}
                   path="badge_subtitle"
                   hintText={member.get('country')}
                 />
               </Col>
-              <Col xs={12} style={hintStyle}>
-                <PreviewBadge
-                  memberId={member.get('id')}
-                  name={
-                    member.get('badge_name') || member.get('preferred_name')
-                  }
-                  subtitle={
-                    member.get('badge_subtitle') || member.get('country')
-                  }
-                >
-                  <FlatButton
-                    label="Preview"
-                    primary
+              {isAdmin ? (
+                <Col xs={12} sm={3} md={2}>
+                  <PreviewBadgeButton
+                    member={member}
                     style={{ float: 'right' }}
                   />
-                </PreviewBadge>
-                {this.msg('badge_hint')}
-              </Col>
+                </Col>
+              ) : (
+                <Col xs={12} style={hintStyle}>
+                  <PreviewBadgeButton
+                    member={member}
+                    style={{ float: 'right' }}
+                  />
+                  {this.msg('badge_hint')}
+                </Col>
+              )}
             </Row>
           )}
         <Row>
@@ -201,9 +214,11 @@ export default class MemberForm extends Component {
           <Col xs={12} sm={6}>
             <TextInput {...inputProps} path="public_last_name" />
           </Col>
-          <Col xs={12} style={hintStyle}>
-            {this.msg('public_name_hint')}
-          </Col>
+          {!isAdmin && (
+            <Col xs={12} style={hintStyle}>
+              {this.msg('public_name_hint')}
+            </Col>
+          )}
         </Row>
         <Row>
           <Col xs={12} sm={4}>
@@ -215,11 +230,18 @@ export default class MemberForm extends Component {
           <Col xs={12} sm={4}>
             <TextInput {...inputProps} path="country" />
           </Col>
-          <Col xs={12} style={hintStyle}>
-            {this.msg('location_hint')}
-          </Col>
+          {!isAdmin && (
+            <Col xs={12} style={hintStyle}>
+              {this.msg('location_hint')}
+            </Col>
+          )}
         </Row>
-        <PaperPubs data={data} newMember={newMember} {...inputProps} />
+        <PaperPubs
+          data={data}
+          isAdmin={isAdmin}
+          newMember={newMember}
+          {...inputProps}
+        />
       </form>
     )
   }

@@ -12,6 +12,10 @@
   cursor: pointer;
 }
 
+.memberInput label {
+  white-space: nowrap;
+}
+
 .checkboxLabel {
   margin-left: 0.5rem;
 }
@@ -30,12 +34,4 @@
   justify-content: center;
   font-size: 1em;
   color: #bdbdbd;
-}
-
-.memberDialog {
-  padding-left: 0 !important;
-}
-
-.memberInput {
-  margin-left: 24px;
 }

@@ -5,7 +5,7 @@ import React from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import { UpgradeFields, CommentField } from './form'
-import { paperPubsIsValid } from './Member'
+import { paperPubsIsValid } from '../../membership/components/paper-pubs'
 
 function getIn(obj, path, unset) {
   const val = obj[path[0]]

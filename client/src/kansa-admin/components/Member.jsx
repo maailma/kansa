@@ -6,8 +6,9 @@ import React, { PureComponent } from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 import { connect } from 'react-redux'
 
+import { ConfigConsumer, ConfigProvider } from '../../lib/config-context'
+import MemberForm from '../../membership/components/MemberForm'
 import printBadge from '../printBadge'
-import { CommonFields, PaperPubsFields } from './form'
 import MemberLog from './MemberLog'
 import NewInvoice from './NewInvoice'
 import Upgrade from './Upgrade'
@@ -50,17 +51,6 @@ export const membershipTypes = [
   'Adult'
 ]
 
-export const emptyPaperPubsMap = Map({ name: '', address: '', country: '' })
-
-export const paperPubsIsValid = pp =>
-  !pp || (pp.get('name') && pp.get('address') && pp.get('country'))
-
-export const memberIsValid = member =>
-  Map.isMap(member) &&
-  member.get('legal_name', false) &&
-  member.get('email', false) &&
-  paperPubsIsValid(member.get('paper_pubs'))
-
 class Member extends PureComponent {
   static propTypes = {
     api: PropTypes.object.isRequired,
@@ -89,16 +79,14 @@ class Member extends PureComponent {
   }
 
   state = {
-    member: Map(),
-    sent: false
+    changes: Map(),
+    sent: false,
+    valid: true
   }
 
   componentWillReceiveProps({ api, member, setMember }) {
     if (member && !member.equals(this.props.member)) {
-      this.setState({
-        member: defaultMember.merge(member),
-        sent: false
-      })
+      this.setState({ changes: Map(), sent: false, valid: true })
       if (!this.props.member) {
         api.GET(`people/${member.get('id')}`).then(setMember)
       }
@@ -114,8 +102,8 @@ class Member extends PureComponent {
       printer,
       showMessage
     } = this.props
-    const { sent } = this.state
-    const hasChanges = this.changes.size > 0
+    const { changes, sent, valid } = this.state
+    const hasChanges = changes.size > 0
     const id = member.get('id')
     const membership = member.get('membership')
 
@@ -123,7 +111,7 @@ class Member extends PureComponent {
       <FlatButton key="close" label="Close" onClick={handleClose} />,
       <FlatButton
         key="ok"
-        disabled={sent || !hasChanges || !this.valid}
+        disabled={sent || !hasChanges || !valid}
         label={sent ? 'Working...' : 'Apply'}
         onClick={() => this.save().then(handleClose)}
       />
@@ -180,7 +168,7 @@ class Member extends PureComponent {
       if (hasChanges) label = 'Save & ' + label
       actions.unshift(
         <FlatButton
-          disabled={sent || !this.valid}
+          disabled={sent || !valid}
           label={label}
           onClick={() =>
             this.handleBadgePrint().then(() =>
@@ -199,21 +187,9 @@ class Member extends PureComponent {
     return actions
   }
 
-  get changes() {
-    const m0 = this.props.member
-    return this.state.member.filter((value, key) => {
-      const v0 = m0.get(key, '')
-      return value && value.equals ? !value.equals(v0) : value !== v0
-    })
-  }
-
-  get valid() {
-    return memberIsValid(this.state.member)
-  }
-
   handleBadgePrint = () => {
     const { api, handleClose, member, printer } = this.props
-    const hasChanges = this.changes.size > 0
+    const { changes } = this.state
     const prev = member.get('badge_print_time')
     const print =
       !prev ||
@@ -238,7 +214,7 @@ class Member extends PureComponent {
     const [pu, pn] = printer.split('#')
     return (member.get('daypass')
       ? Promise.resolve()
-      : printBadge(pu, pn, this.state.member)
+      : printBadge(pu, pn, member.merge(changes))
     )
       .catch(err => {
         console.error('Badge print failed!', err)
@@ -248,15 +224,20 @@ class Member extends PureComponent {
         throw err
       })
       .then(() => api.POST(`people/${member.get('id')}/print`))
-      .then(() => (hasChanges ? this.save() : null))
+      .then(() => (changes.size > 0 ? this.save() : null))
       .then(handleClose)
+  }
+
+  handleChange = (valid, changes) => {
+    this.setState({ changes, valid })
   }
 
   save() {
     const { api, member, showMessage } = this.props
+    const { changes } = this.state
     this.setState({ sent: true })
     return api
-      .POST(`people/${member.get('id')}`, this.changes.toJS())
+      .POST(`people/${member.get('id')}`, changes.toJS())
       .then(() => showMessage(`Data saved for ${member.get('preferred_name')}`))
       .catch(err => {
         console.error('Member save failed!', err)
@@ -269,48 +250,53 @@ class Member extends PureComponent {
     const { handleClose, member } = this.props
     if (!member) return null
     const membership = member.get('membership', 'NonMember')
-    const formProps = {
-      getDefaultValue: path => member.getIn(path, ''),
-      getValue: path => this.state.member.getIn(path, null),
-      onChange: (path, value) =>
-        this.setState({ member: this.state.member.setIn(path, value) })
-    }
 
+    // FIXME: The material-ui 0.20 <Dialog> does not allow context to pass
+    // through like it should; hence this Consumer/Dialog/Provider hack.
     return (
-      <Dialog
-        actions={this.actions}
-        title={
-          <div title={'ID: ' + member.get('id')}>
-            <div
-              style={{
-                color: 'rgba(0, 0, 0, 0.3)',
-                float: 'right',
-                fontSize: 11,
-                fontStyle: 'italic',
-                lineHeight: 'normal',
-                textAlign: 'right'
-              }}
-            >
-              Last modified
-              <br />
-              {member.get('last_modified')}
-            </div>
-            {membership === 'NonMember'
-              ? 'Non-member'
-              : /^DP/.test(membership)
-                ? membership.replace(/^DP/, 'Day pass:')
-                : `Member #${member.get('member_number')} (${membership})`}
-          </div>
-        }
-        open
-        autoScrollBodyContent
-        bodyClassName="memberDialog"
-        onRequestClose={handleClose}
-      >
-        <CommonFields {...formProps} />
-        <br />
-        <PaperPubsFields {...formProps} />
-      </Dialog>
+      <ConfigConsumer>
+        {config => (
+          <Dialog
+            actions={this.actions}
+            title={
+              <div title={'ID: ' + member.get('id')}>
+                <div
+                  style={{
+                    color: 'rgba(0, 0, 0, 0.3)',
+                    float: 'right',
+                    fontSize: 11,
+                    fontStyle: 'italic',
+                    lineHeight: 'normal',
+                    textAlign: 'right'
+                  }}
+                >
+                  Last modified
+                  <br />
+                  {member.get('last_modified')}
+                </div>
+                {membership === 'NonMember'
+                  ? 'Non-member'
+                  : /^DP/.test(membership)
+                    ? membership.replace(/^DP/, 'Day pass:')
+                    : `Member #${member.get('member_number')} (${membership})`}
+              </div>
+            }
+            open
+            autoScrollBodyContent
+            bodyClassName="memberDialog"
+            onRequestClose={handleClose}
+          >
+            <ConfigProvider value={config}>
+              <MemberForm
+                isAdmin={true}
+                member={member}
+                onChange={this.handleChange}
+                tabIndex={1}
+              />
+            </ConfigProvider>
+          </Dialog>
+        )}
+      </ConfigConsumer>
     )
   }
 }

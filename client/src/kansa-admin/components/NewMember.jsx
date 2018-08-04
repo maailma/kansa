@@ -7,8 +7,9 @@ import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
+import MemberForm from '../../membership/components/MemberForm'
 import { CommentField, CommonFields, UpgradeFields } from './form'
-import { defaultMember, memberIsValid } from './Member'
+import { defaultMember } from './Member'
 
 class NewMember extends Component {
   static propTypes = {
@@ -38,7 +39,7 @@ class NewMember extends Component {
     const { enabled, onAdd } = this.props
     const { member, open, sent } = this.state
     if (!enabled) return null
-    let disabled = sent || !memberIsValid(member)
+    let disabled = sent || !MemberForm.isValid(member)
     const formProps = {
       getDefaultValue: () => '',
       getValue: path => member.getIn(path, null),

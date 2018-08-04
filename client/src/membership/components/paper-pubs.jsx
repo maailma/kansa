@@ -111,6 +111,7 @@ const PaperPubs = ({
   data,
   getDefaultValue,
   getValue,
+  isAdmin,
   lc,
   newMember,
   onChange,
@@ -140,10 +141,18 @@ const PaperPubs = ({
                 paid_paper_pubs={paid_paper_pubs}
                 tabIndex={tabIndex}
               />
-              <div style={hintStyle}>{ppMsg.hint_checkbox({ paid: true })}</div>
-              {hasPaperPubs ? (
+              {!isAdmin && (
+                <div style={hintStyle}>
+                  {ppMsg.hint_checkbox({ paid: true })}
+                </div>
+              )}
+              {!isAdmin && hasPaperPubs ? (
                 <div style={hintStyle}>{ppMsg.hint_fields()}</div>
               ) : null}
+            </Col>
+          ) : isAdmin ? (
+            <Col xs={12} sm={6} style={{ textAlign: 'right' }}>
+              {ppMsg.label({})}
             </Col>
           ) : (
             <Col xs={12} sm={6} style={hintStyle}>
@@ -172,6 +181,7 @@ PaperPubs.propTypes = {
   data: PaymentPropTypes.data,
   getDefaultValue: PropTypes.func,
   getValue: PropTypes.func.isRequired,
+  isAdmin: PropTypes.bool,
   lc: PropTypes.string,
   newMember: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
