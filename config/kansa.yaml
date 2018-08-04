@@ -8,4 +8,4 @@ name: Worldcon 75
 # If true, adding mailing address details for a member requires an "upgrade"
 # action that requires payment. If false, paper pubs may be added without any
 # cost.
-paid_paper_pubs: true
+paid_paper_pubs: false
