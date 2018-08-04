@@ -83,52 +83,55 @@ class App extends React.Component {
     this.setState(getMenuState(this.props.allowMenuDocked))
   }
 
-  render () {
-    const { children, email, hideMessage, logout, message, params: { id }, title } = this.props
+  renderHeader () {
+    const { email, logout, params: { id }, title } = this.props
     const { menuDocked, menuOpen, menuWidth } = this.state
+    return email ? [
+      <Worldcon75 key='logo' className={menuOpen ? 'logo navbar' : 'logo'} />,
+      <NavDrawer
+        docked={menuDocked}
+        id={Number(id) || undefined}
+        key='nav'
+        onRequestChange={(menuOpen) => this.setState({ menuOpen })}
+        open={menuOpen}
+        width={menuWidth}
+      />,
+      <AppBar
+        email={email}
+        key='top'
+        logout={logout}
+        menuDocked={menuDocked}
+        menuWidth={menuWidth}
+        onOpenMenu={() => this.setState({ menuOpen: true })}
+        title={title}
+      />
+    ] : (
+      <h1 style={{ paddingTop: 24 }}>
+        <Worldcon75 className='h1-logo' />
+        {title}
+      </h1>
+    )
+  }
 
+  renderFooter () {
+    const { hideMessage, message } = this.props
     return (
-      <EventListener
-        onResize={this.handleResize}
-        target='window'
-      >
+      <Snackbar
+        bodyStyle={{ height: 'auto', lineHeight: '22px', paddingBottom: 13, paddingTop: 13 }}
+        message={message}
+        onRequestClose={hideMessage}
+        open={!!message}
+      />
+    )
+  }
+
+  render () {
+    return (
+      <EventListener onResize={this.handleResize} target='window'>
         <div>
-          { email ? [
-            <Worldcon75 key='logo'
-              className={menuOpen ? 'logo navbar' : 'logo'}
-            />,
-            <NavDrawer
-              docked={menuDocked}
-              id={Number(id) || undefined}
-              key='nav'
-              onRequestChange={(menuOpen) => this.setState({ menuOpen })}
-              open={menuOpen}
-              width={menuWidth}
-            />,
-            <AppBar
-              email={email}
-              key='top'
-              logout={logout}
-              menuDocked={menuDocked}
-              menuWidth={menuWidth}
-              onOpenMenu={() => this.setState({ menuOpen: true })}
-              title={title}
-            />
-          ] : (
-            <h1 style={{ paddingTop: 24 }}>
-              <Worldcon75 className='h1-logo' />
-              {title}
-            </h1>
-          )}
-          <main>
-            {children}
-          </main>
-          <Snackbar
-            bodyStyle={{ height: 'auto', lineHeight: '22px', paddingBottom: 13, paddingTop: 13 }}
-            message={message}
-            onRequestClose={hideMessage}
-            open={!!message}
-          />
+          {this.renderHeader()}
+          <main>{this.props.children}</main>
+          {this.renderFooter()}
         </div>
       </EventListener>
     )
