@@ -10,11 +10,13 @@ function upgradePaperPubs(req, db, data) {
   const log = new LogEntry(req, 'Add paper pubs');
   return db.tx(tx => tx.batch([
     tx.one(`
-         UPDATE People
-            SET paper_pubs=$(paper_pubs)
-          WHERE id=$(id) AND membership != 'NonMember'
-      RETURNING member_number`,
-      data),
+      UPDATE People p
+      SET paper_pubs=$(paper_pubs)
+      FROM membership_types m
+      WHERE id=$(id) AND
+        m.membership = p.membership AND
+        m.member_number = true
+      RETURNING member_number`, data),
     tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
   ]))
     .then((results) => ({

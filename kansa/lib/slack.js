@@ -32,8 +32,12 @@ function sendInvite(org, data) {
 function getUserData(db, session) {
   const email = session && session.user && session.user.email
   if (!email) return Promise.reject(new AuthError())
-  let select = `SELECT public_first_name, public_last_name FROM People WHERE email = $1`
-  if (process.env.SLACK_REQ_MEMBER) select += ` AND membership != 'NonMember'`
+  let select = `
+    SELECT public_first_name, public_last_name
+    FROM People p
+      LEFT JOIN membership_types m USING (membership)
+    WHERE email = $1`
+  if (process.env.SLACK_REQ_MEMBER) select += ` AND m.member_number = true`
   return db.any(select, email).then(people => {
     if (people.size === 0) throw new AuthError('Slack access requires membership')
     const user = { email }
