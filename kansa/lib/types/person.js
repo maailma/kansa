@@ -23,10 +23,6 @@ class Person {
     return [ 'hugo_nominator', 'hugo_voter' ];
   }
 
-  static hugoVoterType(membership) {
-    return [ 'Supporter', 'Youth', 'FirstWorldcon', 'Adult' ].indexOf(membership) !== -1
-  }
-
   static get userModFields() {
     return [ 'legal_name', 'public_first_name', 'public_last_name', 'city', 'state', 'country', 'badge_name', 'badge_subtitle', 'paper_pubs' ];
   }
@@ -52,10 +48,6 @@ class Person {
     util.forceInt(this.data, 'member_number');
     if (this.data.membership === 'NonMember') this.data.member_number = null;
     this.data.paper_pubs = Person.cleanPaperPubs(this.data.paper_pubs);
-  }
-
-  get hugoVoterType() {
-    return Person.hugoVoterType(this.data.membership)
   }
 
   get passDays() {
