@@ -23,8 +23,6 @@ function getPeopleQuery(req, res, next) {
       return '(legal_name ILIKE $(name) OR public_first_name ILIKE $(name) OR public_last_name ILIKE $(name))';
     case 'member_number':
     case 'membership':
-    case 'hugo_nominator':
-    case 'hugo_voter':
       return `${fn} = $(${fn})`;
     default:
       return (Person.fields.indexOf(fn) !== -1) ? `${fn} ILIKE $(${fn})` : 'true';
@@ -249,21 +247,27 @@ function updatePerson(req, res, next) {
   let email = data.email;
   db.tx(tx => tx.batch([
     tx.one(`
-           WITH prev AS (SELECT email FROM People WHERE id=$(id))
-         UPDATE People p
-            SET ${sqlFields}
-          WHERE id=$(id) ${ppCond}
-      RETURNING email AS next_email, (SELECT email AS prev_email FROM prev),
-                hugo_nominator, hugo_voter, preferred_name(p) as name`,
-      data),
+      WITH prev AS (
+        SELECT email, m.hugo_nominator, m.wsfs_member
+        FROM people p
+          LEFT JOIN membership_types m USING (membership)
+        WHERE id=$(id)
+      )
+      UPDATE People p
+      SET ${sqlFields}
+      WHERE id=$(id) ${ppCond}
+      RETURNING
+        email AS next_email,
+        (SELECT email AS prev_email, hugo_nominator, wsfs_member FROM prev),
+        preferred_name(p) as name`, data),
     data.email ? tx.oneOrNone(`SELECT key FROM Keys WHERE email=$(email)`, data) : {},
     tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
   ]))
-    .then(([{ hugo_nominator, hugo_voter, next_email, prev_email, name }, key]) => {
+    .then(([{ hugo_nominator, wsfs_member, next_email, prev_email, name }, key]) => {
       email = next_email;
       if (next_email === prev_email) return {}
       updateMailRecipient(db, prev_email);
-      return !hugo_nominator && !hugo_voter ? {}
+      return !hugo_nominator && !wsfs_member ? {}
         : key ? { key: key.key, name }
         : setKeyChecked(req, db, data.email).then(({ key }) => ({ key, name }));
     })

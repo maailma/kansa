@@ -26,8 +26,6 @@ CREATE TABLE IF NOT EXISTS People (
     country text,
     badge_name text,
     badge_subtitle text,
-    hugo_nominator bool,
-    hugo_voter bool,
     paper_pubs jsonb
 );
 

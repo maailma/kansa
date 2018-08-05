@@ -12,15 +12,10 @@ class Person {
       'email',  // text
       'city', 'state', 'country',  // text
       'badge_name', 'badge_subtitle',  // text
-      'hugo_nominator', 'hugo_voter',  // bool
       'paper_pubs',  // jsonb
       'daypass',  // string
       'daypass_days'  // int[]
     ];
-  }
-
-  static get boolFields() {
-    return [ 'hugo_nominator', 'hugo_voter' ];
   }
 
   static get userModFields() {
@@ -44,7 +39,6 @@ class Person {
   constructor(src) {
     if (!src || !src.legal_name || !src.membership) throw new Error('Missing data for new Person (required: legal_name, membership)');
     this.data = Object.assign({}, src);
-    Person.boolFields.forEach(fn => util.forceBool(this.data, fn));
     util.forceInt(this.data, 'member_number');
     if (this.data.membership === 'NonMember') this.data.member_number = null;
     this.data.paper_pubs = Person.cleanPaperPubs(this.data.paper_pubs);

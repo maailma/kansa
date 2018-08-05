@@ -6,20 +6,20 @@ INSERT INTO admin.Admins (email, member_admin, member_list, siteselection, hugo_
 
 SET ROLE kansa;
 
-INSERT INTO People (legal_name, email, membership, member_number, hugo_nominator, hugo_voter)
-     VALUES ('Admin', 'admin@example.com', 'NonMember', NULL, false, false),
-            ('Member Admin', 'member-admin@example.com', 'NonMember', NULL, false, false),
-            ('Site Selection', 'site-select@example.com', 'NonMember', NULL, false, false),
-            ('Hugo Admin', 'hugo-admin@example.com', 'NonMember', NULL, false, false),
-            ('First Member', 'member@example.com', 'FirstWorldcon', 2, true, true),
-            ('Fan Parent', 'family@example.com', 'Adult', 3, true, true),
-            ('Fan Child', 'family@example.com', 'Child', 4, false, false),
-            ('Fan Youth', 'family@example.com', 'Youth', 5, true, true),
-            ('Fan Supporter', 'supporter@example.com', 'Supporter', 6, true, true),
-            ('Dupe Supporter', 'supporter@example.com', 'Supporter', 7, false, false),
-            ('Fan Trader', 'trader@example.com', 'Exhibitor', 8, false, false),
-            ('Fan Helper', 'helper@example.com', 'Helper', 9, false, false),
-            ('Fan Nominator', 'nominator@example.com', 'NonMember', NULL, true, false);
+INSERT INTO People (legal_name, email, membership, member_number)
+     VALUES ('Admin', 'admin@example.com', 'NonMember', NULL),
+            ('Member Admin', 'member-admin@example.com', 'NonMember', NULL),
+            ('Site Selection', 'site-select@example.com', 'NonMember', NULL),
+            ('Hugo Admin', 'hugo-admin@example.com', 'NonMember', NULL),
+            ('First Member', 'member@example.com', 'FirstWorldcon', 2),
+            ('Fan Parent', 'family@example.com', 'Adult', 3),
+            ('Fan Child', 'family@example.com', 'Child', 4),
+            ('Fan Youth', 'family@example.com', 'Youth', 5),
+            ('Fan Supporter', 'supporter@example.com', 'Supporter', 6),
+            ('Dupe Supporter', 'supporter@example.com', 'Supporter', 7),
+            ('Fan Trader', 'trader@example.com', 'Exhibitor', 8),
+            ('Fan Helper', 'helper@example.com', 'Helper', 9),
+            ('Fan Nominator', 'nominator@example.com', 'HugoNominator', NULL);
 
 INSERT INTO Keys
      VALUES ('admin@example.com', 'key'),
