@@ -47,7 +47,6 @@ class StripeCheckout extends React.Component {
           disabled={disabled}
           email={email}
           name={TITLE}
-          reconfigureOnUpdate={true}
           stripeKey={stripeKeys.get(account || 'default')}
           token={onCheckout}
           triggerEvent="onClick"
