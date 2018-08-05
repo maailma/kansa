@@ -8,6 +8,7 @@ const adminLoginParams = { email: 'admin@example.com', key: 'key' };
 
 describe('Membership purchases', () => {
   let agent
+  let config
   const prices = { adult: 0, supporter: 0, paperPubs: 0 }
   before((done) => {
     agent = request.agent(host, { ca: cert });
@@ -17,7 +18,10 @@ describe('Membership purchases', () => {
         prices.supporter = body.new_member.types.find(t => t.key === 'Supporter').amount
         prices.paperPubs = body.paper_pubs.types[0].amount
       })
-      .end(done);
+      .end(() => agent.get('/api/config')
+        .expect(({ body }) => { config = body })
+        .end(done)
+      );
   })
 
   context('Parameters', () => {
@@ -71,7 +75,7 @@ describe('Membership purchases', () => {
       }).then(source => {
         agent.post('/api/purchase')
           .send({
-            amount: prices.supporter + prices.adult + prices.paperPubs,
+            amount: prices.supporter + prices.adult + (config.paid_paper_pubs ? prices.paperPubs : 0),
             email: `${testName}@example.com`,
             source,
             new_members: [
@@ -138,7 +142,7 @@ describe('Membership purchases', () => {
       });
     });
 
-    it('should add paper publications', (done) => {
+    it('should handle paid paper publications upgrade', (done) => {
       stripe.tokens.create({
         card: {
           number: '4242424242424242',
@@ -155,8 +159,11 @@ describe('Membership purchases', () => {
             upgrades: [{ id: testId, paper_pubs: { name: 'name', address: 'multi\n-line\n-address', country: 'land'} }]
           })
           .expect((res) => {
-            if (res.status !== 200) throw new Error(`Paper pubs purchase failed! ${JSON.stringify(res.body)}`);
-            // HERE
+            if (config.paid_paper_pubs) {
+              if (res.status !== 200) throw new Error(`Paper pubs purchase failed! ${JSON.stringify(res.body)}`);
+            } else {
+              if (res.status < 400) throw new Error(`Paper pubs purchase should have failed! ${JSON.stringify(res.body)}`)
+            }
           })
           .end(done);
       });
