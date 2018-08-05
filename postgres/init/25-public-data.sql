@@ -54,18 +54,15 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE VIEW country_stats AS SELECT * FROM crosstab(
-   'SELECT coalesce(country(country),''=''),
-           coalesce(membership::text,''=''),
-           count(*)
-      FROM People WHERE membership != ''NonMember''
-  GROUP BY CUBE(country(country), membership)',
-  $$VALUES ('Adult'), ('FirstWorldcon'), ('Youth'), ('Child'), ('KidInTow'), ('Exhibitor'), ('Supporter'), ('=') $$
-) AS ct (
-  country text,
-  "Adult" int, "FirstWorldcon" int, "Youth" int, "Child" int, "KidInTow" int, "Exhibitor" int, "Supporter" int,
-  "=" int
-);
+CREATE VIEW country_stats AS
+  SELECT
+    coalesce(country(country), '=') AS country,
+    coalesce(membership, '=') AS membership,
+    count(*)
+  FROM People p
+    LEFT JOIN membership_types t USING (membership)
+  WHERE t.member_number = true
+  GROUP BY CUBE(country(country), membership);
 
 CREATE VIEW daypass_stats AS SELECT * FROM crosstab(
      'SELECT status, ''Wed'' AS day, count(*)

@@ -35,15 +35,15 @@ function getPublicPeople(req, res, next) {
 function getPublicStats(req, res, next) {
   const csv = !!(req.query.csv);
   req.app.locals.db.any('SELECT * from country_stats')
-    .then(data => {
-      if (csv) res.csv(data, true);
-      else res.json(data.reduce((map, c) => {
-        map[c.country] = Object.keys(c).reduce((cc, k) => {
-          if (typeof c[k] === 'number') cc[k] = c[k];
-          return cc;
-        }, map[c.country] || {});
-        return map;
-      }, {}));
+    .then(rows => {
+      if (csv) return res.csv(rows, true);
+      const data = {}
+      rows.forEach(({ country, membership, count }) => {
+        const c = data[country]
+        if (c) c[membership] = Number(count)
+        else data[country] = { [membership]: Number(count) }
+      })
+      res.json(data);
     })
     .catch(next);
 }
