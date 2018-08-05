@@ -5,21 +5,6 @@ const { updateMailRecipient } = require('./mail');
 
 module.exports = { authUpgradePerson, upgradePerson };
 
-function verifyUpgrade(data) {
-  const checks = {
-    membership: Person.cleanMemberType,
-    paper_pubs: Person.cleanPaperPubs
-  };
-  for (const key in checks) {
-    if (data.hasOwnProperty(key)) try {
-      data[key] = checks[key](data[key]);
-    } catch (e) {
-      throw new Error(`${key}: ${e.message}`);
-    }
-  }
-  if (data.membership === 'NonMember') throw new Error(`Can't "upgrade" to NonMember`);
-}
-
 function upgradePaperPubs(req, db, data) {
   if (!data.paper_pubs) throw new InputError('No valid parameters');
   const log = new LogEntry(req, 'Add paper pubs');
@@ -49,20 +34,27 @@ function upgradePaperPubs(req, db, data) {
 
 function upgradeMembership(req, db, data) {
   const set = [ 'membership=$(membership)' ];
-  let email, member_number;
+  let email, member_number, priceRows;
   return db.tx(tx => tx.sequence((i, prev) => { switch (i) {
 
     case 0:
+      return tx.any(`SELECT * FROM membership_prices`);
+
+    case 1:
+      priceRows = prev;
       return tx.one(`
         SELECT membership, member_number
           FROM People
          WHERE id=$1`,
         data.id);
 
-    case 1:
-      const prevTypeIdx = Person.membershipTypes.indexOf(prev.membership);
-      const nextTypeIdx = Person.membershipTypes.indexOf(data.membership);
-      if (nextTypeIdx <= prevTypeIdx) throw new InputError(`Can't "upgrade" from ${prev.membership} to ${data.membership}`);
+    case 2:
+      const nextPrice = priceRows.find(p => p.membership === data.membership)
+      if (!nextPrice) throw new InputError(`Invalid membership type: ${JSON.stringify(data.membership)}`)
+      const prevPrice = priceRows.find(p => p.membership === prev.membership)
+      if (prevPrice && prevPrice.amount > nextPrice.amount) {
+        throw new InputError(`Can't upgrade from ${prev.membership} to ${data.membership}`);
+      }
       if (!parseInt(prev.member_number)) set.push("member_number=nextval('member_number_seq')");
       if (data.paper_pubs) set.push('paper_pubs=$(paper_pubs)');
       return tx.one(`
@@ -71,7 +63,7 @@ function upgradeMembership(req, db, data) {
             WHERE id=$(id)
         RETURNING email, member_number`, data);
 
-    case 2:
+    case 3:
       email = prev.email;
       member_number = prev.member_number;
       const log = new LogEntry(req, `Upgrade to ${data.membership}`);
@@ -79,7 +71,7 @@ function upgradeMembership(req, db, data) {
       log.subject = data.id;
       return tx.none(`INSERT INTO Log ${log.sqlValues}`, log);
 
-    case 3:
+    case 4:
       updateMailRecipient(tx, email);
 
   }}))
@@ -90,10 +82,12 @@ function upgradeMembership(req, db, data) {
 }
 
 function upgradePerson(req, db, data) {
-  try {
-    verifyUpgrade(data);
-  } catch (err) {
-    return Promise.reject(err)
+  if (data.hasOwnProperty('paper_pubs')) {
+    try {
+      data.paper_pubs = Person.cleanPaperPubs(data.paper_pubs);
+    } catch (err) {
+      return Promise.reject(err)
+    }
   }
   return data.membership
     ? upgradeMembership(req, db, data)

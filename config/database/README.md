@@ -9,11 +9,8 @@ If you end up making changes later to values or tables that are defined in your 
 ## Required Config
 Some of the configuration is required, and run at specific points during the initialisation:
 
-### `21-member-types.sql`
-Defines the types of memberships that are supported. The order of values matters for upgrades, so use something like this if adding member types:
-```sql
-ALTER TYPE kansa.MembershipStatus ADD VALUE 'KidInTow' BEFORE 'Child';
-```
+### `member-types.sql`
+Defines the types of memberships that are supported, and their attributes.
 
 ### `31-hugo-categories.sql`
 Defines the Hugo Awards categories. The order of values defines their listing order, so use something like this if adding categories:

@@ -6,7 +6,7 @@ class Person {
       // id SERIAL PRIMARY KEY
       'last_modified',  // timestamptz DEFAULT now()
       'legal_name',  // text NOT NULL
-      'membership',  // MembershipStatus NOT NULL
+      'membership',  // text NOT NULL REFERENCES membership_types
       'member_number',  // integer
       'public_first_name', 'public_last_name',  // text
       'email',  // text
@@ -31,17 +31,8 @@ class Person {
     return [ 'legal_name', 'public_first_name', 'public_last_name', 'city', 'state', 'country', 'badge_name', 'badge_subtitle', 'paper_pubs' ];
   }
 
-  static get membershipTypes() {
-    return [ 'NonMember', 'Exhibitor', 'Helper', 'Supporter', 'KidInTow', 'Child', 'Youth', 'FirstWorldcon', 'Adult' ];
-  }
-
   static get paperPubsFields() {
     return [ 'name', 'address', 'country' ];  // text
-  }
-
-  static cleanMemberType(ms) {
-    if (Person.membershipTypes.indexOf(ms) > -1) return ms;
-    throw new Error('Invalid membership type: ' + JSON.stringify(ms));
   }
 
   static cleanPaperPubs(pp) {
@@ -57,7 +48,6 @@ class Person {
   constructor(src) {
     if (!src || !src.legal_name || !src.membership) throw new Error('Missing data for new Person (required: legal_name, membership)');
     this.data = Object.assign({}, src);
-    Person.cleanMemberType(this.data.membership);
     Person.boolFields.forEach(fn => util.forceBool(this.data, fn));
     util.forceInt(this.data, 'member_number');
     if (this.data.membership === 'NonMember') this.data.member_number = null;

@@ -98,7 +98,7 @@ CREATE VIEW public_members AS
      SELECT country(country), membership,
             public_last_name AS last_name,
             public_first_name AS first_name
-       FROM people
-      WHERE membership != 'NonMember' AND
+       FROM people p LEFT JOIN membership_types t USING (membership)
+      WHERE t.member_number = true AND
             (public_first_name != '' OR public_last_name != '')
    ORDER BY last_name, first_name, country;

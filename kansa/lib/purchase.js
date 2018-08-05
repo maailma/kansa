@@ -147,11 +147,9 @@ class Purchase {
         if (!prev || !prev.membership) throw new InputError(`Previous membership not found for ${JSON.stringify(upgrade)}`);
         if (!upgrade.membership || upgrade.membership === prev.membership) {
           delete upgrade.membership;
-        } else {
-          const ti0 = Person.membershipTypes.indexOf(prev.membership);
-          const ti1 = Person.membershipTypes.indexOf(upgrade.membership);
-          if (ti1 <= ti0) throw new InputError(
-            `Can't "upgrade" from ${JSON.stringify(prev.membership)} to ${JSON.stringify(upgrade.membership)}`
+        } else if (prices[upgrade.membership] < prices[prev.membership]) {
+          throw new InputError(
+            `Can't upgrade from ${JSON.stringify(prev.membership)} to ${JSON.stringify(upgrade.membership)}`
           );
         }
 
@@ -257,7 +255,10 @@ class Purchase {
     }).then(_upgrades => {
       upgrades = _upgrades;
       const newMemberPaymentItems = newMembers.map(p => {
-        const mp = prices[p.data.membership] || 0
+        const mp = prices[p.data.membership]
+        if (typeof mp !== 'number' || mp < 0) {
+          throw new InputError(`Membership type not available for purchase: ${JSON.stringify(p.data.membership)}`)
+        }
         const pp = config.paid_paper_pubs && p.data.paper_pubs && prices.paper_pubs || 0
         return {
           amount: mp + pp,

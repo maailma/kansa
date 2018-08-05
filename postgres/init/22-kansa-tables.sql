@@ -2,10 +2,19 @@ SET ROLE kansa;
 
 CREATE SEQUENCE member_number_seq START 10;
 
+CREATE TABLE membership_types (
+    membership text PRIMARY KEY,
+    badge bool,
+    daypass_available bool,
+    hugo_nominator bool,
+    member_number bool,
+    wsfs_member bool
+);
+
 CREATE TABLE IF NOT EXISTS People (
     id SERIAL PRIMARY KEY,
     last_modified timestamptz DEFAULT now(),
-    membership MembershipStatus NOT NULL,
+    membership text NOT NULL REFERENCES membership_types,
     member_number integer UNIQUE DEFAULT nextval('member_number_seq'),
     legal_name text NOT NULL,
     public_first_name text,
