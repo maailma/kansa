@@ -8,6 +8,7 @@ import { Col, Row } from 'react-flexbox-grid'
 import Snackbar from 'material-ui/Snackbar'
 
 import { setScene } from '../../app/actions/app'
+import { ConfigConsumer } from '../../lib/config-context'
 import { setNominator, clearNominationError } from '../actions'
 import { categoryInfo } from '../constants'
 
@@ -165,37 +166,45 @@ class Nominate extends React.Component {
   render() {
     const { id, person } = this.props
     const { signature } = this.state
-    const active = person.get('hugo_nominator')
     return !id ? (
       <div>Loading...</div>
     ) : !person ? (
       <div>Nominator not found!</div>
     ) : (
-      <div>
-        <NominationsHead
-          active={active}
-          name={this.name}
-          signature={signature}
-        />
-        <Row>
-          <Col xs={10} xsOffset={1} lg={8} lgOffset={2}>
-            {Object.keys(categoryInfo).map(category => (
-              <NominationCategory
+      <ConfigConsumer>
+        {({ membershipTypes }) => {
+          const attr =
+            membershipTypes && membershipTypes[person.get('membership')]
+          const active = !!(attr && attr.hugo_nominator)
+          return (
+            <div>
+              <NominationsHead
                 active={active}
-                category={category}
-                key={category}
+                name={this.name}
                 signature={signature}
               />
-            ))}
-          </Col>
-        </Row>
-        {active ? <SaveAllButton signature={signature} /> : null}
-        <NominationSignature
-          open={active && !signature}
-          setName={signature => this.setState({ signature })}
-        />
-        <Messages />
-      </div>
+              <Row>
+                <Col xs={10} xsOffset={1} lg={8} lgOffset={2}>
+                  {Object.keys(categoryInfo).map(category => (
+                    <NominationCategory
+                      active={active}
+                      category={category}
+                      key={category}
+                      signature={signature}
+                    />
+                  ))}
+                </Col>
+              </Row>
+              {active ? <SaveAllButton signature={signature} /> : null}
+              <NominationSignature
+                open={active && !signature}
+                setName={signature => this.setState({ signature })}
+              />
+              <Messages />
+            </div>
+          )
+        }}
+      </ConfigConsumer>
     )
   }
 
