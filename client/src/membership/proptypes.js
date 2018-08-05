@@ -28,7 +28,7 @@ export const person = ImmutablePropTypes.mapContains({
   id: PropTypes.number.isRequired,
   last_modified: PropTypes.string.isRequired,
   membership: PropTypes.oneOf(membershipTypes).isRequired,
-  member_number: PropTypes.string,
+  member_number: PropTypes.number,
   legal_name: PropTypes.string.isRequired,
   public_first_name: PropTypes.string,
   public_last_name: PropTypes.string,

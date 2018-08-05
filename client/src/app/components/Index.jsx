@@ -1,6 +1,6 @@
 import { List } from 'immutable'
 import PropTypes from 'prop-types'
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { Col, Row } from 'react-flexbox-grid'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 import { connect } from 'react-redux'
@@ -10,9 +10,34 @@ import { setScene } from '../actions/app'
 import { getPurchaseData, getPurchaseList } from '../../payments/actions'
 import PaymentCard from '../../payments/components/payment-card'
 import * as PaymentPropTypes from '../../payments/proptypes'
-import MemberCard from '../../membership/components/MemberCard'
+import MemberCard from '../../membership/components/member-card'
 import NewMemberCard from '../../membership/components/NewMemberCard'
 import KeyRequest from './KeyRequest'
+
+const InvoiceCards = ({ people, purchase }) => {
+  if (!purchase || !purchase.get('list') || !purchase.get('data')) return null
+  const getCategoryData = (category, type) =>
+    purchase.getIn(['data', category]) ||
+    purchase
+      .get('data')
+      .find(cd => cd.get('types').some(td => td.get('key') === type))
+  return purchase
+    .get('list')
+    .filter(p => p.get('status') === 'invoice')
+    .map((p, key) => {
+      const type = p.get('type')
+      const categoryData = getCategoryData(p.get('category'), type)
+      return (
+        <PaymentCard
+          key={key}
+          label={categoryData.getIn(['types', type, 'label']) || type}
+          purchase={p}
+          shape={categoryData.get('shape')}
+          userIds={people.map(pp => pp.get('id'))}
+        />
+      )
+    })
+}
 
 class Index extends Component {
   static propTypes = {
@@ -34,44 +59,6 @@ class Index extends Component {
     if (people.size > 0 && !purchase.get('list')) getPurchaseList()
   }
 
-  get invoiceCards() {
-    const { people, purchase } = this.props
-    if (!purchase.get('list') || !purchase.get('data')) return []
-    const getCategoryData = (category, type) =>
-      purchase.getIn(['data', category]) ||
-      purchase
-        .get('data')
-        .find(cd => cd.get('types').some(td => td.get('key') === type))
-    return purchase
-      .get('list')
-      .filter(p => p.get('status') === 'invoice')
-      .map((p, key) => {
-        const type = p.get('type')
-        const categoryData = getCategoryData(p.get('category'), type)
-        return (
-          <PaymentCard
-            key={key}
-            label={categoryData.getIn(['types', type, 'label']) || type}
-            purchase={p}
-            shape={categoryData.get('shape')}
-            userIds={people.map(pp => pp.get('id'))}
-          />
-        )
-      })
-  }
-
-  get memberCards() {
-    const { people } = this.props
-    const hugoCount = people.reduce(
-      (sum, m) =>
-        sum + (m.get('hugo_nominator') || m.get('hugo_voter') ? 1 : 0),
-      0
-    )
-    return people.map((member, key) => (
-      <MemberCard key={key} member={member} showHugoActions={hugoCount === 1} />
-    ))
-  }
-
   render() {
     const { people, purchase, push } = this.props
     const isLoggedIn = !!(people && people.size)
@@ -82,7 +69,16 @@ class Index extends Component {
     return (
       <Row style={{ marginBottom: -24 }}>
         <Col xs={12} sm={6} lg={4} lgOffset={2}>
-          {isLoggedIn ? [this.invoiceCards, this.memberCards] : <KeyRequest />}
+          {isLoggedIn ? (
+            <Fragment>
+              <InvoiceCards people={people} purchase={purchase} />
+              {people.map((member, key) => (
+                <MemberCard key={key} member={member} />
+              ))}
+            </Fragment>
+          ) : (
+            <KeyRequest />
+          )}
         </Col>
         <Col xs={12} sm={6} lg={4}>
           <NewMemberCard
