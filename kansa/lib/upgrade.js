@@ -15,7 +15,7 @@ function upgradePaperPubs(req, db, data) {
       FROM membership_types m
       WHERE id=$(id) AND
         m.membership = p.membership AND
-        m.member_number = true
+        m.member = true
       RETURNING member_number`, data),
     tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
   ]))

@@ -37,7 +37,7 @@ function getUserData(db, session) {
     FROM People p
       LEFT JOIN membership_types m USING (membership)
     WHERE email = $1`
-  if (process.env.SLACK_REQ_MEMBER) select += ` AND m.member_number = true`
+  if (process.env.SLACK_REQ_MEMBER) select += ` AND m.member = true`
   return db.any(select, email).then(people => {
     if (people.size === 0) throw new AuthError('Slack access requires membership')
     const user = { email }

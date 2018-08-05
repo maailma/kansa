@@ -78,7 +78,7 @@ function getBarcode(req, res, next) {
   const key = req.params.key
   const format = req.params.fmt === 'pdf' ? 'pdf' : 'png'
   req.app.locals.db.one(`
-    SELECT p.member_number, membership,
+    SELECT member_number, membership,
       get_badge_name(p) AS name, get_badge_subtitle(p) AS subtitle,
       d.status AS daypass, daypass_days(d) AS days
     FROM people p

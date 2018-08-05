@@ -8,7 +8,7 @@ CREATE TABLE membership_types (
     badge bool,
     daypass_available bool,
     hugo_nominator bool,
-    member_number bool,
+    member bool,
     wsfs_member bool
 );
 

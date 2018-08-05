@@ -42,7 +42,7 @@ function getMemberEmails(req, res, next) {
       public_first_name AS pfn, public_last_name AS pln
     FROM People p
       LEFT JOIN membership_types m USING (membership)
-    WHERE email != '' AND m.member_number = true
+    WHERE email != '' AND m.member = true
     ORDER BY public_last_name, public_first_name, legal_name`
   )
     .then(raw => {
@@ -80,7 +80,7 @@ function getMemberPaperPubs(req, res, next) {
       paper_pubs->>'country' AS country
     FROM People p
       LEFT JOIN membership_types m USING (membership)
-    WHERE paper_pubs IS NOT NULL AND m.member_number = true`
+    WHERE paper_pubs IS NOT NULL AND m.member = true`
   )
     .then(data => {
       res.status(200).csv(data, true);
