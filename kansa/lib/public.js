@@ -1,8 +1,24 @@
+const config = require('./config');
 const { AuthError, InputError } = require('./errors');
 
 module.exports = {
-  getDaypassStats, getPublicPeople, getPublicStats, lookupPerson
+  getConfig, getDaypassStats, getPublicPeople, getPublicStats, lookupPerson
 };
+
+function getConfig(req, res, next) {
+  req.app.locals.db.any(`
+    SELECT membership, badge, hugo_nominator, member, wsfs_member
+    FROM membership_types`
+  )
+    .then(rows => {
+      const membershipTypes = {}
+      rows.forEach(({ membership, ...props }) => {
+        membershipTypes[membership] = props
+      })
+      res.json(Object.assign({ membershipTypes }, config));
+    })
+    .catch(next);
+}
 
 function getDaypassStats(req, res, next) {
   const csv = !!(req.query.csv);

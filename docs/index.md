@@ -88,7 +88,16 @@ The configuration used by this instance.
 {
   id: 'w75',
   name: 'Worldcon 75',
-  paid_paper_pubs: true
+  paid_paper_pubs: true,
+  membershipTypes: {
+    Adult: {
+      badge: true,
+      hugo_nominator: true,
+      member: true,
+      wsfs_member: true
+    },
+    ...
+  }
 }
 ```
 
