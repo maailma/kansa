@@ -70,9 +70,10 @@ function lookupPerson(req, res, next) {
   }
   req.app.locals.db.any(`
     SELECT id, membership, preferred_name(p) AS name
-      FROM people p
-     WHERE ${queryParts.join(' AND ')}
-           AND membership NOT IN ('Child', 'KidInTow')`, queryValues
+    FROM people p
+      LEFT JOIN membership_types m USING (membership)
+    WHERE ${queryParts.join(' AND ')} AND
+      m.allow_lookup = true`, queryValues
   )
     .then(results => {
       switch (results.length) {

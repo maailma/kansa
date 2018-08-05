@@ -4,6 +4,7 @@ CREATE SEQUENCE member_number_seq START 10;
 
 CREATE TABLE membership_types (
     membership text PRIMARY KEY,
+    allow_lookup bool,
     badge bool,
     daypass_available bool,
     hugo_nominator bool,
