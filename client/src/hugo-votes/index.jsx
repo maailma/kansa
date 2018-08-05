@@ -8,6 +8,8 @@ import { replace } from 'react-router-redux'
 
 import { setScene } from '../app/actions/app'
 import { categoryInfo } from '../hugo-nominations/constants'
+import { ConfigConsumer } from '../lib/config-context'
+import * as MemberPropTypes from '../membership/proptypes'
 
 import { getFinalists, setVoter } from './actions'
 import VoteCategory from './components/category'
@@ -17,42 +19,56 @@ import PostDeadlineContents from './components/post-deadline-contents'
 class Vote extends React.Component {
   static propTypes = {
     getFinalists: PropTypes.func.isRequired,
+    membershipTypes: PropTypes.object.isRequired,
     params: PropTypes.shape({ id: PropTypes.string }),
-    person: ImmutablePropTypes.map,
+    people: MemberPropTypes.people,
     replace: PropTypes.func.isRequired,
     setScene: PropTypes.func.isRequired,
     setVoter: PropTypes.func.isRequired,
     signature: PropTypes.string,
-    soleVoterId: PropTypes.number,
     voterId: PropTypes.number,
     votingOpen: PropTypes.bool
+  }
+
+  static getDerivedStateFromProps({ people, params }, state) {
+    if (!people) return { person: null }
+    const id = params && Number(params.id)
+    const person = (id && people.find(p => p.get('id') === id)) || null
+    return person === state.person ? null : { person }
+  }
+
+  state = {
+    person: null
   }
 
   componentDidMount() {
     const { getFinalists, setScene } = this.props
     getFinalists()
     setScene({ title: 'Hugo Award Voting', dockSidebar: false })
-    this.componentWillReceiveProps(this.props)
+    this.componentDidUpdate()
   }
 
-  componentWillReceiveProps({
-    params,
-    person,
-    replace,
-    setVoter,
-    soleVoterId,
-    voterId
-  }) {
+  componentDidUpdate() {
+    const { params, people, replace, setVoter, voterId } = this.props
+    const { person } = this.state
     const personId = (person && person.get('id')) || null
     if (personId !== voterId) setVoter(personId, null)
     if (!person) {
       if (params.id) replace('/hugo/vote')
-      else if (soleVoterId) replace(`/hugo/vote/${soleVoterId}`)
+      else if (people) {
+        const { membershipTypes } = this.props
+        const pv = people.filter(p => {
+          const m = membershipTypes[p.get('membership')]
+          return m && m.wsfs_member
+        })
+        if (pv.size === 1) replace(`/hugo/vote/${pv.first().get('id')}`)
+      }
     }
   }
 
   render() {
-    const { person, setVoter, signature, votingOpen } = this.props
+    const { setVoter, signature, votingOpen } = this.props
+    const { person } = this.state
     return (
       <div>
         <Row>
@@ -121,22 +137,24 @@ class Vote extends React.Component {
 }
 
 export default connect(
-  ({ hugoVotes, user }, { params }) => {
-    const id = (params && Number(params.id)) || null
-    const people = user.get('people')
-    const pv = id ? null : people && people.filter(p => p.get('hugo_voter'))
-    return {
-      person: (id && people && people.find(p => p.get('id') === id)) || null,
-      signature: hugoVotes.get('signature'),
-      soleVoterId: (pv && pv.size === 1 && pv.first().get('id')) || null,
-      voterId: hugoVotes.get('id'),
-      votingOpen: false // TODO: parameterise properly
-    }
-  },
+  ({ hugoVotes, user }) => ({
+    people: user.get('people'),
+    signature: hugoVotes.get('signature'),
+    voterId: hugoVotes.get('id'),
+    votingOpen: true // TODO: parameterise properly
+  }),
   {
     getFinalists,
     replace,
     setScene,
     setVoter
   }
-)(Vote)
+)(props => (
+  <ConfigConsumer>
+    {({ membershipTypes }) =>
+      membershipTypes ? (
+        <Vote membershipTypes={membershipTypes} {...props} />
+      ) : null
+    }
+  </ConfigConsumer>
+))
