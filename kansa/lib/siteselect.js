@@ -92,9 +92,10 @@ class Siteselect {
         if (data.used) throw new InputError(`Token already used at ${data.used}`)
         return this.db.oneOrNone(`
           SELECT p.legal_name, p.email, s.time AS vote_time
-            FROM people p LEFT JOIN siteselection_votes s ON (p.id = s.person_id)
-           WHERE p.id = $1 AND p.membership IN
-                 ('Supporter','Youth','FirstWorldcon','Adult')`, id)
+          FROM people p
+            LEFT JOIN siteselection_votes s ON (p.id = s.person_id)
+            LEFT JOIN membership_types m USING (membership)
+          WHERE p.id = $1 AND m.wsfs_member = true`, id)
 
       case 2:
         if (!data) throw new InputError('Voter not found')
