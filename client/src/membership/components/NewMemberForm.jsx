@@ -126,8 +126,8 @@ class NewMemberForm extends React.Component {
                 <Col xs={12}>
                   <MembershipSelect
                     data={data}
-                    getValue={path => member.getIn(path) || ''}
-                    onChange={(path, value) => replace(`/new/${value}`)}
+                    onChange={value => replace(`/new/${value}`)}
+                    value={member.get('membership')}
                   />
                 </Col>
               </Row>

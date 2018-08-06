@@ -30,9 +30,9 @@ class MemberEdit extends React.Component {
     return isOpen && !sent && Map.isMap(changes) && changes.size > 0
   }
 
-  get title() {
+  getTitle(attr) {
     const { member } = this.props
-    return member.get('membership', 'NonMember') !== 'NonMember'
+    return attr.member
       ? `Edit member #${member.get('member_number')}`
       : member.get('daypass')
         ? `Edit ${member.get('daypass')} day pass holder`
@@ -105,7 +105,7 @@ class MemberEdit extends React.Component {
               autoScrollBodyContent
               onRequestClose={this.handleClose}
               open={isOpen}
-              title={this.title}
+              title={this.getTitle(config.getMemberAttr(member))}
               titleStyle={{ color: accent1Color, textShadow: 'none' }}
             >
               <ConfigProvider value={config}>

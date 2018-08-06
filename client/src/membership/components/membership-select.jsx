@@ -2,54 +2,36 @@ import React from 'react'
 import MenuItem from 'material-ui/MenuItem'
 import SelectField from 'material-ui/SelectField'
 
-import getMemberPrice from '../../lib/get-member-price'
-import { membershipTypes } from '../constants'
 import messages from '../messages'
 
-const MembershipSelect = ({
-  data,
-  getDefaultValue,
-  getValue,
-  lc = 'en',
-  onChange,
-  style
-}) => {
-  const path = ['membership']
-  const prevMembership = getDefaultValue && getDefaultValue(path)
-  const prevIdx = membershipTypes.indexOf(prevMembership)
-  const value = getValue(path) || 'NonMember'
+const MembershipSelect = ({ data, lc = 'en', onChange, value, ...props }) => {
+  const memberTypes = data && data.getIn(['new_member', 'types'])
+  if (!memberTypes) return null
+  const items = memberTypes.entrySeq().sort((a, b) => {
+    const aa = a[1].get('amount')
+    const ba = b[1].get('amount')
+    if (aa !== ba) return aa > ba ? -1 : 1
+    return a[0] < b[0] ? -1 : 1
+  })
   return (
     <SelectField
-      errorText={
-        value === 'NonMember' && prevMembership !== 'NonMember'
-          ? messages[lc].required()
-          : ''
-      }
+      errorText={memberTypes.has(value) ? '' : messages[lc].required()}
       floatingLabelFixed
       floatingLabelText={messages[lc].membership_type()}
       fullWidth
-      onChange={(ev, idx, value) => onChange(path, value)}
-      style={style}
+      onChange={(ev, idx, value) => onChange(value)}
       value={value}
+      {...props}
     >
-      {membershipTypes.map((type, idx) => {
-        if (type === 'NonMember' && prevMembership !== 'NonMember') return null
-        if (type === 'Exhibitor' && prevMembership !== 'Exhibitor') return null
-        if (type === 'Helper' && prevMembership !== 'Helper') return null
-        const amount = getMemberPrice(data, prevMembership, type)
-        let label
-        if (messages[lc][type]) {
-          label = messages[lc][type]()
-        } else {
-          const typeLabel =
-            data && data.getIn(['new_member', 'types', type, 'label'])
-          label = typeLabel || type
-        }
+      {items.map(([key, type]) => {
+        const amount = type.get('amount')
+        const labelFn = messages[lc][key]
+        const label = labelFn ? labelFn() : type.get('label') || key
         return (
           <MenuItem
-            key={type}
-            disabled={amount < 0 || idx < prevIdx}
-            value={type}
+            disabled={typeof amount !== 'number' || amount < 0}
+            key={key}
+            value={key}
             primaryText={amount <= 0 ? label : `${label} (€${amount / 100})`}
           />
         )
