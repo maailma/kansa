@@ -5,7 +5,7 @@ import TextField from 'material-ui/TextField'
 import PropTypes from 'prop-types'
 import React from 'react'
 
-import { emptyPaperPubsMap } from '../../membership/constants'
+import { newPaperPubs } from '../../membership/components/paper-pubs'
 import { membershipTypes } from './Member'
 
 const styles = {
@@ -143,7 +143,7 @@ const PaperPubsCheckbox = ({ getDefaultValue, getValue, onChange }) => {
       checked={!!getValue(path)}
       disabled={!!getDefaultValue(path)}
       onCheck={(ev, checked) =>
-        onChange(path, checked ? emptyPaperPubsMap : null)
+        onChange(path, checked ? newPaperPubs(getValue) : null)
       }
     />
   )
