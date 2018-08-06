@@ -9,7 +9,7 @@ import { disabledColor } from '../../theme/colors'
 import * as PaymentPropTypes from '../../payments/proptypes'
 import { isAttendingMember } from '../constants'
 import messages from '../messages'
-import { TextInput } from './form-components'
+import TextInput from '../../lib/text-input'
 import PaperPubs, { paperPubsIsValid } from './paper-pubs'
 import PreviewBadge from './preview-badge'
 
