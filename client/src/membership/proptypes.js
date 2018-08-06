@@ -1,8 +1,6 @@
 import { PropTypes } from 'prop-types'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 
-import { membershipTypes } from './constants'
-
 export const lookupQuery = ImmutablePropTypes.mapContains({
   email: PropTypes.string,
   member_number: PropTypes.number,
@@ -12,7 +10,7 @@ export const lookupQuery = ImmutablePropTypes.mapContains({
 export const lookupResults = ImmutablePropTypes.mapContains({
   status: PropTypes.oneOf(['multiple', 'not found', 'success']).isRequired,
   id: PropTypes.number,
-  membership: PropTypes.oneOf(membershipTypes),
+  membership: PropTypes.string,
   name: PropTypes.string
 })
 
@@ -27,7 +25,7 @@ export const paperPubs = ImmutablePropTypes.mapContains({
 export const person = ImmutablePropTypes.mapContains({
   id: PropTypes.number.isRequired,
   last_modified: PropTypes.string.isRequired,
-  membership: PropTypes.oneOf(membershipTypes).isRequired,
+  membership: PropTypes.string.isRequired,
   member_number: PropTypes.number,
   legal_name: PropTypes.string.isRequired,
   public_first_name: PropTypes.string,

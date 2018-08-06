@@ -7,11 +7,11 @@ import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import { disabledColor } from '../../theme/colors'
 import * as PaymentPropTypes from '../../payments/proptypes'
-import { isAttendingMember } from '../constants'
 import messages from '../messages'
 import TextInput from '../../lib/text-input'
 import PaperPubs, { paperPubsIsValid } from './paper-pubs'
 import PreviewBadge from './preview-badge'
+import { ConfigConsumer } from '../../lib/config-context'
 
 export const hintStyle = {
   color: disabledColor,
@@ -27,6 +27,43 @@ const PreviewBadgeButton = ({ member, style }) => (
   >
     <FlatButton label="Preview" primary style={style} />
   </PreviewBadge>
+)
+
+const BadgeRow = ({ getMsg, inputProps, isAdmin, member }) => (
+  <ConfigConsumer>
+    {({ getMemberAttr }) =>
+      getMemberAttr(member).badge ? (
+        <Row style={{ alignItems: 'flex-end' }}>
+          <Col xs={12} sm={6}>
+            <TextInput
+              hintText={member.get('preferred_name')}
+              multiLine
+              path="badge_name"
+              rowsMax={2}
+              {...inputProps}
+            />
+          </Col>
+          <Col xs={12} sm={isAdmin ? 3 : 6} md={isAdmin ? 4 : 6}>
+            <TextInput
+              {...inputProps}
+              path="badge_subtitle"
+              hintText={member.get('country')}
+            />
+          </Col>
+          {isAdmin ? (
+            <Col xs={12} sm={3} md={2}>
+              <PreviewBadgeButton member={member} style={{ float: 'right' }} />
+            </Col>
+          ) : (
+            <Col xs={12} style={hintStyle}>
+              <PreviewBadgeButton member={member} style={{ float: 'right' }} />
+              {getMsg('badge_hint')}
+            </Col>
+          )}
+        </Row>
+      ) : null
+    }
+  </ConfigConsumer>
 )
 
 export default class MemberForm extends Component {
@@ -95,7 +132,7 @@ export default class MemberForm extends Component {
     return MemberForm.isValid(this.state.member)
   }
 
-  msg(key, params) {
+  msg = (key, params) => {
     const { lc = 'en' } = this.props
     const fn = messages[lc][key]
     return fn ? fn(params) : key
@@ -170,43 +207,14 @@ export default class MemberForm extends Component {
                 ]}
           </Col>
         </Row>
-        {lc !== 'daypass' &&
-          isAttendingMember(member) && (
-            <Row style={{ alignItems: 'flex-end' }}>
-              <Col xs={12} sm={6}>
-                <TextInput
-                  hintText={member.get('preferred_name')}
-                  multiLine
-                  path="badge_name"
-                  rowsMax={2}
-                  {...inputProps}
-                />
-              </Col>
-              <Col xs={12} sm={isAdmin ? 3 : 6} md={isAdmin ? 4 : 6}>
-                <TextInput
-                  {...inputProps}
-                  path="badge_subtitle"
-                  hintText={member.get('country')}
-                />
-              </Col>
-              {isAdmin ? (
-                <Col xs={12} sm={3} md={2}>
-                  <PreviewBadgeButton
-                    member={member}
-                    style={{ float: 'right' }}
-                  />
-                </Col>
-              ) : (
-                <Col xs={12} style={hintStyle}>
-                  <PreviewBadgeButton
-                    member={member}
-                    style={{ float: 'right' }}
-                  />
-                  {this.msg('badge_hint')}
-                </Col>
-              )}
-            </Row>
-          )}
+        {lc !== 'daypass' && (
+          <BadgeRow
+            getMsg={this.msg}
+            inputProps={inputProps}
+            isAdmin={isAdmin}
+            member={member}
+          />
+        )}
         <Row>
           <Col xs={12} sm={6}>
             <TextInput {...inputProps} path="public_first_name" />
