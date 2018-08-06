@@ -104,7 +104,7 @@ const BarcodeAction = ({ attr, member }) => {
 let UpgradeAction = ({ member, paidPaperPubs, purchaseData, push }) => {
   const mpt = purchaseData && purchaseData.getIn(['new_member', 'types'])
   if (!mpt) return null
-  const prevAmount = mpt.getIn([member.get('membership'), 'amount'])
+  const prevAmount = mpt.getIn([member.get('membership'), 'amount']) || 0
   const upgrade = mpt.some(t => t.get('amount') > prevAmount)
   const addPP = paidPaperPubs && !member.get('paper_pubs')
   return upgrade || addPP ? (
