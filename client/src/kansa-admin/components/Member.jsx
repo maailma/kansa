@@ -3,11 +3,11 @@ import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import ImmutablePropTypes from 'react-immutable-proptypes'
 import { connect } from 'react-redux'
 
 import { ConfigConsumer, ConfigProvider } from '../../lib/config-context'
 import MemberForm from '../../membership/components/MemberForm'
+import * as MemberPropTypes from '../../membership/proptypes'
 import printBadge from '../printBadge'
 import MemberLog from './MemberLog'
 import NewInvoice from './NewInvoice'
@@ -51,28 +51,39 @@ export const membershipTypes = [
   'Adult'
 ]
 
+const MemberTitle = ({ attr, member, ...props }) => {
+  const membership = member.get('membership')
+  const title = attr.member
+    ? `Member #${member.get('member_number')} (${membership})`
+    : /^DP/.test(membership)
+      ? membership.replace(/^DP/, 'Day pass:')
+      : 'Non-member'
+  const lastModStyle = {
+    color: 'rgba(0, 0, 0, 0.3)',
+    float: 'right',
+    fontSize: 11,
+    fontStyle: 'italic',
+    lineHeight: 'normal',
+    textAlign: 'right'
+  }
+  return (
+    <div title={'ID: ' + member.get('id')} {...props}>
+      <div style={lastModStyle}>
+        Last modified
+        <br />
+        {member.get('last_modified')}
+      </div>
+      {title}
+    </div>
+  )
+}
+
 class Member extends PureComponent {
   static propTypes = {
     api: PropTypes.object.isRequired,
     handleClose: PropTypes.func.isRequired,
     locked: PropTypes.bool.isRequired,
-    member: ImmutablePropTypes.mapContains({
-      id: PropTypes.number,
-      legal_name: PropTypes.string,
-      email: PropTypes.string,
-      badge_name: PropTypes.string,
-      badge_subtitle: PropTypes.string,
-      public_first_name: PropTypes.string,
-      public_last_name: PropTypes.string,
-      country: PropTypes.string,
-      state: PropTypes.string,
-      city: PropTypes.string,
-      paper_pubs: ImmutablePropTypes.mapContains({
-        name: PropTypes.string.isRequired,
-        address: PropTypes.string.isRequired,
-        country: PropTypes.string.isRequired
-      })
-    }),
+    member: MemberPropTypes.person,
     printer: PropTypes.string,
     setMember: PropTypes.func.isRequired,
     showMessage: PropTypes.func.isRequired
@@ -93,7 +104,7 @@ class Member extends PureComponent {
     }
   }
 
-  get actions() {
+  getActions(attr) {
     const {
       api,
       handleClose,
@@ -158,11 +169,7 @@ class Member extends PureComponent {
     }
 
     const daypass = member.get('daypass')
-    if (
-      printer &&
-      membership !== 'Supporter' &&
-      (membership !== 'NonMember' || daypass)
-    ) {
+    if (printer && (attr.badge || daypass)) {
       let label = daypass ? 'Claim daypass' : 'Print badge'
       if (member.get('badge_print_time')) label = 'Re-' + label
       if (hasChanges) label = 'Save & ' + label
@@ -171,13 +178,10 @@ class Member extends PureComponent {
           disabled={sent || !valid}
           label={label}
           onClick={() =>
-            this.handleBadgePrint().then(() =>
-              showMessage(
-                `${
-                  daypass ? 'Daypass claimed' : 'Badge printed'
-                } for ${member.get('preferred_name')}`
-              )
-            )
+            this.handleBadgePrint().then(() => {
+              const done = daypass ? 'Daypass claimed' : 'Badge printed'
+              showMessage(`${done} for ${member.get('preferred_name')}`)
+            })
           }
           style={{ float: 'left' }}
         />
@@ -195,8 +199,7 @@ class Member extends PureComponent {
       !prev ||
       window.confirm(
         [
-          'Are you sure?',
-          '',
+          'Are you sure?\n',
           member.get('daypass')
             ? 'Daypass was already claimed at:'
             : 'Badge was already printed at:',
@@ -248,56 +251,35 @@ class Member extends PureComponent {
 
   render() {
     const { handleClose, member } = this.props
-    if (!member) return null
-    const membership = member.get('membership', 'NonMember')
 
     // FIXME: The material-ui 0.20 <Dialog> does not allow context to pass
     // through like it should; hence this Consumer/Dialog/Provider hack.
-    return (
+    return member ? (
       <ConfigConsumer>
-        {config => (
-          <Dialog
-            actions={this.actions}
-            title={
-              <div title={'ID: ' + member.get('id')}>
-                <div
-                  style={{
-                    color: 'rgba(0, 0, 0, 0.3)',
-                    float: 'right',
-                    fontSize: 11,
-                    fontStyle: 'italic',
-                    lineHeight: 'normal',
-                    textAlign: 'right'
-                  }}
-                >
-                  Last modified
-                  <br />
-                  {member.get('last_modified')}
-                </div>
-                {membership === 'NonMember'
-                  ? 'Non-member'
-                  : /^DP/.test(membership)
-                    ? membership.replace(/^DP/, 'Day pass:')
-                    : `Member #${member.get('member_number')} (${membership})`}
-              </div>
-            }
-            open
-            autoScrollBodyContent
-            bodyClassName="memberDialog"
-            onRequestClose={handleClose}
-          >
-            <ConfigProvider value={config}>
-              <MemberForm
-                isAdmin={true}
-                member={member}
-                onChange={this.handleChange}
-                tabIndex={1}
-              />
-            </ConfigProvider>
-          </Dialog>
-        )}
+        {config => {
+          const attr = config.getMemberAttr(member)
+          return (
+            <Dialog
+              actions={this.getActions(attr)}
+              title={<MemberTitle attr={attr} member={member} />}
+              open
+              autoScrollBodyContent
+              bodyClassName="memberDialog"
+              onRequestClose={handleClose}
+            >
+              <ConfigProvider value={config}>
+                <MemberForm
+                  isAdmin={true}
+                  member={member}
+                  onChange={this.handleChange}
+                  tabIndex={1}
+                />
+              </ConfigProvider>
+            </Dialog>
+          )
+        }}
       </ConfigConsumer>
-    )
+    ) : null
   }
 }
 
