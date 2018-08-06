@@ -23,21 +23,16 @@ const Action = props => (
 
 let HugoAction = ({
   attrName,
+  getMemberAttr,
   getPath,
   member,
-  membershipTypes,
   people,
   primaryText,
   push
 }) => {
-  const attr = membershipTypes && membershipTypes[member.get('membership')]
-  if (!attr || !attr[attrName]) return null
+  if (!getMemberAttr(member)[attrName]) return null
   return people.size > 1 &&
-    people.some(p => {
-      if (p === member) return false
-      const pm = membershipTypes[p.get('membership')]
-      return pm && pm[attrName]
-    }) ? null : (
+    people.some(p => p !== member && getMemberAttr(p)[attrName]) ? null : (
     <Action
       leftIcon={<Rocket />}
       onClick={() => push(getPath(member.get('id')))}
@@ -99,7 +94,7 @@ const EditAction = ({ member }) => {
 }
 
 const BarcodeAction = ({ attr, member }) => {
-  return attr && (attr.badge || member.get('daypass')) ? (
+  return attr.badge || member.get('daypass') ? (
     <ShowBarcode memberId={member.get('id')}>
       <Action leftIcon={<Receipt />} primaryText="Show registration barcode" />
     </ShowBarcode>
@@ -127,7 +122,7 @@ UpgradeAction = connect(
 )(UpgradeAction)
 
 let SiteSelectionTokenAction = ({ attr, push }) =>
-  attr && attr.wsfs_member ? (
+  attr.wsfs_member ? (
     <Action
       leftIcon={<LocationCity />}
       onClick={() => push(`/pay/ss-token`)}
@@ -140,7 +135,7 @@ SiteSelectionTokenAction = connect(
 )(SiteSelectionTokenAction)
 
 let SlackInviteAction = ({ attr, requestSlackInvite }) =>
-  attr && attr.member ? (
+  attr.member ? (
     <Action
       leftIcon={<SlackIcon />}
       onClick={requestSlackInvite}
@@ -153,7 +148,7 @@ SlackInviteAction = connect(
 )(SlackInviteAction)
 
 const SouvenirBookAction = ({ attr }) =>
-  attr && attr.wsfs_member ? (
+  attr.wsfs_member ? (
     <Action
       leftIcon={<SouvenirBook />}
       onClick={() => {
@@ -165,18 +160,15 @@ const SouvenirBookAction = ({ attr }) =>
 
 const MemberActions = ({ member }) => (
   <ConfigConsumer>
-    {({ membershipTypes, paid_paper_pubs }) => {
-      const attr = membershipTypes && membershipTypes[member.get('membership')]
+    {({ getMemberAttr, paid_paper_pubs }) => {
+      const attr = getMemberAttr(member)
       return (
         <List style={{ paddingTop: 0 }}>
           <EditAction member={member} />
           <UpgradeAction member={member} paidPaperPubs={paid_paper_pubs} />
           <BarcodeAction attr={attr} member={member} />
-          <HugoNominateAction
-            member={member}
-            membershipTypes={membershipTypes}
-          />
-          <HugoVoteAction member={member} membershipTypes={membershipTypes} />
+          <HugoNominateAction getMemberAttr={getMemberAttr} member={member} />
+          <HugoVoteAction getMemberAttr={getMemberAttr} member={member} />
           <SiteSelectionTokenAction attr={attr} />
           <SlackInviteAction attr={attr} />
           <SouvenirBookAction attr={attr} />

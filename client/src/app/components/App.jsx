@@ -8,8 +8,11 @@ import Snackbar from 'material-ui/Snackbar'
 import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar'
 import Menu from 'material-ui/svg-icons/navigation/menu'
 
-import api from '../../lib/api'
-import { ConfigProvider } from '../../lib/config-context'
+import {
+  ConfigProvider,
+  defaultConfig,
+  getConfig
+} from '../../lib/config-context'
 import Worldcon75 from '../../lib/worldcon75'
 import { primary2Color } from '../../theme/colors'
 import { hideMessage } from '../actions/app'
@@ -96,13 +99,13 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = Object.assign(
-      { config: {}, menuOpen: false },
+      { config: defaultConfig, menuOpen: false },
       getMenuState(props.allowMenuDocked)
     )
   }
 
   componentDidMount() {
-    api.GET('config').then(config => this.setState({ config }))
+    getConfig().then(config => this.setState({ config }))
   }
 
   componentWillReceiveProps(nextProps) {

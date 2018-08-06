@@ -172,10 +172,8 @@ class Nominate extends React.Component {
       <div>Nominator not found!</div>
     ) : (
       <ConfigConsumer>
-        {({ membershipTypes }) => {
-          const attr =
-            membershipTypes && membershipTypes[person.get('membership')]
-          const active = !!(attr && attr.hugo_nominator)
+        {({ getMemberAttr }) => {
+          const active = !!getMemberAttr(person).hugo_nominator
           return (
             <div>
               <NominationsHead

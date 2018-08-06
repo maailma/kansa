@@ -19,7 +19,7 @@ import PostDeadlineContents from './components/post-deadline-contents'
 class Vote extends React.Component {
   static propTypes = {
     getFinalists: PropTypes.func.isRequired,
-    membershipTypes: PropTypes.object.isRequired,
+    getMemberAttr: PropTypes.func.isRequired,
     params: PropTypes.shape({ id: PropTypes.string }),
     people: MemberPropTypes.people,
     replace: PropTypes.func.isRequired,
@@ -49,18 +49,21 @@ class Vote extends React.Component {
   }
 
   componentDidUpdate() {
-    const { params, people, replace, setVoter, voterId } = this.props
+    const {
+      getMemberAttr,
+      params,
+      people,
+      replace,
+      setVoter,
+      voterId
+    } = this.props
     const { person } = this.state
     const personId = (person && person.get('id')) || null
     if (personId !== voterId) setVoter(personId, null)
     if (!person) {
       if (params.id) replace('/hugo/vote')
       else if (people) {
-        const { membershipTypes } = this.props
-        const pv = people.filter(p => {
-          const m = membershipTypes[p.get('membership')]
-          return m && m.wsfs_member
-        })
+        const pv = people.filter(p => getMemberAttr(p).wsfs_member)
         if (pv.size === 1) replace(`/hugo/vote/${pv.first().get('id')}`)
       }
     }
@@ -151,10 +154,6 @@ export default connect(
   }
 )(props => (
   <ConfigConsumer>
-    {({ membershipTypes }) =>
-      membershipTypes ? (
-        <Vote membershipTypes={membershipTypes} {...props} />
-      ) : null
-    }
+    {({ getMemberAttr }) => <Vote getMemberAttr={getMemberAttr} {...props} />}
   </ConfigConsumer>
 ))

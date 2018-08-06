@@ -18,47 +18,43 @@ const preferredName = person => {
 
 const VoteIntro = ({ person, setSignature, signature }) => (
   <ConfigConsumer>
-    {({ membershipTypes }) => {
-      const ms = person && person.get('membership')
-      const attr = ms && membershipTypes && membershipTypes[ms]
-      return (
-        <Card>
-          <VoteIntroText />
-          <Divider />
-          {signature ? (
-            <CardHeader
-              style={{ padding: '16px 32px' }}
-              textStyle={{ paddingRight: 0 }}
-              title={`Signing as "${signature}"`}
-            />
-          ) : attr && attr.wsfs_member ? (
-            <VoteSignature
-              person={person}
-              preferredName={preferredName(person)}
-              setSignature={setSignature}
-            />
-          ) : (
-            <CardText style={{ padding: '16px 32px' }}>
-              <p>
-                To access Hugo Award voting, please use a personal login link
-                sent to you by email.
-              </p>
-              <p>
-                If your email address is associated with more than one
-                membership that is eligible to vote or nominate in the 2017 Hugo
-                Awards, you'll need to use the separately emailed Hugo login
-                link to access those services. For further assistance with Hugo
-                nominations, please e-mail{' '}
-                <a href="mailto:hugohelp@worldcon.fi">hugohelp@worldcon.fi</a>.
-              </p>
-              <p>
-                <Link to="/">&laquo; Return to the main member page</Link>
-              </p>
-            </CardText>
-          )}
-        </Card>
-      )
-    }}
+    {({ getMemberAttr }) => (
+      <Card>
+        <VoteIntroText />
+        <Divider />
+        {signature ? (
+          <CardHeader
+            style={{ padding: '16px 32px' }}
+            textStyle={{ paddingRight: 0 }}
+            title={`Signing as "${signature}"`}
+          />
+        ) : getMemberAttr(person).wsfs_member ? (
+          <VoteSignature
+            person={person}
+            preferredName={preferredName(person)}
+            setSignature={setSignature}
+          />
+        ) : (
+          <CardText style={{ padding: '16px 32px' }}>
+            <p>
+              To access Hugo Award voting, please use a personal login link sent
+              to you by email.
+            </p>
+            <p>
+              If your email address is associated with more than one membership
+              that is eligible to vote or nominate in the 2017 Hugo Awards,
+              you'll need to use the separately emailed Hugo login link to
+              access those services. For further assistance with Hugo
+              nominations, please e-mail{' '}
+              <a href="mailto:hugohelp@worldcon.fi">hugohelp@worldcon.fi</a>.
+            </p>
+            <p>
+              <Link to="/">&laquo; Return to the main member page</Link>
+            </p>
+          </CardText>
+        )}
+      </Card>
+    )}
   </ConfigConsumer>
 )
 

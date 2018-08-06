@@ -4,10 +4,9 @@ import * as MemberPropTypes from '../proptypes'
 import MemberActions from './member-actions'
 import { ConfigConsumer } from '../../lib/config-context'
 
-function cardTitle(member, membershipTypes) {
-  const ms = member.get('membership')
-  const attr = membershipTypes && membershipTypes[ms]
-  if (attr && attr.member) return `${ms} member #${member.get('member_number')}`
+function cardTitle(member, attr) {
+  if (attr.member)
+    return `${member.get('membership')} member #${member.get('member_number')}`
   const daypass = member.get('daypass')
   if (daypass) {
     const days = ['Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -15,18 +14,18 @@ function cardTitle(member, membershipTypes) {
       .join('/')
     return `${daypass} day pass ${days}`
   }
-  return attr && attr.hugo_nominator ? 'Hugo nominator' : 'Non-member'
+  return attr.hugo_nominator ? 'Hugo nominator' : 'Non-member'
 }
 
 const MemberCard = ({ member }) =>
   member ? (
     <Card style={{ marginBottom: 18 }}>
       <ConfigConsumer>
-        {({ membershipTypes }) => (
+        {({ getMemberAttr }) => (
           <CardHeader
             title={member.get('legal_name')}
             style={{ fontWeight: 600 }}
-            subtitle={cardTitle(member, membershipTypes)}
+            subtitle={cardTitle(member, getMemberAttr(member))}
           />
         )}
       </ConfigConsumer>
