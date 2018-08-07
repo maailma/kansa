@@ -1,3 +1,4 @@
+const { InputError } = require('../errors');
 const util = require('../util');
 
 class Person {
@@ -30,14 +31,16 @@ class Person {
     if (!util.isTrueish(pp)) return null;
     if (typeof pp == 'string') pp = JSON.parse(pp);
     return Person.paperPubsFields.reduce((o, fn) => {
-      if (!pp[fn]) throw new Error('If non-null, paper_pubs requires: ' + Person.paperPubsFields.join(', '));
+      if (!pp[fn]) throw new InputError('If non-null, paper_pubs requires: ' + Person.paperPubsFields.join(', '));
       o[fn] = pp[fn];
       return o;
     }, {});
   }
 
   constructor(src) {
-    if (!src || !src.legal_name || !src.membership) throw new Error('Missing data for new Person (required: legal_name, membership)');
+    if (!src || !src.legal_name || !src.membership) {
+      throw new InputError('Missing data for new Person (required: legal_name, membership)');
+    }
     this.data = Object.assign({}, src);
     util.forceInt(this.data, 'member_number');
     if (this.data.membership === 'NonMember') this.data.member_number = null;

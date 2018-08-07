@@ -221,67 +221,89 @@ function authAddPerson(req, res, next) {
     .catch(next);
 }
 
-function updatePerson(req, res, next) {
-  const data = Object.assign({}, req.body);
-  const isMemberAdmin = req.session.user.member_admin;
-  const fieldSrc = isMemberAdmin ? Person.fields : Person.userModFields;
-  const fields = fieldSrc.filter(fn => data.hasOwnProperty(fn));
-  if (fields.length == 0) return res.status(400).json({ status: 'error', message: 'No valid parameters' });
+function getUpdateQuery(data, id, isAdmin) {
+  const values = Object.assign({}, data, { id })
+  const fieldSrc = isAdmin ? Person.fields : Person.userModFields;
+  const fields = fieldSrc.filter(f => values.hasOwnProperty(f));
+  if (fields.length == 0) throw new InputError('No valid parameters');
   let ppCond = '';
-  if (fields.indexOf('paper_pubs') >= 0) try {
-    data.paper_pubs = Person.cleanPaperPubs(data.paper_pubs);
-    if (config.paid_paper_pubs && !isMemberAdmin) {
-      if (!data.paper_pubs) {
-        const message = 'Removing paid paper publications is not allowed'
-        return res.status(400).json({ status: 'error', message })
-      }
+  if (fields.indexOf('paper_pubs') >= 0) {
+    values.paper_pubs = Person.cleanPaperPubs(values.paper_pubs);
+    if (config.paid_paper_pubs && !isAdmin) {
+      if (!values.paper_pubs) throw new InputError('Removing paid paper publications is not allowed')
       ppCond = 'AND paper_pubs IS NOT NULL';
     }
-  } catch (e) {
-    return res.status(400).json({ status: 'error', message: 'paper_pubs: ' + e.message });
   }
-  const sqlFields = fields.map(fn => `${fn}=$(${fn})`).join(', ');
-  const log = new LogEntry(req, 'Update fields: ' + fields.join(', '));
-  data.id = log.subject = parseInt(req.params.id);
-  const db = req.app.locals.db;
-  let email = data.email;
-  db.tx(tx => tx.batch([
-    tx.one(`
-      WITH prev AS (
-        SELECT email, m.hugo_nominator, m.wsfs_member
-        FROM people p
-          LEFT JOIN membership_types m USING (membership)
-        WHERE id=$(id)
-      )
-      UPDATE People p
-      SET ${sqlFields}
-      WHERE id=$(id) ${ppCond}
-      RETURNING
-        email AS next_email,
-        (SELECT email AS prev_email, hugo_nominator, wsfs_member FROM prev),
-        preferred_name(p) as name`, data),
-    data.email ? tx.oneOrNone(`SELECT key FROM Keys WHERE email=$(email)`, data) : {},
-    tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
-  ]))
-    .then(([{ hugo_nominator, wsfs_member, next_email, prev_email, name }, key]) => {
-      email = next_email;
-      if (next_email === prev_email) return {}
-      updateMailRecipient(db, prev_email);
-      return !hugo_nominator && !wsfs_member ? {}
-        : key ? { key: key.key, name }
-        : setKeyChecked(req, db, data.email).then(({ key }) => ({ key, name }));
-    })
-    .then(({ key, name }) => !!(key && mailTask('hugo-update-email', {
-      email,
-      key,
-      memberId: data.id,
-      name
-    })))
-    .then(key_sent => {
-      res.json({ status: 'success', updated: fields, key_sent });
-      updateMailRecipient(db, email);
-    })
-    .catch(err => (ppCond && !err[0].success && err[0].result.message == 'No data returned from the query.')
-      ? res.status(402).json({ status: 'error', message: 'Paper publications have not been enabled for this person' })
-      : next(err));
+  const query = `
+    WITH prev AS (
+      SELECT email, m.hugo_nominator, m.wsfs_member
+      FROM people p
+        LEFT JOIN membership_types m USING (membership)
+      WHERE id=$(id)
+    )
+    UPDATE People p
+    SET ${fields.map(f => `${f}=$(${f})`).join(', ')}
+    WHERE id=$(id) ${ppCond}
+    RETURNING
+      email AS next_email,
+      preferred_name(p) as name,
+      (SELECT email AS prev_email FROM prev),
+      (SELECT hugo_nominator FROM prev),
+      (SELECT wsfs_member FROM prev)`
+  return { fields, ppCond, query, values }
+}
+
+function updatePerson(req, res, next) {
+  const { fields, ppCond, query, values } = getUpdateQuery(
+    req.body,
+    parseInt(req.params.id),
+    req.session.user.member_admin
+  )
+  const log = new LogEntry(req, 'Update fields: ' + fields.join(', '))
+  log.subject = values.id
+  req.app.locals.db.task(dbTask => {
+    dbTask.tx(tx => tx.batch([
+      tx.one(query, values),
+      values.email
+        ? tx.oneOrNone(`SELECT key FROM Keys WHERE email=$(email)`, values)
+        : {},
+      tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
+    ]))
+      .then(([{ hugo_nominator, wsfs_member, next_email, prev_email, name }, prevKey]) => {
+        values.email = next_email;
+        if (next_email !== prev_email) {
+          updateMailRecipient(dbTask, prev_email);
+          if (hugo_nominator || wsfs_member) {
+            return prevKey
+              ? { key: prevKey.key, name }
+              : setKeyChecked(req, dbTask, values.email)
+                  .then(({ key }) => ({ key, name }));
+          }
+        }
+        return {}
+      })
+      .then(({ key, name }) => !!(
+        key &&
+        mailTask('hugo-update-email', {
+          email: values.email,
+          key,
+          memberId: values.id,
+          name
+        })
+      ))
+      .then(key_sent => {
+        res.json({ status: 'success', updated: fields, key_sent });
+        updateMailRecipient(dbTask, values.email);
+      })
+      .catch(err => {
+        if (ppCond && Array.isArray(err) && !err[0].success) {
+          const { message } = err.result || {}
+          if (message === 'No data returned from the query.') {
+            err = new InputError('Paper publications have not been enabled for this person')
+            err.status = 402
+          }
+        }
+        next(err)
+      })
+  })
 }
