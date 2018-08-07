@@ -7,8 +7,16 @@ import { ConfigConsumer } from '../../lib/config-context'
 import { filterTerms } from '../filterPeople'
 import { memberFields } from './Member'
 
-const styleTerm = src =>
-  src.split('_').map((val, idx) => (idx % 2 ? <i key={idx}>{val}</i> : val))
+const TermDefinition = ({ term: [title, definition] }) => {
+  const styleTerm = src =>
+    src.split('_').map((val, idx) => (idx % 2 ? <i key={idx}>{val}</i> : val))
+  return (
+    <Fragment>
+      <dt>{styleTerm(title)}</dt>
+      <dd style={{ marginBottom: 8 }}>{styleTerm(definition)}</dd>
+    </Fragment>
+  )
+}
 
 const listKeys = list => {
   const lastIdx = list.length - 1
@@ -46,12 +54,7 @@ export const HelpDialog = ({ open, handleClose }) => (
         <dl>
           {filterTerms.reduce(
             (res, term, idx) =>
-              res.concat(
-                <Fragment key={term[0]}>
-                  <dt>{styleTerm(term[0])}</dt>
-                  <dd style={{ marginBottom: 8 }}>{styleTerm(term[1])}</dd>
-                </Fragment>
-              ),
+              res.concat(<TermDefinition key={idx} term={term} />),
             []
           )}
         </dl>

@@ -39,23 +39,24 @@ const TextInput = ({
   }
   return (
     <TextField
-      floatingLabelText={label}
+      className="memberInput"
       floatingLabelFixed
       floatingLabelStyle={{
         color: value ? disabledColor : 'rgba(0, 0, 0, 0.870588)'
       }}
+      floatingLabelText={label}
       fullWidth
-      style={style}
-      className="memberInput"
-      underlineStyle={ulStyle}
-      underlineFocusStyle={ulStyle}
-      value={value}
       onChange={(ev, value) => onChange(path, value)}
-      ref={inputRef || (() => {})}
+      ref={inputRef}
+      style={style}
+      underlineFocusStyle={ulStyle}
+      underlineStyle={ulStyle}
+      value={value}
       {...props}
     />
   )
 }
+
 TextInput.propTypes = {
   getDefaultValue: PropTypes.func,
   getValue: PropTypes.func.isRequired,

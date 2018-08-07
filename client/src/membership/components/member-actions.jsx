@@ -107,14 +107,17 @@ let UpgradeAction = ({ member, paidPaperPubs, purchaseData, push }) => {
   const prevAmount = mpt.getIn([member.get('membership'), 'amount']) || 0
   const upgrade = mpt.some(t => t.get('amount') > prevAmount)
   const addPP = paidPaperPubs && !member.get('paper_pubs')
-  return upgrade || addPP ? (
+  if (!upgrade && !addPP) return null
+  const primaryText = upgrade ? 'Upgrade membership' : 'Add paper publications'
+  const secondaryText = upgrade && addPP ? 'and/or add paper publications' : ''
+  return (
     <Action
       leftIcon={<ThumbUp style={upgrade && addPP ? { top: 12 } : null} />}
       onClick={() => push(`/upgrade/${member.get('id')}`)}
-      primaryText={upgrade ? 'Upgrade membership' : 'Add paper publications'}
-      secondaryText={upgrade && addPP ? 'and/or add paper publications' : ''}
+      primaryText={primaryText}
+      secondaryText={secondaryText}
     />
-  ) : null
+  )
 }
 UpgradeAction = connect(
   ({ purchase }) => ({ purchaseData: purchase.get('data') }),

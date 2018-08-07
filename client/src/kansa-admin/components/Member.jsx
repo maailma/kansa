@@ -104,90 +104,88 @@ class Member extends PureComponent {
     }
   }
 
-  getActions(attr) {
-    const {
-      api,
-      handleClose,
-      locked,
-      member,
-      printer,
-      showMessage
-    } = this.props
-    const { changes, sent, valid } = this.state
-    const hasChanges = changes.size > 0
+  getAdminActions() {
+    const { api, member, showMessage } = this.props
+    const email = member.get('email')
     const id = member.get('id')
+    const legal_name = member.get('legal_name')
     const membership = member.get('membership')
+    const paper_pubs = member.get('paper_pubs')
+    return [
+      <MemberLog key="log" getLog={() => api.GET(`people/${id}/log`)} id={id}>
+        <FlatButton label="View log" style={{ float: 'left' }} />
+      </MemberLog>,
 
-    const actions = [
+      <Upgrade
+        key="upgrade"
+        membership={membership}
+        paper_pubs={paper_pubs}
+        name={`${legal_name} <${email}>`}
+        upgrade={res =>
+          api
+            .POST(`people/${id}/upgrade`, res)
+            .then(() => showMessage(`${legal_name} upgraded`))
+        }
+      >
+        <FlatButton label="Upgrade" style={{ float: 'left' }} />
+      </Upgrade>,
+
+      <NewInvoice
+        key="invoice"
+        onSubmit={invoice =>
+          api
+            .POST(`purchase/invoice`, {
+              email,
+              items: [invoice]
+            })
+            .then(() => showMessage(`Invoice created for ${legal_name}`))
+        }
+        person={member}
+      >
+        <FlatButton label="New invoice" style={{ float: 'left' }} />
+      </NewInvoice>
+    ]
+  }
+
+  getBadgeAction(attr) {
+    const { member, printer, showMessage } = this.props
+    const { changes, sent, valid } = this.state
+    const daypass = member.get('daypass')
+    if (!printer || !(attr.badge || daypass)) return null
+    let label = daypass ? 'Claim daypass' : 'Print badge'
+    if (member.get('badge_print_time')) label = 'Re-' + label
+    if (changes.size > 0) label = 'Save & ' + label
+    return (
+      <FlatButton
+        disabled={sent || !valid}
+        key="badge"
+        label={label}
+        onClick={() =>
+          this.handleBadgePrint().then(() => {
+            const done = daypass ? 'Daypass claimed' : 'Badge printed'
+            showMessage(`${done} for ${member.get('preferred_name')}`)
+          })
+        }
+        style={{ float: 'left' }}
+      />
+    )
+  }
+
+  getActions(attr) {
+    const { handleClose, locked } = this.props
+    const { changes, sent, valid } = this.state
+    const actions = locked ? [] : this.getAdminActions()
+    const ba = this.getBadgeAction(attr)
+    if (ba) actions.unshift(ba)
+    actions.push(
       <FlatButton key="close" label="Close" onClick={handleClose} />,
       <FlatButton
         key="ok"
-        disabled={sent || !hasChanges || !valid}
+        disabled={sent || changes.size === 0 || !valid}
         label={sent ? 'Working...' : 'Apply'}
         onClick={() => this.save().then(handleClose)}
       />
-    ]
-
-    if (!locked) {
-      const email = member.get('email')
-      const legal_name = member.get('legal_name')
-      const paper_pubs = member.get('paper_pubs')
-      actions.unshift(
-        <MemberLog key="log" getLog={() => api.GET(`people/${id}/log`)} id={id}>
-          <FlatButton label="View log" style={{ float: 'left' }} />
-        </MemberLog>,
-
-        <Upgrade
-          key="upgrade"
-          membership={membership}
-          paper_pubs={paper_pubs}
-          name={`${legal_name} <${email}>`}
-          upgrade={res =>
-            api
-              .POST(`people/${id}/upgrade`, res)
-              .then(() => showMessage(`${legal_name} upgraded`))
-          }
-        >
-          <FlatButton label="Upgrade" style={{ float: 'left' }} />
-        </Upgrade>,
-
-        <NewInvoice
-          key="invoice"
-          onSubmit={invoice =>
-            api
-              .POST(`purchase/invoice`, {
-                email,
-                items: [invoice]
-              })
-              .then(() => showMessage(`Invoice created for ${legal_name}`))
-          }
-          person={member}
-        >
-          <FlatButton label="New invoice" style={{ float: 'left' }} />
-        </NewInvoice>
-      )
-    }
-
-    const daypass = member.get('daypass')
-    if (printer && (attr.badge || daypass)) {
-      let label = daypass ? 'Claim daypass' : 'Print badge'
-      if (member.get('badge_print_time')) label = 'Re-' + label
-      if (hasChanges) label = 'Save & ' + label
-      actions.unshift(
-        <FlatButton
-          disabled={sent || !valid}
-          label={label}
-          onClick={() =>
-            this.handleBadgePrint().then(() => {
-              const done = daypass ? 'Daypass claimed' : 'Badge printed'
-              showMessage(`${done} for ${member.get('preferred_name')}`)
-            })
-          }
-          style={{ float: 'left' }}
-        />
-      )
-    }
-
+    )
     return actions
   }
 
