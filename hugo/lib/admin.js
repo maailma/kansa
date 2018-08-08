@@ -100,18 +100,16 @@ class Admin {
   }
 
   _classifyWithObject(category, nomination, getInsertQuery) {
-    return this.db.tx(tx => tx.sequence((i, data) => { switch (i) {
-      case 0:
-        return tx.one(`
-          INSERT INTO Canon (category, nomination)
-          VALUES ($(category), $(nomination)::jsonb)
-          ON CONFLICT (category, nomination)
-            DO UPDATE SET category = EXCLUDED.category
-          RETURNING id
-        `, { category, nomination });  // DO UPDATE required for non-empty RETURNING id
-      case 1:
-        return tx.none(getInsertQuery(data.id));
-    }}))
+    return this.db.tx(tx =>
+      tx.one(`
+        INSERT INTO Canon (category, nomination)
+        VALUES ($(category), $(nomination)::jsonb)
+        ON CONFLICT (category, nomination)
+          DO UPDATE SET category = EXCLUDED.category
+        RETURNING id`, { category, nomination } // DO UPDATE required for non-empty RETURNING id
+      )
+        .then(({ id }) => tx.none(getInsertQuery(id)))
+    )
   }
 
   classify(req, res, next) {

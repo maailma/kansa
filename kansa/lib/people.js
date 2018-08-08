@@ -180,29 +180,27 @@ function addPerson(req, db, person) {
   }
   const log = new LogEntry(req, 'Add new person');
   let res;
-  return db.tx(tx => tx.sequence((i, data) => { switch (i) {
-
-    case 0:
-      return tx.one(`INSERT INTO People ${person.sqlValues} RETURNING id, member_number`, person.data);
-
-    case 1:
-      person.data.id = data.id
-      person.data.member_number = data.member_number
-      res = data;
-      log.subject = data.id
-      return tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
-
-    case 2:
-      if (passDays.length) {
-        person.data.membership = status
+  return db.tx(tx =>
+    tx.one(`
+      INSERT INTO People ${person.sqlValues}
+      RETURNING id, member_number`, person.data
+    )
+      .then(data => {
+        person.data.id = data.id
+        person.data.member_number = data.member_number
+        res = data;
+        log.subject = data.id
+        return tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
+      })
+      .then(() => {
+        if (passDays.length === 0) return null
         const trueDays = passDays.map(d => 'true').join(',')
         return tx.none(`
           INSERT INTO daypasses (person_id,status,${passDays.join(',')})
-               VALUES ($(id),$(membership),${trueDays})`, person.data
+          VALUES ($(id),$(status),${trueDays})`, { id: res.id, status }
         )
-      }
-
-  }}))
+      })
+  )
     .then(() => res);
 }
 

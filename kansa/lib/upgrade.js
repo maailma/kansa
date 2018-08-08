@@ -34,53 +34,57 @@ function upgradePaperPubs(req, db, data) {
     });
 }
 
+function getUpgradeQuery(data, addMemberNumber) {
+  const fields = ['membership']
+  let update = 'membership=$(membership)'
+  if (addMemberNumber) {
+    fields.push('member_number')
+    update += ", member_number=nextval('member_number_seq')"
+  }
+  if (data.paper_pubs) {
+    fields.push('paper_pubs')
+    update += ', paper_pubs=$(paper_pubs)'
+  }
+  const query = `
+    UPDATE people SET ${update} WHERE id=$(id)
+    RETURNING email, member_number`
+  return { fields, query }
+}
+
 function upgradeMembership(req, db, data) {
-  const set = [ 'membership=$(membership)' ];
-  let email, member_number, priceRows;
-  return db.tx(tx => tx.sequence((i, prev) => { switch (i) {
-
-    case 0:
-      return tx.any(`SELECT * FROM membership_prices`);
-
-    case 1:
-      priceRows = prev;
-      return tx.one(`
-        SELECT membership, member_number
-          FROM People
-         WHERE id=$1`,
-        data.id);
-
-    case 2:
-      const nextPrice = priceRows.find(p => p.membership === data.membership)
-      if (!nextPrice) throw new InputError(`Invalid membership type: ${JSON.stringify(data.membership)}`)
-      const prevPrice = priceRows.find(p => p.membership === prev.membership)
-      if (prevPrice && prevPrice.amount > nextPrice.amount) {
-        throw new InputError(`Can't upgrade from ${prev.membership} to ${data.membership}`);
-      }
-      if (!parseInt(prev.member_number)) set.push("member_number=nextval('member_number_seq')");
-      if (data.paper_pubs) set.push('paper_pubs=$(paper_pubs)');
-      return tx.one(`
-           UPDATE People
-              SET ${set.join(', ')}
-            WHERE id=$(id)
-        RETURNING email, member_number`, data);
-
-    case 3:
-      email = prev.email;
-      member_number = prev.member_number;
-      const log = new LogEntry(req, `Upgrade to ${data.membership}`);
-      if (data.paper_pubs) log.description += ' and add paper pubs';
-      log.subject = data.id;
-      return tx.none(`INSERT INTO Log ${log.sqlValues}`, log);
-
-    case 4:
-      updateMailRecipient(tx, email);
-
-  }}))
-    .then(() => ({
-      member_number,
-      updated: set.map(sql => sql.replace(/=.*/, ''))
-    }));
+  return db.task(dbTask =>
+    dbTask.batch([
+      dbTask.any(`SELECT * FROM membership_prices`),
+      dbTask.one(`SELECT membership, member_number FROM People WHERE id=$1`, data.id)
+    ])
+      .then(([priceRows, prev]) => {
+        const nextPrice = priceRows.find(p => p.membership === data.membership)
+        if (!nextPrice) {
+          const strType = JSON.stringify(data.membership)
+          throw new InputError(`Invalid membership type: ${strType}`)
+        }
+        const prevPrice = priceRows.find(p => p.membership === prev.membership)
+        if (prevPrice && prevPrice.amount > nextPrice.amount) {
+          throw new InputError(`Can't upgrade from ${prev.membership} to ${data.membership}`)
+        }
+        const addMemberNumber = !parseInt(prev.member_number)
+        const { fields, query } = getUpgradeQuery(data, addMemberNumber)
+        return dbTask.tx(tx =>
+          tx.one(query, data)
+            .then(({ email, member_number }) => {
+              const log = new LogEntry(req, `Upgrade to ${data.membership}`)
+              if (data.paper_pubs) log.description += ' and add paper pubs'
+              log.subject = data.id
+              return tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
+                .then(() => ({ email, fields, member_number }))
+            })
+        )
+      })
+      .then(({ email, fields, member_number }) => {
+        updateMailRecipient(dbTask, email)
+        return { member_number, updated: fields }
+      })
+  )
 }
 
 function upgradePerson(req, db, data) {
