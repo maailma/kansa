@@ -39,7 +39,7 @@ const mailRecipient = (email, res) => {
     email: res[0].email,
     hugo_members,
     key: res[0].key,
-    membership: res[0].membership, // FIXME
+    membership: res[0].membership, // FIXME: see https://github.com/maailma/kansa/issues/49
     name
   }
 }
