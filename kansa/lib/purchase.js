@@ -132,9 +132,9 @@ class Purchase {
     }
   }
 
-  checkUpgrades(prices, reqUpgrades) {
+  checkUpgrades(db, prices, reqUpgrades) {
     if (reqUpgrades.length === 0) return Promise.resolve([]);
-    return this.db.any(`
+    return db.any(`
       SELECT id, email, membership, preferred_name(p) as name, paper_pubs
         FROM People p
        WHERE id IN ($1:csv)`, [reqUpgrades.map(u => u.id)]
@@ -174,6 +174,126 @@ class Purchase {
         });
       });
     });
+  }
+
+  getMembershipPaymentItems(prices, newMembers, upgrades) {
+    const newMemberItems = newMembers.map(({ data }) => {
+      const mp = prices[data.membership]
+      if (typeof mp !== 'number' || mp < 0) {
+        throw new InputError(`Membership type not available for purchase: ${JSON.stringify(data.membership)}`)
+      }
+      const pp = config.paid_paper_pubs && data.paper_pubs && prices.paper_pubs || 0
+      return {
+        amount: mp + pp,
+        category: 'new_member',
+        currency: 'eur',
+        data,
+        person_name: data.preferredName,
+        type: data.membership
+      }
+    })
+    const upgradeItems = upgrades.map(({ amount, id, membership, name, paper_pubs}) => ({
+      amount,
+      category: 'upgrade',
+      currency: 'eur',
+      data: { membership, paper_pubs: paper_pubs || undefined },
+      person_id: id,
+      person_name: name,
+      type: 'upgrade'
+    }))
+    return newMemberItems.concat(upgradeItems)
+  }
+
+  getMembershipPurchaseData(db, {
+    account,
+    amount: reqAmount,
+    email,
+    new_members: reqNewMembers = [],
+    source,
+    upgrades: reqUpgrades = []
+  }) {
+    if (!email) throw new InputError('Required parameter: email')
+    if (!reqAmount !== !source) {
+      throw new InputError('If one is set, the other is required: amount, source')
+    }
+    if (reqNewMembers.length === 0 && reqUpgrades.length === 0) {
+      throw new InputError('Non-empty new_members or upgrades is required')
+    }
+    const newMembers = reqNewMembers.map(src => new Person(src))
+    return db.any(`
+      SELECT key, amount
+      FROM payment_types WHERE category IN ('new_member', 'paper_pubs')`
+    )
+      .then(rows => {
+        const prices = rows.reduce((prices, { key, amount }) => {
+          prices[key] = amount
+          return prices
+        }, {})
+        return this.checkUpgrades(db, prices, reqUpgrades)
+          .then(upgrades => ({ prices, upgrades }))
+      })
+      .then(({ prices, upgrades }) => {
+        const items = this.getMembershipPaymentItems(prices, newMembers, upgrades)
+        const amount = Number(reqAmount)
+        const calcAmount = items.reduce((sum, item) => sum + item.amount, 0)
+        if (amount !== calcAmount) {
+          throw new InputError(`Amount mismatch: in request ${amount}, calculated ${calcAmount}`)
+        }
+        return { account, amount, email, items, newMembers, prices, source, upgrades }
+      })
+  }
+
+  applyMembershipPurchase(req, db, paidItems, { charge_id, newMembers, upgrades }) {
+    const applyUpgrade = (u) => upgradePerson(req, db, u)
+      .then(({ member_number }) => {
+        u.member_number = member_number
+        return getKeyChecked(req, db, u.email)
+      })
+      .then(({ key }) => mailTask(
+        ((!u.membership || u.membership === u.prev_membership) && u.paper_pubs)
+          ? 'kansa-add-paper-pubs' : 'kansa-upgrade-person',
+        Object.assign({ charge_id, key }, u)
+      ))
+    const applyNewMember = (m) => addPerson(req, db, m)
+      .then(() => {
+        const pi = paidItems.find(item => item.data === m.data)
+        return pi && db.none(
+          `UPDATE ${Payment.table} SET person_id=$1 WHERE id=$2`, [m.data.id, pi.id]
+        );
+      })
+      .then(() => getKeyChecked(req, db, m.data.email))
+      .then(({ key, set }) => {
+        const data = Object.assign({ charge_id, key, name: m.preferredName }, m.data)
+        return mailTask('kansa-new-member', data)
+          .then(() => set ? data.email : null)
+      })
+    return Promise.all(
+      upgrades.map(applyUpgrade).concat(newMembers.map(applyNewMember))
+    )
+  }
+
+  makeMembershipPurchase(req, res, next) {
+    let data
+    return this.db.task(dbTask =>
+      this.getMembershipPurchaseData(dbTask, req.body)
+        .then(d => {
+          data = d
+          if (data.amount === 0) return []
+          const { account, email, source, items } = data
+          return new Payment(this.pgp, dbTask, account, email, source, items).process()
+        })
+        .then(paidItems => {
+          if (paidItems[0]) data.charge_id = paidItems[0].stripe_charge_id
+          return this.applyMembershipPurchase(req, dbTask, paidItems, data)
+        })
+        .then(newEmails => {
+          if (!req.session.user) {
+            const email = newEmails.find(e => e)
+            if (email) req.session.user = { email, roles: {} };
+          }
+          res.json({ status: 'success', charge_id: data.charge_id });
+        })
+    ).catch(next);
   }
 
   makeDaypassPurchase(req, res, next) {
@@ -228,101 +348,6 @@ class Purchase {
       }
       res.json({ status: 'success', charge_id })
     }).catch(next)
-  }
-
-  makeMembershipPurchase(req, res, next) {
-    const amount = Number(req.body.amount);
-    const { account, email, source } = req.body;
-    if (!email) return next(new InputError('Required parameter: email'));
-    if (!amount !== !source) return next(new InputError('If one is set, the other is required: amount, source'));
-    const newMembers = (req.body.new_members || []).map(src => new Person(src));
-    const reqUpgrades = req.body.upgrades || [];
-    if (newMembers.length === 0 && reqUpgrades.length === 0) return next(
-      new InputError('Non-empty new_members or upgrades is required')
-    );
-    const newEmailAddresses = {};
-    let charge_id, paymentItems, prices, upgrades;
-    return this.db.any(`
-      SELECT key, amount
-        FROM payment_types
-       WHERE category IN ('new_member', 'paper_pubs')
-    `).then(priceRows => {
-      prices = priceRows.reduce((p, { key, amount }) => {
-        p[key] = amount
-        return p
-      }, {})
-      return this.checkUpgrades(prices, reqUpgrades)
-    }).then(_upgrades => {
-      upgrades = _upgrades;
-      const newMemberPaymentItems = newMembers.map(p => {
-        const mp = prices[p.data.membership]
-        if (typeof mp !== 'number' || mp < 0) {
-          throw new InputError(`Membership type not available for purchase: ${JSON.stringify(p.data.membership)}`)
-        }
-        const pp = config.paid_paper_pubs && p.data.paper_pubs && prices.paper_pubs || 0
-        return {
-          amount: mp + pp,
-          currency: 'eur',
-          category: 'new_member',
-          person_name: p.data.preferredName,
-          type: p.data.membership,
-          data: p.data
-        }
-      });
-      const upgradePaymentItems = upgrades.map(u => ({
-        amount: u.amount,
-        currency: 'eur',
-        person_id: u.id,
-        person_name: u.name,
-        category: 'upgrade',
-        type: 'upgrade',
-        data: { membership: u.membership, paper_pubs: u.paper_pubs || undefined },
-      }));
-      const items = newMemberPaymentItems.concat(upgradePaymentItems);
-      const calcAmount = items.reduce((sum, item) => sum + item.amount, 0);
-      if (amount !== calcAmount) throw new InputError(`Amount mismatch: in request ${amount}, calculated ${calcAmount}`);
-      return amount === 0 ? [] : new Payment(this.pgp, this.db, account, email, source, items)
-        .process()
-    }).then(_items => {
-      paymentItems = _items;
-      if (_items[0]) charge_id = _items[0].stripe_charge_id
-      return Promise.all(upgrades.map(u => (
-        upgradePerson(req, this.db, u)
-          .then(({ member_number }) => {
-            u.member_number = member_number;
-            return getKeyChecked(req, this.db, u.email);
-          })
-          .then(({ key }) => mailTask(
-            ((!u.membership || u.membership === u.prev_membership) && u.paper_pubs)
-              ? 'kansa-add-paper-pubs' : 'kansa-upgrade-person',
-            Object.assign({ charge_id, key }, u)
-          ))
-      )));
-    }).then(() => Promise.all(
-      newMembers.map(m => (
-        addPerson(req, this.db, m)
-          .then(() => {
-            const pi = paymentItems.find(item => item.data === m.data);
-            return pi && this.db.none(
-              `UPDATE ${Payment.table} SET person_id=$1 WHERE id=$2`, [m.data.id, pi.id]
-            );
-          })
-          .then(() => getKeyChecked(req, this.db, m.data.email))
-          .then(({ key, set }) => {
-            if (set) newEmailAddresses[m.data.email] = true;
-            return mailTask(
-              'kansa-new-member',
-              Object.assign({ charge_id, key, name: m.preferredName }, m.data)
-            );
-          })
-      ))
-    )).then(() => {
-      if (!req.session.user) {
-        const nea = Object.keys(newEmailAddresses);
-        if (nea.length >= 1) req.session.user = { email: nea[0], roles: {} };
-      }
-      res.status(200).json({ status: 'success', charge_id });
-    }).catch(next);
   }
 
   makeOtherPurchase(req, res, next) {
