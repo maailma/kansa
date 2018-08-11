@@ -48,7 +48,7 @@ class Payment {
       stripe_receipt: null,
       stripe_token: source && source.id || null,
       amount: Number(item.amount),
-      currency: item.currency || 'eur',
+      currency: item.currency || 'nzd',
       person_email: null,
       person_id: Number(item.person_id) || null,
       person_name: item.person_name || null,
@@ -216,7 +216,7 @@ class Payment {
     return this.stripe.charges.create({
       amount,
       currency,
-      description: `Charge of €${amount/100} by ${this.email} for ${itemsDesc}`,
+      description: `Charge of NZD $${amount/100} by ${this.email} for ${itemsDesc}`,
       metadata: { items: this.items.map(item => item.id).join(',') },
       receipt_email: this.email,
       source: this.source.id,
