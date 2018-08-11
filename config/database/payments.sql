@@ -48,9 +48,9 @@ INSERT INTO payment_categories (key, label, account, listed, fields, description
 ('sponsor', 'Sponsorship', null, true, ARRAY['sponsor','invoice','comments'], 'The problem with travelling is the waiting. The long wait for a space elevator capsule or dragon caravan (or for that programme item you really want to see) can get quite dull. Why not sponsor a craft lounge to help con-goers pass the time? Or sponsor a bench, and give weary convention members somewhere to put their feet up when they have spent too long wandering around the halls.');
 
 INSERT INTO payment_types (category, key, amount, label, sort_index) VALUES
-('daypass'     , 'daypass-Adult'      , null  , 'Adult (from NSD $25/day)'                          , 1)  ,
-('daypass'     , 'daypass-Youth'      , null  , 'Youth (from NSD $15/day)'                          , 2)  ,
-('daypass'     , 'daypass-Child'      , null  , 'Child (from NSD $10/day)'                          , 3)  ,
+('daypass'     , 'daypass-Adult'      , null  , 'Adult (from NZD $25/day)'                      , 1)  ,
+('daypass'     , 'daypass-Youth'      , null  , 'Youth (from NZD $15/day)'                      , 2)  ,
+('daypass'     , 'daypass-Child'      , null  , 'Child (from NZD $10/day)'                      , 3)  ,
 ('new_member'  , 'FirstWorldcon'      , 19500 , 'First Worldcon'                                , 1)  ,
 ('new_member'  , 'Adult'              , 19500 , 'Adult'                                         , 2)  ,
 ('new_member'  , 'Youth'              , 11000 , 'Youth'                                         , 3)  ,
