@@ -170,12 +170,12 @@ function attendingType(type) {
     'bid friend': 'Adult',
     'bid subscriber': 'Adult',
     'child': 'Child',
-    'first worldcon': 'FirstWorldcon',
+    'first worldcon': 'Unwaged',
     'goh': 'Adult',
     'kid-in-tow': 'KidInTow',
     'new attending': 'Adult',
     'upgrade to attending': 'Adult',
-    'upgrade to first worldcon': 'FirstWorldcon',
+    'upgrade to unwaged': 'Unwaged',
     'upgrade to youth attending': 'Youth',
     'youth': 'Youth'
   }[type.toLowerCase()];

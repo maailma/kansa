@@ -94,7 +94,7 @@ class Siteselect {
           SELECT p.legal_name, p.email, s.time AS vote_time
             FROM people p LEFT JOIN siteselection_votes s ON (p.id = s.person_id)
            WHERE p.id = $1 AND p.membership IN
-                 ('Supporter','Youth','FirstWorldcon','Adult')`, id)
+                 ('Supporter','Youth','Unwaged','Adult')`, id)
 
       case 2:
         if (!data) throw new InputError('Voter not found')

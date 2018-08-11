@@ -11,7 +11,7 @@ INSERT INTO People (legal_name, email, membership, member_number, hugo_nominator
             ('Member Admin', 'member-admin@example.com', 'NonMember', NULL, false, false),
             ('Site Selection', 'site-select@example.com', 'NonMember', NULL, false, false),
             ('Hugo Admin', 'hugo-admin@example.com', 'NonMember', NULL, false, false),
-            ('First Member', 'member@example.com', 'FirstWorldcon', 2, true, true),
+            ('First Member', 'member@example.com', 'Unwaged', 2, true, true),
             ('Fan Parent', 'family@example.com', 'Adult', 3, true, true),
             ('Fan Child', 'family@example.com', 'Child', 4, false, false),
             ('Fan Youth', 'family@example.com', 'Youth', 5, true, true),

@@ -51,7 +51,7 @@ INSERT INTO payment_types (category, key, amount, label, sort_index) VALUES
 ('daypass'     , 'daypass-Adult'      , null  , 'Adult (from NZD $375/day)'                     , 1)  ,
 ('daypass'     , 'daypass-Youth'      , null  , 'Youth (from NZD $225/day)'                     , 2)  ,
 ('daypass'     , 'daypass-Child'      , null  , 'Child (from NZD $105/day)'                     , 3)  ,
-('new_member'  , 'FirstWorldcon'      , 37500 , 'First Worldcon'                                , 1)  ,
+('new_member'  , 'Unwaged'            , 37500 , 'Unwaged (NZ residents only)'                   , 1)  ,
 ('new_member'  , 'Adult'              , 37500 , 'Adult'                                         , 2)  ,
 ('new_member'  , 'Youth'              , 22500 , 'Young Adult'                                   , 3)  ,
 ('new_member'  , 'Child'              , 10500 , 'Child'                                         , 4)  ,

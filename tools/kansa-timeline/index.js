@@ -28,7 +28,7 @@ data.forEach(({ add_date, add_ms, up_date, up_ms }) => {
   }
 });
 
-const sum = {Adult:0,FirstWorldcon:0,Youth:0,Child:0,KidInTow:0,Exhibitor:0,Helper:0,Supporter:0,NonMember:0}
+const sum = {Adult:0,Unwaged:0,Youth:0,Child:0,KidInTow:0,Exhibitor:0,Helper:0,Supporter:0,NonMember:0}
 const types = Object.keys(sum)
 console.log(['date', ...types].join(','));
 Object.keys(dates).sort().forEach(date => {

@@ -8,6 +8,6 @@ CREATE TYPE MembershipStatus AS ENUM (
     'KidInTow',
     'Child',
     'Youth',
-    'FirstWorldcon',
+    'Unwaged',
     'Adult'
 );
