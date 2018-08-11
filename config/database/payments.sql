@@ -33,7 +33,7 @@ INSERT INTO payment_fields (key, label, required, type) VALUES
 UPDATE payment_fields SET generated = true WHERE key IN ('token');
 
 INSERT INTO payment_categories (key, label, allow_create_account, custom_email, fields) VALUES
-('daypass'     , 'Day pass'           , true , null , ARRAY['day1','day2','day3','day4','day5','legal_name','email','public_first_name','public_last_name','city','state','country','invoice','comments']),
+-- ('daypass'     , 'Day pass'           , true , null , ARRAY['day1','day2','day3','day4','day5','legal_name','email','public_first_name','public_last_name','city','state','country','invoice','comments']),
 ('new_member'  , 'New membership'     , true , true , ARRAY['membership','legal_name','email','public_first_name','public_last_name','city','state','country','paper_pubs','invoice','comments']),
 ('paper_pubs'  , 'Paper publications' , null , true , ARRAY['pp_name','pp_address','pp_country','invoice','comments']),
 ('exhibits'    , 'Exhibits'           , null , null , ARRAY['count','invoice','comments']),
@@ -48,16 +48,16 @@ INSERT INTO payment_categories (key, label, account, listed, fields, description
 ('sponsor', 'Sponsorship', null, true, ARRAY['sponsor','invoice','comments'], 'The problem with travelling is the waiting. The long wait for a space elevator capsule or dragon caravan (or for that programme item you really want to see) can get quite dull. Why not sponsor a craft lounge to help con-goers pass the time? Or sponsor a bench, and give weary convention members somewhere to put their feet up when they have spent too long wandering around the halls.');
 
 INSERT INTO payment_types (category, key, amount, label, sort_index) VALUES
-('daypass'     , 'daypass-Adult'      , null  , 'Adult (from NZD $25/day)'                      , 1)  ,
-('daypass'     , 'daypass-Youth'      , null  , 'Youth (from NZD $15/day)'                      , 2)  ,
-('daypass'     , 'daypass-Child'      , null  , 'Child (from NZD $10/day)'                      , 3)  ,
-('new_member'  , 'FirstWorldcon'      , 19500 , 'First Worldcon'                                , 1)  ,
-('new_member'  , 'Adult'              , 19500 , 'Adult'                                         , 2)  ,
-('new_member'  , 'Youth'              , 11000 , 'Youth'                                         , 3)  ,
-('new_member'  , 'Child'              , 7500  , 'Child'                                         , 4)  ,
+('daypass'     , 'daypass-Adult'      , null  , 'Adult (from NZD $375/day)'                     , 1)  ,
+('daypass'     , 'daypass-Youth'      , null  , 'Youth (from NZD $225/day)'                     , 2)  ,
+('daypass'     , 'daypass-Child'      , null  , 'Child (from NZD $105/day)'                     , 3)  ,
+('new_member'  , 'FirstWorldcon'      , 37500 , 'First Worldcon'                                , 1)  ,
+('new_member'  , 'Adult'              , 37500 , 'Adult'                                         , 2)  ,
+('new_member'  , 'Youth'              , 22500 , 'Young Adult'                                   , 3)  ,
+('new_member'  , 'Child'              , 10500 , 'Child'                                         , 4)  ,
 ('new_member'  , 'KidInTow'           , 0     , 'Kid-in-tow'                                    , 5)  ,
-('new_member'  , 'Supporter'          , 3500  , 'Supporting'                                    , 6)  ,
-('paper_pubs'  , 'paper_pubs'         , 1000  , 'Paper publications'                            , 1)  ,
+('new_member'  , 'Supporter'          , 7500  , 'Supporting'                                    , 6)  ,
+('paper_pubs'  , 'paper_pubs'         , 0     , 'Paper publications'                            , 1)  ,
 ('exhibits'    , 'art-board'          , 3000  , 'Art show board'                                , 1)  ,
 ('exhibits'    , 'art-halftable'      , 1500  , 'Art show half-table'                           , 2)  ,
 ('exhibits'    , 'art-printshop'      , 50    , 'Print shop'                                    , 3)  ,
@@ -90,6 +90,6 @@ INSERT INTO payment_types (category, key, amount, label, description, sort_index
 ('sponsor', 'lounge', 50000, 'Craft lounge', '<p>The problem with travelling is the waiting. The long wait for a space elevator capsule or dragon caravan (or for that programme item you really want to see) can get quite dull. Why not sponsor a craft lounge to help con-goers pass the time? Origami, knitting, coloring pages, paper constructions—we have a long list of suggestions and we’re open to other ideas too.</p><p>Craft space sponsorships include a sign and a set of themed posters for you to keep. You’re also welcome to keep any left-over craft supplies if you would like (or we will donate them to a good cause).</p><p>For queries, contact <a href="mailto:exhibits@worldcon.fi">exhibits@worldcon.fi</a>. If your sponsorship is received in time, it will be acknowledged on the Worldcon75 website and in the programme book.</p>', 2);
 
 INSERT INTO daypass_amounts VALUES
-('Adult',2500,4500,5000,5000,2500),
-('Youth',1500,2500,3000,3000,1500),
-('Child',1000,1500,2000,2000,1000);
+('Adult',37500,37500,37500,37500,37500),
+('Youth',22500,22500,22500,22500,22500),
+('Child',10500,10500,10500,10500,10500);
