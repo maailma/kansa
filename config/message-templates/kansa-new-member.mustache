@@ -3,9 +3,18 @@ from: registration@conzealand.nz
 fromname: CoNZealand Registration
 subject: Your new {{&membership}} CoNZealand Membership
 ---
-Kia ora! Welcome to Worldcon!
 
-We've just processed your {{&membership}} membership registration for CoNZealand; your member number is #{{&member_number}}.
+Kia Ora (hello), Welcome to CoNZealand!
+
+We have just processed your {{&membership}} membership for CoNZealand. Your member number is #{{&member_number}}.
+
+{{#barcode_uri}}
+
+When you come to the convention, we ask that you print or have available on a phone or tablet the following barcode to help speed up our Registration, along with some form of photo ID.
+
+{{&barcode_uri}}.pdf
+
+{{/barcode_uri}}
 
 To access our online services and to check that all your data is correct, please use the following link:
 
@@ -14,9 +23,13 @@ To access our online services and to check that all your data is correct, please
 Visiting that URL will automatically log you in, with no need for passwords or other credentials. Please don't share the link or forward this email, as that'll allow any recipients to also access your account.
 
 {{#charge_id}}
-Our charge ID for this transaction was {{&charge_id}}, and it will appear on your statement as coming from "CoNZealand".
+
+At any time, you can also return to our membership section and enter your registered email address, and you will be sent an email with a log in link.
+
+Our charge ID for this transaction was {{&charge_id}}, and it will appear on your statement as coming from “CoNZealand”.
 
 {{/charge_id}}
+
 
 CoNZealand
 registration@conzealand.nz
