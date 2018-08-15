@@ -15,7 +15,7 @@ function mailTask(type, data, delay) {
 }
 
 const mailRecipient = (email, res) => {
-  const mt = [ 'NonMember', 'KidInTow', 'Exhibitor', 'Helper', 'Child', 'Supporter', 'Youth', 'Unwaged', 'Adult' ]
+  const mt = [ 'NonMember', 'KidInTow', 'Exhibitor', 'Helper', 'Child', 'Supporter', 'YoungAdult', 'Unwaged', 'Adult' ]
     // inlined as types/person.js has Supporter < Child
   const mi = res.reduce((max, r) => Math.max(max, mt.indexOf(r.membership)), -1)
   let name = res[0].name

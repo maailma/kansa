@@ -176,8 +176,8 @@ function attendingType(type) {
     'new attending': 'Adult',
     'upgrade to attending': 'Adult',
     'upgrade to unwaged': 'Unwaged',
-    'upgrade to youth attending': 'Youth',
-    'youth': 'Youth'
+    'upgrade to youth attending': 'YoungAdult',
+    'youth': 'YoungAdult'
   }[type.toLowerCase()];
 }
 

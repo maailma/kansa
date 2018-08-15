@@ -7,7 +7,7 @@ CREATE TYPE MembershipStatus AS ENUM (
     'Supporter',
     'KidInTow',
     'Child',
-    'Youth',
+    'YoungAdult',
     'Unwaged',
     'Adult'
 );

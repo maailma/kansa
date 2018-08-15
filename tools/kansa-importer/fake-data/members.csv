@@ -12,7 +12,7 @@ TreeFree Forest Sprite,Supporter,8/4/2016 12:35:21,,,SaplingPower@enddeforestati
 Donald Duck,,,Adult,8/4/2016 12:36:33,donald@duck.duck,Duckburg,Calisota,,Donald,Duck,
 Thomas Fool,,,First Worldcon,8/4/2016 12:37:13,thomas.fool@hell.gov,Houska,,Hell,Thomas,Fool,
 Jaakko Parantainen,,,First Worldcon,8/4/2016 12:39:52,jaakkoparantainenkummelista@gmail.com,Tampesteri,Hervanta,Finland,Jaakko,Parantainen,
-Pongo,,,Youth,8/4/2016 12:41:30,pingo@pongo.tv,Dublin,Dublin,Ireland,P,Ongo,6
+Pongo,,,YoungAdult,8/4/2016 12:41:30,pingo@pongo.tv,Dublin,Dublin,Ireland,P,Ongo,6
 Donald Trump,,,Adult,8/4/2016 12:43:42,donald@trump.com,Twitsville,Illinois,The GOOD OL' USA,Donald,Trump,7
 Lempi Lempinen ,,,First Worldcon,8/4/2016 12:45:00,fakefake@email.com,Lovevillage ,,Amoria,,,
 Dennis Mitchell,,,Child,8/4/2016 12:45:49,youllnevercatchmemrwilson@troublemakerheartbreaker.net,Cape Canaveral,Florida,USA,Dennis,the Menace,
@@ -23,7 +23,7 @@ Sauron,Supporter,8/4/2016 12:47:23,,,sauron@mordor.com,Mordor,,,,,9
 Fergus Crowley,,,Adult,8/4/2016 12:47:39,fergus@hades.dot.au,Dis,Hades,HELL,Fergus,Crowley,
 T.H.E. End,,,Adult,8/4/2016 12:48:08,1 Deadend Road,Terminus,Final,Nulla,Ted,End,10
 Hermione Targaryen,,,First Worldcon,8/4/2016 12:49:38,harryswife@dragonstone.wes,Meereen,Hogwarts,Slaver's Bay,Hermione,Targaryen,
-Acidia Raine ,,,Youth,8/4/2016 12:49:40,moreacid@fakemail.concon,Gotham,,,,,11
+Acidia Raine ,,,YoungAdult,8/4/2016 12:49:40,moreacid@fakemail.concon,Gotham,,,,,11
 toru loru,,,First Worldcon,8/4/2016 12:51:00,totulotu@aaa.ee,soomaa,jaani,eesti,totu,lotu,12
 Irma-Perttuli Lampipuhurinen ,,,Child,8/4/2016 12:51:19,irma@perttuli.net,,,finland,irmaperttuli ,,
 Patrick Jane,,,Adult,8/4/2016 12:52:10,patrick.jane@cbi.gov,Sacramento,California,USA,Patrick,Jane,
@@ -42,7 +42,7 @@ Pullervo Saimaalta,,,Adult,8/4/2016 12:58:53,pullervo@saimaa,Pitkulajärvi,Saima
 Drizzt Do'Urden,,,First Worldcon,8/4/2016 12:59:44,zakismyfather@menzoberranzan.com,Menzoberranzan,,,,,19
 Legolas Greenleaf,,,Adult,8/4/2016 13:00:42, ,,,Greenwood the Great,,,
 💩💩💩💩💩,Supporter,8/4/2016 13:01:10,,,com+@com@com.com,💩,💩,💩,,,
-Kamala Khan,,,Youth,8/4/2016 13:01:14,,Albany,NY,USA,Ms,Marvel,20
+Kamala Khan,,,YoungAdult,8/4/2016 13:01:14,,Albany,NY,USA,Ms,Marvel,20
 Esko Mörkö,,,First Worldcon,8/4/2016 13:01:22,esko.morko@morko.tv,Ankkalinna,Hoth,Gondor,Esko,Mörkö,
 Möhmötti Puupparanta,,,Adult,8/4/2016 13:01:28,möhmötti.puupparanta@gmail.com,Tampere,Pirkanmaa,Finland,Möhmötti,Puupparanta,
 Paddington Bear,,,Adult,8/4/2016 13:01:54,padington@teddy.com,Lima,,Peru,Paddy,Bear,21
@@ -54,7 +54,7 @@ Siipiratas Ankka,Supporter,8/4/2016 13:04:46,,,siipiratas@gmail.com,Siippari,Pii
 Mogens Ångström,,,First Worldcon,8/4/2016 13:04:54,mogens@angstrom.fi,Kauniainen,,Finland,Mogens,Ångström,
 Scarlet Witch,,,Adult,8/4/2016 13:04:56,avengers.scarlet.witch@earths.mightiest.net,New York,New York,USA,Wanda,Maximoff,23
 Carol Ní Chonghaile,Supporter,8/4/2016 13:05:06,,,myfakename@yahoo.com,Dublin,Dublin,Rep. of Ireland,CarolC,,
-Laalaa Land,,,Youth,8/4/2016 13:05:31,laalaalandiassaollaan@suomi24.fi,Laiska,Luiska,Land,Laalaa,Land,
+Laalaa Land,,,YoungAdult,8/4/2016 13:05:31,laalaalandiassaollaan@suomi24.fi,Laiska,Luiska,Land,Laalaa,Land,
 Opun Undo,,,First Worldcon,8/4/2016 13:07:28,rubber@eraser.net,Dodge Town,Iowa,USA,Nualla,Blank,
 Pantsy McPants,,,First Worldcon,8/4/2016 13:07:54,antsypantsy+fake@hotmail.com,Stockholm,,SWEDEN,Pantsy,McPants,
 Maija Mehilainen,,,First Worldcon,8/4/2016 13:08:21,maija@mehilainen.com,Bee Hive City,Bee province,Bee country,Maija,Mehilainen,24
@@ -68,7 +68,7 @@ Amelia Pond,,,Kid-in-tow,8/4/2016 13:14:07,amyandrory@theponds.com,Leadworth,Eng
 Spendle Backreach,,,Adult,8/4/2016 13:14:23,spendle@aol.noseriously.co.uk,Chang Rai,,Thailand,Spendle,Backreach,26
 Yippieh Ayeih,,,Adult,8/4/2016 13:14:28,Yippiehayeih@gmail.com,Buxtehude,,Germany,Yippieh,Ayeih,
 SELECT count(*) from *.*;,,,Child,8/4/2016 13:14:35,not@real.com,Mallicious,United States,Awkward,Obviously silly test. :) ,Nope,
-Rose Tyler,,,Youth,8/4/2016 13:15:12,rose@otherdimension.org,London,London,UK,Rose,Tyler,
+Rose Tyler,,,YoungAdult,8/4/2016 13:15:12,rose@otherdimension.org,London,London,UK,Rose,Tyler,
 Jack T. Ladd,,,First Worldcon,8/4/2016 13:16:15,Jackyboy@pan.net,,,,,,27
 Yappa Dappadoo,,,First Worldcon,8/4/2016 13:16:39,Yappadappadoo@hotmail.com,London,,Great Britain,Yappa,Dappadoo,28
 I saw a cake from a distance,Supporter,8/4/2016 13:16:50,,,distance@cake.i.saw,Cakedistant,Isaw,Atadistance,Isawacake,Atadistance,
@@ -76,8 +76,8 @@ Rory Williams,,,Kid-in-tow,8/4/2016 13:17:06,amyandrory@theponds.com,Leadworth,E
 It was a chcocolate cake I think,,,First Worldcon,8/4/2016 13:17:59,itwas@chocolate.cake,Ithink,Distance,Cake,Itwaschcoclate,Ithink,
 Holy Moly,Supporter,8/4/2016 13:18:07,,,Holymoly@yahoo.com,Rome,,Italy,Holy,Moly,29
 Martha Jones,,,First Worldcon,8/4/2016 13:18:38,ilovethedoctor@marthajones.co.uk,London,London,UK,Martha,Jones,
-So I ran quickly towards it,,,Youth,8/4/2016 13:19:05,SoI@ran.quickly.mo,Towards,It,Ranqucik,Soiranquickly,Towardsit,
-But it was just my imagination playing tricks,,,Youth,8/4/2016 13:20:09,itwas@just.my,Imagination,Playing,Tricks,Itwasjustmy,Imagination-Playingtricks,
+So I ran quickly towards it,,,YoungAdult,8/4/2016 13:19:05,SoI@ran.quickly.mo,Towards,It,Ranqucik,Soiranquickly,Towardsit,
+But it was just my imagination playing tricks,,,YoungAdult,8/4/2016 13:20:09,itwas@just.my,Imagination,Playing,Tricks,Itwasjustmy,Imagination-Playingtricks,
 Blaargh,,,First Worldcon,8/4/2016 13:21:03,Duh@somewhere.com,HereOrThere,Nope,That One,Tiff,Ehrm,30
 Oswin Oswald,Supporter,8/4/2016 13:21:29,,,suffle@dalek.com,Alaska,Dalek Asylum,Skaro,Oswin,Oswald,
 The New Robert Heinlein,,,Adult,8/4/2016 13:22:09,robert@heinlein.moon,Robert,Heinlein,Moon,New Robert,heinlein,
@@ -91,7 +91,7 @@ Jack Harkness,,,Adult,8/4/2016 13:29:08,captain@handsome.com,Awesome,Boeshane Pe
 Brune Keare,,,Adult,8/4/2016 13:30:08,krzyczacy@shanvaola.com,Shan Vaola,Zatoka snów,Shan Vaola ,Krzyczący w ciemności ,,
  Bruce Wayne,,,First Worldcon,8/4/2016 13:33:05,bruce@batman.bat,Gotham City,,United States,Bat,Man,
 Chris Yannic,Supporter,8/4/2016 13:35:22,,,chyann@ucdavis.edu,Davis,California,United States,,,
-Adam Mitchell,,,Youth,8/4/2016 13:35:47,hacker@vanstatten.com,Can't remember,England,UK,Adam,Mitchell,
+Adam Mitchell,,,YoungAdult,8/4/2016 13:35:47,hacker@vanstatten.com,Can't remember,England,UK,Adam,Mitchell,
 Mickey Smith,Supporter,8/4/2016 13:36:46,,,mickeytheidiot@rickey.com,London,England,UK,Mickey,Smith,
 Smurfette,,,Kid-in-tow,8/4/2016 13:37:15,smurfette@smurftown.sm,Smurftown,Blue Woods,Great Waterland,Smurfette,Smurf,34
 Astrid Peth,Supporter,8/4/2016 13:38:05,,,astrid@titanic.uni,Sto,Sto,Sto,Astrid,Peth,
@@ -103,20 +103,20 @@ Elizabetha von Finn,,,First Worldcon,8/4/2016 13:39:58,elizabetha.vonfinn@fakeem
 Wilfred Mott,Supporter,8/4/2016 13:40:27,,,wilf@noble.com,Chiswick,London,UK,Wilfred,Mott,
 Mother of Dragons,,,First Worldcon,8/4/2016 13:40:50,Motherofdragons@fantasy.com,Meereen,Essos,Westeros,Daenerys,Targaryen,
 Leonardo da Vinci,,,Kid-in-tow,8/4/2016 13:41:13,Leonardo.is.the.greatest@genius.com,Da Vinci,,Italia!,Leo,DaV,37
-Evelyn Craven,,,Youth,8/4/2016 13:42:49,EvelynCraven@evelyncraven.com,London,London,UK,Evelyn,Craven,38
+Evelyn Craven,,,YoungAdult,8/4/2016 13:42:49,EvelynCraven@evelyncraven.com,London,London,UK,Evelyn,Craven,38
 Noodledipoodle,,,Kid-in-tow,8/4/2016 13:43:24,Noodles.poodles@com,Spaghetti Town,Lasagnia,Pasta Heaven,Maccaroni,Cheese,
 Kasa Obake,Supporter,8/4/2016 13:43:54,,,Fake@Email.com,Not,My,Real Address,Kasa,Obake,
 Vilunki-Petteri,,,First Worldcon,8/4/2016 13:43:59,vilunki-petteri@nope.com,Turku,,Finland,Vilunki-Petteri,Kusettaja,39
 Melody Pond,,,Child,8/4/2016 13:45:51,melody@pond.com,Demons Run,Demons Run,Demons Run,Melody,Pond,
 Vox Day,,,Child,8/4/2016 13:46:01,vox@day.com,Rome,,Italy,Teddy,Beale,40
 River Song,,,Adult,8/4/2016 13:46:39,river@badass.com,Leadworth,England,Great Britain,Doctor River,Song,
-Strawberry Sundae,,,Youth,8/4/2016 13:46:44,Strawberry-icecream@heaven.com,Icecreamparlor,Vanilla,Gelato,Lady,Berry,
+Strawberry Sundae,,,YoungAdult,8/4/2016 13:46:44,Strawberry-icecream@heaven.com,Icecreamparlor,Vanilla,Gelato,Lady,Berry,
 Happy Bladder,,,First Worldcon,8/4/2016 13:47:15,Happydotcom@com.com,Bubbling pub,,Pen Island,Happy,Bag,
 Craig Owens,,,Kid-in-tow,8/4/2016 13:47:44,craig@stormageddon.co.uk,Colchester,England,UK,Craig,Owens,
 Dr. Victor Von Doom,Supporter,8/4/2016 13:48:00,,,Dr.Doom@doom.com,Doomstad,,Latveria,Victor,Von Doom,
 Ada Celeritas,,,Adult,8/4/2016 13:49:21,Adaceleritas@arsmagica.com,Cad Gadu,Stonehenge Tribunal,Wales,Ada,Celeritas,41
-Alli Paasikivi,,,Youth,8/4/2016 13:53:56,a.paasik@meili.zxc.fin,Porvoo,,Åland,Alli,,
-미라,,,Youth,8/4/2016 13:54:38,mira@hanmail.net,서울,서울특별시,대한민국,미라,,
+Alli Paasikivi,,,YoungAdult,8/4/2016 13:53:56,a.paasik@meili.zxc.fin,Porvoo,,Åland,Alli,,
+미라,,,YoungAdult,8/4/2016 13:54:38,mira@hanmail.net,서울,서울특별시,대한민국,미라,,
 Fakey McFakeface,,,First Worldcon,8/4/2016 13:55:18,mail@fakemail.com,Here,That place,There,,,
 Juho Kusti,,,First Worldcon,8/4/2016 13:56:24,,Turku,,Finlandia,,,42
 Throat Warbler Mangrove,,,First Worldcon,8/4/2016 13:58:12,NowWhatsAllThisThen@Hello.wot,Sweer Island,Gulf of Carpenteria,Australia,Raymond,Luxury-Yatch,43
@@ -138,7 +138,7 @@ Zaphod Beeblebrox CXXIII,,,Kid-in-tow,8/4/2016 14:20:27,heart.of.gold@stolen.net
 Årån-Öän Ənndœ,,,First Worldcon,8/4/2016 14:21:07,what's it to you?,Sjır,N/A,Vinland,Årån-Öän,Ənndœ,52
 Creator of acorns,,,Kid-in-tow,8/4/2016 14:25:19,redoak@treefarm.org,Forrest City,Taiga,Mother Tree,Adolf,Acorn,53
 BunnyCat,,,Adult,8/4/2016 14:25:30,BunnyFromHell@gmail.com,Ytre Enebakk,Akershus,Norway,Bunny,Cat,
-Freda bloggs,,,Youth,8/4/2016 14:26:07,freda.bloggs@wherever.com,Brighton,Surrey,Belgium,Freda,Mindyourown,54
+Freda bloggs,,,YoungAdult,8/4/2016 14:26:07,freda.bloggs@wherever.com,Brighton,Surrey,Belgium,Freda,Mindyourown,54
 Ørjan Gålbærg,,,Kid-in-tow,8/4/2016 14:26:28,Maybetoo@yes.no,Oslo,,Norway,Ørjan,Gålbærg,
 Inigo Montoya,,,Adult,8/4/2016 14:27:48,prepare@die.die.die,Capital City,Land of far away,dangerous,Inigo,Montoya,55
 Dirk Hardfist,,,First Worldcon,8/4/2016 14:28:08,david.cameron@oink.com,Reseune ,New Gehenna,Cyteen,Arianne,Emory,56
@@ -155,7 +155,7 @@ Helanius Bigglesworth,,,First Worldcon,8/4/2016 14:45:45,Bobama@whitehouse.gov,I
 Gerbil Hubernough,Supporter,8/4/2016 14:50:17,,,gargle33.2guppmail.com,Fakevile,Ohio,USA,The Mighty Gerbil,,
 Tufflm Girdflump,,,Adult,8/4/2016 14:50:28,tgirdflump@gmail.com,Mumbai,Kenyatta,India,Tufflm,Girdflump,
 Lance Armstrong,,,First Worldcon,8/4/2016 14:50:41,lance@livestrong.org,Houston,Texas,USA,Lance,Armstrong,
-Email with Plus in it,,,Youth,8/4/2016 14:54:40,email+foo@example.com,,,,,,
+Email with Plus in it,,,YoungAdult,8/4/2016 14:54:40,email+foo@example.com,,,,,,
 Mahlah Zelophehad Manasseh,,,Kid-in-tow,8/4/2016 15:05:22,emzy_manasseh@gotmail.com,Gilead,MA,USA,Emzy,Manasseh,63
 Arthur Dent,,,Adult,8/4/2016 15:06:19,Arthur.dent@bbc.co.uk,Cottington,Somerset,UK,Arthur,Dent,
 Kellosepän jalkavaimon käsväsky,,,Kid-in-tow,8/4/2016 15:10:47,Väskyläinen@citissä.nero,Kaapin takana naulakko,Ylin oksa,Kellosepän kellari,Neulottu,Tyylikäs-käsväsky,64
@@ -169,7 +169,7 @@ Oma Nimi,,,Kid-in-tow,8/4/2016 15:22:34,eiole@gmail.com,Springfield,Satakunta,Is
 Isaac Asimov,,,Child,8/4/2016 15:22:59,ike@asimov.com,New York,New York,USA,Isaac,Asimov,
 Maija Mehiläinen,,,First Worldcon,8/4/2016 15:23:22,maija.mehilainen@thehive.com,Tampere,Pirkanmaa,Finland,Maija,Mehiläinen,
 Seleya Smith,,,Child,8/4/2016 15:23:49,vulkan@mail.it,Florence,Tuscany,Italy,Seleya,Smith,66
-K Tomato,,,Youth,8/4/2016 15:27:24,moviesRus@planet9.space,Smallville,Gotham,Mars,Killer,Tomato,
+K Tomato,,,YoungAdult,8/4/2016 15:27:24,moviesRus@planet9.space,Smallville,Gotham,Mars,Killer,Tomato,
 Radamsa,,,Kid-in-tow,8/4/2016 15:32:14,,"Sink, Under the",,,Snadaff,Uhmuh,67
 Bilbo Baggins,,,First Worldcon,8/4/2016 15:34:21,bilbo@hobbittown.com,The Shire,The Shire,Middle Earth,Bilbo,,
 Ildikó James,,,Adult,8/4/2016 15:35:15,ijames@ei.oo,Budapest,,Hungary,Ildikó,James,68
@@ -192,7 +192,7 @@ Bill Bobbington,,,Adult,8/4/2016 16:28:35,Dfghhj@ffhhk.com,Newtownabbey,Antrim,U
 Fred Perry ,,,Adult,8/4/2016 16:34:37,Fred@perry.com,North Hollywood ,Ca,Usa,Dave,Dave,
 Hugh Kyril Sacristan,,,Adult,8/4/2016 16:36:56,hughsac@avevalecollege.org.uk,Avevale,Kingsland,Britain,Paul,Harding,
 Yrjö Äijö,,,Adult,8/4/2016 16:37:28,yrjoaijo@jippii.com,Nikolainkaupunki,Länsi-Suomi,Finland,Yrjö,Äijö,74
-Barbara Wellesley,,,Youth,8/4/2016 16:42:07,bewell@aCloud.com,Dublin,,Ireland,Barbara,Wellesley,
+Barbara Wellesley,,,YoungAdult,8/4/2016 16:42:07,bewell@aCloud.com,Dublin,,Ireland,Barbara,Wellesley,
 Crochet Queen,,,Kid-in-tow,8/4/2016 16:44:00,notaknitter@yarnlovers.com,Sheepsville,Wool Land,Yarnheads,Crochet,Queen,
 Ääkköñen Ääkötsalo,,,Adult,8/4/2016 16:51:07,erich.mielke@stasi.dd,Kerakekoski,,Finland,Ääkkönen,Ääkötsalo,75
 Justin Treudeau,,,First Worldcon,8/4/2016 16:56:14,dontask@gmail.com,Canada,Canada,CANADA,Justin,McSexy Treudeau,76
@@ -254,11 +254,11 @@ Sabrina Vorkosigan,,,Kid-in-tow,8/4/2016 19:09:14,Daddy@nappy.yuk.uk,Newcastle,T
 Soup Dragon,,,Adult,8/4/2016 19:10:52,soupdragon@Clangers.planet,Star City,Asteroid belt,UK,Soupy,,
 Ford Prefect,,,Adult,8/4/2016 19:12:03,Ford@hitchhikersguide.vogon,London,UK,,Ford,,
 Pinkie pie,,,Child,8/4/2016 19:13:09,mummy@nappy.yuk.uk,Bristol,Avon,UK,Baby,,
-tweety pie,,,Youth,8/4/2016 19:14:22,bird@bird.bird,Birdsvelle,,UK,Tweety,,
+tweety pie,,,YoungAdult,8/4/2016 19:14:22,bird@bird.bird,Birdsvelle,,UK,Tweety,,
 Mrs Slartibartfast,,,First Worldcon,8/4/2016 19:19:48,slartibartfast@hotletter.com,Brigadoon,Teuchterland,Scotland,Istina,Pronkovic,
 Rękosław Samodzielny,,,First Worldcon,8/4/2016 19:20:43,RasiaSamosia@buziaczek.wp.pl,Chrząszczyżewoszyce,Łękołody,Poland,Rękosław,Samodzielny,106
 Galadriel of House Finarfin,,,Adult,8/4/2016 19:20:47,galadriel@lothlorien.fi,LothLorien,woods,Middle-earth,Galadriel,Galadriel,
-Tina Belcher,,,Youth,8/4/2016 19:20:49,tina@burgertown.net,Seymour's Bay,Rhode Island,United States,Dina,Belcher,107
+Tina Belcher,,,YoungAdult,8/4/2016 19:20:49,tina@burgertown.net,Seymour's Bay,Rhode Island,United States,Dina,Belcher,107
 Legolas aka the dainty footed elfling,,,First Worldcon,8/4/2016 19:27:17,legs-so-daint@elfdom.elf,Woodland Realm,Mirkwood,Middle Earth,Legolas,Thranduilson,
 Bert and Ernie,,,First Worldcon,8/4/2016 19:33:07,thisisatest@test.com,Oklahoma City,OK,USA,Bert,Ernie,108
 Putinoid,,,First Worldcon,8/4/2016 19:43:11,idiot@kremlin-kgb.com,Северополюсовск,Лагерь,Российская Умудряция,Путиноид Ленинович, Сталин-Добанутый,109
@@ -275,11 +275,11 @@ Lisa-Oscar de la Kärvistys,,,First Worldcon,8/4/2016 20:23:17,foo+bar@mail.exam
 Wrigley,,,Adult,8/4/2016 20:23:18,wrigley@chocolatemoose.org,Solihull,West Midlands,United Kingdom,Wrigley,Caterpillar,
 <script>alert(1)</script>,,,Child,8/4/2016 20:28:22,foo.bar@example.ninja,<script>alert('2')</script>,"<script>alert(""3"")</script>",<script>alert(4)</script>,<SCRIPT SRC=http://xss.rocks/xss.js></SCRIPT>,"<IMG SRC=""javascript:alert('XSS');"">",113
 Fakey MacFakerston,,,Adult,8/4/2016 20:31:09,fmf@fakey.example.com,Portland,OR,USA,Fake,MacFakerston,114
-x' OR full_name LIKE '%Bob%,,,Youth,8/4/2016 20:34:48,x' AND email IS NULL; --,x' AND 1=(SELECT COUNT(*) FROM tabname); --,anything' OR 'x'='x,Finland,x'; DROP TABLE members; --,Hacker,115
+x' OR full_name LIKE '%Bob%,,,YoungAdult,8/4/2016 20:34:48,x' AND email IS NULL; --,x' AND 1=(SELECT COUNT(*) FROM tabname); --,anything' OR 'x'='x,Finland,x'; DROP TABLE members; --,Hacker,115
 Kaywinnet Lee Frye,Supporter,8/4/2016 20:48:56,,,kaylee_unicorn@serenity.brown,Classified,Classified,a Core planet,Kaylee,Fry,116
 Falsity Tanner,,,First Worldcon,8/4/2016 20:51:16,Falsity@RDC.com,Wales,MA,USA,Fanny,Tanner,117
 Spiro T Agnew,,,First Worldcon,8/4/2016 20:54:39,spiro@agnew.com,Washington,DC,USA,Spiro,Agnew,118
-Arya Stark,,,Youth,8/4/2016 20:56:51,winter@is.coming,Winterfell,The North,Westeros,A Girl has,No name,119
+Arya Stark,,,YoungAdult,8/4/2016 20:56:51,winter@is.coming,Winterfell,The North,Westeros,A Girl has,No name,119
 Rommi,,,Adult,8/4/2016 21:04:08,Caribean@car,Havanna,,Pirate union,Rommi,Blackbeard,120
 FitzChivalry Farseer,Supporter,8/4/2016 21:06:53,,,fitzchivalry.farseer@sixduchies.gov,Buckkeep,Buck,Six Duchies,Fitz,Farseer,
 Kettricken of the Mountains,,,Adult,8/4/2016 21:08:14,Kettricken.Queen@sixduchies.org,Buckkeep,Buck,Six Duchies,Kettricken,,
@@ -292,11 +292,11 @@ Lola Numjaker,,,First Worldcon,8/4/2016 21:57:15,yawanityagotit@somemail.ca,Mosc
 Regnad Kcin,,,Adult,8/4/2016 22:18:38,danger@fake.com,The City,Solidstate,Freedonia,Regnad,Kcin,124
 Paradoxical Astral Fairy,,,First Worldcon,8/4/2016 22:23:21,fairy@none.com,Utopia,,Atlantis,You're Not,Serious,
 Noodle McNoodface,,,First Worldcon,8/4/2016 22:31:37,Noodynoodnoodnoodlington@nood.com,Cottonwood,Arizona,United States,Nana,McNoodFace,125
-Silly Lilly vonWigglesbottom,,,Youth,8/4/2016 22:32:55,actuallymycat@actuallymycat.com,Cat Tower,VA,Roanoke,Kitteh,Hsu,
-Kathryn Airey,,,Youth,8/4/2016 22:34:33,kja@maths.mf.ac.uk,Okehampton,Devon,United Kingdom§,,,126
+Silly Lilly vonWigglesbottom,,,YoungAdult,8/4/2016 22:32:55,actuallymycat@actuallymycat.com,Cat Tower,VA,Roanoke,Kitteh,Hsu,
+Kathryn Airey,,,YoungAdult,8/4/2016 22:34:33,kja@maths.mf.ac.uk,Okehampton,Devon,United Kingdom§,,,126
 River Song,,,Adult,8/4/2016 22:42:28,river.song@51stcentury.net,Everywhere,Everywhere,All of time and space,,,
 Shadow Moon,,,Adult,8/4/2016 22:45:19,shadow@moon.com,House on the Rock,Wisconsin,America,Shadow,Moon,
-Τηλέμαχος,,,Youth,8/4/2016 22:47:32,,,Ιθάκη,Ελλάδα,Τηλέμαχος,,127
+Τηλέμαχος,,,YoungAdult,8/4/2016 22:47:32,,,Ιθάκη,Ελλάδα,Τηλέμαχος,,127
 Breq Mianaai,,,First Worldcon,8/4/2016 22:50:39,captain@mercyofkalr.rd,Athoek Station,Athoek,The Radch,,<i>Justice of Toren</i>,
 I have a public first name but not a public last name. Let's see if it gets recorded in the database properly.,Supporter,8/4/2016 22:58:33,,,awkward@example.com,Bristol,Avon,England,Venturus,,
 Abby Yates,,,Adult,8/4/2016 23:10:13,theyRreal@ghostbusters.ca,"Neutron City, Alberta",Alberta,Kanata,Keymaster,Zod,
@@ -306,7 +306,7 @@ Patty Tolan,,,Adult,8/4/2016 23:17:23,HistoryGoddess@ghostbusters.ca,Subway,NYC,
 Anthea Sykes,,,Child,8/4/2016 23:23:09,awful@sykesfamily.co.uk,An unnamed town,An unnamed county,England,"""Awful""",Sykes,
 Oobedoob Benubi,,,First Worldcon,8/4/2016 23:31:22,Starfish1@domainname.fish,Springfield,Az,Usa,,,128
 Boaty McBoatFace,,,First Worldcon,8/4/2016 23:45:32,marvinkmooney@pleasegonow.com,Kalamazoo,Timbuktu,Spam,,,
-Sophie Meier,,,Youth,8/4/2016 23:47:12,sophia@zoeterwoude.nl,Leiden,Zuid-Holland,Nederland,Sophie,Meier,
+Sophie Meier,,,YoungAdult,8/4/2016 23:47:12,sophia@zoeterwoude.nl,Leiden,Zuid-Holland,Nederland,Sophie,Meier,
 Mario di Noble,,,First Worldcon,8/4/2016 23:48:20,Mario@whatever.joke,Pashmina,Indiana ,USA ,Mario,De noble,129
 π∆q Bach,,,First Worldcon,8/4/2016 23:53:14,harpsichord@music.net,,,,,,
 Pernickity Tests,,,First Worldcon,8/4/2016 23:59:10,pernickity@example.com,Pernickity,A pernickity place,Pernickity States of Acirema,Pernickity,Pernickityboots,130
@@ -355,7 +355,7 @@ Moggie McGato,,,First Worldcon,8/5/2016 9:29:42,Cathouse@fakemail.com,Katzenburg
 Hideki Motosuwa,,,First Worldcon,8/5/2016 10:54:07,hideki.motosuwa@gmail.com,Tokyo,,Japan,Hideki,Motosuwa,151
 Alex Woodley,,,Adult,8/5/2016 11:20:09,alex.woodley@example.com,Winchester,,England,Alex,Woodley,152
 Poplock Duckweed,,,First Worldcon,8/5/2016 11:46:55,poplock@example.com,Pondsparkle,,Zarathanton,Poplock,Poplock,
-Fred the Great,,,Youth,8/5/2016 12:22:19,fredthegreat@fakemail.com,Mars,Milkyway,Universe,Fred,the Great,153
+Fred the Great,,,YoungAdult,8/5/2016 12:22:19,fredthegreat@fakemail.com,Mars,Milkyway,Universe,Fred,the Great,153
 Sheila,,,Adult,8/5/2016 12:23:19,someone@bigpond.net,Perth,Western Australia,Australia,Sheila,Docker,154
 Biggs McPearsen,,,Child,8/5/2016 12:23:33,biggsyboo@fakemail.com,Undulasia,BC,Amenada,Biggsy,McPearsen,155
 Helena Robertson,Supporter,8/5/2016 12:27:26,,,hrobertson@geocities.com,Bangor,Maine,USA,Helena,Robertson,
@@ -363,7 +363,7 @@ Tintin Windowes,,,First Worldcon,8/5/2016 12:27:33,snowy@tintin.com,Townsville ,
 Frank Zappa,,,First Worldcon,8/5/2016 12:28:23,zappa@frank.com,caprica,aldur,zootopia,Frank,Zappa,
 Ashley Williams,,,First Worldcon,8/5/2016 12:31:24,ashley.m.williams@edenprime.mil.sa,San Juan,Puerto Rico,USA,Ashley,Madeline,156
 meow,,,Adult,8/5/2016 12:33:25,meow@meow.meow,meow,meow,meow,meow,meow,157
-Stephanie Brown,,,Youth,8/5/2016 12:33:38,Spoiler@batgirl.com,Gotham,,United States,,,
+Stephanie Brown,,,YoungAdult,8/5/2016 12:33:38,Spoiler@batgirl.com,Gotham,,United States,,,
 Ian,Supporter,8/5/2016 12:34:02,,,Iandoodoo@fake.cum,Cheesusville,Venus,Potatopia,Johan,Bach,158
 Blake Langsam,,,First Worldcon,8/5/2016 12:36:37,,Brooklyn,Ny,United States ,Blake,Lamgsam,159
 Samwise Gamgee,Supporter,8/5/2016 12:36:45,,,thegardener@potatoes.net,Hobbiton,Westfarthing,Shire,,,160
@@ -425,7 +425,7 @@ Roland Deschain,,,Adult,8/5/2016 15:09:51,last.gunslinger@gilead.gov,,,,,,
 Shadow Moon,,,Adult,8/5/2016 15:11:42,,,,,,,
 Susannah Dean,,,Kid-in-tow,8/5/2016 15:12:21,,,,,,,
 Eddie Deen,,,Adult,8/5/2016 15:12:54,,,,,,,
-Jake Chambers,,,Youth,8/5/2016 15:13:35,,,,,,,188
+Jake Chambers,,,YoungAdult,8/5/2016 15:13:35,,,,,,,188
 Oy,,,Child,8/5/2016 15:14:32,dress,ity,ovince,untry,Oy!,Ambers!,
 Not Boaty McBoatface,,,First Worldcon,8/5/2016 15:19:33,notboatymcboatface@fake.com,North,Pole,Algeria,Not,Face,189
 Romana,,,First Worldcon,8/5/2016 15:25:49,Timelady@gallifreymail.com,Capitol City,Prydonia,Gallifrey,Romanadvoratralunda,,190
@@ -438,13 +438,13 @@ Ember,Supporter,8/5/2016 15:35:30,,,Aydenalendil071@aim.com,Boise,Idaho,USA ,Jan
 Abso Lutien,,,First Worldcon,8/5/2016 15:37:17,ALutien@no.com,Auckland,,New Zealand,Absol,Lution,
 Mrowing Mrower,,,First Worldcon,8/5/2016 15:48:43,mmwatchasay@gmail.com,Bowster,California,USA,Mrowing,Mrower,
 Robert'); DROP TABLE members;--,,,First Worldcon,8/5/2016 15:52:30,Bobby@fake.com,Oz,Oz,Over the rainbow,Bobby,Tables,194
-MCsketti,,,Youth,8/5/2016 15:55:58,THisLOveHastaakkenCONtrolOFme@homtail.comb,A cardboard box,A larger cardboard box,A fucking massive cardboard box,Borg,Magorg,195
+MCsketti,,,YoungAdult,8/5/2016 15:55:58,THisLOveHastaakkenCONtrolOFme@homtail.comb,A cardboard box,A larger cardboard box,A fucking massive cardboard box,Borg,Magorg,195
 Zuppa di Day,,,Kid-in-tow,8/5/2016 15:59:53,Zdd@imaginaryrealms.net,Saskatchewan,Wherever Saskatchewan is...,Kyrgystan,Zup,Day,196
 Meow Meowface,,,Adult,8/5/2016 16:02:44,meow@catsville.org,Purrfect Peeeeace,Catsholme,Cat-Holica,Meow,Meowface,197
 Marian,,,Adult,8/5/2016 16:03:04,Me.com,Lothering,N/A,Gone,Marian,,198
 Akhal-Teke,,,First Worldcon,8/5/2016 16:14:48,akhal@teke.com,Portland,Maine,USA,Akhal,Teke,199
 Delta,,,First Worldcon,8/5/2016 16:15:12,Delta@projectfreelancer.mil,New Luxor,Eridanus II,Outer Colonies,Delta,Church,200
-Ragnell Szeto,,,Youth,8/5/2016 16:18:54,Rszeto1987@webmail.com,Cairo,Illinois,USA,Ragnell,Smith,201
+Ragnell Szeto,,,YoungAdult,8/5/2016 16:18:54,Rszeto1987@webmail.com,Cairo,Illinois,USA,Ragnell,Smith,201
 Lala Mc'Sparkle,,,Adult,8/5/2016 16:20:48,Ozonlimes@esther.org,Gibbsonville,IT,USA,,,
 Maya Wiener,,,Child,8/5/2016 16:22:43,,,,,,,202
 Charlotte the Spider,,,First Worldcon,8/5/2016 16:24:55,web@parlor.org,Old Farmstead,Towney Town,Old Timey America,Charlotte,Spider,203
@@ -464,7 +464,7 @@ Marie Wolfe,,,Adult,8/5/2016 17:15:09,mizzwolfe@fakey.com,Kitchissippi,Iowa,USA,
 Brontus McMiller,,,First Worldcon,8/5/2016 17:24:32,jackedupsoupedup@hotmail.com,Dubai,Dubai,,,,211
 W.H.Oami,,,Adult,8/5/2016 17:25:55,Falsified@faaified.com,Yorick,Yorickshire,Yorickson,Q,Jepson,212
 Amanda Hugginkiss,,,First Worldcon,8/5/2016 17:26:54,ahk@example.com,Fauxington,NW,US,Amanda,,213
-Sherlock Beeblebrox,,,Youth,8/5/2016 17:27:09,supercalifragilistic@aol.com,Ankh-Morpork,Ankh-Morpork,Discworld,Albert,Hall,
+Sherlock Beeblebrox,,,YoungAdult,8/5/2016 17:27:09,supercalifragilistic@aol.com,Ankh-Morpork,Ankh-Morpork,Discworld,Albert,Hall,
 Hugo Second,,,First Worldcon,8/5/2016 17:28:39,h2nd@overcliffe.net,Sun City,Wiltshire,UK,Hugo,Second,214
 Lauren Ipsum,,,Kid-in-tow,8/5/2016 17:30:17,Lauren.Ipsum@Dolor.sit,221B Baker Street,PA,Camelot,Lauren,Ipsum,215
 Jane Doe,,,Kid-in-tow,8/5/2016 17:32:03,janedoes@gmail.com,Nowhere,Oregon,USA,Jane,Doe,216
@@ -499,19 +499,19 @@ Donald Doodyhead,,,First Worldcon,8/5/2016 19:25:03,donalddoodyhead@msn.com,NYC,
 Edna Edelweiss ,,,Adult,8/5/2016 19:29:12,floraflower09@gmail.com,Margaritaville ,Florida,USA,Daisy,,232
 Mat Cauthon,,,First Worldcon,8/5/2016 19:29:50,Luckypips7@gmail.com,Emond's Field,PA,USA,Knotai,Cauthon,
 Ogdor,,,Kid-in-tow,8/5/2016 19:34:41,What?,North York,South York,New Carolina,The Great,And Powerful,233
-OohAah Cantona,,,Youth,8/5/2016 19:37:23,canolisarealright@intaliano.com,Piza,,Italy,OohAah,Cantona,
+OohAah Cantona,,,YoungAdult,8/5/2016 19:37:23,canolisarealright@intaliano.com,Piza,,Italy,OohAah,Cantona,
 Ashton Howerton,,,Child,8/5/2016 19:52:19,Ashho@gmail.com,Lilith,New York,America,Ashton,Howerton,
 "Gorblaxis Slaglon, King of Gamma VII",,,Kid-in-tow,8/5/2016 19:52:32,EarthConquerer@gorblaxiaplaza.gov,New York City (Soon to be renamed Gorblaxia II),New York,United States,Doom,Bringer,234
 Chet Gladstones,,,Adult,8/5/2016 20:00:45,frutieprincessbubblegum@gmail.com,Hell,Michigan,USA,Charles,Happypebbles,235
 Ryba McNuggins,,,Kid-in-tow,8/5/2016 20:06:16,Squishly@zorg.com,La Luna,Ourkansas,Canana,Georgous,Strigling,
 Izzy Ruto,,,First Worldcon,8/5/2016 20:28:14,izzy.ruto@gmail.com,Mobile,Alabama,United States,Isabella,Ruto,
 Margot Empress Of Destruction,,,First Worldcon,8/5/2016 21:08:15,12345@fakeemal.cob,Iacon,Manganese,Cybertron,Jane,Doe,
-Dave Strider,,,Youth,8/5/2016 21:30:20,turntechgodhead@cool.com,not the fucking meteor anymore,idek anymore,the current universe,Dave,Strider,236
-Alex Colin Stewart,,,Youth,8/5/2016 21:32:30,,San Fransisco,California,America,Alec,Stewart,237
+Dave Strider,,,YoungAdult,8/5/2016 21:30:20,turntechgodhead@cool.com,not the fucking meteor anymore,idek anymore,the current universe,Dave,Strider,236
+Alex Colin Stewart,,,YoungAdult,8/5/2016 21:32:30,,San Fransisco,California,America,Alec,Stewart,237
 Kathryn Janeway,,,Adult,8/5/2016 21:36:02,kathryn.janeway@voyager.mail,Voyager,Delta Quadrant,Space,Kathryn,Janeway,
 Titty Malasyia,Supporter,8/5/2016 21:37:59,,,orphan.black@gmail.com,Scarborough ,Toronto,Canada,Titty,Malasyia ,
-👽👭😍🌌,,,Youth,8/5/2016 21:43:13,👽👭😍🌌,👽👭😍🌌,👽👭 😍 🌌 ,👽 👭 😍 🌌 ,👽 👭 😍 🌌 ,👽 👭 😍 🌌 ,238
-Dairine Callahan,,,Youth,8/5/2016 21:45:59,dari@worldsend.co,Long Island,NY,USA,Dari,Callahan,239
+👽👭😍🌌,,,YoungAdult,8/5/2016 21:43:13,👽👭😍🌌,👽👭😍🌌,👽👭 😍 🌌 ,👽 👭 😍 🌌 ,👽 👭 😍 🌌 ,👽 👭 😍 🌌 ,238
+Dairine Callahan,,,YoungAdult,8/5/2016 21:45:59,dari@worldsend.co,Long Island,NY,USA,Dari,Callahan,239
 Разбойник Бармалей,,,Adult,8/5/2016 21:57:02,barmaley@mail.chu,Джунгли,Лимпопо,Занзибар,Бармалей,Разбойник,
 Kalessin Prrrrrer,,,First Worldcon,8/5/2016 22:10:10,kitten@mau.pr,Kastrop-Rauxel,NRW,Germany,Kali,Cat,240
 Gilbert Forthright,,,Child,8/5/2016 22:22:27,Gilbertthegrape@communistconspiracy.com,Buenos Aires,,Sokovia,Hortense,Puddlington,241
@@ -527,16 +527,16 @@ Hayden Kensington,,,First Worldcon,8/6/2016 0:16:36,mail@fakeemail.com,Broomfiel
 Isgebind,,,Kid-in-tow,8/6/2016 0:17:25,indolent@me.com,Groovytown,RI,USA,Meg,Murray,248
 Not Batman Obviously ,Supporter,8/6/2016 0:35:34,,,Nbo@elsewhere.com,The Base,The Moon,Space,Not,Obviously ,
 Kethrys,,,Kid-in-tow,8/6/2016 0:50:30,Kehthxs@hyosmil.com,Sparta,Alberta,Canada ,Josie,McDonald,249
-Stella Kui,,,Youth,8/6/2016 1:05:32,fornlets1950@jourrapide.com,"Los Angeles, California",California,United States,,,
+Stella Kui,,,YoungAdult,8/6/2016 1:05:32,fornlets1950@jourrapide.com,"Los Angeles, California",California,United States,,,
 Rowan Sunchild,,,Adult,8/6/2016 1:18:18,albacore@deepsea.net,Golden Lake,Yukon Territory,Canada,Jo,Billingsworth,250
 Lulu,,,Child,8/6/2016 1:26:11,luluandromedadestroyerof@worlds.com,The moon,Solar System,Milky Way,THE lulu,None of your beeswax ,
 Peri,,,Kid-in-tow,8/6/2016 1:31:12,Peri.dot@gmail.com,Pflugerville,Texas,UAE,Peri,Dot,
 Donglord McSucc,Supporter,8/6/2016 1:45:53,,,albanybaster@mrrrrrrrrr.com,The Moon,Down South,This period -->.,JOHNNNNNNN ,cena.,251
 Ekatarin Vorkosigan,,,Kid-in-tow,8/6/2016 2:03:22,gardencat@hassadar.edi,Vorbarr Sultana,Vorkosigan ,Barrayaran Empire,Ekaterin,Vorkosigan,
 Bob,,,First Worldcon,8/6/2016 2:03:34,boop@beep.com,Vorkosigan,WY,Andorra,Frederick,Kruger,252
-Sara martignone,,,Youth,8/6/2016 2:46:10,sara.m.90@gmail.com,Jujuy,Jujuy,Argentina,Sara,Martignone,
+Sara martignone,,,YoungAdult,8/6/2016 2:46:10,sara.m.90@gmail.com,Jujuy,Jujuy,Argentina,Sara,Martignone,
 Kade Kennedy,,,Adult,8/6/2016 3:03:23,Rikroll@otherworlds.com,Riverside,Mo,USA,Georg,Handel,
-Gerry James,,,Youth,8/6/2016 3:21:45,Gerryjames4678425098813@gmail.com,San Francisco ,California ,United States,Gerry,James,253
+Gerry James,,,YoungAdult,8/6/2016 3:21:45,Gerryjames4678425098813@gmail.com,San Francisco ,California ,United States,Gerry,James,253
 Supreme Leader Kim Jong Un,,,First Worldcon,8/6/2016 3:26:31,kimjongun@northkorea.com,Pyongyang,,North Korea,Kimmy,,254
 Wilhelmina Iggleswoop,,,Adult,8/6/2016 3:27:50,WI@london.ig,Uberchester-on-the-Slope,Undershire,UK,Willie,Iggleswoop,
 Lemons McLemons,,,First Worldcon,8/6/2016 3:52:06,lemons@lemons.lemons,Lacus Somniorum,Isternes,The Moon,Lemons,Ransom,255
@@ -545,7 +545,7 @@ Pack Hunt,,,Kid-in-tow,8/6/2016 4:15:56,packsaplenty@imgonnahowllots.wolf,Gruul,
 Adán Najera,,,Kid-in-tow,8/6/2016 4:17:32,grizzlycudlebear@yahoo.com,Bear Town,Ursus Land,Bear Den,Dan,Naj,257
 Garnet McBadass,,,Adult,8/6/2016 4:26:42,butterycupcakes@nomail.com,Jupiter,Norway,Gemworld,Meredith,Snailslayer,258
 Alfred E. Neuman,,,Adult,8/6/2016 4:40:46,Yahoo@mad.com,Brooklyn,New York,USA ,Alfie,Neuman,259
-One Entire Succ,,,Youth,8/6/2016 4:45:24,dat_boi@succ.com,,,Succland,,,
+One Entire Succ,,,YoungAdult,8/6/2016 4:45:24,dat_boi@succ.com,,,Succland,,,
 Cider Ilohas,,,First Worldcon,8/6/2016 4:51:33,tennen@brop.com,Boring,Oregon,USA,,,
 Pepe Scoober,,,Child,8/6/2016 5:01:57,ohshit@scooby.me,Gaytown,Boom,Nanaland,Doofus,Boofer,
 Frau Doktor Worblehat,,,First Worldcon,8/6/2016 5:13:22,fraudoktor@unseenuniversity.edu,Ankh-Morpork,The Left Side,Diskworld,Frau,Worblehat,260
@@ -567,12 +567,12 @@ Nimps,Supporter,8/6/2016 19:36:07,,,niimps@silverline.net,Milwaukee,Nebraska,Geo
 Esteban Morolonion,,,Child,8/6/2016 19:59:33,kjsadf@lskdjfa,Kingdom in the Mists,Windermere,Wild West,King Gilead,Windermere,
 Eblis O'Shaunessy,,,Adult,8/6/2016 20:09:53,eblis@aol.com,Hades,Elsewhere,Mootopia,Ebbles,Oshun,
 Fairest and Fallen,,,First Worldcon,8/6/2016 22:20:28,theothersideoftheuniverse@tptb.wizardry ,NYC Alternate Universe,NY,Timeheart,Lone,Power,267
-Arcflash Watts,,,Youth,8/6/2016 23:10:26,arcflash@melancholyhill.talent,New York,New York,United States of America,Arcflash,,268
+Arcflash Watts,,,YoungAdult,8/6/2016 23:10:26,arcflash@melancholyhill.talent,New York,New York,United States of America,Arcflash,,268
 Memory Greycat,,,First Worldcon,8/6/2016 23:27:55,memory@thegrey.cat,Meh,Maune,United Siamese Adults,Grey,Cat,269
 Dude McPherseon-Plantaganet,,,Adult,8/6/2016 23:37:17,mcpherse@btu.edu,Lodgepolis,Montana,United States of AMERICA ,Dude ,Lodgepolitian,270
 Alice The Horse,,,First Worldcon,8/6/2016 23:42:25,alicethehorse@yandex.com,Steveston,Massachusetts,U.S.,Alice,Offbrand Amish,
 Sally-May,Supporter,8/6/2016 23:48:26,,,Salliemae@shady.gov,Newark,Delaware,U.S.A.,Sallie,Banker,271
-Adam Young,,,Youth,8/6/2016 23:55:16,adamyoung@stopmessingaroundinpeople'slives.net,Lower Tadfield,Oxfordshire,Unseceded Britain,Adam,Young,
+Adam Young,,,YoungAdult,8/6/2016 23:55:16,adamyoung@stopmessingaroundinpeople'slives.net,Lower Tadfield,Oxfordshire,Unseceded Britain,Adam,Young,
 Declan Dublin,,,Adult,8/7/2016 0:01:32,PorkyPig69er@hotdawg.du,Helsinki,Baconshire,Un-united Kingdom,I Really Like the Letter,WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW,272
 Fake Bill,Supporter,8/7/2016 0:22:23,,,disposable+tag@fastmail.fm,Croton-on-Hudson,NY,USA,Still Fake,Nielsen Hayden,
 Marsh Skatekey,,,Kid-in-tow,8/7/2016 0:27:49,i'llrootfortheoilersifiwantgetoffmycase@hotmail.com,Rainy River Dist.,Ontario,Canada,Shep,The Ex-Shepherd,273
@@ -587,7 +587,7 @@ Swagamoto,,,First Worldcon,8/7/2016 8:39:04,swagamoto@hotmail.com,Swagville,Swag
 Sauce,,,Adult,8/7/2016 8:43:47,sauce_uke@gmail.com,Konohagakure,Konohagakure,Hi no Kuni,Sasuke,Uchiha,277
 L,,,Kid-in-tow,8/7/2016 8:46:36,lllowlight@hotmail.com,Secret,N/A,SECRET,L,L,278
 Harry BWL Potter,Supporter,8/7/2016 8:51:13,,,treacletreacletreacletart@gmail.com,NOT Surrey,,The No Longer United Kingdom of Great Britain and Northern Ireland (Thanks a Million Brexit),Harry,Potter,279
-Speshul,,,Youth,8/7/2016 8:53:50,speshulsnowflake@msn.com,Tumblrton,New Tumblr,Tumblria,Speshul,Snowflake,280
+Speshul,,,YoungAdult,8/7/2016 8:53:50,speshulsnowflake@msn.com,Tumblrton,New Tumblr,Tumblria,Speshul,Snowflake,280
 Yaoirox,,,Adult,8/7/2016 8:55:49,yaoirocrokroxomgz@gmail.com,Yaoiiiiiiiiiii,Roxxxxxxx,Yaoiroxland,Yaoifan,Yaoirox,
 Ash Ketchup,Supporter,8/7/2016 8:58:09,,,pokemongoz@gmail.com,Pallet Town,Kanto,Pokeworld,Ash,Ketchup,281
 Åäö ÅåÄäÖö,,,Child,8/7/2016 10:09:33,åäö@öö.åå,Åland,,Öland,Å,Ö,282
@@ -613,19 +613,19 @@ Lindsay James,,,First Worldcon,8/8/2016 21:42:34,mcpoodle.doodle@aol.com,Philade
 drop table;,,,Adult,8/8/2016 22:03:31,drop table;,drop table;,drop table;,drop table;,drop table;,drop table;,291
 James Bond,,,Adult,8/9/2016 5:55:55,007@mi6.gov.uk,classified,classified,England,James,Bond,
 Slatribartfast albus hinikin iii,,,First Worldcon,8/9/2016 8:10:11,embaressingusername25@angelfire2.com,Norway,ohio,america of the north,bart,hinikin,292
-Slipnotika Kornilia Edgelord,,,Youth,8/9/2016 8:19:25,Thereisnonemoreedge@razor.com,blackwall ,edgess,Noirvania,Knottikorn,Edgelord,
+Slipnotika Kornilia Edgelord,,,YoungAdult,8/9/2016 8:19:25,Thereisnonemoreedge@razor.com,blackwall ,edgess,Noirvania,Knottikorn,Edgelord,
 Person Unusual,,,First Worldcon,8/9/2016 18:23:55,person@person.org,Atlanta,KS,USA,Person,Person,293
 Claire Dale,,,First Worldcon,8/10/2016 1:11:51,clairedale92@yahoo.com,Cedar town ,Georgia ,America,Claire,Dale,294
 "Ponsonby Britt, O.B.E.",,,First Worldcon,8/10/2016 9:28:42,ponsonby@britt.obe,Mafeking,,Transvaal Colony,Ponsonby,Britt,295
 Horatio Xavier Taylor-Smith,,,Adult,8/10/2016 17:58:23,h.xavier.taylor-smith@gmail.com,Juarez del Norte,Texas,USA,Xavier,Taylor-Smith,
 Geo-Rge Jetson,,,First Worldcon,8/13/2016 1:18:11,123@CBSOUTDOOR.com,St Louis,MO,USA,Geo-Rge,Jeston,
 Julian Nebogipfel,,,Adult,8/13/2016 23:49:29,alpha.ralpha@boule.com,Deep Space,Gilead,Fandom,Julian,Julian,
-Ash Ketchum,,,Youth,8/14/2016 7:56:13,catchemall@pallettown.kn,Pallet Town,Kanto,Kanto,Ash,Ketchum,296
+Ash Ketchum,,,YoungAdult,8/14/2016 7:56:13,catchemall@pallettown.kn,Pallet Town,Kanto,Kanto,Ash,Ketchum,296
 Kalani The Parrot,,,First Worldcon,8/15/2016 1:27:32,,Alexandria,,Egypt,Kalani,Kalani,
 Ginger Johnson,,,First Worldcon,8/15/2016 1:35:11,pematson@yahoo.com,Rochester,NY,US,Snaps,Johnson,297
 Sally Park,Supporter,8/15/2016 1:37:32,,,pematson@yahoo.com,San Francisco,Calif.,USA,Sally,Park,
 Tilda Gelhorn,,,First Worldcon,8/15/2016 1:41:29,pematson@yahoo.com,,,,Tilda,Gelhorn,298
-Princess Ariadne,,,Youth,8/15/2016 1:45:49,,Knossos,Crete,Crete,Princess,Ariadne,299
+Princess Ariadne,,,YoungAdult,8/15/2016 1:45:49,,Knossos,Crete,Crete,Princess,Ariadne,299
 Jill Highsmith,Supporter,8/15/2016 1:52:09,,,jhighsmith@nationalparks.uk.gov,Windermere,Cumbria,England,Jill,Highsmith,
 Robin Williamson,,,First Worldcon,8/15/2016 4:08:43,palmtrees@grimace.com,Salem,Massachusetts,United States,Robin,Williamson,300
 Anna,,,Adult,8/15/2016 19:15:48,Please.best@yahoo.org,East Jordan,MI,America,Mickey,I,301
@@ -637,12 +637,12 @@ Arabella Ashby,,,First Worldcon,8/24/2016 3:34:00,A.Ashby@Diana.MarsTrading.Com,
 Keeler Altair,,,First Worldcon,8/26/2016 1:15:01,k.altair@battle.ship,None,None,Alternia,,,303
 Anastasia Sÿms,,,First Worldcon,8/29/2016 4:15:38,011110@jeep.com,Holland,Michigan,US,FanGrrrl,,304
 Meep Newton,Supporter,8/29/2016 4:17:25,,,Meep@gmail.com,Michigan City,IN,US,Meep,Newton,
-Frisk Dreamurr,,,Youth,9/13/2016 4:22:14,IHaveALotOfParents@Underground.Net,The Ruins,The Surface,The Underground,Frisk,D.,
+Frisk Dreamurr,,,YoungAdult,9/13/2016 4:22:14,IHaveALotOfParents@Underground.Net,The Ruins,The Surface,The Underground,Frisk,D.,
 Shelby Bradbury,Supporter,9/13/2016 4:26:30,,,GracefulAce@Tailer.com,Pureshed City,Millington,England,Shaun,B.,305
 Craig Xerxes Retsnimde,,,Kid-in-tow,9/14/2016 3:20:55,YaBoy@Deeznuts.org,Jerville,Smufton-on-the-barrows,Elgarn,Huilky,Jervsondottirson,306
 Derf Relmits,,,First Worldcon,9/16/2016 4:14:11,fiddle-dee-dee@tara.manse,Atlantis,Santorini,Crete,Wheres,Waldo,307
 Fizzgig von Fuzzelbutt,,,Adult,9/25/2016 2:21:16,Noone@loopback.edu,Rlyeh,Botali,Hell,Fizzgig,Von Fuzzelbutt,308
-Marimekko Mirjala,,,Youth,9/25/2016 17:51:51,marimiri@meks.fi,Urjakkala,Millinen,Magalo,,,
+Marimekko Mirjala,,,YoungAdult,9/25/2016 17:51:51,marimiri@meks.fi,Urjakkala,Millinen,Magalo,,,
 Fairy Land,,,First Worldcon,9/26/2016 19:04:13,fl@unseeliecourt.org,,,underground probably,,,309
 Fizzleborg Humperding,,,Kid-in-tow,10/6/2016 22:56:11,hump@ding.lol,Krachmannlachens,Hinterdingen - Legenscheid,Banalachen,,,310
 Falkrunn Ungart,,,Kid-in-tow,1/17/2017 10:18:26,intricatemasonryyay@ymail.com,Waren,Kein,Denmark,Falkrunn,Ungart,

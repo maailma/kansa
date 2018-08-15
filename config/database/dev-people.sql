@@ -14,7 +14,7 @@ INSERT INTO People (legal_name, email, membership, member_number, hugo_nominator
             ('First Member', 'member@example.com', 'Unwaged', 2, true, true),
             ('Fan Parent', 'family@example.com', 'Adult', 3, true, true),
             ('Fan Child', 'family@example.com', 'Child', 4, false, false),
-            ('Fan Youth', 'family@example.com', 'Youth', 5, true, true),
+            ('Fan Youth', 'family@example.com', 'YoungAdult', 5, true, true),
             ('Fan Supporter', 'supporter@example.com', 'Supporter', 6, true, true),
             ('Dupe Supporter', 'supporter@example.com', 'Supporter', 7, false, false),
             ('Fan Trader', 'trader@example.com', 'Exhibitor', 8, false, false),

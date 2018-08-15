@@ -60,10 +60,10 @@ CREATE VIEW country_stats AS SELECT * FROM crosstab(
            count(*)
       FROM People WHERE membership != ''NonMember''
   GROUP BY CUBE(country(country), membership)',
-  $$VALUES ('Adult'), ('Unwaged'), ('Youth'), ('Child'), ('KidInTow'), ('Exhibitor'), ('Supporter'), ('=') $$
+  $$VALUES ('Adult'), ('Unwaged'), ('YoungAdult'), ('Child'), ('KidInTow'), ('Exhibitor'), ('Supporter'), ('=') $$
 ) AS ct (
   country text,
-  "Adult" int, "Unwaged" int, "Youth" int, "Child" int, "KidInTow" int, "Exhibitor" int, "Supporter" int,
+  "Adult" int, "Unwaged" int, "YoungAdult" int, "Child" int, "KidInTow" int, "Exhibitor" int, "Supporter" int,
   "=" int
 );
 
