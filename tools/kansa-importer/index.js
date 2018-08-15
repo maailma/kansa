@@ -9,7 +9,7 @@ const PaperPubs = require('./paperpubs');
 const agent = new https.Agent({ rejectUnauthorized: false })
 
 const csvOptions = { columns: true, skip_empty_lines: true };
-const DEFAULT_EMAIL = 'registration@worldcon.fi';
+const DEFAULT_EMAIL = 'registration@conzealand.nz';
 
 const loginUrl = process.argv[2];
 if (loginUrl.indexOf('/login') === -1) {
