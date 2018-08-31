@@ -3,11 +3,11 @@ import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-import ImmutablePropTypes from 'react-immutable-proptypes'
 import { connect } from 'react-redux'
 
 import { ConfigConsumer, ConfigProvider } from '../../lib/config-context'
 import MemberForm from '../../membership/components/MemberForm'
+import * as MemberPropTypes from '../../membership/proptypes'
 import printBadge from '../printBadge'
 import MemberLog from './MemberLog'
 import NewInvoice from './NewInvoice'
@@ -51,28 +51,39 @@ export const membershipTypes = [
   'Adult'
 ]
 
+const MemberTitle = ({ attr, member, ...props }) => {
+  const membership = member.get('membership')
+  const title = attr.member
+    ? `Member #${member.get('member_number')} (${membership})`
+    : /^DP/.test(membership)
+      ? membership.replace(/^DP/, 'Day pass:')
+      : 'Non-member'
+  const lastModStyle = {
+    color: 'rgba(0, 0, 0, 0.3)',
+    float: 'right',
+    fontSize: 11,
+    fontStyle: 'italic',
+    lineHeight: 'normal',
+    textAlign: 'right'
+  }
+  return (
+    <div title={'ID: ' + member.get('id')} {...props}>
+      <div style={lastModStyle}>
+        Last modified
+        <br />
+        {member.get('last_modified')}
+      </div>
+      {title}
+    </div>
+  )
+}
+
 class Member extends PureComponent {
   static propTypes = {
     api: PropTypes.object.isRequired,
     handleClose: PropTypes.func.isRequired,
     locked: PropTypes.bool.isRequired,
-    member: ImmutablePropTypes.mapContains({
-      id: PropTypes.number,
-      legal_name: PropTypes.string,
-      email: PropTypes.string,
-      badge_name: PropTypes.string,
-      badge_subtitle: PropTypes.string,
-      public_first_name: PropTypes.string,
-      public_last_name: PropTypes.string,
-      country: PropTypes.string,
-      state: PropTypes.string,
-      city: PropTypes.string,
-      paper_pubs: ImmutablePropTypes.mapContains({
-        name: PropTypes.string.isRequired,
-        address: PropTypes.string.isRequired,
-        country: PropTypes.string.isRequired
-      })
-    }),
+    member: MemberPropTypes.person,
     printer: PropTypes.string,
     setMember: PropTypes.func.isRequired,
     showMessage: PropTypes.func.isRequired
@@ -93,97 +104,88 @@ class Member extends PureComponent {
     }
   }
 
-  get actions() {
-    const {
-      api,
-      handleClose,
-      locked,
-      member,
-      printer,
-      showMessage
-    } = this.props
-    const { changes, sent, valid } = this.state
-    const hasChanges = changes.size > 0
+  getAdminActions() {
+    const { api, member, showMessage } = this.props
+    const email = member.get('email')
     const id = member.get('id')
+    const legal_name = member.get('legal_name')
     const membership = member.get('membership')
+    const paper_pubs = member.get('paper_pubs')
+    return [
+      <MemberLog key="log" getLog={() => api.GET(`people/${id}/log`)} id={id}>
+        <FlatButton label="View log" style={{ float: 'left' }} />
+      </MemberLog>,
 
-    const actions = [
+      <Upgrade
+        key="upgrade"
+        membership={membership}
+        paper_pubs={paper_pubs}
+        name={`${legal_name} <${email}>`}
+        upgrade={res =>
+          api
+            .POST(`people/${id}/upgrade`, res)
+            .then(() => showMessage(`${legal_name} upgraded`))
+        }
+      >
+        <FlatButton label="Upgrade" style={{ float: 'left' }} />
+      </Upgrade>,
+
+      <NewInvoice
+        key="invoice"
+        onSubmit={invoice =>
+          api
+            .POST(`purchase/invoice`, {
+              email,
+              items: [invoice]
+            })
+            .then(() => showMessage(`Invoice created for ${legal_name}`))
+        }
+        person={member}
+      >
+        <FlatButton label="New invoice" style={{ float: 'left' }} />
+      </NewInvoice>
+    ]
+  }
+
+  getBadgeAction(attr) {
+    const { member, printer, showMessage } = this.props
+    const { changes, sent, valid } = this.state
+    const daypass = member.get('daypass')
+    if (!printer || !(attr.badge || daypass)) return null
+    let label = daypass ? 'Claim daypass' : 'Print badge'
+    if (member.get('badge_print_time')) label = 'Re-' + label
+    if (changes.size > 0) label = 'Save & ' + label
+    return (
+      <FlatButton
+        disabled={sent || !valid}
+        key="badge"
+        label={label}
+        onClick={() =>
+          this.handleBadgePrint().then(() => {
+            const done = daypass ? 'Daypass claimed' : 'Badge printed'
+            showMessage(`${done} for ${member.get('preferred_name')}`)
+          })
+        }
+        style={{ float: 'left' }}
+      />
+    )
+  }
+
+  getActions(attr) {
+    const { handleClose, locked } = this.props
+    const { changes, sent, valid } = this.state
+    const actions = locked ? [] : this.getAdminActions()
+    const ba = this.getBadgeAction(attr)
+    if (ba) actions.unshift(ba)
+    actions.push(
       <FlatButton key="close" label="Close" onClick={handleClose} />,
       <FlatButton
         key="ok"
-        disabled={sent || !hasChanges || !valid}
+        disabled={sent || changes.size === 0 || !valid}
         label={sent ? 'Working...' : 'Apply'}
         onClick={() => this.save().then(handleClose)}
       />
-    ]
-
-    if (!locked) {
-      const email = member.get('email')
-      const legal_name = member.get('legal_name')
-      const paper_pubs = member.get('paper_pubs')
-      actions.unshift(
-        <MemberLog key="log" getLog={() => api.GET(`people/${id}/log`)} id={id}>
-          <FlatButton label="View log" style={{ float: 'left' }} />
-        </MemberLog>,
-
-        <Upgrade
-          key="upgrade"
-          membership={membership}
-          paper_pubs={paper_pubs}
-          name={`${legal_name} <${email}>`}
-          upgrade={res =>
-            api
-              .POST(`people/${id}/upgrade`, res)
-              .then(() => showMessage(`${legal_name} upgraded`))
-          }
-        >
-          <FlatButton label="Upgrade" style={{ float: 'left' }} />
-        </Upgrade>,
-
-        <NewInvoice
-          key="invoice"
-          onSubmit={invoice =>
-            api
-              .POST(`purchase/invoice`, {
-                email,
-                items: [invoice]
-              })
-              .then(() => showMessage(`Invoice created for ${legal_name}`))
-          }
-          person={member}
-        >
-          <FlatButton label="New invoice" style={{ float: 'left' }} />
-        </NewInvoice>
-      )
-    }
-
-    const daypass = member.get('daypass')
-    if (
-      printer &&
-      membership !== 'Supporter' &&
-      (membership !== 'NonMember' || daypass)
-    ) {
-      let label = daypass ? 'Claim daypass' : 'Print badge'
-      if (member.get('badge_print_time')) label = 'Re-' + label
-      if (hasChanges) label = 'Save & ' + label
-      actions.unshift(
-        <FlatButton
-          disabled={sent || !valid}
-          label={label}
-          onClick={() =>
-            this.handleBadgePrint().then(() =>
-              showMessage(
-                `${
-                  daypass ? 'Daypass claimed' : 'Badge printed'
-                } for ${member.get('preferred_name')}`
-              )
-            )
-          }
-          style={{ float: 'left' }}
-        />
-      )
-    }
-
+    )
     return actions
   }
 
@@ -195,8 +197,7 @@ class Member extends PureComponent {
       !prev ||
       window.confirm(
         [
-          'Are you sure?',
-          '',
+          'Are you sure?\n',
           member.get('daypass')
             ? 'Daypass was already claimed at:'
             : 'Badge was already printed at:',
@@ -248,56 +249,35 @@ class Member extends PureComponent {
 
   render() {
     const { handleClose, member } = this.props
-    if (!member) return null
-    const membership = member.get('membership', 'NonMember')
 
     // FIXME: The material-ui 0.20 <Dialog> does not allow context to pass
     // through like it should; hence this Consumer/Dialog/Provider hack.
-    return (
+    return member ? (
       <ConfigConsumer>
-        {config => (
-          <Dialog
-            actions={this.actions}
-            title={
-              <div title={'ID: ' + member.get('id')}>
-                <div
-                  style={{
-                    color: 'rgba(0, 0, 0, 0.3)',
-                    float: 'right',
-                    fontSize: 11,
-                    fontStyle: 'italic',
-                    lineHeight: 'normal',
-                    textAlign: 'right'
-                  }}
-                >
-                  Last modified
-                  <br />
-                  {member.get('last_modified')}
-                </div>
-                {membership === 'NonMember'
-                  ? 'Non-member'
-                  : /^DP/.test(membership)
-                    ? membership.replace(/^DP/, 'Day pass:')
-                    : `Member #${member.get('member_number')} (${membership})`}
-              </div>
-            }
-            open
-            autoScrollBodyContent
-            bodyClassName="memberDialog"
-            onRequestClose={handleClose}
-          >
-            <ConfigProvider value={config}>
-              <MemberForm
-                isAdmin={true}
-                member={member}
-                onChange={this.handleChange}
-                tabIndex={1}
-              />
-            </ConfigProvider>
-          </Dialog>
-        )}
+        {config => {
+          const attr = config.getMemberAttr(member)
+          return (
+            <Dialog
+              actions={this.getActions(attr)}
+              title={<MemberTitle attr={attr} member={member} />}
+              open
+              autoScrollBodyContent
+              bodyClassName="memberDialog"
+              onRequestClose={handleClose}
+            >
+              <ConfigProvider value={config}>
+                <MemberForm
+                  isAdmin={true}
+                  member={member}
+                  onChange={this.handleChange}
+                  tabIndex={1}
+                />
+              </ConfigProvider>
+            </Dialog>
+          )
+        }}
       </ConfigConsumer>
-    )
+    ) : null
   }
 }
 

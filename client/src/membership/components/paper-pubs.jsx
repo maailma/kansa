@@ -10,12 +10,17 @@ import { Col, Row } from 'react-flexbox-grid'
 
 import { ConfigConsumer } from '../../lib/config-context'
 import * as PaymentPropTypes from '../../payments/proptypes'
-import { emptyPaperPubsMap } from '../constants'
 import messages from '../messages'
 import { hintStyle } from './MemberForm'
 
 export const paperPubsIsValid = pp =>
   !pp || (pp.get('name') && pp.get('address') && !!pp.get('country'))
+
+export const newPaperPubs = getValue => {
+  const name = getValue(['legal_name']) || ''
+  const country = getValue(['country']) || ''
+  return Map({ name, address: '', country })
+}
 
 const AddressField = ({
   autoFocus,
@@ -134,7 +139,7 @@ const PaperPubs = ({
                 onCheck={(ev, checked) =>
                   onChange(
                     ['paper_pubs'],
-                    checked ? prevPaperPubs || emptyPaperPubsMap : null
+                    checked ? prevPaperPubs || newPaperPubs(getValue) : null
                   )
                 }
                 ppMsg={ppMsg}

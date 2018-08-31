@@ -81,11 +81,7 @@ class NavDrawer extends React.Component {
           handleNav={this.handleNav}
           otherMembers={otherMembers}
         />
-        <NavMenu
-          currentMember={currentMember}
-          handleNav={this.handleNav}
-          otherMembers={otherMembers}
-        />
+        <NavMenu onChange={(ev, val) => this.handleNav(val)} />
       </Drawer>
     )
   }

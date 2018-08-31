@@ -1,7 +1,7 @@
 import React from 'react'
 import { Col, Row } from 'react-flexbox-grid'
 
-import { TextInput } from '../../membership/components/form-components'
+import TextInput from '../../lib/text-input'
 import MemberLookupSelector from '../../membership/components/MemberLookupSelector'
 
 const DataField = ({ field, onChange, value }) => {

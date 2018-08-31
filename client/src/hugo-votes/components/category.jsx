@@ -31,7 +31,7 @@ const VoteCategory = ({
         display: 'block',
         padding: 0
       }}
-      title={categoryInfo[category]}
+      title={categoryInfo[category].title}
       titleStyle={{
         fontSize: 24,
         fontWeight: 400,

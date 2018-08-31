@@ -5,7 +5,7 @@ import React from 'react'
 import { Col, Row } from 'react-flexbox-grid'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 
-import { TextInput } from '../../membership/components/form-components'
+import TextInput from '../../lib/text-input'
 import SelectIbanCountry, { ibanCountries } from './select-iban-country'
 import StripeDirectDebit from './stripe-direct-debit'
 

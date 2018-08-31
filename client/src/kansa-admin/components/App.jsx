@@ -5,7 +5,11 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 import api from '../../lib/api'
-import { ConfigProvider } from '../../lib/config-context'
+import {
+  ConfigProvider,
+  defaultConfig,
+  getConfig
+} from '../../lib/config-context'
 import BarcodeListener from './barcode-listener'
 import PaymentTable from './PaymentTable'
 import PeopleScene from './PeopleScene'
@@ -24,7 +28,7 @@ class App extends React.Component {
   }
 
   state = {
-    config: {},
+    config: defaultConfig,
     filter: '',
     member: null,
     scene: 'people'
@@ -35,7 +39,7 @@ class App extends React.Component {
     const appTitle = App.defaultProps.title
     document.title =
       TITLE.indexOf(appTitle) === -1 ? `${appTitle} - ${TITLE}` : TITLE
-    api.GET('config').then(config => this.setState({ config }))
+    getConfig().then(config => this.setState({ config }))
   }
 
   componentWillReceiveProps({ people }) {

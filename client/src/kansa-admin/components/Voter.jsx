@@ -7,6 +7,7 @@ import React, { Component } from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 import { connect } from 'react-redux'
 
+import { ConfigConsumer } from '../../lib/config-context'
 import TokenSelector from './TokenSelector'
 
 const styles = {
@@ -36,8 +37,6 @@ class Voter extends Component {
     showMessage: PropTypes.func.isRequired
   }
 
-  static voterTypes = ['Supporter', 'Youth', 'FirstWorldcon', 'Adult']
-
   static get defaultState() {
     return {
       available_tokens: [],
@@ -50,14 +49,6 @@ class Voter extends Component {
   }
 
   state = Voter.defaultState
-
-  get isVoter() {
-    const { member } = this.props
-    return (
-      Map.isMap(member) &&
-      Voter.voterTypes.indexOf(member.get('membership')) !== -1
-    )
-  }
 
   componentWillReceiveProps({ api, member }) {
     if (member && !member.equals(this.props.member)) {
@@ -130,66 +121,74 @@ class Voter extends Component {
       ? member.toJS()
       : {}
     return (
-      <Dialog
-        actions={[
-          <FlatButton key="close" label="Close" onClick={onClose} />,
-          <FlatButton
-            key="ok"
-            label={sent ? 'Working...' : 'Vote'}
-            disabled={
-              sent || !this.isVoter || !!(token && (!token.token || token.used))
-            }
-            onClick={this.vote}
-          />
-        ]}
-        autoScrollBodyContent
-        className="voter"
-        onRequestClose={onClose}
-        open={!!member}
-        title={
-          this.isVoter
+      <ConfigConsumer>
+        {({ getMemberAttr }) => {
+          const isVoter = getMemberAttr(member).wsfs_member
+          const disabled =
+            sent || !isVoter || !!(token && (!token.token || token.used))
+          const title = isVoter
             ? `Member #${member_number} (${membership})`
             : `Non-voter (${membership})`
-        }
-      >
-        {this.renderPastNames()}
-        <TextField
-          floatingLabelText="Voter name"
-          floatingLabelFixed
-          fullWidth
-          hintText={legal_name}
-          name="name"
-          onChange={(_, voter_name) => this.setState({ voter_name })}
-          value={voter_name}
-        />
-        <TextField
-          floatingLabelText="Voter email"
-          floatingLabelFixed
-          fullWidth
-          hintText={email}
-          name="email"
-          onChange={(_, voter_email) => this.setState({ voter_email })}
-          value={voter_email}
-        />
-        {token && token.used ? (
-          <div style={styles.noVote}>Voted at {token.used}</div>
-        ) : !this.isVoter ? (
-          <div style={styles.noVote}>Not eligible to vote</div>
-        ) : (
-          <TokenSelector
-            api={api}
-            onAdd={token =>
-              this.setState({
-                available_tokens: [token].concat(this.state.available_tokens),
-                token
-              })
-            }
-            onSelect={token => this.setState({ token })}
-            selected={token || null}
-            tokens={available_tokens}
-          />
-        )}
-      </Dialog>
+          return (
+            <Dialog
+              actions={[
+                <FlatButton key="close" label="Close" onClick={onClose} />,
+                <FlatButton
+                  key="ok"
+                  label={sent ? 'Working...' : 'Vote'}
+                  disabled={disabled}
+                  onClick={this.vote}
+                />
+              ]}
+              autoScrollBodyContent
+              className="voter"
+              onRequestClose={onClose}
+              open={!!member}
+              title={title}
+            >
+              {this.renderPastNames()}
+              <TextField
+                floatingLabelText="Voter name"
+                floatingLabelFixed
+                fullWidth
+                hintText={legal_name}
+                name="name"
+                onChange={(_, voter_name) => this.setState({ voter_name })}
+                value={voter_name}
+              />
+              <TextField
+                floatingLabelText="Voter email"
+                floatingLabelFixed
+                fullWidth
+                hintText={email}
+                name="email"
+                onChange={(_, voter_email) => this.setState({ voter_email })}
+                value={voter_email}
+              />
+              {token && token.used ? (
+                <div style={styles.noVote}>Voted at {token.used}</div>
+              ) : !isVoter ? (
+                <div style={styles.noVote}>Not eligible to vote</div>
+              ) : (
+                <TokenSelector
+                  api={api}
+                  onAdd={token =>
+                    this.setState({
+                      available_tokens: [token].concat(
+                        this.state.available_tokens
+                      ),
+                      token
+                    })
+                  }
+                  onSelect={token => this.setState({ token })}
+                  selected={token || null}
+                  tokens={available_tokens}
+                />
+              )}
+            </Dialog>
+          )
+        }}
+      </ConfigConsumer>
     )
   }
 }

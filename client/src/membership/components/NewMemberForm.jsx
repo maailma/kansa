@@ -12,8 +12,8 @@ import getMemberPrice from '../../lib/get-member-price'
 import { buyMembership, getPurchaseData } from '../../payments/actions'
 import StripeCheckout from '../../payments/components/stripe-checkout'
 import * as PaymentPropTypes from '../../payments/proptypes'
-import { MembershipSelect } from './form-components'
 import MemberForm from './MemberForm'
+import MembershipSelect from './membership-select'
 
 class NewMemberForm extends React.Component {
   static propTypes = {
@@ -126,8 +126,8 @@ class NewMemberForm extends React.Component {
                 <Col xs={12}>
                   <MembershipSelect
                     data={data}
-                    getValue={path => member.getIn(path) || ''}
-                    onChange={(path, value) => replace(`/new/${value}`)}
+                    onChange={value => replace(`/new/${value}`)}
+                    value={member.get('membership')}
                   />
                 </Col>
               </Row>
