@@ -1,8 +1,24 @@
+const config = require('./config');
 const { AuthError, InputError } = require('./errors');
 
 module.exports = {
-  getDaypassStats, getPublicPeople, getPublicStats, lookupPerson
+  getConfig, getDaypassStats, getPublicPeople, getPublicStats, lookupPerson
 };
+
+function getConfig(req, res, next) {
+  req.app.locals.db.any(`
+    SELECT membership, badge, hugo_nominator, member, wsfs_member
+    FROM membership_types`
+  )
+    .then(rows => {
+      const membershipTypes = {}
+      rows.forEach(({ membership, ...props }) => {
+        membershipTypes[membership] = props
+      })
+      res.json(Object.assign({ membershipTypes }, config));
+    })
+    .catch(next);
+}
 
 function getDaypassStats(req, res, next) {
   const csv = !!(req.query.csv);
@@ -35,45 +51,50 @@ function getPublicPeople(req, res, next) {
 function getPublicStats(req, res, next) {
   const csv = !!(req.query.csv);
   req.app.locals.db.any('SELECT * from country_stats')
-    .then(data => {
-      if (csv) res.csv(data, true);
-      else res.json(data.reduce((map, c) => {
-        map[c.country] = Object.keys(c).reduce((cc, k) => {
-          if (typeof c[k] === 'number') cc[k] = c[k];
-          return cc;
-        }, map[c.country] || {});
-        return map;
-      }, {}));
+    .then(rows => {
+      if (csv) return res.csv(rows, true);
+      const data = {}
+      rows.forEach(({ country, membership, count }) => {
+        const c = data[country]
+        if (c) c[membership] = Number(count)
+        else data[country] = { [membership]: Number(count) }
+      })
+      res.json(data);
     })
     .catch(next);
 }
 
-function lookupPerson(req, res, next) {
-  if (!req.session || !req.session.user || !req.session.user.email) return next(new AuthError());
-  const { email, member_number, name } = req.body;
-  const queryParts = [];
-  const queryValues = {};
+function getLookupQuery({ email, member_number, name }) {
+  const parts = [];
+  const values = {};
   if (email && /.@./.test(email)) {
-    queryParts.push('lower(email) = $(email)');
-    queryValues.email = email.trim().toLowerCase();
+    parts.push('lower(email) = $(email)');
+    values.email = email.trim().toLowerCase();
   }
   if (member_number > 0) {
-    queryParts.push('(member_number = $(number) OR id = $(number))');
-    queryValues.number = Number(member_number);
+    parts.push('(member_number = $(number) OR id = $(number))');
+    values.number = Number(member_number);
   }
   if (name) {
-    queryParts.push('(lower(legal_name) = $(name) OR lower(public_name(p)) = $(name))');
-    queryValues.name = name.trim().toLowerCase();
+    parts.push('(lower(legal_name) = $(name) OR lower(public_name(p)) = $(name))');
+    values.name = name.trim().toLowerCase();
   }
-  if (queryParts.length === 0 || (queryParts.length === 1 && queryValues.number)) {
-    return next(new InputError('No valid parameters'));
+  if (parts.length === 0 || (parts.length === 1 && values.number)) {
+    throw new InputError('No valid parameters');
   }
-  req.app.locals.db.any(`
+  const query = `
     SELECT id, membership, preferred_name(p) AS name
-      FROM people p
-     WHERE ${queryParts.join(' AND ')}
-           AND membership NOT IN ('Child', 'KidInTow')`, queryValues
-  )
+    FROM people p
+      LEFT JOIN membership_types m USING (membership)
+    WHERE ${parts.join(' AND ')} AND
+      m.allow_lookup = true`
+  return { query, values }
+}
+
+function lookupPerson(req, res, next) {
+  if (!req.session || !req.session.user || !req.session.user.email) return next(new AuthError());
+  const { query, values } = getLookupQuery(req.body)
+  req.app.locals.db.any(query, values)
     .then(results => {
       switch (results.length) {
         case 0: return res.json({ status: 'not found' });

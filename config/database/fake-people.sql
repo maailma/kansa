@@ -19,6 +19,8 @@ SET row_security = off;
 -- Data for Name: people; Type: TABLE DATA; Schema: kansa; Owner: kansa
 --
 
+ALTER TABLE kansa.people ADD COLUMN hugo_nominator bool;
+ALTER TABLE kansa.people ADD COLUMN hugo_voter bool;
 COPY kansa.people (id, last_modified, membership, member_number, legal_name, public_first_name, public_last_name, email, city, state, country, badge_name, badge_subtitle, hugo_nominator, hugo_voter, paper_pubs) FROM stdin;
 15	2018-07-29 18:14:07.698028+00	FirstWorldcon	43	Factual Blob	Fake (Factual)	Blob	fblog@fblobsblog.com	Fact City	Data Central	Blobitania	\N	\N	\N	\N	\N
 14	2018-07-29 18:14:07.701524+00	Supporter	42	Samuel Vimes	\N	\N	s.vimes@gmial.ocm	Ankh-Morpork	\N	The Disc	\N	\N	\N	\N	{"name": "Samuel Vimes", "address": "11, Broadstreet\\r\\nAnkh-Morpork", "country": "Ankh-Morpork"}
@@ -669,6 +671,8 @@ COPY kansa.people (id, last_modified, membership, member_number, legal_name, pub
 660	2018-07-29 18:14:40.950855+00	KidInTow	688	Falkrunn Ungart	Falkrunn	Ungart	intricatemasonryyay@ymail.com	Waren	Kein	Denmark	\N	\N	\N	\N	\N
 \.
 
+ALTER TABLE kansa.people DROP COLUMN hugo_nominator;
+ALTER TABLE kansa.people DROP COLUMN hugo_voter;
 
 --
 -- Data for Name: log; Type: TABLE DATA; Schema: kansa; Owner: kansa

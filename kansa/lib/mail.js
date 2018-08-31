@@ -15,9 +15,6 @@ function mailTask(type, data, delay) {
 }
 
 const mailRecipient = (email, res) => {
-  const mt = [ 'NonMember', 'KidInTow', 'Exhibitor', 'Helper', 'Child', 'Supporter', 'Youth', 'FirstWorldcon', 'Adult' ]
-    // inlined as types/person.js has Supporter < Child
-  const mi = res.reduce((max, r) => Math.max(max, mt.indexOf(r.membership)), -1)
   let name = res[0].name
   switch (res.length) {
     case 0: return { email, delete: true }
@@ -32,32 +29,29 @@ const mailRecipient = (email, res) => {
       name = names.join(', ')
   }
   const attending = res
-    .filter(r => {
-      switch (r.membership) {
-        case 'Supporter': return false
-        case 'NonMember': return !!r.daypass
-        default: return true
-      }
-    })
+    .filter(r => r.badge || r.daypass)
     .map(({ id, name }) => ({ id, name }))
   const hugo_members = res
-    .filter(r => r.hugo_nominator || r.hugo_voter)
+    .filter(r => r.hugo_nominator || r.wsfs_member)
     .map(({ id, name }) => ({ id, name }))
   return {
     attending,
     email: res[0].email,
     hugo_members,
     key: res[0].key,
-    membership: mt[mi],
+    membership: res[0].membership, // FIXME: see https://github.com/maailma/kansa/issues/49
     name
   }
 }
 mailRecipient.selector = `
-   SELECT email, key, p.id, membership, preferred_name(p) as name,
-          hugo_nominator, hugo_voter, d.status AS daypass
-     FROM people p
-LEFT JOIN keys USING (email)
-LEFT JOIN daypasses d ON (p.id = d.person_id)`
+  SELECT
+    email, key, p.id, membership, preferred_name(p) as name,
+    m.badge, m.hugo_nominator, m.wsfs_member,
+    d.status AS daypass
+  FROM people p
+    LEFT JOIN keys USING (email)
+    LEFT JOIN membership_type m USING (membership)
+    LEFT JOIN daypasses d ON (p.id = d.person_id)`
 
 function rxUpdateTask(recipients) {
   return fetch('http://kyyhky/update-recipients', {

@@ -83,37 +83,41 @@ class Siteselect {
     const { id } = req.params
     const token = Siteselect.parseToken(req.body.token)
     let { voter_name, voter_email } = req.body
-    this.db.tx(tx => tx.sequence((i, data) => { switch (i) {
-      case 0:
-        return token ? tx.one(`SELECT used FROM tokens WHERE token=$1`, token) : {}
-
-      case 1:
-        if (!data) throw new InputError(`Token not found`)
-        if (data.used) throw new InputError(`Token already used at ${data.used}`)
-        return this.db.oneOrNone(`
-          SELECT p.legal_name, p.email, s.time AS vote_time
-            FROM people p LEFT JOIN siteselection_votes s ON (p.id = s.person_id)
-           WHERE p.id = $1 AND p.membership IN
-                 ('Supporter','Youth','FirstWorldcon','Adult')`, id)
-
-      case 2:
-        if (!data) throw new InputError('Voter not found')
-        if (data.vote_time) throw new InputError(`Already voted at ${data.vote_time}`)
-        if (!voter_name && !voter_email) {
-          voter_name = data.legal_name
-          voter_email = data.email
-        }
-        this.db.none(`
-          INSERT INTO siteselection_votes (person_id, token, voter_name, voter_email)
-               VALUES ($(id), $(token), $(voter_name), $(voter_email))`,
-          {
-            id,
-            token: token || null,
-            voter_name: voter_name || null,
-            voter_email: voter_email || null
+    this.db.task(dbTask =>
+      (
+        token
+          ? dbTask.oneOrNone(`SELECT used FROM tokens WHERE token=$1`, token)
+          : Promise.resolve({})
+      )
+        .then(data => {
+          if (!data) throw new InputError(`Token not found`)
+          if (data.used) throw new InputError(`Token already used at ${data.used}`)
+          return dbTask.oneOrNone(`
+            SELECT p.legal_name, p.email, s.time AS vote_time
+            FROM people p
+              LEFT JOIN siteselection_votes s ON (p.id = s.person_id)
+              LEFT JOIN membership_types m USING (membership)
+            WHERE p.id = $1 AND m.wsfs_member = true`, id)
+        })
+        .then(data => {
+          if (!data) throw new InputError('Voter not found')
+          if (data.vote_time) throw new InputError(`Already voted at ${data.vote_time}`)
+          if (!voter_name && !voter_email) {
+            voter_name = data.legal_name
+            voter_email = data.email
           }
-        )
-    }}))
+          return dbTask.none(`
+            INSERT INTO siteselection_votes (person_id, token, voter_name, voter_email)
+            VALUES ($(id), $(token), $(voter_name), $(voter_email))`,
+            {
+              id,
+              token: token || null,
+              voter_name: voter_name || null,
+              voter_email: voter_email || null
+            }
+          )
+        })
+    )
       .then(() => res.json({ status: 'success', voter_name, voter_email }))
       .catch(next)
   }

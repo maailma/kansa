@@ -39,8 +39,12 @@ const splitNameInTwain = (name) => {
 function getBadge(req, res, next) {
   const id = parseInt(req.params.id || '0')
   req.app.locals.db.oneOrNone(`
-    SELECT member_number, membership, get_badge_name(p) AS name, get_badge_subtitle(p) AS subtitle
-      FROM people p WHERE id = $1 AND membership != 'Supporter'`, id
+    SELECT
+      p.member_number, membership,
+      get_badge_name(p) AS name, get_badge_subtitle(p) AS subtitle
+    FROM people p
+      LEFT JOIN membership_types m USING (membership)
+    WHERE id = $1 AND m.badge = true`, id
   )
     .then(data => {
       const { member_number, membership, name, subtitle } = data || {}
@@ -75,12 +79,15 @@ function getBarcode(req, res, next) {
   const format = req.params.fmt === 'pdf' ? 'pdf' : 'png'
   req.app.locals.db.one(`
     SELECT member_number, membership,
-           get_badge_name(p) AS name, get_badge_subtitle(p) AS subtitle,
-           d.status AS daypass, daypass_days(d) AS days
-      FROM people p
+      get_badge_name(p) AS name, get_badge_subtitle(p) AS subtitle,
+      d.status AS daypass, daypass_days(d) AS days
+    FROM people p
       JOIN keys k USING (email)
- LEFT JOIN daypasses d ON (p.id = d.person_id)
-     WHERE p.id=$(id) ${key ? 'AND key=$(key)' : ''} AND membership != 'Supporter'`, { id, key }
+      LEFT JOIN membership_types m USING (membership)
+      LEFT JOIN daypasses d ON (p.id = d.person_id)
+    WHERE p.id=$(id) AND
+      (m.badge = true OR d.status IS NOT NULL)
+      ${key ? 'AND key=$(key)' : ''}`, { id, key }
   )
     .then(data => {
       const { daypass, days, member_number, membership, name, subtitle } = data

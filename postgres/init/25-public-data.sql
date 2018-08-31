@@ -54,18 +54,15 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE VIEW country_stats AS SELECT * FROM crosstab(
-   'SELECT coalesce(country(country),''=''),
-           coalesce(membership::text,''=''),
-           count(*)
-      FROM People WHERE membership != ''NonMember''
-  GROUP BY CUBE(country(country), membership)',
-  $$VALUES ('Adult'), ('FirstWorldcon'), ('Youth'), ('Child'), ('KidInTow'), ('Exhibitor'), ('Supporter'), ('=') $$
-) AS ct (
-  country text,
-  "Adult" int, "FirstWorldcon" int, "Youth" int, "Child" int, "KidInTow" int, "Exhibitor" int, "Supporter" int,
-  "=" int
-);
+CREATE VIEW country_stats AS
+  SELECT
+    coalesce(country(country), '=') AS country,
+    coalesce(membership, '=') AS membership,
+    count(*)
+  FROM People p
+    LEFT JOIN membership_types m USING (membership)
+  WHERE m.member = true
+  GROUP BY CUBE(country(country), membership);
 
 CREATE VIEW daypass_stats AS SELECT * FROM crosstab(
      'SELECT status, ''Wed'' AS day, count(*)
@@ -95,10 +92,13 @@ CREATE VIEW daypass_stats AS SELECT * FROM crosstab(
 );
 
 CREATE VIEW public_members AS
-     SELECT country(country), membership,
-            public_last_name AS last_name,
-            public_first_name AS first_name
-       FROM people
-      WHERE membership != 'NonMember' AND
-            (public_first_name != '' OR public_last_name != '')
-   ORDER BY last_name, first_name, country;
+  SELECT
+    country(country),
+    membership,
+    public_last_name AS last_name,
+    public_first_name AS first_name
+  FROM people p
+    LEFT JOIN membership_types m USING (membership)
+  WHERE m.member = true AND
+    (public_first_name != '' OR public_last_name != '')
+  ORDER BY last_name, first_name, country;

@@ -88,3 +88,8 @@ CREATE TABLE stripe_keys (
     type StripeKeyType NOT NULL,
     key text NOT NULL
 );
+
+CREATE VIEW membership_prices AS
+  SELECT m.membership, p.amount
+  FROM membership_types m LEFT JOIN payment_types p ON (m.membership = p.key)
+  WHERE p.category = 'new_member' or p.category IS NULL;

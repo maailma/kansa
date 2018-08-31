@@ -46,11 +46,11 @@ const peopleStream = new PeopleStream(db);
 router.get('/public/people', cors({ origin: '*' }), publicData.getPublicPeople);
 router.get('/public/stats', cors({ origin: '*' }), publicData.getPublicStats);
 router.get('/public/daypass-stats', cors({ origin: '*' }), publicData.getDaypassStats);
+router.get('/config', publicData.getConfig);
 
 router.post('/key', key.setKey);
 router.all('/login', user.login);
 
-router.get('/config', (req, res) => res.json(config));
 router.get('/barcode/:key/:id.:fmt', badge.getBarcode);
 router.get('/blank-badge', badge.getBadge);
 

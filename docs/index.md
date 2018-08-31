@@ -88,7 +88,16 @@ The configuration used by this instance.
 {
   id: 'w75',
   name: 'Worldcon 75',
-  paid_paper_pubs: true
+  paid_paper_pubs: true,
+  membershipTypes: {
+    Adult: {
+      badge: true,
+      hugo_nominator: true,
+      member: true,
+      wsfs_member: true
+    },
+    ...
+  }
 }
 ```
 
@@ -240,7 +249,6 @@ data, `member_admin` or `member_list` authority is required.
 {
   id, last_modified, member_number, membership, legal_name, email,
   public_first_name, public_last_name, city, state, country,
-  hugo_nominator, hugo_voter,
   paper_pubs: { name, address, country },
   preferred_name, daypass, daypass_days
 }

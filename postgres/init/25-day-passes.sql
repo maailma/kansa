@@ -1,7 +1,7 @@
 SET ROLE kansa;
 
 CREATE TABLE daypass_amounts (
-    status MembershipStatus PRIMARY KEY,
+    status text PRIMARY KEY REFERENCES membership_types,
     day1 integer,
     day2 integer,
     day3 integer,
@@ -12,7 +12,7 @@ CREATE TABLE daypass_amounts (
 CREATE TABLE daypasses (
     id SERIAL PRIMARY KEY,
     person_id integer REFERENCES people NOT NULL,
-    status MembershipStatus NOT NULL,
+    status text NOT NULL REFERENCES membership_types,
     day1 bool DEFAULT false,
     day2 bool DEFAULT false,
     day3 bool DEFAULT false,
@@ -23,7 +23,7 @@ CREATE TABLE daypasses (
 CREATE TABLE badge_and_daypass_prints (
     person integer REFERENCES people NOT NULL,
     timestamp timestamptz NOT NULL DEFAULT now(),
-    membership MembershipStatus NOT NULL,
+    membership text NOT NULL REFERENCES membership_types,
     member_number integer,
     daypass integer REFERENCES daypasses
 );
