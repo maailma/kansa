@@ -15,7 +15,7 @@ function getConfig(req, res, next) {
       rows.forEach(({ membership, ...props }) => {
         membershipTypes[membership] = props
       })
-      res.json(Object.assign({ membershipTypes }, config));
+      res.json(Object.assign({ membershipTypes }, config, { auth: undefined }));
     })
     .catch(next);
 }

@@ -9,3 +9,11 @@ name: Worldcon 75
 # action that requires payment. If false, paper pubs may be added without any
 # cost.
 paid_paper_pubs: false
+
+# Authentication configuration. Duration values should use suffixes to indicate
+# units, e.g. "1d 3h" or "4w". To disable a timeout, use a null value.
+auth:
+
+  # After session timeout, a user is redirected to the sign-in page at their
+  # next request.
+  session_timeout: 5d
