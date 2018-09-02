@@ -31,7 +31,8 @@ CREATE TABLE IF NOT EXISTS People (
 
 CREATE TABLE IF NOT EXISTS Keys (
     email text PRIMARY KEY,
-    key text NOT NULL
+    key text NOT NULL,
+    expires timestamptz
 );
 
 CREATE TABLE IF NOT EXISTS Log (
