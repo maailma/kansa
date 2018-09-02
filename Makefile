@@ -18,8 +18,12 @@ update-%:
 stop:
 	$(DC) stop
 
-test: | integration-tests/node_modules
+test-reset:
+	docker exec kansa_postgres_1 psql api kansa -c "SELECT reset_test_users();"
+
+test: test-reset | integration-tests/node_modules
 	cd integration-tests && npm test
+	@${MAKE} test-reset
 
 integration-tests/node_modules:
 	cd integration-tests && npm install
