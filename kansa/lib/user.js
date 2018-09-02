@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { promisify } = require('util')
+const config = require('./config')
 const { AuthError, InputError } = require('./errors');
 const { resetExpiredKey } = require('./key')
 const Admin = require('./types/admin');
@@ -28,7 +29,10 @@ function verifyPeopleAccess(req, res, next) {
 }
 
 function login(req, res, next) {
-  const cookieOptions = { httpOnly: true, path: '/member-files', secure: true }
+  const cookieOptions = {
+    files: { httpOnly: true, path: '/member-files', secure: true },
+    session: { httpOnly: true, path: '/', maxAge: config.auth.session_timeout }
+  }
   const email = req.body && req.body.email || req.query.email
   const key = req.body && req.body.key || req.query.key
   req.app.locals.db.task(async ts => {
@@ -45,6 +49,8 @@ function login(req, res, next) {
     if (user.expired) {
       const path = req.body && req.body.path
       await resetExpiredKey(req, ts, { email, path })
+      res.clearCookie('files', cookieOptions.files);
+      res.clearCookie(config.id, cookieOptions.session);
       return res.status(403).json({ status: 'expired', email });
     }
     req.session.user = user
@@ -56,12 +62,13 @@ function login(req, res, next) {
         subject: email
       }
     )
-    res.cookie('files', token, cookieOptions);
+    res.cookie('files', token, cookieOptions.files);
     res.json({ status: 'success', email });
     const log = new LogEntry(req, 'Login');
     ts.none(`INSERT INTO Log ${log.sqlValues}`, log);
   }).catch(error => {
-    res.clearCookie('files', cookieOptions);
+    res.clearCookie('files', cookieOptions.files);
+    res.clearCookie(config.id, cookieOptions.session);
     next(error);
   });
 }
