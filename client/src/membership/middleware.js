@@ -37,7 +37,12 @@ export default ({ dispatch }) => next => action => {
               dispatch(replace(path || '/'))
             })
             .catch(err => {
-              handleError(err)
+              if (err.response && err.response.status === 403) {
+                const msg = `Your login key has expired, and has been reset. Your new login link is being sent to ${email}.`
+                dispatch(showMessage(msg))
+              } else {
+                handleError(err)
+              }
               dispatch(push('/'))
             })
         }
@@ -53,7 +58,7 @@ export default ({ dispatch }) => next => action => {
               callback()
             })
             .catch(err => {
-              if (err.status !== 'unauthorized') handleError(err)
+              if (err.message !== 'Unauthorized') handleError(err)
               callback(err)
             })
         }
