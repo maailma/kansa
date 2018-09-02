@@ -11,13 +11,21 @@ before_install:
     - docker-compose
       -f config/docker-compose.base.yaml
       -f config/docker-compose.dev.yaml
-      -p api
+      -p kansa
       up --build -d
     - sleep 10  # allow time for postgres db init
     - cd integration-tests
 
 after_failure:
-    - docker-compose logs
+    - docker-compose
+      -f ../config/docker-compose.base.yaml
+      -f ../config/docker-compose.dev.yaml
+      -p kansa
+      logs
 
 after_script:
-    - docker-compose down
+    - docker-compose
+      -f ../config/docker-compose.base.yaml
+      -f ../config/docker-compose.dev.yaml
+      -p kansa
+      down
