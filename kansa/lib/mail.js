@@ -50,7 +50,7 @@ mailRecipient.selector = `
     d.status AS daypass
   FROM people p
     LEFT JOIN keys USING (email)
-    LEFT JOIN membership_type m USING (membership)
+    LEFT JOIN membership_types m USING (membership)
     LEFT JOIN daypasses d ON (p.id = d.person_id)`
 
 function rxUpdateTask(recipients) {
