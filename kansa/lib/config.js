@@ -10,6 +10,10 @@ const shape = {
   name: 'string',
   paid_paper_pubs: 'boolean',
   auth: {
+    key_timeout: {
+      admin: 'duration',
+      normal: 'duration'
+    },
     session_timeout: 'duration'
   }
 }

@@ -11,8 +11,14 @@ name: Worldcon 75
 paid_paper_pubs: false
 
 # Authentication configuration. Duration values should use suffixes to indicate
-# units, e.g. "1d 3h" or "4w". To disable a timeout, use a null value.
+# units, e.g. "1d 3h" or "4w".
 auth:
+
+  # If an expired key is used for login, the key is reset and automatically
+  # sent by email. Admin users are those with any administrative privileges.
+  key_timeout:
+    normal: 1y
+    admin: 5d
 
   # After session timeout, a user is redirected to the sign-in page at their
   # next request.
