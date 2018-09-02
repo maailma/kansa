@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
-const { AuthError, InputError, isNoDataError } = require('./errors');
+const { promisify } = require('util')
+const { AuthError, InputError } = require('./errors');
+const { resetExpiredKey } = require('./key')
 const Admin = require('./types/admin');
 const LogEntry = require('./types/logentry');
 const { selectAllPeopleData } = require('./people')
@@ -26,39 +28,41 @@ function verifyPeopleAccess(req, res, next) {
 }
 
 function login(req, res, next) {
-  const cookieOptions = { httpOnly: true, path: '/member-files', secure: true };
-  const email = req.body && req.body.email || req.query.email || null;
-  const key = req.body && req.body.key || req.query.key || null;
-  if (!email || !key) {
-    res.clearCookie('files', cookieOptions);
-    return next(new InputError('Email and key are required for login'));
-  }
-  const db = req.app.locals.db;
-  db.one(`
-    SELECT ${Admin.sqlRoles}
-      FROM kansa.Keys LEFT JOIN admin.Admins USING (email)
-     WHERE email=$(email) AND key=$(key)`, { email, key }
-  ).then(roles => {
-    req.session.user = Object.assign({ email }, roles);
-    return new Promise((resolve, reject) => {
-      jwt.sign({ scope: 'wsfs' }, process.env.JWT_SECRET, {
+  const cookieOptions = { httpOnly: true, path: '/member-files', secure: true }
+  const email = req.body && req.body.email || req.query.email
+  const key = req.body && req.body.key || req.query.key
+  req.app.locals.db.task(async ts => {
+    if (!email || !key) throw new InputError('Email and key are required for login')
+    const user = await ts.oneOrNone(`
+      SELECT
+        k.email,
+        k.expires IS NOT NULL AND k.expires < now() AS expired,
+        ${Admin.sqlRoles}
+      FROM kansa.Keys k
+        LEFT JOIN admin.Admins a USING (email)
+      WHERE email=$(email) AND key=$(key)`, { email, key })
+    if (!user) throw new AuthError(`Email and key don't match`)
+    if (user.expired) {
+      const path = req.body && req.body.path
+      await resetExpiredKey(req, ts, { email, path })
+      return res.status(403).json({ status: 'expired', email });
+    }
+    req.session.user = user
+    const token = await promisify(jwt.sign)(
+      { scope: 'wsfs' },
+      process.env.JWT_SECRET,
+      {
         expiresIn: 120 * 60,
         subject: email
-      }, (err, token) => {
-        if (err) reject(err);
-        else {
-          res.cookie('files', token, cookieOptions);
-          resolve();
-        }
-      });
-    })
-  }).then(() => {
-    res.status(200).json({ status: 'success', email });
+      }
+    )
+    res.cookie('files', token, cookieOptions);
+    res.json({ status: 'success', email });
     const log = new LogEntry(req, 'Login');
-    db.none(`INSERT INTO Log ${log.sqlValues}`, log);
+    ts.none(`INSERT INTO Log ${log.sqlValues}`, log);
   }).catch(error => {
     res.clearCookie('files', cookieOptions);
-    next(isNoDataError(error) ? new AuthError('Email and key don\'t match') : error);
+    next(error);
   });
 }
 
