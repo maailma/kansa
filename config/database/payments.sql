@@ -22,6 +22,9 @@ INSERT INTO payment_fields (key, label, required, type) VALUES
 ('city', 'City', null, 'string'),
 ('state', 'State/province', null, 'string'),
 ('country', 'Country', null, 'string'),
+('postcode', 'Postcode', null, 'string'),
+('address', 'Address', null, 'string'),
+('badge_text', 'Badge Name', null, 'string'),
 ('membership', 'Membership type', null, 'string'),
 ('paper_pubs', 'Paper publications', null, 'object'),
 ('pp_name', 'Paper pubs name', true, 'string'),
@@ -33,7 +36,7 @@ UPDATE payment_fields SET generated = true WHERE key IN ('token');
 
 INSERT INTO payment_categories (key, label, allow_create_account, custom_email, fields) VALUES
 ('daypass', 'Day pass', true, null, ARRAY['day1','day2','day3','day4','day5','legal_name','email','public_first_name','public_last_name','city','state','country','invoice','comments']),
-('new_member', 'New membership', true, true, ARRAY['membership','legal_name','email','public_first_name','public_last_name','city','state','country','paper_pubs','invoice','comments']),
+('new_member', 'New membership', true, true, ARRAY['membership','legal_name','email','public_first_name','public_last_name','city','state','country''postcode','address','paper_pubs','invoice','comments']),
 ('paper_pubs', 'Paper publications', null, true, ARRAY['pp_name','pp_address','pp_country','invoice','comments']),
 ('exhibits', 'Exhibits', null, null, ARRAY['count','invoice','comments']),
 ('trips_tours', 'Trips and Tours', null, null, ARRAY['invoice','comments']),
@@ -43,20 +46,20 @@ INSERT INTO payment_categories (key, label, allow_create_account, custom_email, 
 ('staff', 'Staff shirt', null, null, ARRAY['invoice','comments']);
 
 INSERT INTO payment_categories (key, label, account, listed, fields, description) VALUES
-('siteselect', 'Advance Supporting Membership Fee for the 2019 Worldcon', 'siteselect', true, ARRAY['token'], '<p>You (or someone else you pay for) will receive a <b>voting token</b> to be entered on the site selection ballot as proof of payment, which will allow you to submit a vote for where the 77th Worldcon will be held in 2019. You can vote in advance by postal mail or in person at Worldcon 75. Your ballot will NOT be counted unless you provide this proof of payment of the Advance Supporting Membership Fee for the 2019 Worldcon. You will receive your voting token via email.</p><p><b>Worldcon Site Selection Ballot</b>: <a href="http://www.worldcon.fi/wsfs/site-selection/" target="_blank">Click here</a> to find a printable copy of the Worldcon Site Selection ballot to download.</p>'),
-('sponsor', 'Sponsorship', null, true, ARRAY['sponsor','invoice','comments'], 'The problem with travelling is the waiting. The long wait for a space elevator capsule or dragon caravan (or for that programme item you really want to see) can get quite dull. Why not sponsor a craft lounge to help con-goers pass the time? Or sponsor a bench, and give weary convention members somewhere to put their feet up when they have spent too long wandering around the halls.');
+('siteselect', 'Advance Supporting Membership Fee for the 2019 Worldcon', 'siteselect', false, ARRAY['token'], '<p>You (or someone else you pay for) will receive a <b>voting token</b> to be entered on the site selection ballot as proof of payment, which will allow you to submit a vote for where the 77th Worldcon will be held in 2019. You can vote in advance by postal mail or in person at Worldcon 75. Your ballot will NOT be counted unless you provide this proof of payment of the Advance Supporting Membership Fee for the 2019 Worldcon. You will receive your voting token via email.</p><p><b>Worldcon Site Selection Ballot</b>: <a href="http://www.worldcon.fi/wsfs/site-selection/" target="_blank">Click here</a> to find a printable copy of the Worldcon Site Selection ballot to download.</p>'),
+('sponsor', 'Sponsorship', null, false, ARRAY['sponsor','invoice','comments'], 'The problem with travelling is the waiting. The long wait for a space elevator capsule or dragon caravan (or for that programme item you really want to see) can get quite dull. Why not sponsor a craft lounge to help con-goers pass the time? Or sponsor a bench, and give weary convention members somewhere to put their feet up when they have spent too long wandering around the halls.');
 
 INSERT INTO payment_types (category, key, amount, label, sort_index) VALUES
 ('siteselect', 'ss-token', 4000, 'Site Selection Voting Fee', 1),
 ('daypass', 'daypass-Adult', null, 'Adult (from €25/day)', 1),
 ('daypass', 'daypass-Youth', null, 'Youth (from €15/day)', 2),
 ('daypass', 'daypass-Child', null, 'Child (from €10/day)', 3),
-('new_member', 'FirstWorldcon', 19500, 'First Worldcon', 1),
-('new_member', 'Adult', 19500, 'Adult', 2),
-('new_member', 'Youth', 11000, 'Youth', 3),
-('new_member', 'Child', 7500, 'Child', 4),
-('new_member', 'KidInTow', 0, 'Kid-in-tow', 5),
-('new_member', 'Supporter', 3500, 'Supporting', 6),
+('new_member', 'FirstWorldcon', 13000, 'First Worldcon', 1),
+('new_member', 'Adult', 21000, 'Adult', 2),
+('new_member', 'YoungAdult', 13000, 'YoungAdult', 3),
+('new_member', 'Child', 7000, 'Child', 4),
+('new_member', 'Infant', 500, 'Infant', 5),
+('new_member', 'Supporter', 4000, 'Supporting', 6),
 ('paper_pubs', 'paper_pubs', 1000, 'Paper publications', 1),
 ('exhibits', 'art-board', 3000, 'Art show board', 1),
 ('exhibits', 'art-halftable', 1500, 'Art show half-table', 2),
@@ -91,5 +94,5 @@ INSERT INTO payment_types (category, key, amount, label, description, sort_index
 
 INSERT INTO daypass_amounts VALUES
 ('Adult',2500,4500,5000,5000,2500),
-('Youth',1500,2500,3000,3000,1500),
-('Child',1000,1500,2000,2000,1000);
+('YoungAdult',1500,2500,3000,3000,1500),
+('Infant',1000,1500,2000,2000,1000);
