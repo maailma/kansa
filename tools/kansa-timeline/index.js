@@ -14,7 +14,7 @@ data.forEach(({ add_date, add_ms, up_date, up_ms }) => {
     dates[add_date] = { [add_ms]: 1 }
   } else {
     const n = dates[add_date][add_ms] || 0
-    dates[add_date][add_ms] = n + 1;
+    dates[add_date][add_ms] = n + 1
   }
   if (up_ms) {
     if (!dates[up_date]) {
@@ -26,16 +26,28 @@ data.forEach(({ add_date, add_ms, up_date, up_ms }) => {
       dates[up_date][up_ms] = n1 + 1
     }
   }
-});
-
-const sum = {Adult:0,FirstWorldcon:0,Youth:0,Child:0,KidInTow:0,Exhibitor:0,Helper:0,Supporter:0,NonMember:0}
-const types = Object.keys(sum)
-console.log(['date', ...types].join(','));
-Object.keys(dates).sort().forEach(date => {
-  const src = dates[date]
-  Object.keys(src).forEach(type => sum[type] += src[type])
-  console.log([date, ...types.map(type => sum[type])].join(','))
-  //sums[date] = Object.assign({}, sum)
 })
+
+const sum = {
+  Adult: 0,
+  FirstWorldcon: 0,
+  Youth: 0,
+  Child: 0,
+  KidInTow: 0,
+  Exhibitor: 0,
+  Helper: 0,
+  Supporter: 0,
+  NonMember: 0
+}
+const types = Object.keys(sum)
+console.log(['date', ...types].join(','))
+Object.keys(dates)
+  .sort()
+  .forEach(date => {
+    const src = dates[date]
+    Object.keys(src).forEach(type => (sum[type] += src[type]))
+    console.log([date, ...types.map(type => sum[type])].join(','))
+    //sums[date] = Object.assign({}, sum)
+  })
 
 //console.log(JSON.stringify(sums));

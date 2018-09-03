@@ -18,7 +18,10 @@ messages.process('*', (job, done) => {
     .catch(done)
 })
 messages.on('failed', (job, err) => {
-  console.warn(`Job ${job.id} failed to send ${job.name} to ${job.data.email}:\n`, err);
+  console.warn(
+    `Job ${job.id} failed to send ${job.name} to ${job.data.email}:\n`,
+    err
+  )
 })
 
 const contactSync = new ContactSync()
@@ -27,7 +30,7 @@ rxUpdates.process((job, done) => {
   contactSync.sync(job.data, done)
 })
 rxUpdates.on('failed', (job, err) => {
-  console.warn(`Job ${job.id} failed to update recipients:\n`, err);
+  console.warn(`Job ${job.id} failed to update recipients:\n`, err)
 })
 
 module.exports = { messages, rxUpdates }

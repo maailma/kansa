@@ -6,7 +6,7 @@ version: '2'
 # For full config, see also docker-compose.{dev,prod}.yaml
 
 volumes:
-  pgdata:
+  pgdata: null
 
 services:
   nginx:
@@ -23,7 +23,7 @@ services:
     links:
       - postgres
     expose:
-      - "80"
+      - '80'
     volumes:
       - ../config/kansa.yaml:/kansa.yaml:ro
 
@@ -36,7 +36,7 @@ services:
       - tarra
       - tuohi
     expose:
-      - "80"
+      - '80'
     volumes:
       - ../config/kansa.yaml:/kansa.yaml:ro
       - ../config/siteselection/ballot-data.js:/ss-ballot-data.js:ro
@@ -47,19 +47,19 @@ services:
     links:
       - postgres
     expose:
-      - "3000"
+      - '3000'
     volumes:
       - ../config/kansa.yaml:/kansa.yaml:ro
 
   tarra:
     image: worldcon75devops/label-printer:0.3.0
     expose:
-      - "80"
+      - '80'
 
   tuohi:
     image: eeemeli/pdf-form-fill:0.2
     expose:
-      - "3000"
+      - '3000'
     environment:
       PDF_TEMPLATE_DIR: /templates
     volumes:
@@ -73,14 +73,14 @@ services:
     links:
       - redis
     expose:
-      - "80"
+      - '80'
     volumes:
       - ../config/message-templates:/message-templates:ro
 
   redis:
     image: redis:4.0
     expose:
-      - "6379"
+      - '6379'
 
   postgres:
     image: postgres:10.4
@@ -90,7 +90,7 @@ services:
       POSTGRES_DB: api
       POSTGRES_USER: admin
     expose:
-      - "5432"
+      - '5432'
     volumes:
       - pgdata:/pgdata
       - ../postgres/init/10-admin-init.sql:/docker-entrypoint-initdb.d/10-admin-init.sql:ro

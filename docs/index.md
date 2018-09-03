@@ -14,50 +14,53 @@ and `500` for server error. The response should contain a `status` field with
 the contents `"error"` or `"unauthorized"`, as appropriate, possibly along with
 some relevant data and/or a `message` field.
 
-* [Public information](#public-information)
-  * [`GET public/people`](#get-publicpeople)
-  * [`GET public/stats`](#get-publicstats)
-  * [`GET config`](#get-config)
-* [Authentication](#authentication)
-  * [`POST key`](#post-key)
-  * [`GET/POST login`](#getpost-login)
-  * [`GET/POST logout`](#getpost-logout)
-* [User info](#user-info)
-  * [`GET user`](#get-user)
-  * [`GET user/log`](#get-userlog)
-* [Member info](#member-info)
-  * [`GET people`](#get-people)
-  * [`POST people`](#post-people)
-  * [`GET people/:id`](#get-peopleid)
-  * [`GET people/:id/log`](#get-peopleidlog)
-  * [`POST people/:id`](#post-peopleid)
-  * [`POST people/:id/upgrade`](#post-peopleidupgrade)
-  * [`POST people/lookup`](#post-peoplelookup)
-  * [WebSocket: `people/updates`](#websocket-peopleupdates)
-* [Purchases](#purchases)
-  * [`POST purchase`](#post-purchase)
-  * [`GET purchase/data`](#get-purchasedata)
-  * [`GET purchase/keys`](#get-purchasekeys)
-  * [`GET purchase/list`](#get-purchaselist)
-  * [`POST purchase/other`](#post-purchaseother)
-* [Slack](#slack)
-  * [`POST slack/invite`](#post-slackinvite)
+- [Public information](#public-information)
+  - [`GET public/people`](#get-publicpeople)
+  - [`GET public/stats`](#get-publicstats)
+  - [`GET config`](#get-config)
+- [Authentication](#authentication)
+  - [`POST key`](#post-key)
+  - [`GET/POST login`](#getpost-login)
+  - [`GET/POST logout`](#getpost-logout)
+- [User info](#user-info)
+  - [`GET user`](#get-user)
+  - [`GET user/log`](#get-userlog)
+- [Member info](#member-info)
+  - [`GET people`](#get-people)
+  - [`POST people`](#post-people)
+  - [`GET people/:id`](#get-peopleid)
+  - [`GET people/:id/log`](#get-peopleidlog)
+  - [`POST people/:id`](#post-peopleid)
+  - [`POST people/:id/upgrade`](#post-peopleidupgrade)
+  - [`POST people/lookup`](#post-peoplelookup)
+  - [WebSocket: `people/updates`](#websocket-peopleupdates)
+- [Purchases](#purchases)
+  - [`POST purchase`](#post-purchase)
+  - [`GET purchase/data`](#get-purchasedata)
+  - [`GET purchase/keys`](#get-purchasekeys)
+  - [`GET purchase/list`](#get-purchaselist)
+  - [`POST purchase/other`](#post-purchaseother)
+- [Slack](#slack)
 
-* [Hugo Award Nominations & Votes](hugo.md)
+  - [`POST slack/invite`](#post-slackinvite)
 
-* [Raami Art Show / Exhibitions](raami.md)
+- [Hugo Award Nominations & Votes](hugo.md)
 
-----
+- [Raami Art Show / Exhibitions](raami.md)
+
+---
 
 ## Public information
 
 ### `GET public/people`
+
 - Parameters: `csv`
 
 List of members who have opted to have their info in public. If the query
 parameter `csv` is true-ish, returns results as csv rather than json format.
 
 #### Response
+
 ```
 [
   { country, membership, first_name, last_name },
@@ -66,12 +69,14 @@ parameter `csv` is true-ish, returns results as csv rather than json format.
 ```
 
 ### `GET public/stats`
+
 - Parameters: `csv`
 
 Membership statistics by country. If the query parameter `csv` is true-ish,
 returns results as csv rather than json format.
 
 #### Response
+
 ```
 {
   Finland: { Adult: 13, …, total: 26 },
@@ -81,9 +86,11 @@ returns results as csv rather than json format.
 ```
 
 ### `GET config`
+
 The configuration used by this instance.
 
 #### Response
+
 ```
 {
   id: 'w75',
@@ -101,10 +108,10 @@ The configuration used by this instance.
 }
 ```
 
-
 ## Authentication
 
 ### `POST key`
+
 - Parameters: `email`, `name`, `path`, `reset`
 
 If `email` matches (case-insensitively) a known address, send a login link to
@@ -114,6 +121,7 @@ and login key, and send a login link to `email`. If `path` is set, it will be
 included in the login link as the value of the `next` query parameter.
 
 #### Response
+
 ```
 {
   status: 'success',
@@ -121,8 +129,8 @@ included in the login link as the value of the `next` query parameter.
 }
 ```
 
-
 ### `GET/POST login`
+
 - Parameters: `email`, `key`
 
 Fails with HTTP status `400` for missing input values, `401` for incorrect
@@ -131,6 +139,7 @@ reset and sends an email with an updated login link). Creates a new session
 object for valid credentials.
 
 #### Response
+
 ```
 Set-Cookie: w75=sessionId
 
@@ -140,8 +149,8 @@ Set-Cookie: w75=sessionId
 }
 ```
 
-
 ### `GET/POST logout`
+
 - Requires authentication
 - Parameters: `all`, `reset`, `email` (`admin_admin` only)
 
@@ -152,6 +161,7 @@ If `reset` is set, the user's key is also reset, and will need to be
 re-requested.
 
 #### Response
+
 ```
 {
   status: 'success',
@@ -161,10 +171,10 @@ re-requested.
 }
 ```
 
-
 ## User info
 
 ### `GET user`
+
 - Requires authentication
 - Parameters: `email` (`member_admin` only)
 
@@ -173,6 +183,7 @@ memberships matching the given email address, and the roles (e.g.
 `"member_admin"`) assigned to this email address.
 
 #### Response
+
 ```
 {
   email,
@@ -181,8 +192,8 @@ memberships matching the given email address, and the roles (e.g.
 }
 ```
 
-
 ### `GET user/log`
+
 - Requires authentication
 - Parameters: `email` (`member_admin` only)
 
@@ -190,6 +201,7 @@ If `email` is not set, its value is read from session data. Returns the
 log entries with `author` set to the given email address.
 
 #### Response
+
 ```
 {
   email,
@@ -197,10 +209,10 @@ log entries with `author` set to the given email address.
 }
 ```
 
-
 ## Member info
 
 ### `GET people`
+
 - Requires authentication and `member_admin` or `member_list` authority
 - Parameters: `since`, `name`, and all person fields
 
@@ -215,6 +227,7 @@ All text fields are compared using the postgres case-insensitive `ILIKE`, which
 uses `_` for single-character wildcards and `%` for multiple characters.
 
 #### Response
+
 ```
 [
   { id, last_modified, member_number, legal_name, email, … },
@@ -222,8 +235,8 @@ uses `_` for single-character wildcards and `%` for multiple characters.
 ]
 ```
 
-
 ### `POST people`
+
 - Requires authentication and `member_admin` authority
 - Parameters: `membership`, `legal_name`, `email`, `public_first_name`,
   `public_last_name`, `city`, `state`, `country`, `paper_pubs`
@@ -232,6 +245,7 @@ Add new person. If `membership` is not `'NonMember'`, a new `member_number` will
 be generated.
 
 #### Response
+
 ```
 {
   status: 'success',
@@ -240,14 +254,15 @@ be generated.
 }
 ```
 
-
 ### `GET people/:id`
+
 - Requires authentication
 
 Find the person matching `id`. If its email address does not match the session
 data, `member_admin` or `member_list` authority is required.
 
 #### Response
+
 ```
 {
   id, last_modified, member_number, membership, legal_name, email,
@@ -257,14 +272,15 @@ data, `member_admin` or `member_list` authority is required.
 }
 ```
 
-
 ### `GET people/:id/log`
+
 - Requires authentication
 
 Find the log entries for the person matching `id`. If its email address does not
 match the session data, `member_admin` or `member_list` authority is required.
 
 #### Response
+
 ```
 [
   { timestamp: …, author: …, subject: …, action: …, … },
@@ -272,8 +288,8 @@ match the session data, `member_admin` or `member_list` authority is required.
 ]
 ```
 
-
 ### `POST people/:id`
+
 - Requires authentication
 - Parameters: `membership` (`member_admin` only), `email` (`member_admin` only),
   `legal_name`, `public_first_name`, `public_last_name`, `city`, `state`,
@@ -288,6 +304,7 @@ values for the fields `name`, `address`, and `country`. If the user does not
 non-null value.
 
 #### Response
+
 ```
 {
   status: 'success',
@@ -295,8 +312,8 @@ non-null value.
 }
 ```
 
-
 ### `POST people/:id/upgrade`
+
 - Requires authentication and `member_admin` authority
 - Parameters: `membership`, `member_number` (`admin_admin` only), `paper_pubs`
 
@@ -305,6 +322,7 @@ or previously set. Also handles `paper_pubs` purchases, connected or separately
 from membership changes.
 
 #### Response
+
 ```
 {
   status: 'success',
@@ -313,8 +331,8 @@ from membership changes.
 }
 ```
 
-
 ### `POST people/lookup`
+
 - Parameters: `email`, `member_number`, `name`
 
 Finds a person's `id`, `membership` and `name` based on a slightly fuzzy lookup
@@ -324,6 +342,7 @@ found, `status` will be `not found`. Child and Kid-in-tow members are not
 included in the results.
 
 #### Response
+
 ```
 {
   status: 'success',
@@ -333,8 +352,8 @@ included in the results.
 }
 ```
 
-
 ### WebSocket: `people/updates`
+
 - Requires authentication and `member_admin` authority
 
 WebSocket connection endpoint. The server won't listen to any messages sent to
@@ -345,14 +364,15 @@ The API uses the app-specific codes `4001` and `4004` on WebSocket `'close'`
 events to signal `'Unauthorized'` and `'Not Found'` (respectively) to the client.
 
 #### Response
+
 ```
 '{"id":#,"member_number":…,"legal_name":…,…}'
 ```
 
-
 ## Purchases
 
 ### `POST purchase`
+
 - Parameters: `account`, `amount`, `email`, `source`,
   `new_members: [ { membership, email, legal_name, public_first_name, public_last_name, city, state, country, paper_pubs }, ... ]`,
   `upgrades: [ { id, membership, paper_pubs }, ... ]`
@@ -365,6 +385,7 @@ the welcome email sent to each address. Sends an info message to each new or
 upgraded member.
 
 #### Response
+
 ```
 {
   status: 'success',
@@ -380,6 +401,7 @@ shapes of the expected `data` object, with matching JS `type`. Shape values with
 `required: true` need to have a non-empty value in the matching request.
 
 #### Response
+
 ```
 {
   new_member: {
@@ -436,6 +458,7 @@ key is used, its name should be passed to `POST` purchase calls as the value of
 `account`.
 
 #### Response
+
 ```
 {
   default: 'pk_test_...',
@@ -449,6 +472,7 @@ Purchases made using this account's `email` address, or one set as a query
 parameter (requires `member_admin` access).
 
 #### Response
+
 ```
 [
   {
@@ -471,7 +495,9 @@ parameter (requires `member_admin` access).
 ```
 
 ### `POST purchase/other`
+
 Parameters:
+
 - `account`: Optional, used to set indicate an alternative Stripe account name
 - `email`: They payer's email address
 - `source: { id, ... }`: Received from Stripe, used to make the charge
@@ -487,6 +513,7 @@ and adds entries to the `Payments` table for each item. Sends an info email to
 each item's beneficiary.
 
 #### Request
+
 ```
 {
   email: '...',
@@ -508,13 +535,13 @@ each item's beneficiary.
 ```
 
 #### Response
+
 ```
 {
   status: 'succeeded' || 'pending' || 'failed',
   charge_id: '...'
 }
 ```
-
 
 ## Slack
 
@@ -526,6 +553,7 @@ the `client` and `admin` permission scopes granted. Attempting to re-send an
 invitation will return an error.
 
 #### Response
+
 ```
 {
   success: true,

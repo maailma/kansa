@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+const fetch = require('node-fetch')
 
 function sendEmail(type, data, delay) {
   let url = `http://kyyhky/email/${type}`

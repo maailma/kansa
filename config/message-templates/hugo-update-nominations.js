@@ -3,7 +3,7 @@ function categoryString({ category, nominations }, wrap) {
   const cn = nominations.map(n => {
     const ns = Object.values(n).join('; ')
     return '  - ' + wrap('    ', ns)
-  });
+  })
   return `${title}:\n${cn.join('\n')}`
 }
 

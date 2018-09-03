@@ -13,7 +13,7 @@ services:
       SSL_CERTIFICATE: /ssl/localhost.cert
       SSL_CERTIFICATE_KEY: /ssl/localhost.key
     ports:
-      - "4430:443"
+      - '4430:443'
     volumes:
       - ../nginx/hugo-packet:/srv/hugo-packet:ro
       - ../nginx/member-files:/srv/member-files:ro
@@ -35,7 +35,7 @@ services:
       SESSION_SECRET: dev secret
       SLACK_ORG: worldcon75
       SLACK_REQ_MEMBER: 'true'
-      SLACK_TOKEN:
+      SLACK_TOKEN: ''
       STRIPE_SECRET_APIKEY: sk_test_zq022Drx7npYPVEtXAVMaOJT
       STRIPE_SECRET_APIKEY_siteselect: sk_test_35SiP34s6qovtenwPPLguIyY
 
@@ -58,7 +58,7 @@ services:
       API_URI_ROOT: https://localhost:4430/api
       DEBUG: kyyhky:*,sendgrid
       LOGIN_URI_ROOT: https://localhost:4430/#/login
-      SENDGRID_APIKEY:
+      SENDGRID_APIKEY: ''
 
   postgres:
     environment:

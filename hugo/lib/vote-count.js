@@ -48,7 +48,8 @@ function cleanBallots(ballots, finalists) {
     const ballot = ballots[i]
     for (let j = ballot.length - 1; j >= 0; --j) {
       const choice = ballot[j]
-      if (!choice) ballot.splice(j)  // no-preference is null at this point
+      if (!choice) ballot.splice(j)
+      // no-preference is null at this point
       else if (finalists.indexOf(choice) === -1) ballot.splice(j, 1)
     }
     if (ballot.length === 0) ballots.splice(i, 1)
@@ -123,7 +124,9 @@ function eliminateNextCandidates(tally, firstPlaceVotes) {
     .filter(({ votes }) => votes === leastVotes)
     .map(({ finalist }) => finalist)
   if (next.length <= 1) return next
-  const tiebreaker = firstPlaceVotes.filter(({ finalist }) => next.includes(finalist))
+  const tiebreaker = firstPlaceVotes.filter(({ finalist }) =>
+    next.includes(finalist)
+  )
   const leastFirstPlaceVotes = tiebreaker[tiebreaker.length - 1].votes
   return tiebreaker
     .filter(({ votes }) => votes === leastFirstPlaceVotes)
@@ -150,7 +153,10 @@ function getNextRound(ballots, eliminated) {
   const tally = tallyVotes(ballots, eliminated)
   const totalWithPreference = tally.reduce((sum, { votes }) => sum + votes, 0)
   const minimumForMajority = Math.floor(totalWithPreference / 2) + 1
-  const winner = tally.length > 0 && tally[0].votes >= minimumForMajority ? tally[0].finalist : undefined
+  const winner =
+    tally.length > 0 && tally[0].votes >= minimumForMajority
+      ? tally[0].finalist
+      : undefined
   return { tally, totalWithPreference, minimumForMajority, winner }
 }
 
@@ -228,10 +234,12 @@ function countVotes(ballots, finalists) {
     if (!firstPlaceVotes) firstPlaceVotes = round.tally
     round.eliminated = eliminateNextCandidates(round.tally, firstPlaceVotes)
     eliminated.push.apply(eliminated, round.eliminated)
-    firstPlaceVotes = firstPlaceVotes.filter(({ finalist }) => eliminated.indexOf(finalist) === -1)
+    firstPlaceVotes = firstPlaceVotes.filter(
+      ({ finalist }) => eliminated.indexOf(finalist) === -1
+    )
   } while (eliminated.length > 0 && eliminated.length < finalists.length)
   let winner = rounds[rounds.length - 1].winner
   const runoff = runoffTest(ballots, winner)
-  if (runoff && (runoff.losses > runoff.wins)) winner = NO_AWARD
+  if (runoff && runoff.losses > runoff.wins) winner = NO_AWARD
   return { rounds, runoff, winner }
 }

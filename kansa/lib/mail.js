@@ -1,7 +1,9 @@
-const fetch = require('node-fetch');
+const fetch = require('node-fetch')
 
 module.exports = {
-  mailTask, setAllMailRecipients, updateMailRecipient
+  mailTask,
+  setAllMailRecipients,
+  updateMailRecipient
 }
 
 function mailTask(type, data, delay) {
@@ -17,8 +19,10 @@ function mailTask(type, data, delay) {
 const mailRecipient = (email, res) => {
   let name = res[0].name
   switch (res.length) {
-    case 0: return { email, delete: true }
-    case 1: break
+    case 0:
+      return { email, delete: true }
+    case 1:
+      break
     case 2:
       name += ' and ' + res[1].name
       break
@@ -62,7 +66,8 @@ function rxUpdateTask(recipients) {
 }
 
 function setAllMailRecipients(req, res, next) {
-  req.app.locals.db.any(`${mailRecipient.selector} ORDER BY email`)
+  req.app.locals.db
+    .any(`${mailRecipient.selector} ORDER BY email`)
     .then(res => {
       const er = res.reduce((set, r) => {
         if (set[r.email]) set[r.email].push(r)
@@ -78,7 +83,8 @@ function setAllMailRecipients(req, res, next) {
 }
 
 function updateMailRecipient(db, email) {
-  return db.any(`${mailRecipient.selector} WHERE email ILIKE $1`, email)
+  return db
+    .any(`${mailRecipient.selector} WHERE email ILIKE $1`, email)
     .then(res => rxUpdateTask([mailRecipient(email, res)]))
     .catch(err => console.error('updateMailRecipient:', err))
 }

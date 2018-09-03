@@ -14,46 +14,46 @@ version: '2'
 services:
   nginx:
     environment:
-      JWT_SECRET:
-      SERVER_NAME:
-      SSL_CERTIFICATE:
-      SSL_CERTIFICATE_KEY:
+      JWT_SECRET: ''
+      SERVER_NAME: ''
+      SSL_CERTIFICATE: ''
+      SSL_CERTIFICATE_KEY: ''
     ports:
-      - "80:80"
-      - "443:443"
+      - '80:80'
+      - '443:443'
     restart: always
 
   hugo:
     environment:
-      DATABASE_URL:
-      JWT_SECRET:
-      SESSION_SECRET:
+      DATABASE_URL: ''
+      JWT_SECRET: ''
+      SESSION_SECRET: ''
     restart: always
 
   kansa:
     environment:
-      DATABASE_URL:
+      DATABASE_URL: ''
       DEBUG: kansa:errors
-      JWT_SECRET:
-      SESSION_SECRET:
-      STRIPE_SECRET_APIKEY:
+      JWT_SECRET: ''
+      SESSION_SECRET: ''
+      STRIPE_SECRET_APIKEY: ''
     restart: always
 
   raami:
     environment:
-      DATABASE_URL:
-      SESSION_SECRET:
+      DATABASE_URL: ''
+      SESSION_SECRET: ''
 
   kyyhky:
     environment:
-      API_URI_ROOT:
-      LOGIN_URI_ROOT:
-      SENDGRID_APIKEY:
+      API_URI_ROOT: ''
+      LOGIN_URI_ROOT: ''
+      SENDGRID_APIKEY: ''
     restart: always
 
   postgres:
     environment:
-      POSTGRES_PASSWORD:
-      KANSA_PG_PASSWORD:
-      HUGO_PG_PASSWORD:
+      POSTGRES_PASSWORD: ''
+      KANSA_PG_PASSWORD: ''
+      HUGO_PG_PASSWORD: ''
     restart: always

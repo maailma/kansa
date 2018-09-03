@@ -5,7 +5,7 @@ if (process.env.SENDGRID_APIKEY) {
   module.exports = SendGrid(process.env.SENDGRID_APIKEY)
 } else {
   module.exports = {
-    emptyRequest: (request) => request || {},
+    emptyRequest: request => request || {},
     API: ({ body, method, path }) => {
       debug('MOCK SendGrid request', method, path)
       switch (path) {
@@ -18,14 +18,14 @@ if (process.env.SENDGRID_APIKEY) {
           return Promise.resolve(null)
         }
         case '/v3/contactdb/recipients':
-          if (method === 'GET') return Promise.reject({ response: { statusCode: 404 } })
+          if (method === 'GET')
+            return Promise.reject({ response: { statusCode: 404 } })
           debug(body, '\n--------')
           return Promise.resolve({ body: '{}' })
         default:
           return Promise.reject(new Error('Unmocked path!'))
       }
     }
-  };
+  }
   console.warn('Using MOCK SendGrid instance -> emails will not be sent!')
 }
-

@@ -11,23 +11,30 @@ const shape = {
 function checkConfig(key, config, shape) {
   if (shape instanceof RegExp) {
     if (typeof config !== 'string') {
-      throw new Error(`Expected string value for '${key}', but found ${typeof config}`)
+      throw new Error(
+        `Expected string value for '${key}', but found ${typeof config}`
+      )
     }
     if (!shape.test(config)) {
-      throw new Error(`Expected value for '${key}' to match regular expression ${shape}`)
+      throw new Error(
+        `Expected value for '${key}' to match regular expression ${shape}`
+      )
     }
   } else if (typeof shape === 'object') {
     if (typeof config !== 'object') {
-      throw new Error(key
-        ? `Expected object value for '${key}', but found ${typeof config}`
-        : `Expected configuration object, but found ${typeof config}`
+      throw new Error(
+        key
+          ? `Expected object value for '${key}', but found ${typeof config}`
+          : `Expected configuration object, but found ${typeof config}`
       )
     }
     Object.keys(shape).forEach(k => {
       checkConfig(key ? `${key}.${k}` : k, config[k], shape[k])
     })
   } else if (typeof config !== shape) {
-    throw new Error(`Expected ${shape} value for '${key}', but found ${typeof config}`)
+    throw new Error(
+      `Expected ${shape} value for '${key}', but found ${typeof config}`
+    )
   }
 }
 checkConfig('', config, shape)

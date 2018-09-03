@@ -23,6 +23,7 @@ order by add_date,up_date
 ```
 
 Then generate the output data with:
+
 ```
 node index.js /tmp/join-dates.csv
 ```

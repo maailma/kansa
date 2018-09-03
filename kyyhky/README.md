@@ -33,6 +33,7 @@ variable is unset, Kyyhky will mock the SendGrid API internally.
 Furthermore, you should set up your account there with the following
 [custom fields], all of type `text` (These may then be used to define segments
 of the membership for mailings):
+
 - `membership`, `name`, `login_url`
 - `attending_name_#`, `attending_barcode_url_#` with `#` replaced by each of `1`, `2`, `3`
 - `hugo_name_#`, `hugo_login_url_#` with `#` replaced by each of `1`, `2`, `3`, `4`
@@ -66,6 +67,6 @@ Content-Type: application/json
 ]
 ```
 
-[Bull]: https://github.com/OptimalBits/bull
-[SendGrid]: https://github.com/sendgrid/sendgrid-nodejs
+[bull]: https://github.com/OptimalBits/bull
+[sendgrid]: https://github.com/sendgrid/sendgrid-nodejs
 [custom fields]: https://sendgrid.com/marketing_campaigns/ui/custom_fields

@@ -1,13 +1,13 @@
-const fs = require('fs');
-const mustache = require('mustache');
-const path = require('path');
-const tfm = require('tiny-frontmatter');
-const wrap = require('wordwrap');
-const { barcodeUri, loginUri } = require('./login-uri');
+const fs = require('fs')
+const mustache = require('mustache')
+const path = require('path')
+const tfm = require('tiny-frontmatter')
+const wrap = require('wordwrap')
+const { barcodeUri, loginUri } = require('./login-uri')
 const sendgrid = require('./sendgrid')
 
 const TEMPLATES_DIR = '/message-templates'
-const WRAP_WIDTH = 78;
+const WRAP_WIDTH = 78
 
 function wrapIndented(prefix, str) {
   return prefix
@@ -33,16 +33,19 @@ function getTemplate(name) {
   const fn = path.resolve(process.cwd(), TEMPLATES_DIR, name + '.mustache')
   return new Promise((resolve, reject) => {
     fs.readFile(fn, 'utf8', (err, template) => {
-      if (err) reject(err);
-      else resolve(template);
+      if (err) reject(err)
+      else resolve(template)
     })
   })
 }
 
 function sgRequest(msgTemplate, data) {
-  const { attributes: { from, fromname, subject }, body } = tfm(msgTemplate);
-  const to = [{ email: data.email }];
-  if (data.name) to[0].name = data.name;
+  const {
+    attributes: { from, fromname, subject },
+    body
+  } = tfm(msgTemplate)
+  const to = [{ email: data.email }]
+  if (data.name) to[0].name = data.name
   return sendgrid.emptyRequest({
     method: 'POST',
     path: '/v3/mail/send',
@@ -50,15 +53,17 @@ function sgRequest(msgTemplate, data) {
       personalizations: [{ to }],
       from: {
         email: from,
-        name: fromname,
+        name: fromname
       },
       subject: mustache.render(subject, data),
-      content: [{
-        type: 'text/plain',
-        value: wrap(WRAP_WIDTH)(mustache.render(body, data))
-      }]
+      content: [
+        {
+          type: 'text/plain',
+          value: wrap(WRAP_WIDTH)(mustache.render(body, data))
+        }
+      ]
     }
-  });
+  })
 }
 
 function sendEmail(name, data) {
@@ -67,10 +72,10 @@ function sendEmail(name, data) {
   return applyCustomConfig(name, data)
     .then(getTemplate)
     .then(template => {
-      const request = sgRequest(template, data);
+      const request = sgRequest(template, data)
       return sendgrid.API(request)
     })
     .then(() => data.email)
 }
 
-module.exports = sendEmail;
+module.exports = sendEmail

@@ -1,31 +1,31 @@
 sudo: required
 
 services:
-    - docker
+  - docker
 
 language: node_js
 node_js:
-    - "node"
+  - 'node'
 
 before_install:
-    - docker-compose
-      -f config/docker-compose.base.yaml
-      -f config/docker-compose.dev.yaml
-      -p kansa
-      up --build -d
-    - sleep 10  # allow time for postgres db init
-    - cd integration-tests
+  - docker-compose
+    -f config/docker-compose.base.yaml
+    -f config/docker-compose.dev.yaml
+    -p kansa
+    up --build -d
+  - sleep 10 # allow time for postgres db init
+  - cd integration-tests
 
 after_failure:
-    - docker-compose
-      -f ../config/docker-compose.base.yaml
-      -f ../config/docker-compose.dev.yaml
-      -p kansa
-      logs
+  - docker-compose
+    -f ../config/docker-compose.base.yaml
+    -f ../config/docker-compose.dev.yaml
+    -p kansa
+    logs
 
 after_script:
-    - docker-compose
-      -f ../config/docker-compose.base.yaml
-      -f ../config/docker-compose.dev.yaml
-      -p kansa
-      down
+  - docker-compose
+    -f ../config/docker-compose.base.yaml
+    -f ../config/docker-compose.dev.yaml
+    -p kansa
+    down

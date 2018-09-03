@@ -1,14 +1,14 @@
 var ContactImporter = require('sendgrid/lib/helpers/contact-importer/contact-importer')
 const debug = require('debug')('kyyhky:sync')
-const { barcodeUri, loginUri } = require('./login-uri');
+const { barcodeUri, loginUri } = require('./login-uri')
 const sendgrid = require('./sendgrid')
 
 const MAX_ATTENDING = process.env.MAX_ATTENDING || 3
 const MAX_HUGO_MEMBERS = process.env.MAX_HUGO_MEMBERS || 4
 
-const recipient = (src) => {
+const recipient = src => {
   const rx = { email: src.email }
-  src.custom_fields.forEach(cf => rx[cf.name] = cf.value)
+  src.custom_fields.forEach(cf => (rx[cf.name] = cf.value))
   return rx
 }
 
@@ -31,7 +31,7 @@ class ContactSync {
       return new Promise(resolve => setTimeout(resolve, delay))
     }
     let next
-    const onError = (err) => {
+    const onError = err => {
       if (err.response && err.response.statusCode === 429) {
         return throttle(err.response).then(next)
       } else {
@@ -55,16 +55,15 @@ class ContactSync {
       }
     })
     let recipients = []
-    const onSuccess = (response) => {
+    const onSuccess = response => {
       debug('getRecipients request', request.queryParams.page)
       recipients = recipients.concat(JSON.parse(response.body).recipients)
       request.queryParams.page += 1
-      return this.sgThrottleAPI(request, response)
-        .then(onSuccess)
+      return this.sgThrottleAPI(request, response).then(onSuccess)
     }
     return this.sgThrottleAPI(request)
       .then(onSuccess)
-      .catch((err) => {
+      .catch(err => {
         this.fetching = false
         if (err.response && err.response.statusCode === 404) {
           this.recipientIds = recipients.reduce((map, r) => {
@@ -72,7 +71,7 @@ class ContactSync {
             return map
           }, {})
           debug('getRecipients done', this.recipientIds.length)
-          return this.recipients = recipients.map(recipient)
+          return (this.recipients = recipients.map(recipient))
         } else {
           debug('getRecipients error', err, err.response)
           throw err
@@ -101,16 +100,22 @@ class ContactSync {
             return false
           }
           rx.login_url = loginUri(rx)
-          if (!rx.attending || rx.attending.length > MAX_ATTENDING) rx.attending = []
+          if (!rx.attending || rx.attending.length > MAX_ATTENDING)
+            rx.attending = []
           for (let i = 1; i <= MAX_ATTENDING; ++i) {
             const { id, name } = rx.attending[i - 1] || {}
-            rx[`attending_barcode_url_${i}`] = id ? barcodeUri({ key: rx.key, memberId: id }) : null
+            rx[`attending_barcode_url_${i}`] = id
+              ? barcodeUri({ key: rx.key, memberId: id })
+              : null
             rx[`attending_name_${i}`] = name || null
           }
-          if (!rx.hugo_members || rx.hugo_members.length > MAX_HUGO_MEMBERS) rx.hugo_members = []
+          if (!rx.hugo_members || rx.hugo_members.length > MAX_HUGO_MEMBERS)
+            rx.hugo_members = []
           for (let i = 1; i <= MAX_HUGO_MEMBERS; ++i) {
             const { id, name } = rx.hugo_members[i - 1] || {}
-            rx[`hugo_login_url_${i}`] = id ? loginUri(Object.assign({ memberId: id }, rx)) : null
+            rx[`hugo_login_url_${i}`] = id
+              ? loginUri(Object.assign({ memberId: id }, rx))
+              : null
             rx[`hugo_name_${i}`] = name || null
           }
           delete rx.attending
