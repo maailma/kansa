@@ -12,7 +12,8 @@ class Person {
       'public_first_name', 'public_last_name',  // text
       'email',  // text
       'city', 'state', 'country',  // text
-      'badge_name', 'badge_subtitle',  // text
+      'postcode', 'address', //text
+      'badge_text',  // text
       'paper_pubs',  // jsonb
       'daypass',  // string
       'daypass_days'  // int[]
@@ -20,7 +21,18 @@ class Person {
   }
 
   static get userModFields() {
-    return [ 'legal_name', 'public_first_name', 'public_last_name', 'city', 'state', 'country', 'badge_name', 'badge_subtitle', 'paper_pubs' ];
+    return [ 
+	'legal_name', 
+	'public_first_name', 
+	'public_last_name',
+	'city', 
+	'state', 
+	'country',
+	'postcode',
+	'address',
+	'badge_text', 
+	'paper_pubs' 
+    ];
   }
 
   static get paperPubsFields() {

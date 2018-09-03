@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS People (
     city text,
     state text,
     country text,
+    postcode text,
+    address text,
     badge_name text,
     badge_subtitle text,
     paper_pubs jsonb
