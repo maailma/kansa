@@ -1,13 +1,13 @@
 const config = require('./config');
 const { setKeyChecked } = require('./key');
 const { AuthError, InputError } = require('./errors');
-const { mailTask, updateMailRecipient } = require('./mail')
+const { mailTask, updateMailRecipient } = require('./mail');
 const LogEntry = require('./types/logentry');
 const Person = require('./types/person');
 
 const selectAllPeopleData = `
   SELECT p.*, preferred_name(p), d.status AS daypass, daypass_days(d)
-    FROM people p LEFT JOIN daypasses d ON (p.id = d.person_id)`
+    FROM people p LEFT JOIN daypasses d ON (p.id = d.person_id)`;
 
 module.exports = {
   selectAllPeopleData,
@@ -172,11 +172,11 @@ function getPrevNames(req, res, next) {
 }
 
 function addPerson(req, db, person) {
-  const passDays = person.passDays
-  const status = person.data.membership
+  const passDays = person.passDays;
+  const status = person.data.membership;
   if (passDays.length) {
-    person.data.membership = 'NonMember'
-    person.data.member_number = null
+    person.data.membership = 'NonMember';
+    person.data.member_number = null;
   }
   const log = new LogEntry(req, 'Add new person');
   let res;
@@ -186,19 +186,19 @@ function addPerson(req, db, person) {
       RETURNING id, member_number`, person.data
     )
       .then(data => {
-        person.data.id = data.id
-        person.data.member_number = data.member_number
+        person.data.id = data.id;
+        person.data.member_number = data.member_number;
         res = data;
-        log.subject = data.id
-        return tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
+        log.subject = data.id;
+        return tx.none(`INSERT INTO Log ${log.sqlValues}`, log);
       })
       .then(() => {
-        if (passDays.length === 0) return null
-        const trueDays = passDays.map(d => 'true').join(',')
+        if (passDays.length === 0) return null;
+        const trueDays = passDays.map(d => 'true').join(',');
         return tx.none(`
           INSERT INTO daypasses (person_id,status,${passDays.join(',')})
           VALUES ($(id),$(status),${trueDays})`, { id: res.id, status }
-        )
+        );
       })
   )
     .then(() => res);
