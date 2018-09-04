@@ -173,12 +173,12 @@ function attendingType(type) {
     'child': 'Child',
     'first worldcon': 'FirstWorldcon',
     'goh': 'Adult',
-    'kid-in-tow': 'KidInTow',
+    'infant': 'Infant',
     'new attending': 'Adult',
     'upgrade to attending': 'Adult',
     'upgrade to first worldcon': 'FirstWorldcon',
-    'upgrade to youth attending': 'Youth',
-    'youth': 'Youth'
+    'upgrade to YA attending': 'YoungAdult',
+    'YoungAdult': 'YoungAdult'
   }[type.toLowerCase()];
 }
 

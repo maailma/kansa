@@ -14,7 +14,7 @@ INSERT INTO People (legal_name, email, membership, member_number)
             ('First Member', 'member@example.com', 'FirstWorldcon', 2),
             ('Fan Parent', 'family@example.com', 'Adult', 3),
             ('Fan Child', 'family@example.com', 'Child', 4),
-            ('Fan Youth', 'family@example.com', 'Youth', 5),
+            ('Fan YoungAdult', 'family@example.com', 'YoungAdult', 5),
             ('Fan Supporter', 'supporter@example.com', 'Supporter', 6),
             ('Dupe Supporter', 'supporter@example.com', 'Supporter', 7),
             ('Fan Trader', 'trader@example.com', 'Exhibitor', 8),

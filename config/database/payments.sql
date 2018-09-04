@@ -52,7 +52,7 @@ INSERT INTO payment_categories (key, label, account, listed, fields, description
 INSERT INTO payment_types (category, key, amount, label, sort_index) VALUES
 ('siteselect', 'ss-token', 4000, 'Site Selection Voting Fee', 1),
 ('daypass', 'daypass-Adult', null, 'Adult (from €25/day)', 1),
-('daypass', 'daypass-Youth', null, 'Youth (from €15/day)', 2),
+('daypass', 'daypass-YoungAdult', null, 'YoungAdult (from €15/day)', 2),
 ('daypass', 'daypass-Child', null, 'Child (from €10/day)', 3),
 ('new_member', 'FirstWorldcon', 13000, 'First Worldcon', 1),
 ('new_member', 'Adult', 21000, 'Adult', 2),
