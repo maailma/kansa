@@ -1,0 +1,8 @@
+version: '2'
+
+# Adds debugger to kansa
+services:
+  kansa:
+    entrypoint: ./wait-for-it.sh postgres:5432 -- node --inspect=0.0.0.0 server.js
+    ports:
+      - "9229:9229"
