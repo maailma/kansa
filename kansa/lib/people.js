@@ -274,7 +274,7 @@ function updatePerson(req, res, next) {
           if (hugo_nominator || wsfs_member) {
             return prevKey
               ? { key: prevKey.key, name }
-              : setKeyChecked(req, dbTask, values.email)
+              : setKeyChecked(req, dbTask, { email: values.email })
                   .then(({ key }) => ({ key, name }));
           }
         }

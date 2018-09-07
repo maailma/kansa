@@ -23,7 +23,7 @@ ALTER TABLE kansa.people ADD COLUMN hugo_nominator bool;
 ALTER TABLE kansa.people ADD COLUMN hugo_voter bool;
 COPY kansa.people (id, last_modified, membership, member_number, legal_name, public_first_name, public_last_name, email, city, state, country, badge_name, badge_subtitle, hugo_nominator, hugo_voter, paper_pubs) FROM stdin;
 15	2018-07-29 18:14:07.698028+00	FirstWorldcon	43	Factual Blob	Fake (Factual)	Blob	fblog@fblobsblog.com	Fact City	Data Central	Blobitania	\N	\N	\N	\N	\N
-14	2018-07-29 18:14:07.701524+00	Supporter	42	Samuel Vimes	\N	\N	s.vimes@gmial.ocm	Ankh-Morpork	\N	The Disc	\N	\N	\N	\N	{"name": "Samuel Vimes", "address": "11, Broadstreet\\r\\nAnkh-Morpork", "country": "Ankh-Morpork"}
+661	2018-07-29 18:14:07.701524+00	Supporter	42	Samuel Vimes	\N	\N	s.vimes@gmial.ocm	Ankh-Morpork	\N	The Disc	\N	\N	\N	\N	{"name": "Samuel Vimes", "address": "11, Broadstreet\\r\\nAnkh-Morpork", "country": "Ankh-Morpork"}
 16	2018-07-29 18:14:07.762761+00	FirstWorldcon	44	Æthelwine B. Clobberfeld	Æthelwine	Clobberfeld	abc@cba.nr	Yaren	Yaren District	Nauru	\N	\N	\N	\N	{"name": "Æthelwine B. Clobberfeld", "address": "42 Yaren Drive\\r\\nYaren", "country": "Nauru"}
 17	2018-07-29 18:14:07.804774+00	Adult	45	Polly Amorous	Polly	Amorous	Allthelove@manymoresomuch.fi	Helsinki	Helsinki	Finland	\N	\N	\N	\N	{"name": "Polly", "address": "Amorous", "country": "Helsinki"}
 18	2018-07-29 18:14:07.831094+00	Adult	46	Jorma Mörönen	\N	\N	jorma@moronen.com	Paris	\N	France	\N	\N	\N	\N	\N
@@ -680,8 +680,8 @@ ALTER TABLE kansa.people DROP COLUMN hugo_voter;
 
 COPY kansa.log (id, "timestamp", client_ip, client_ua, author, subject, action, parameters, description) FROM stdin;
 1	2018-07-29 18:13:33.179618+00	::ffff:172.23.0.10	node-fetch/1.0 (+https://github.com/bitinn/node-fetch)	admin@example.com	\N	GET /login	{"email": "admin@example.com"}	Login
-2	2016-08-04 12:29:02+00	::ffff:172.23.0.10	node-fetch/1.0 (+https://github.com/bitinn/node-fetch)	admin@example.com	14	POST /people	{"city": "Ankh-Morpork", "email": "s.vimes@gmial.ocm", "voter": false, "country": "The Disc", "timestamp": "8/4/2016 12:29:02 UTC", "legal_name": "Samuel Vimes", "membership": "Supporter"}	Add new person
-3	2018-07-29 18:14:07.701524+00	::ffff:172.23.0.10	node-fetch/1.0 (+https://github.com/bitinn/node-fetch)	admin@example.com	\N	POST /people/14/upgrade	{"timestamp": "undefined UTC", "paper_pubs": {"name": "Samuel Vimes", "address": "11, Broadstreet\\r\\nAnkh-Morpork", "country": "Ankh-Morpork"}}	Add paper pubs
+2	2016-08-04 12:29:02+00	::ffff:172.23.0.10	node-fetch/1.0 (+https://github.com/bitinn/node-fetch)	admin@example.com	661	POST /people	{"city": "Ankh-Morpork", "email": "s.vimes@gmial.ocm", "voter": false, "country": "The Disc", "timestamp": "8/4/2016 12:29:02 UTC", "legal_name": "Samuel Vimes", "membership": "Supporter"}	Add new person
+3	2018-07-29 18:14:07.701524+00	::ffff:172.23.0.10	node-fetch/1.0 (+https://github.com/bitinn/node-fetch)	admin@example.com	\N	POST /people/661/upgrade	{"timestamp": "undefined UTC", "paper_pubs": {"name": "Samuel Vimes", "address": "11, Broadstreet\\r\\nAnkh-Morpork", "country": "Ankh-Morpork"}}	Add paper pubs
 4	2016-08-04 12:30:50+00	::ffff:172.23.0.10	node-fetch/1.0 (+https://github.com/bitinn/node-fetch)	admin@example.com	15	POST /people	{"city": "Fact City", "email": "fblog@fblobsblog.com", "state": "Data Central", "country": "Blobitania", "timestamp": "8/4/2016 12:30:50 UTC", "legal_name": "Factual Blob", "membership": "FirstWorldcon", "public_last_name": "Blob", "public_first_name": "Fake (Factual)"}	Add new person
 5	2016-08-04 12:31:26+00	::ffff:172.23.0.10	node-fetch/1.0 (+https://github.com/bitinn/node-fetch)	admin@example.com	16	POST /people	{"city": "Yaren", "email": "abc@cba.nr", "state": "Yaren District", "country": "Nauru", "timestamp": "8/4/2016 12:31:26 UTC", "legal_name": "Æthelwine B. Clobberfeld", "membership": "FirstWorldcon", "public_last_name": "Clobberfeld", "public_first_name": "Æthelwine"}	Add new person
 6	2018-07-29 18:14:07.762761+00	::ffff:172.23.0.10	node-fetch/1.0 (+https://github.com/bitinn/node-fetch)	admin@example.com	\N	POST /people/16/upgrade	{"timestamp": "undefined UTC", "paper_pubs": {"name": "Æthelwine B. Clobberfeld", "address": "42 Yaren Drive\\r\\nYaren", "country": "Nauru"}}	Add paper pubs
@@ -1658,7 +1658,7 @@ SELECT pg_catalog.setval('kansa.member_number_seq', 688, true);
 -- Name: people_id_seq; Type: SEQUENCE SET; Schema: kansa; Owner: kansa
 --
 
-SELECT pg_catalog.setval('kansa.people_id_seq', 660, true);
+SELECT pg_catalog.setval('kansa.people_id_seq', 661, true);
 
 --
 -- PostgreSQL database dump complete

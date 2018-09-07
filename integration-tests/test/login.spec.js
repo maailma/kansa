@@ -91,7 +91,7 @@ describe('Login', () => {
         .end(done);
     });
 
-    it('gets unauthorized from /api/usr', (done) => {
+    it('gets unauthorized from /api/user', (done) => {
       unlogged.get('/api/user')
         .expect(401, { status: 'unauthorized' })
         .end(done)
@@ -106,10 +106,26 @@ describe('Login', () => {
         .end(done);
     });
 
-    it('gets unauthorized from /api/usr', (done) => {
+    it('gets unauthorized from /api/user', (done) => {
       unlogged.get('/api/user')
-        .expect(401,{status:'unauthorized'})
+        .expect(401, { status: 'unauthorized' })
         .end(done);
+    });
+  });
+
+  context('Login with expired key', () => {
+    it('gets 403 response', (done) => {
+      const email = 'expired@example.com'
+      unlogged.get('/api/login')
+        .query({ email, key: 'key' })
+        .expect(403, { email, status: 'expired' })
+        .end(done)
+    });
+
+    it('gets unauthorized from /api/user', (done) => {
+      unlogged.get('/api/user')
+        .expect(401, { status: 'unauthorized' })
+        .end(done)
     });
   });
 });

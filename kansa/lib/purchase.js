@@ -2,7 +2,7 @@ const config = require('./config');
 const { AuthError, InputError } = require('./errors');
 const Payment = require('./types/payment');
 const Person = require('./types/person');
-const { getKeyChecked } = require('./key');
+const { refreshKey } = require('./key');
 const { mailTask } = require('./mail');
 const { addPerson } = require('./people');
 const { upgradePerson } = require('./upgrade');
@@ -247,7 +247,7 @@ class Purchase {
     const applyUpgrade = (u) => upgradePerson(req, db, u)
       .then(({ member_number }) => {
         u.member_number = member_number
-        return getKeyChecked(req, db, u.email)
+        return refreshKey(req, db, u.email)
       })
       .then(({ key }) => mailTask(
         ((!u.membership || u.membership === u.prev_membership) && u.paper_pubs)
@@ -261,7 +261,7 @@ class Purchase {
           `UPDATE ${Payment.table} SET person_id=$1 WHERE id=$2`, [m.data.id, pi.id]
         );
       })
-      .then(() => getKeyChecked(req, db, m.data.email))
+      .then(() => refreshKey(req, db, m.data.email))
       .then(({ key, set }) => {
         const data = Object.assign({ charge_id, key, name: m.preferredName }, m.data)
         return mailTask('kansa-new-member', data)
@@ -331,7 +331,7 @@ class Purchase {
                 `UPDATE ${Payment.table} SET person_id=$1 WHERE id=$2`, [p.data.id, pi.id]
               )
             })
-            .then(() => getKeyChecked(req, this.db, p.data.email))
+            .then(() => refreshKey(req, this.db, p.data.email))
             .then(({ key, set }) => {
               if (set) newEmailAddresses[p.data.email] = true
               return mailTask(

@@ -11,6 +11,7 @@ INSERT INTO People (legal_name, email, membership, member_number)
             ('Member Admin', 'member-admin@example.com', 'NonMember', NULL),
             ('Site Selection', 'site-select@example.com', 'NonMember', NULL),
             ('Hugo Admin', 'hugo-admin@example.com', 'NonMember', NULL),
+            ('Expired Login', 'expired@example.com', 'NonMember', NULL),
             ('First Member', 'member@example.com', 'FirstWorldcon', 2),
             ('Fan Parent', 'family@example.com', 'Adult', 3),
             ('Fan Child', 'family@example.com', 'Child', 4),
@@ -21,16 +22,26 @@ INSERT INTO People (legal_name, email, membership, member_number)
             ('Fan Helper', 'helper@example.com', 'Helper', 9),
             ('Fan Nominator', 'nominator@example.com', 'HugoNominator', NULL);
 
-INSERT INTO Keys
-     VALUES ('admin@example.com', 'key'),
-            ('member-admin@example.com', 'key'),
-            ('site-select@example.com', 'key'),
-            ('hugo-admin@example.com', 'key'),
-            ('family@example.com', 'key'),
-            ('member@example.com', 'key'),
-            ('nominator@example.com', 'key'),
-            ('trader@example.com', 'key'),
-            ('helper@example.com', 'key'),
-            ('supporter@example.com', 'key');
+INSERT INTO Keys (email, key, expires)
+     VALUES ('admin@example.com', 'key', NULL),
+            ('member-admin@example.com', 'key', NULL),
+            ('site-select@example.com', 'key', NULL),
+            ('hugo-admin@example.com', 'key', NULL),
+            ('expired@example.com', 'key', '2017-08-13'),
+            ('family@example.com', 'key', NULL),
+            ('member@example.com', 'key', NULL),
+            ('nominator@example.com', 'key', NULL),
+            ('trader@example.com', 'key', NULL),
+            ('helper@example.com', 'key', NULL),
+            ('supporter@example.com', 'key', NULL);
 
 ALTER SEQUENCE member_number_seq RESTART WITH 42;
+
+-- The admin & expired users are used by integration tests, and are expected
+-- to initially have these key values.
+CREATE FUNCTION reset_test_users() RETURNS void AS $$
+BEGIN
+  UPDATE keys SET key='key', expires=NULL WHERE email='admin@example.com';
+  UPDATE keys SET key='key', expires='2017-08-13' WHERE email='expired@example.com';
+END;
+$$ LANGUAGE plpgsql;

@@ -125,7 +125,10 @@ included in the login link as the value of the `next` query parameter.
 ### `GET/POST login`
 - Parameters: `email`, `key`
 
-If the pair `key`, `email` matches known values, create a new session object
+Fails with HTTP status `400` for missing input values, `401` for incorrect
+`email`/`key` combinations, and `403` for expired `key` (which triggers a key
+reset and sends an email with an updated login link). Creates a new session
+object for valid credentials.
 
 #### Response
 ```

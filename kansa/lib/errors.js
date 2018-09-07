@@ -14,6 +14,4 @@ function InputError(message = 'Input error') {
 }
 InputError.prototype = new Error;
 
-const isNoDataError = ({ name, message }) => name === 'QueryResultError' && message === 'No data returned from the query.';
-
-module.exports = { AuthError, InputError, isNoDataError };
+module.exports = { AuthError, InputError };
