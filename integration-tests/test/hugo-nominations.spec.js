@@ -1,11 +1,14 @@
 const assert = require('assert')
 const fs = require('fs')
 const request = require('supertest')
+const WebSocket = require('ws')
+const YAML = require('yaml').default
 
-const host = 'https://localhost:4430'
+const config = YAML.parse(fs.readFileSync('../config/kansa.yaml', 'utf8'))
 const ca = fs.readFileSync('../nginx/ssl/localhost.cert', 'utf8')
-const admin = request.agent(host, { ca })
-const nominator = request.agent(host, { ca })
+const host = 'localhost:4430'
+const admin = request.agent(`https://${host}`, { ca })
+const nominator = request.agent(`https://${host}`, { ca })
 
 const randomString = () => (Math.random().toString(36) + '0000000').slice(2, 7)
 
@@ -172,4 +175,30 @@ describe('Hugo nominations', () => {
         assert(Array.isArray(o))
         assert.equal(o[1], n[1])
       }))
+
+  it('admin: WebSocket client', done => {
+    const sessionCookie = admin.jar.getCookie(config.id, { path: '/' })
+    const ws = new WebSocket(`wss://${host}/api/hugo/admin/canon-updates`, {
+      ca,
+      headers: { Cookie: String(sessionCookie) }
+    })
+    ws.onclose = () => done()
+    ws.onerror = done
+    ws.onmessage = ({ data }) => {
+      const obj = JSON.parse(data)
+      assert.equal(obj && typeof obj.canon, 'object')
+      assert.equal(obj.canon.nomination.author, otherAuthor)
+      ws.close()
+    }
+    ws.onopen = () =>
+      admin
+        .post(`/api/hugo/admin/canon/${canonId}`)
+        .send({
+          category,
+          nomination: { author: otherAuthor },
+          disqualified: true
+        })
+        .expect(200, { status: 'success' })
+        .catch(done)
+  })
 })
