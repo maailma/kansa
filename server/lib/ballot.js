@@ -14,17 +14,16 @@ class Ballot {
     const id = parseInt(req.params.id)
     if (isNaN(id) || id <= 0)
       return next(new InputError('Invalid id parameter'))
-    const email = req.session.user && req.session.user.email
-    if (!email) return next(new AuthError())
+    const { user } = req.session
+    if (!user || !user.email) return next(new AuthError())
     return this.db
       .task(async t => {
-        const person = await t.oneOrNone(
-          `SELECT
+        let pq = `SELECT
             member_number, legal_name, email, city, state, country,
             badge_name, paper_pubs
-          FROM People WHERE id = $(id) and email = $(email)`,
-          { id, email }
-        )
+          FROM People WHERE id = $(id)`
+        if (!user.siteselection) pq += ` and email = $(email)`
+        const person = await t.oneOrNone(pq, { id, email: user.email })
         if (!person) throw new AuthError()
         const token = await t.oneOrNone(
           `SELECT data->>'token' AS token

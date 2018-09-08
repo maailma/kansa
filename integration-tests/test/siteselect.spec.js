@@ -53,6 +53,12 @@ describe('Site selection', () => {
   it('member: fail to list voters', () =>
     member.get(`/api/siteselect/voters.json`).expect(401))
 
+  it('admin: get member ballot', () =>
+    admin
+      .get(`/api/people/${id}/ballot`)
+      .expect(200)
+      .expect('Content-Type', 'application/pdf'))
+
   it('admin: list tokens as JSON', () =>
     admin
       .get(`/api/siteselect/tokens.json`)
