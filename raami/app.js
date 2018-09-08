@@ -15,15 +15,11 @@ var options = {
 }
 
 var pgp = require('pg-promise')(options)
-var db = pgp(process.env.DATABASE_URL)
 
 var config = require('./config')
-var router = require('./router')
+var appRouter = require('./router')
 
 var app = express()
-
-app.locals.db = db
-
 app.use(logger('dev'))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
@@ -50,7 +46,7 @@ app.use(
   })
 )
 
-app.use('/', router)
+app.use(appRouter(pgp, process.env.DATABASE_URL))
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
