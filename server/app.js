@@ -149,10 +149,10 @@ app.ws('/*', (ws, req) => ws.close(4004, 'Not Found'))
 app.use('/', router)
 
 const hugoRouter = require('./modules/hugo')
-app.use('/hugo', hugoRouter(pgp, process.env.HUGO_DB_URL))
+app.use('/hugo', hugoRouter(pgp))
 
 const raamiRouter = require('./modules/raami')
-app.use('/raami', raamiRouter(pgp, process.env.RAAMI_DB_URL))
+app.use('/raami', raamiRouter(pgp))
 
 // no match from router -> 404
 app.use((req, res, next) => {

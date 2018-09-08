@@ -4,7 +4,12 @@ const express = require('express')
 const { AuthError } = require('./errors')
 const Queries = require('./queries')
 
-module.exports = (pgp, dbUrl) => {
+module.exports = pgp => {
+  const url = process.env.RAAMI_PG_URL
+  if (!url)
+    throw new Error('The raami module requires the RAAMI_PG_URL env var')
+  const db = pgp(url)
+
   const router = express.Router()
   router.use(bodyParser.json({ limit: '2mb' }))
   router.use(
@@ -20,7 +25,7 @@ module.exports = (pgp, dbUrl) => {
     else next(new AuthError())
   })
 
-  const queries = new Queries(pgp(dbUrl))
+  const queries = new Queries(db)
   router.get('/:id/artist', queries.getArtist)
   router.post('/:id/artist', queries.upsertArtist)
 
