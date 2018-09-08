@@ -1,5 +1,5 @@
+const { AuthError, InputError } = require('@kansa/errors')
 const config = require('./config')
-const { AuthError, InputError } = require('./errors')
 const Payment = require('./types/payment')
 const Person = require('./types/person')
 const { refreshKey } = require('./key')

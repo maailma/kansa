@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 const { promisify } = require('util')
+const { AuthError, InputError } = require('@kansa/errors')
 const config = require('./config')
-const { AuthError, InputError } = require('./errors')
 const { resetExpiredKey } = require('./key')
 const Admin = require('./types/admin')
 const LogEntry = require('./types/logentry')

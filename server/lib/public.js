@@ -1,5 +1,5 @@
+const { AuthError, InputError } = require('@kansa/errors')
 const config = require('./config')
-const { AuthError, InputError } = require('./errors')
 
 module.exports = {
   getConfig,

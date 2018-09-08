@@ -10,6 +10,7 @@
     "archiver": "^1.3.0"
   },
   "peerDependencies": {
+    "@kansa/errors": "1.x",
     "body-parser": "1.*",
     "csv-express": "1.*",
     "express": "4.*"

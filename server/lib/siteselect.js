@@ -1,5 +1,5 @@
 const randomstring = require('randomstring')
-const { AuthError, InputError } = require('./errors')
+const { AuthError, InputError } = require('@kansa/errors')
 
 class Siteselect {
   static generateToken() {

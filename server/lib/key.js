@@ -1,7 +1,6 @@
 const randomstring = require('randomstring')
-
+const { InputError } = require('@kansa/errors')
 const config = require('./config')
-const { InputError } = require('./errors')
 const { mailTask, updateMailRecipient } = require('./mail')
 const LogEntry = require('./types/logentry')
 

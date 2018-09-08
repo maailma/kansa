@@ -1,8 +1,7 @@
 const Stripe = require('stripe')
-
+const { InputError } = require('@kansa/errors')
 const config = require('../config')
 const { generateToken } = require('../siteselect')
-const InputError = require('./inputerror')
 
 function checkData(shape, data) {
   const missing = shape

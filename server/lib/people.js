@@ -1,6 +1,6 @@
+const { AuthError, InputError } = require('@kansa/errors')
 const config = require('./config')
 const { setKeyChecked } = require('./key')
-const { AuthError, InputError } = require('./errors')
 const { mailTask, updateMailRecipient } = require('./mail')
 const LogEntry = require('./types/logentry')
 const Person = require('./types/person')

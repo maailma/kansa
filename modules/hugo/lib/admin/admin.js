@@ -1,4 +1,4 @@
-const { InputError } = require('../errors')
+const { InputError } = require('@kansa/errors')
 const countVotes = require('./vote-count')
 
 class Admin {

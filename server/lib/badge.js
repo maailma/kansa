@@ -1,6 +1,6 @@
 const fetch = require('node-fetch')
+const { AuthError } = require('@kansa/errors')
 const config = require('./config')
-const { AuthError } = require('./errors')
 
 const TITLE_MAX_LENGTH = 14
 
