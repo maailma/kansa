@@ -23,7 +23,7 @@ services:
       - '443:443'
     restart: always
 
-  kansa:
+  server:
     environment:
       DATABASE_URL: ''
       DEBUG: kansa:errors
