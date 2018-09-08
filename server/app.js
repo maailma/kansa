@@ -1,14 +1,16 @@
-const debug = require('debug')
-const debugErrors = debug('kansa:errors')
-
-const cors = require('cors')
-const csv = require('csv-express')
-const express = require('express')
-const http = require('http')
 const bodyParser = require('body-parser')
+const cors = require('cors')
+require('csv-express')
+const debug = require('debug')
+const express = require('express')
 const session = require('express-session')
-
 const pgSession = require('connect-pg-simple')(session)
+const http = require('http')
+
+const config = require('./lib/config')
+const PeopleStream = require('./lib/PeopleStream')
+const appRouter = require('./lib/router')
+
 const pgOptions = {}
 const pgp = require('pg-promise')(pgOptions)
 if (debug.enabled('kansa:db')) {
@@ -16,98 +18,12 @@ if (debug.enabled('kansa:db')) {
   pgMonitor.attach(pgOptions)
 }
 const db = pgp(process.env.DATABASE_URL)
-
-const admin = require('./lib/admin')
-const badge = require('./lib/badge')
-const Ballot = require('./lib/ballot')
-const ballot = new Ballot(db)
-const config = require('./lib/config')
-const key = require('./lib/key')
-const log = require('./lib/log')
-const { setAllMailRecipients } = require('./lib/mail')
-const people = require('./lib/people')
-const PeopleStream = require('./lib/PeopleStream')
-const publicData = require('./lib/public')
-const Purchase = require('./lib/purchase')
-const purchase = new Purchase(pgp, db)
-const Siteselect = require('./lib/siteselect')
-const siteselect = new Siteselect(db)
-const slack = require('./lib/slack')
-const upgrade = require('./lib/upgrade')
-const user = require('./lib/user')
+const debugErrors = debug('kansa:errors')
 
 const app = express()
 const server = http.createServer(app)
-const expressWs = require('express-ws')(app, server)
-const router = express.Router()
+require('express-ws')(app, server)
 const peopleStream = new PeopleStream(db)
-
-// these are accessible without authentication
-router.get('/public/people', cors({ origin: '*' }), publicData.getPublicPeople)
-router.get('/public/stats', cors({ origin: '*' }), publicData.getPublicStats)
-router.get(
-  '/public/daypass-stats',
-  cors({ origin: '*' }),
-  publicData.getDaypassStats
-)
-router.get('/config', publicData.getConfig)
-
-router.post('/key', key.setKey)
-router.all('/login', user.login)
-
-router.get('/barcode/:key/:id.:fmt', badge.getBarcode)
-router.get('/blank-badge', badge.getBadge)
-
-router.post('/purchase', purchase.makeMembershipPurchase)
-router.get('/purchase/data', purchase.getPurchaseData)
-router.get('/purchase/daypass-prices', purchase.getDaypassPrices)
-router.post('/purchase/daypass', purchase.makeDaypassPurchase)
-router.post('/purchase/invoice', purchase.createInvoice)
-router.get('/purchase/keys', purchase.getStripeKeys)
-router.get('/purchase/list', purchase.getPurchases)
-router.post('/purchase/other', purchase.makeOtherPurchase)
-router.post('/webhook/stripe', purchase.handleStripeWebhook)
-
-// subsequent routes require authentication
-router.use(user.authenticate)
-router.all('/logout', user.logout)
-
-router.get('/members/emails', people.getMemberEmails)
-router.get('/members/paperpubs', people.getMemberPaperPubs)
-
-router.get('/people', people.getPeople)
-router.post('/people', people.authAddPerson)
-router.post('/people/lookup', publicData.lookupPerson)
-router.get('/people/prev-names.:fmt', people.getAllPrevNames)
-
-router.all('/people/:id*', user.verifyPeopleAccess)
-router.get('/people/:id', people.getPerson)
-router.post('/people/:id', people.updatePerson)
-router.get('/people/:id/badge', badge.getBadge)
-router.get('/people/:id/ballot', ballot.getBallot)
-router.get('/people/:id/barcode.:fmt', badge.getBarcode)
-router.get('/people/:id/log', log.getPersonLog)
-router.get('/people/:id/prev-names', people.getPrevNames)
-router.post('/people/:id/print', badge.logPrint)
-router.post('/people/:id/upgrade', upgrade.authUpgradePerson)
-
-router.post('/slack/invite', slack.invite)
-
-router.get('/user', user.getInfo)
-router.get('/user/log', log.getUserLog)
-
-router.all('/siteselect*', siteselect.verifyAccess)
-router.get('/siteselect/tokens.:fmt', siteselect.getTokens)
-router.get('/siteselect/tokens/:token', siteselect.findToken)
-router.get('/siteselect/voters.:fmt', siteselect.getVoters)
-router.get('/siteselect/voters/:id', siteselect.findVoterTokens)
-router.post('/siteselect/voters/:id', siteselect.vote)
-
-router.all('/admin*', admin.isAdminAdmin)
-router.get('/admin', admin.getAdmins)
-router.post('/admin', admin.setAdmin)
-router.post('/admin/set-keys', key.setAllKeys)
-router.post('/admin/set-recipients', setAllMailRecipients)
 
 app.locals.db = db
 if (debug.enabled('kansa:http')) {
@@ -146,7 +62,7 @@ app.ws('/people/updates', (ws, req) => {
 // express-ws monkeypatching breaks the server on unhandled paths
 app.ws('/*', (ws, req) => ws.close(4004, 'Not Found'))
 
-app.use('/', router)
+app.use('/', appRouter(pgp, db))
 
 const hugoRouter = require('./modules/hugo')
 app.use('/hugo', hugoRouter(pgp))
