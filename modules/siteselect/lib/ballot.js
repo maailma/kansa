@@ -1,5 +1,5 @@
 const fetch = require('node-fetch')
-const { AuthError, InputError } = require('@kansa/errors')
+const { AuthError, InputError } = require('@kansa/common/errors')
 
 // source is at /config/siteselection/ballot-data.js
 const ballotData = require('/ss-ballot-data')
@@ -15,7 +15,6 @@ class Ballot {
     if (isNaN(id) || id <= 0)
       return next(new InputError('Invalid id parameter'))
     const { user } = req.session
-    if (!user || !user.email) return next(new AuthError())
     return this.db
       .task(async t => {
         let pq = `SELECT

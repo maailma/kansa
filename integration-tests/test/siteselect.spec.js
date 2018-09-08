@@ -1,11 +1,15 @@
 const assert = require('assert')
 const fs = require('fs')
 const request = require('supertest')
+const YAML = require('yaml').default
 
+const config = YAML.parse(fs.readFileSync('../config/kansa.yaml', 'utf8'))
 const ca = fs.readFileSync('../proxy/ssl/localhost.cert', 'utf8')
 const host = 'localhost:4430'
 const admin = request.agent(`https://${host}`, { ca })
 const member = request.agent(`https://${host}`, { ca })
+
+if (!config.modules.siteselect) return
 
 describe('Site selection', () => {
   let id = null
@@ -40,12 +44,12 @@ describe('Site selection', () => {
 
   it('member: get own ballot', () =>
     member
-      .get(`/api/people/${id}/ballot`)
+      .get(`/api/siteselect/${id}/ballot`)
       .expect(200)
       .expect('Content-Type', 'application/pdf'))
 
   it("member: fail to get others' ballot", () =>
-    member.get(`/api/people/${id - 1}/ballot`).expect(401))
+    member.get(`/api/siteselect/${id - 1}/ballot`).expect(401))
 
   it('member: fail to list tokens', () =>
     member.get(`/api/siteselect/tokens.json`).expect(401))
@@ -55,7 +59,7 @@ describe('Site selection', () => {
 
   it('admin: get member ballot', () =>
     admin
-      .get(`/api/people/${id}/ballot`)
+      .get(`/api/siteselect/${id}/ballot`)
       .expect(200)
       .expect('Content-Type', 'application/pdf'))
 

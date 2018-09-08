@@ -54,6 +54,9 @@ modules:
   # Art show management
   raami: false
 
+  # Site selection token management
+  siteselect: true
+
   # Invite generator for a Slack organisation
   slack:
     #org: worldcon75

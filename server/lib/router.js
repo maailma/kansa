@@ -7,7 +7,6 @@ const peopleRouter = require('./people/router')
 const adminRouter = require('./admin/router')
 const getConfig = require('./get-config')
 const Purchase = require('./purchase')
-const Siteselect = require('./siteselect')
 const userRouter = require('./user/router')
 
 module.exports = (db, ctx) => {
@@ -43,14 +42,6 @@ module.exports = (db, ctx) => {
   router.use('/members', ar.membersRouter)
   router.use('/people', ar)
   router.use('/people', peopleRouter(db, ctx))
-
-  const siteselect = new Siteselect(db)
-  router.use('/siteselect', hasRole('siteselection'))
-  router.get('/siteselect/tokens.:fmt', siteselect.getTokens)
-  router.get('/siteselect/tokens/:token', siteselect.findToken)
-  router.get('/siteselect/voters.:fmt', siteselect.getVoters)
-  router.get('/siteselect/voters/:id', siteselect.findVoterTokens)
-  router.post('/siteselect/voters/:id', siteselect.vote)
 
   return router
 }
