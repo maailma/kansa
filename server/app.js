@@ -59,7 +59,7 @@ Object.keys(config.modules).forEach(name => {
   const mc = config.modules[name]
   if (mc) {
     const module = require(`./modules/${name}`)
-    app.use(`/${name}`, module(pgp, mc))
+    app.use(`/${name}`, module(pgp, db, mc))
   }
 })
 

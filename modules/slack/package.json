@@ -1,0 +1,16 @@
+{
+  "name": "@kansa/slack",
+  "version": "1.0.0",
+  "description": "Slack invites for Kansa",
+  "private": true,
+  "license": "Apache-2.0",
+  "repository": "maailma/kansa",
+  "main": "lib/router.js",
+  "dependencies": {
+    "form-data": "^2.3.2"
+  },
+  "peerDependencies": {
+    "express": "4.x",
+    "node-fetch": "*"
+  }
+}

@@ -12,7 +12,6 @@ const PeopleStream = require('./PeopleStream')
 const publicData = require('./public')
 const Purchase = require('./purchase')
 const Siteselect = require('./siteselect')
-const slack = require('./slack')
 const upgrade = require('./upgrade')
 const user = require('./user')
 
@@ -75,8 +74,6 @@ module.exports = (pgp, db) => {
   router.get('/people/:id/prev-names', people.getPrevNames)
   router.post('/people/:id/print', badge.logPrint)
   router.post('/people/:id/upgrade', upgrade.authUpgradePerson)
-
-  router.post('/slack/invite', slack.invite)
 
   router.get('/user', user.getInfo)
   router.get('/user/log', log.getUserLog)
