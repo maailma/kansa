@@ -14,8 +14,9 @@ const db = pgp(process.env.DATABASE_URL)
 
 const adminRouter = require('./lib/admin/router')
 const config = require('./lib/config')
-const nominate = require('./lib/nominate')
+const Nominate = require('./lib/nominate')
 const Vote = require('./lib/vote')
+const nominate = new Nominate(db)
 const vote = new Vote(pgp, db)
 
 const app = express()
