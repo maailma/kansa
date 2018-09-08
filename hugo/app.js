@@ -1,5 +1,5 @@
 const cors = require('cors')
-const csv = require('csv-express')
+require('csv-express')
 const express = require('express')
 const http = require('http')
 const logger = require('morgan')
@@ -10,20 +10,14 @@ const pgSession = require('connect-pg-simple')(session)
 const pgOptions = { promiseLib: require('bluebird') }
 const pgp = require('pg-promise')(pgOptions)
 require('pg-monitor').attach(pgOptions)
-const db = pgp(process.env.DATABASE_URL)
 
-const adminRouter = require('./lib/admin/router')
 const config = require('./lib/config')
-const Nominate = require('./lib/nominate')
-const Vote = require('./lib/vote')
-const nominate = new Nominate(db)
-const vote = new Vote(pgp, db)
+const appRouter = require('./lib/router')
 
 const app = express()
 const server = http.createServer(app)
-const expressWs = require('express-ws')(app, server)
+require('express-ws')(app, server)
 
-app.locals.db = db
 app.use(logger('dev'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -50,21 +44,10 @@ app.use(
   })
 )
 
-const router = express.Router()
-router.use('/admin', adminRouter(pgp, db))
-
-router.get('/:id/nominations', nominate.getNominations)
-router.post('/:id/nominate', nominate.nominate)
-
-router.get('/finalists', vote.getFinalists)
-router.get('/:id/packet', vote.getPacket)
-router.get('/:id/packet-series-extra', vote.packetSeriesExtra)
-router.get('/:id/votes', vote.getVotes)
-router.post('/:id/vote', vote.setVotes)
-
-app.ws('/*', (ws, req) => ws.close(4004, 'Not Found'))
 // express-ws monkeypatching breaks the server on unhandled paths
-app.use('/', router)
+app.ws('/*', (ws, req) => ws.close(4004, 'Not Found'))
+
+app.use(appRouter(pgp, process.env.DATABASE_URL))
 
 // no match from router -> 404
 app.use((req, res, next) => {
