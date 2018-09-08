@@ -23,13 +23,6 @@ services:
       - '443:443'
     restart: always
 
-  hugo:
-    environment:
-      DATABASE_URL: ''
-      JWT_SECRET: ''
-      SESSION_SECRET: ''
-    restart: always
-
   kansa:
     environment:
       DATABASE_URL: ''

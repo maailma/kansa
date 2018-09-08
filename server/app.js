@@ -142,9 +142,14 @@ app.ws('/people/updates', (ws, req) => {
   if (req.session.user.member_admin) peopleStream.addClient(ws)
   else ws.close(4001, 'Unauthorized')
 })
-app.ws('/*', (ws, req) => ws.close(4004, 'Not Found'))
+
 // express-ws monkeypatching breaks the server on unhandled paths
+app.ws('/*', (ws, req) => ws.close(4004, 'Not Found'))
+
 app.use('/', router)
+
+const hugoRouter = require('./modules/hugo')
+app.use('/hugo', hugoRouter(pgp, process.env.HUGO_DATABASE_URL))
 
 // no match from router -> 404
 app.use((req, res, next) => {
