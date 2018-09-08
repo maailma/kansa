@@ -11,13 +11,19 @@ volumes:
 services:
   proxy:
     build: ../proxy
+    image: kansa-proxy
     links:
       - server
       - raami
-    entrypoint: /bin/bash -c "envsubst '$$SERVER_NAME $$SSL_CERTIFICATE $$SSL_CERTIFICATE_KEY' < /nginx.conf.template > /usr/local/openresty/nginx/conf/nginx.conf && /usr/local/openresty/bin/openresty -g 'daemon off;'"
+    entrypoint: >
+      /bin/bash -c
+      "envsubst '$$SERVER_NAME $$SSL_CERTIFICATE $$SSL_CERTIFICATE_KEY' < /nginx.conf.template
+      > /usr/local/openresty/nginx/conf/nginx.conf &&
+      /usr/local/openresty/bin/openresty -g 'daemon off;'"
 
   server:
     build: ../server
+    image: kansa-server
     entrypoint: ./wait-for-it.sh postgres:5432 -- npm start
     links:
       - kyyhky
@@ -33,6 +39,7 @@ services:
 
   raami:
     build: ../raami
+    image: kansa-raami
     entrypoint: ./wait-for-it.sh postgres:5432 -- npm start
     links:
       - postgres
@@ -57,6 +64,7 @@ services:
 
   kyyhky:
     build: ../kyyhky
+    image: kansa-kyyhky
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
