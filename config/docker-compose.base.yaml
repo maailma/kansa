@@ -34,8 +34,7 @@ services:
     volumes:
       - ../config/kansa.yaml:/kansa.yaml:ro
       - ../config/siteselection/ballot-data.js:/ss-ballot-data.js:ro
-      - ../modules/hugo:/kansa/modules/hugo:ro
-      - ../modules/raami:/kansa/modules/raami:ro
+      - ../modules:/kansa/modules:ro
 
   tarra:
     image: worldcon75devops/label-printer:0.3.0

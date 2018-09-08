@@ -55,11 +55,13 @@ app.use(
 
 app.use('/', appRouter(pgp, db))
 
-const hugoRouter = require('./modules/hugo')
-app.use('/hugo', hugoRouter(pgp))
-
-const raamiRouter = require('./modules/raami')
-app.use('/raami', raamiRouter(pgp))
+Object.keys(config.modules).forEach(name => {
+  const mc = config.modules[name]
+  if (mc) {
+    const module = require(`./modules/${name}`)
+    app.use(`/${name}`, module(pgp, mc))
+  }
+})
 
 // no match from router -> 404
 app.use((req, res, next) => {

@@ -15,7 +15,8 @@ const shape = {
       normal: 'duration'
     },
     session_timeout: 'duration'
-  }
+  },
+  modules: 'object'
 }
 
 const getIn = (config, path) => {

@@ -22,3 +22,20 @@ auth:
   # After session timeout, a user is redirected to the sign-in page at their
   # next request.
   session_timeout: 5d
+
+# Modules add optional functionality to the core Kansa member management
+# system. This configuration controls the behaviour of the API server; if you
+# make changes you may want to also modify your Docker Compose and/or Postgres
+# configuration. To disable a module, set its value to `null` or `false`.
+#
+# Modules will be loaded by the server roughly as follows:
+#   const app = require('express')()
+#   const pgp = require('pg-promise')()
+#   const module = require(`./modules/${name}`)
+#   app.use(`/${name}`, module(pgp, config.modules[name]))
+modules:
+  # Nomination and voting for the Hugo Awards
+  hugo: true
+
+  # Art show management
+  raami: false
