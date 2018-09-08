@@ -3,7 +3,7 @@
 All API requests need to be made using secure connections, i.e. with `https` or
 `wss` protocols, and their paths should be prefixed by `/api/`. Requests for
 `/api/hugo/...` will be handled by the [`hugo`](../hugo/) server,
-`/api/raami/...` by [`raami`](../raami/), and all others by [`kansa`](../kansa/).
+`/api/raami/...` by [`raami`](../raami/), and all others by [`kansa`](../server/).
 
 Some GET paths include query parameters. POST body parameters may be included
 either as `application/x-www-form-urlencoded` or as `application/json`. All

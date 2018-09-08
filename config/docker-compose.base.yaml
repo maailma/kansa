@@ -28,7 +28,7 @@ services:
       - ../config/kansa.yaml:/kansa.yaml:ro
 
   kansa:
-    build: ../kansa
+    build: ../server
     entrypoint: ./wait-for-it.sh postgres:5432 -- npm start
     links:
       - kyyhky
