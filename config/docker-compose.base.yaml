@@ -88,7 +88,7 @@ services:
       - ../postgres/init/25-public-data.sql:/docker-entrypoint-initdb.d/25-public-data.sql:ro
       - ../postgres/init/28-siteselection.sql:/docker-entrypoint-initdb.d/28-siteselection.sql:ro
       - ../config/database/membership-types.sql:/docker-entrypoint-initdb.d/29-membership-types.sql:ro
-      - ../postgres/init/30-hugo-init.sql:/docker-entrypoint-initdb.d/30-hugo-init.sql:ro
-      - ../config/database/31-hugo-categories.sql:/docker-entrypoint-initdb.d/31-hugo-categories.sql:ro
-      - ../postgres/init/32-hugo-tables.sql:/docker-entrypoint-initdb.d/32-hugo-tables.sql:ro
-      - ../postgres/init/40-raami-init.sql:/docker-entrypoint-initdb.d/40-raami-init.sql:ro
+      - ../modules/hugo/database/init.sql:/docker-entrypoint-initdb.d/30-hugo-init.sql:ro
+      - ../config/database/hugo-categories.sql:/docker-entrypoint-initdb.d/31-hugo-categories.sql:ro
+      - ../modules/hugo/database/tables.sql:/docker-entrypoint-initdb.d/32-hugo-tables.sql:ro
+      - ../modules/raami/database/init.sql:/docker-entrypoint-initdb.d/40-raami-init.sql:ro

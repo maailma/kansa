@@ -14,7 +14,7 @@ Some of the configuration is required, and run at specific points during the ini
 
 Defines the types of memberships that are supported, and their attributes.
 
-### `31-hugo-categories.sql`
+### `hugo-categories.sql`
 
 Defines the Hugo Awards categories. The order of values defines their listing order, so use something like this if adding categories:
 
