@@ -3,7 +3,6 @@ const cors = require('cors')
 var path = require('path')
 var logger = require('morgan')
 var cookieParser = require('cookie-parser')
-var bodyParser = require('body-parser')
 
 const session = require('express-session')
 const pgSession = require('connect-pg-simple')(session)
@@ -19,19 +18,13 @@ var pgp = require('pg-promise')(options)
 var db = pgp(process.env.DATABASE_URL)
 
 var config = require('./config')
-var routes = require('./routes')
+var router = require('./router')
 
 var app = express()
 
 app.locals.db = db
 
-app.use(bodyParser.json({ limit: '2mb' }))
-app.use(
-  bodyParser.urlencoded({ limit: '2mb', extended: true, parameterLimit: 2000 })
-)
 app.use(logger('dev'))
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
@@ -57,7 +50,7 @@ app.use(
   })
 )
 
-app.use('/', routes)
+app.use('/', router)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
