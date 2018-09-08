@@ -8,7 +8,6 @@ const pgSession = require('connect-pg-simple')(session)
 const http = require('http')
 
 const config = require('./lib/config')
-const PeopleStream = require('./lib/PeopleStream')
 const appRouter = require('./lib/router')
 
 const pgOptions = {}
@@ -23,7 +22,6 @@ const debugErrors = debug('kansa:errors')
 const app = express()
 const server = http.createServer(app)
 require('express-ws')(app, server)
-const peopleStream = new PeopleStream(db)
 
 app.locals.db = db
 if (debug.enabled('kansa:http')) {
@@ -54,13 +52,6 @@ app.use(
     })
   })
 )
-app.ws('/people/updates', (ws, req) => {
-  if (req.session.user.member_admin) peopleStream.addClient(ws)
-  else ws.close(4001, 'Unauthorized')
-})
-
-// express-ws monkeypatching breaks the server on unhandled paths
-app.ws('/*', (ws, req) => ws.close(4004, 'Not Found'))
 
 app.use('/', appRouter(pgp, db))
 

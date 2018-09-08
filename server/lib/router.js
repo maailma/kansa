@@ -8,6 +8,7 @@ const key = require('./key')
 const log = require('./log')
 const { setAllMailRecipients } = require('./mail')
 const people = require('./people')
+const PeopleStream = require('./PeopleStream')
 const publicData = require('./public')
 const Purchase = require('./purchase')
 const Siteselect = require('./siteselect')
@@ -93,6 +94,12 @@ module.exports = (pgp, db) => {
   router.post('/admin', admin.setAdmin)
   router.post('/admin/set-keys', key.setAllKeys)
   router.post('/admin/set-recipients', setAllMailRecipients)
+
+  const peopleStream = new PeopleStream(db)
+  router.ws('/people/updates', (ws, req) => {
+    if (req.session.user.member_admin) peopleStream.addClient(ws)
+    else ws.close(4001, 'Unauthorized')
+  })
 
   return router
 }
