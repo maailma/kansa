@@ -1,0 +1,8 @@
+{
+  "name": "@kansa/errors",
+  "version": "1.0.0",
+  "description": "Kansa error objects",
+  "license": "Apache-2.0",
+  "repository": "maailma/kansa",
+  "main": "errors.js"
+}
