@@ -102,12 +102,12 @@ Email messages are based on message templates, which are
 ### Directory Overview
 
 - **`config`** - System configuration
-- **`hugo`** - Server module providing the Hugo Awards parts of the [REST API](docs/hugo.md)
 - **`integration-tests`** - Tests for the REST API, targeting the Stripe and Sendgrid interfaces in particular
 - **`kyyhky`** - Internal mailing service & [SendGrid](https://sendgrid.com/) integration for hugo & kansa
+- **`modules/hugo`** - Server module providing the Hugo Awards parts of the [REST API](docs/hugo.md)
+- **`modules/raami`** - Server module providing art show management [REST API](docs/raami.md)
 - **`postgres`** - Configuration & schemas for our database
 - **`proxy`** - An SSL-terminating reverse proxy & file server, using [OpenResty](https://openresty.org/)
-- **`raami`** - Art show management [REST API](docs/raami.md)
 - **`server`** - Provides the core parts of the [REST API](docs/index.md)
 - **`tools`** - Semi-automated tools for importing data, and for other tasks
 - **`tuohi`** - Fills out a PDF form, for `GET /people/:id/ballot`
