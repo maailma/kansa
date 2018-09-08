@@ -1,4 +1,5 @@
 const bodyParser = require('body-parser')
+const { execSync } = require('child_process')
 const cors = require('cors')
 require('csv-express')
 const debug = require('debug')
@@ -6,6 +7,7 @@ const express = require('express')
 const session = require('express-session')
 const pgSession = require('connect-pg-simple')(session)
 const http = require('http')
+const path = require('path')
 
 const config = require('./lib/config')
 const appRouter = require('./lib/router')
@@ -57,10 +59,13 @@ app.use('/', appRouter(pgp, db))
 
 Object.keys(config.modules).forEach(name => {
   const mc = config.modules[name]
-  if (mc) {
-    const module = require(`./modules/${name}`)
-    app.use(`/${name}`, module(pgp, db, mc))
-  }
+  if (!mc) return
+  debug('kansa:modules')(`Installing ${name}...`)
+  const cwd = path.resolve(__dirname, 'modules', name)
+  execSync('npm install', { cwd, encoding: 'utf8' })
+  const module = require(cwd)
+  app.use(`/${name}`, module(pgp, db, mc))
+  debug('kansa:modules')(`Added ${name}.`)
 })
 
 // no match from router -> 404
