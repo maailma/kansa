@@ -1,17 +1,7 @@
-const AuthError = require('./errors').AuthError
-const InputError = require('./errors').InputError
+const { InputError } = require('../errors')
 const countVotes = require('./vote-count')
 
 class Admin {
-  static verifyAdminAccess(req, res, next) {
-    const user = req.session.user
-    if (user.hugo_admin) {
-      next()
-    } else {
-      next(new AuthError())
-    }
-  }
-
   constructor(pgp, db) {
     this.pgp = pgp
     this.db = db
@@ -237,8 +227,6 @@ class Admin {
   }
 
   getVoteResults(req, res, next) {
-    if (!req.session.user || !req.session.user.hugo_admin)
-      return next(new AuthError())
     const { category } = req.params
     const { csv } = req.query
     this.db

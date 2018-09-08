@@ -80,7 +80,7 @@ describe('Hugo nominations', () => {
       })
   })
 
-  it("nominator: do not add others' nomination", () => {
+  it('nominator: fail to add nomination for others', () => {
     return nominator
       .post(`/api/hugo/${id - 1}/nominate`)
       .send({ signature, category, nominations: [{ author }] })
@@ -97,8 +97,17 @@ describe('Hugo nominations', () => {
         assert.equal(c.signature, signature)
       }))
 
-  it("nominator: do not list others' nominations", () =>
+  it("nominator: fail to list others' nominations", () =>
     nominator.get(`/api/hugo/${id - 1}/nominations`).expect(401))
+
+  it('nominator: fail to list all ballots', () =>
+    nominator.get('/api/hugo/admin/ballots').expect(401))
+
+  it('nominator: get proper not-found error for non-existing path', () =>
+    nominator.get(`/api/hugo/${id}/nosuchpath`).expect(404))
+
+  it('nominator: get proper not-allowed error for non-existing admin path', () =>
+    nominator.get(`/api/hugo/admin/nosuchpath`).expect(401))
 
   it('admin: list all ballots', () =>
     admin.get('/api/hugo/admin/ballots').then(res => {

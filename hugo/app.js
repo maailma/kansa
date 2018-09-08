@@ -12,14 +12,11 @@ const pgp = require('pg-promise')(pgOptions)
 require('pg-monitor').attach(pgOptions)
 const db = pgp(process.env.DATABASE_URL)
 
+const adminRouter = require('./lib/admin/router')
 const config = require('./lib/config')
 const nominate = require('./lib/nominate')
 const Vote = require('./lib/vote')
 const vote = new Vote(pgp, db)
-const Admin = require('./lib/admin')
-const admin = new Admin(pgp, db)
-const CanonStream = require('./lib/canon-stream')
-const canonStream = new CanonStream(db)
 
 const app = express()
 const server = http.createServer(app)
@@ -53,14 +50,7 @@ app.use(
 )
 
 const router = express.Router()
-router.all('/admin/*', Admin.verifyAdminAccess)
-router.get('/admin/ballots', admin.getAllBallots)
-router.get('/admin/ballots/:category', admin.getBallots)
-router.get('/admin/canon', admin.getCanon)
-router.get('/admin/nominations', admin.getNominations)
-router.post('/admin/classify', admin.classify)
-router.post('/admin/canon/:id', admin.updateCanonEntry)
-router.get('/admin/votes/:category', admin.getVoteResults)
+router.use('/admin', adminRouter(pgp, db))
 
 router.get('/:id/nominations', nominate.getNominations)
 router.post('/:id/nominate', nominate.nominate)
@@ -71,10 +61,6 @@ router.get('/:id/packet-series-extra', vote.packetSeriesExtra)
 router.get('/:id/votes', vote.getVotes)
 router.post('/:id/vote', vote.setVotes)
 
-app.ws('/admin/canon-updates', (ws, req) => {
-  if (req.session.user.hugo_admin) canonStream.addClient(ws)
-  else ws.close(4001, 'Unauthorized')
-})
 app.ws('/*', (ws, req) => ws.close(4004, 'Not Found'))
 // express-ws monkeypatching breaks the server on unhandled paths
 app.use('/', router)
