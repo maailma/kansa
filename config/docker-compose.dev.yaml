@@ -23,7 +23,8 @@ services:
     environment:
       CORS_ORIGIN: http://localhost:8080
       DATABASE_URL: postgres://kansa:pwd@postgres:5432/api
-      HUGO_DATABASE_URL: postgres://hugo:pwd@postgres:5432/api
+      HUGO_DB_URL: postgres://hugo:pwd@postgres:5432/api
+      RAAMI_DB_URL: postgres://raami:pwd@postgres:5432/api
       DEBUG: kansa:*
       JWT_SECRET: dev secret
       SESSION_SECRET: dev secret
@@ -32,12 +33,6 @@ services:
       SLACK_TOKEN: ''
       STRIPE_SECRET_APIKEY: sk_test_zq022Drx7npYPVEtXAVMaOJT
       STRIPE_SECRET_APIKEY_siteselect: sk_test_35SiP34s6qovtenwPPLguIyY
-
-  raami:
-    environment:
-      CORS_ORIGIN: http://localhost:8080
-      DATABASE_URL: postgres://raami:pwd@postgres:5432/api
-      SESSION_SECRET: dev secret
 
   tarra:
     volumes:

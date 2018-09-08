@@ -32,11 +32,6 @@ services:
       STRIPE_SECRET_APIKEY: ''
     restart: always
 
-  raami:
-    environment:
-      DATABASE_URL: ''
-      SESSION_SECRET: ''
-
   kyyhky:
     environment:
       API_URI_ROOT: ''

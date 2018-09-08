@@ -1,9 +1,7 @@
 # Member Services API
 
 All API requests need to be made using secure connections, i.e. with `https` or
-`wss` protocols, and their paths should be prefixed by `/api/`. Requests for
-`/api/raami/...` will be handled by the [`raami`](../raami/) server, and all
-others by [`server`](../server/).
+`wss` protocols, and their paths should be prefixed by `/api/`.
 
 Some GET paths include query parameters. POST body parameters may be included
 either as `application/x-www-form-urlencoded` or as `application/json`. All

@@ -14,7 +14,6 @@ services:
     image: kansa-proxy
     links:
       - server
-      - raami
     entrypoint: >
       /bin/bash -c
       "envsubst '$$SERVER_NAME $$SSL_CERTIFICATE $$SSL_CERTIFICATE_KEY' < /nginx.conf.template
@@ -36,17 +35,7 @@ services:
       - ../config/kansa.yaml:/kansa.yaml:ro
       - ../config/siteselection/ballot-data.js:/ss-ballot-data.js:ro
       - ../hugo:/kansa/modules/hugo:ro
-
-  raami:
-    build: ../raami
-    image: kansa-raami
-    entrypoint: ./wait-for-it.sh postgres:5432 -- npm start
-    links:
-      - postgres
-    expose:
-      - '3000'
-    volumes:
-      - ../config/kansa.yaml:/kansa.yaml:ro
+      - ../raami:/kansa/modules/raami:ro
 
   tarra:
     image: worldcon75devops/label-printer:0.3.0
