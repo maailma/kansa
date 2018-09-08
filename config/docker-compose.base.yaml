@@ -9,8 +9,8 @@ volumes:
   pgdata: null
 
 services:
-  nginx:
-    build: ../nginx
+  proxy:
+    build: ../proxy
     links:
       - server
       - raami

@@ -6,7 +6,7 @@ version: '2'
 #   docker-compose -f config/docker-compose.base.yaml -f config/docker-compose.dev.yaml up -d
 
 services:
-  nginx:
+  proxy:
     environment:
       JWT_SECRET: dev secret
       SERVER_NAME: localhost
@@ -15,9 +15,9 @@ services:
     ports:
       - '4430:443'
     volumes:
-      - ../nginx/hugo-packet:/srv/hugo-packet:ro
-      - ../nginx/member-files:/srv/member-files:ro
-      - ../nginx/ssl:/ssl:ro
+      - ../proxy/hugo-packet:/srv/hugo-packet:ro
+      - ../proxy/member-files:/srv/member-files:ro
+      - ../proxy/ssl:/ssl:ro
 
   server:
     environment:

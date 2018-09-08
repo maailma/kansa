@@ -12,7 +12,7 @@ version: '2'
 # DO NOT COMMIT PRODUCTION SECRETS TO ANY REPOSITORY
 
 services:
-  nginx:
+  proxy:
     environment:
       JWT_SECRET: ''
       SERVER_NAME: ''

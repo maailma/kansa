@@ -4,7 +4,7 @@ const stripe = require('stripe')(
   process.env.STRIPE_SECRET_APIKEY || 'sk_test_zq022Drx7npYPVEtXAVMaOJT'
 )
 
-const cert = fs.readFileSync('../nginx/ssl/localhost.cert', 'utf8')
+const cert = fs.readFileSync('../proxy/ssl/localhost.cert', 'utf8')
 const host = 'https://localhost:4430'
 const adminLoginParams = { email: 'admin@example.com', key: 'key' }
 

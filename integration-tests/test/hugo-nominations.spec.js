@@ -5,7 +5,7 @@ const WebSocket = require('ws')
 const YAML = require('yaml').default
 
 const config = YAML.parse(fs.readFileSync('../config/kansa.yaml', 'utf8'))
-const ca = fs.readFileSync('../nginx/ssl/localhost.cert', 'utf8')
+const ca = fs.readFileSync('../proxy/ssl/localhost.cert', 'utf8')
 const host = 'localhost:4430'
 const admin = request.agent(`https://${host}`, { ca })
 const nominator = request.agent(`https://${host}`, { ca })

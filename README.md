@@ -105,8 +105,8 @@ Email messages are based on message templates, which are
 - **`hugo`** - Server module providing the Hugo Awards parts of the [REST API](docs/hugo.md)
 - **`integration-tests`** - Tests for the REST API, targeting the Stripe and Sendgrid interfaces in particular
 - **`kyyhky`** - Internal mailing service & [SendGrid](https://sendgrid.com/) integration for hugo & kansa
-- **`nginx`** - An SSL-terminating reverse proxy & file server, using [OpenResty](https://openresty.org/)
 - **`postgres`** - Configuration & schemas for our database
+- **`proxy`** - An SSL-terminating reverse proxy & file server, using [OpenResty](https://openresty.org/)
 - **`raami`** - Art show management [REST API](docs/raami.md)
 - **`server`** - Provides the core parts of the [REST API](docs/index.md)
 - **`tools`** - Semi-automated tools for importing data, and for other tasks
@@ -125,7 +125,7 @@ The particular places that may need manual adjustment are:
   [self-signed certificate](http://www.selfsignedcertificate.com/) for `localhost`. This will not
   be automatically accepted by browsers or other clients. If you have a signed certificate you can
   use (and therefore a publicly visible address), you'll want to add the certificate files to
-  `nginx/ssl/` and adjust the environment values set for the `nginx` service in
+  `proxy/ssl/` and adjust the environment values set for the `proxy` service in
   [docker-compose.override.yaml](config/docker-compose.override.yaml) and/or your
   `docker-compose.prod.yaml`.
 
@@ -134,7 +134,7 @@ The particular places that may need manual adjustment are:
   default, the value should match the `http://localhost:8080` address of the client Webpack dev
   servers.
 
-- If you're running the server on a separate machine or if you've changed the `nginx` port
+- If you're running the server on a separate machine or if you've changed the `proxy` port
   configuration, you may need to tell clients where to find the server, using something like
   `export API_HOST='remote.example.com'` before running `npm start`.
 

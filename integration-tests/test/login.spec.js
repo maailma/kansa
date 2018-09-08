@@ -4,7 +4,7 @@ const assert = require('assert')
 const fs = require('fs')
 
 // Create agent for unlogged and admin sessions
-const ca = fs.readFileSync('../nginx/ssl/localhost.cert', 'utf8')
+const ca = fs.readFileSync('../proxy/ssl/localhost.cert', 'utf8')
 const unlogged = request.agent(host, { ca })
 const admin = request.agent(host, { ca })
 const loginparams = { email: 'admin@example.com', key: 'key' }
