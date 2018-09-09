@@ -1,40 +1,9 @@
 const fetch = require('node-fetch')
 const { AuthError } = require('@kansa/common/errors')
+const splitName = require('@kansa/common/split-name')
 const config = require('./config')
 
-const TITLE_MAX_LENGTH = 14
-
 module.exports = { getBadge, getBarcode, logPrint }
-
-const splitNameInTwain = name => {
-  name = name.trim()
-  if (name.indexOf('\n') !== -1) {
-    const nm = name.match(/(.*)\s+([\s\S]*)/)
-    const n0 = nm[1].trim()
-    const n1 = nm[2].trim().replace(/\s+/g, ' ')
-    return [n0, n1]
-  } else if (name.length <= TITLE_MAX_LENGTH) {
-    return ['', name]
-  } else {
-    const na = name.split(/\s+/)
-    let n0 = na.shift() || ''
-    let n1 = na.pop() || ''
-    while (na.length) {
-      const p0 = na.shift()
-      const p1 = na.pop()
-      if (p1 && n0.length + p0.length > n1.length + p1.length) {
-        n1 = p1 + ' ' + n1
-        na.unshift(p0)
-      } else if (!p1 && n0.length + p0.length > n1.length + p0.length) {
-        n1 = p0 + ' ' + n1
-      } else {
-        n0 = n0 + ' ' + p0
-        if (p1) na.push(p1)
-      }
-    }
-    return [n0, n1]
-  }
-}
 
 function getBadge(req, res, next) {
   const id = parseInt(req.params.id || '0')
@@ -51,9 +20,7 @@ function getBadge(req, res, next) {
     )
     .then(data => {
       const { member_number, membership, name, subtitle } = data || {}
-      const [FirstName, Surname] = splitNameInTwain(
-        req.query.name || name || ''
-      )
+      const [FirstName, Surname] = splitName(req.query.name || name || '')
       return fetch('http://tarra/label.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -105,7 +72,7 @@ function getBarcode(req, res, next) {
     .then(data => {
       const { daypass, days, member_number, membership, name, subtitle } = data
       const code = membership.charAt(0) + '-' + (member_number || `i${id}`)
-      const [FirstName, Surname] = splitNameInTwain(name || '')
+      const [FirstName, Surname] = splitName(name || '')
       const Info = daypass
         ? 'Daypass ' +
           ['Wed', 'Thu', 'Fri', 'Sat', 'Sun']
