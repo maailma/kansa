@@ -49,13 +49,13 @@ module.exports = (pgp, db) => {
   router.post('/purchase/other', purchase.makeOtherPurchase)
   router.post('/webhook/stripe', purchase.handleStripeWebhook)
 
-  // subsequent routes require authentication
-  router.use(user.authenticate)
-  router.all('/logout', user.logout)
+  router.all('/logout', user.authenticate, user.logout)
 
+  router.use('/members', user.authenticate)
   router.get('/members/emails', people.getMemberEmails)
   router.get('/members/paperpubs', people.getMemberPaperPubs)
 
+  router.use('/people', user.authenticate)
   router.get('/people', people.getPeople)
   router.post('/people', people.authAddPerson)
   router.post('/people/lookup', publicData.lookupPerson)
@@ -75,18 +75,19 @@ module.exports = (pgp, db) => {
   router.post('/people/:id/print', badge.logPrint)
   router.post('/people/:id/upgrade', upgrade.authUpgradePerson)
 
+  router.use('/user', user.authenticate)
   router.get('/user', user.getInfo)
   router.get('/user/log', log.getUserLog)
 
   const siteselect = new Siteselect(db)
-  router.all('/siteselect*', siteselect.verifyAccess)
+  router.use('/siteselect', siteselect.verifyAccess)
   router.get('/siteselect/tokens.:fmt', siteselect.getTokens)
   router.get('/siteselect/tokens/:token', siteselect.findToken)
   router.get('/siteselect/voters.:fmt', siteselect.getVoters)
   router.get('/siteselect/voters/:id', siteselect.findVoterTokens)
   router.post('/siteselect/voters/:id', siteselect.vote)
 
-  router.all('/admin*', admin.isAdminAdmin)
+  router.use('/admin', admin.isAdminAdmin)
   router.get('/admin', admin.getAdmins)
   router.post('/admin', admin.setAdmin)
   router.post('/admin/set-keys', key.setAllKeys)
