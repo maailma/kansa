@@ -3,5 +3,9 @@
   "version": "1.0.0",
   "description": "Common objects and utilities shared across the Kansa server & modules",
   "license": "Apache-2.0",
-  "repository": "maailma/kansa"
+  "repository": "maailma/kansa",
+  "dependencies": {
+    "timestring": "^5.0.1",
+    "yaml": "^1.0.0-rc.8"
+  }
 }

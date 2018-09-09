@@ -32,6 +32,15 @@ with either `AuthError`, `InputError`, or a database error.
 
 ### `new AuthError(message: string)`
 
+## Configuration
+
+```js
+const config = require('@kansa/common/config')
+```
+
+The server configuration, sourced from `config/kansa.yaml` and read during
+server start.
+
 ## Errors
 
 ```js

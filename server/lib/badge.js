@@ -1,7 +1,7 @@
 const fetch = require('node-fetch')
+const config = require('@kansa/common/config')
 const { AuthError } = require('@kansa/common/errors')
 const splitName = require('@kansa/common/split-name')
-const config = require('./config')
 
 module.exports = { getBadge, getBarcode, logPrint }
 

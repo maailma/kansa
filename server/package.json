@@ -27,8 +27,6 @@
     "pg-monitor": "^1.0.0",
     "pg-promise": "^8.4.5",
     "randomstring": "^1.1.5",
-    "stripe": "^6.3.0",
-    "timestring": "^5.0.1",
-    "yaml": "^1.0.0-rc.7"
+    "stripe": "^6.3.0"
   }
 }

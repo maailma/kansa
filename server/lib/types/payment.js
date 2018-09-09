@@ -1,6 +1,6 @@
 const Stripe = require('stripe')
+const config = require('@kansa/common/config')
 const { InputError } = require('@kansa/common/errors')
-const config = require('../config')
 const { generateToken } = require('../siteselect')
 
 function checkData(shape, data) {

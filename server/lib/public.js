@@ -1,5 +1,5 @@
+const config = require('@kansa/common/config')
 const { InputError } = require('@kansa/common/errors')
-const config = require('./config')
 
 module.exports = {
   getConfig,

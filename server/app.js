@@ -9,7 +9,7 @@ const pgSession = require('connect-pg-simple')(session)
 const http = require('http')
 const path = require('path')
 
-const config = require('./lib/config')
+const config = require('@kansa/common/config')
 const appRouter = require('./lib/router')
 
 const pgOptions = {}
