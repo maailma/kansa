@@ -3,11 +3,11 @@ const { promisify } = require('util')
 const { matchesId } = require('@kansa/common/auth-user')
 const config = require('@kansa/common/config')
 const { AuthError, InputError } = require('@kansa/common/errors')
+const isTrueish = require('@kansa/common/trueish')
 const { resetExpiredKey } = require('./key')
 const Admin = require('./types/admin')
 const LogEntry = require('./types/logentry')
 const { selectAllPeopleData } = require('./people')
-const util = require('./util')
 
 module.exports = { verifyPeopleAccess, login, logout, getInfo }
 
@@ -72,9 +72,9 @@ function login(req, res, next) {
 
 function logout(req, res, next) {
   const data = Object.assign({}, req.query, req.body)
-  const opt = util.isTrueish(data.reset)
+  const opt = isTrueish(data.reset)
     ? 'reset'
-    : util.isTrueish(data.all)
+    : isTrueish(data.all)
       ? 'all'
       : null
   // null: log out this session only, 'all': log out all sessions, 'reset': also reset/forget login key

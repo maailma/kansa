@@ -89,3 +89,22 @@ If the name already includes newlines, the first will be used to split the
 string and the others replaced with spaces. If the name is at most
 `maxLength` characters, it'll be returned as `['', name]`. Otherwise, we
 find the most balanced white space to use as a split point.
+
+## Trueish
+
+```js
+const isTrueish = require('@kansa/common/trueish')
+
+isTrueish() // false
+isTrueish('0') // false
+isTrueish(' False') // false
+isTrueish(-1) // true
+```
+
+### `function isTrueish(v: any): boolean`
+
+Casts input into boolean values. In addition to normal JavaScript casting
+rules, also trims and lower-cases strings before comparing them to the
+following: `''`, `'0'`, `'false'`, `'null'`. Matches to these result in a
+`false` value. The primary intent is to enable human-friendly handling of query
+parameter values.

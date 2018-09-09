@@ -1,5 +1,5 @@
 const { InputError } = require('@kansa/common/errors')
-const util = require('../util')
+const isTrueish = require('@kansa/common/trueish')
 
 class Person {
   static get fields() {
@@ -42,7 +42,7 @@ class Person {
   }
 
   static cleanPaperPubs(pp) {
-    if (!util.isTrueish(pp)) return null
+    if (!isTrueish(pp)) return null
     if (typeof pp == 'string') pp = JSON.parse(pp)
     return Person.paperPubsFields.reduce((o, fn) => {
       if (!pp[fn])
@@ -62,8 +62,13 @@ class Person {
       )
     }
     this.data = Object.assign({}, src)
-    util.forceInt(this.data, 'member_number')
-    if (this.data.membership === 'NonMember') this.data.member_number = null
+    if (this.data.membership === 'NonMember') {
+      this.data.member_number = null
+    } else if (this.data.hasOwnProperty('member_number')) {
+      const mn = this.data.member_number
+      if (!Number.isInteger(mn))
+        this.data.member_number = mn ? parseInt(mn) : null
+    }
     this.data.paper_pubs = Person.cleanPaperPubs(this.data.paper_pubs)
   }
 

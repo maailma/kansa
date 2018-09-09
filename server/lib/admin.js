@@ -1,9 +1,16 @@
 const { InputError } = require('@kansa/common/errors')
+const isTrueish = require('@kansa/common/trueish')
 const Admin = require('./types/admin')
 const LogEntry = require('./types/logentry')
-const util = require('./util')
 
 module.exports = { getAdmins, setAdmin }
+
+function forceBool(obj, prop) {
+  const src = obj[prop]
+  if (obj.hasOwnProperty(prop) && typeof src !== 'boolean') {
+    obj[prop] = isTrueish(src)
+  }
+}
 
 function getAdmins(req, res, next) {
   req.app.locals.db
@@ -22,7 +29,7 @@ function setAdmin(req, res, next) {
   const fCols = fields.join(', ')
   const fValues = fields.map(fn => `$(${fn})`).join(', ')
   const fSet = fields.map(fn => `${fn} = EXCLUDED.${fn}`).join(', ')
-  fields.forEach(fn => util.forceBool(data, fn))
+  fields.forEach(fn => forceBool(data, fn))
   req.app.locals.db
     .tx(async tx => {
       await tx.none(
