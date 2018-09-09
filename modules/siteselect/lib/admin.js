@@ -1,4 +1,4 @@
-const { InputError } = require('@kansa/common/errors')
+const { InputError, NotFoundError } = require('@kansa/common/errors')
 const { parseToken } = require('./token')
 
 class Admin {
@@ -13,19 +13,19 @@ class Admin {
 
   findToken(req, res, next) {
     const token = parseToken(req.params.token)
-    if (!token) return res.status(404).json({ error: 'not found' })
+    if (!token) return next(new NotFoundError())
     this.db
       .oneOrNone(`SELECT * FROM token_lookup WHERE token=$1`, token)
       .then(data => {
-        if (data) res.json(data)
-        else res.status(404).json({ error: 'not found' })
+        if (!data) throw new NotFoundError()
+        res.json(data)
       })
       .catch(next)
   }
 
   findVoterTokens(req, res, next) {
     const { id } = req.params
-    if (!id) return res.status(404).json({ error: 'not found' })
+    if (!id) return next(new NotFoundError())
     this.db
       .any(
         `
