@@ -53,6 +53,19 @@ const { AuthError, InputError } = require('@kansa/common/errors')
 
 Handled by the server's error handling. May also have their `status` set.
 
+## Log entries
+
+```js
+const LogEntry = require('@kansa/common/log-entry')
+new LogEntry(req, 'Log message').write(db)
+```
+
+### `new LogEntry(req, message: string)`
+
+Creates a new log entry for tracking changes. The entry's fields such as
+`author`, `description` and `subject` are modifiable before the entry gets
+stored with its `write(db): Promise` method.
+
 ## Mail
 
 ### `function sendMail(type: string, data: any, delay?: number): Promise`

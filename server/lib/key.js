@@ -1,8 +1,8 @@
 const randomstring = require('randomstring')
 const config = require('@kansa/common/config')
 const { InputError } = require('@kansa/common/errors')
+const LogEntry = require('@kansa/common/log-entry')
 const { sendMail, updateMailRecipient } = require('@kansa/common/mail')
-const LogEntry = require('./types/logentry')
 
 module.exports = {
   refreshKey,
@@ -47,7 +47,7 @@ function resetExpiredKey(req, db, { email, path }) {
     )
     const log = new LogEntry(req, 'Reset access key')
     log.author = email
-    await tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
+    await log.write(tx)
     await updateMailRecipient(tx, email)
     await sendMail('kansa-set-key', { email, key, path })
   })
@@ -77,7 +77,7 @@ function setKeyChecked(req, db, { email, maxAge, name }) {
     }
     const log = new LogEntry(req, description)
     log.author = email
-    await tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
+    await log.write(tx)
     await updateMailRecipient(tx, email)
     return { email, key, maxAge, set: true }
   })

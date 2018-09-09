@@ -3,9 +3,9 @@ const { promisify } = require('util')
 const { matchesId } = require('@kansa/common/auth-user')
 const config = require('@kansa/common/config')
 const { AuthError, InputError } = require('@kansa/common/errors')
+const LogEntry = require('@kansa/common/log-entry')
 const isTrueish = require('@kansa/common/trueish')
 const { resetExpiredKey } = require('./key')
-const LogEntry = require('./types/logentry')
 const { selectAllPeopleData } = require('./people')
 
 module.exports = { verifyPeopleAccess, login, logout, getInfo }
@@ -61,8 +61,7 @@ function login(req, res, next) {
       )
       res.cookie('files', token, cookieOptions.files)
       res.json({ status: 'success', email })
-      const log = new LogEntry(req, 'Login')
-      ts.none(`INSERT INTO Log ${log.sqlValues}`, log)
+      new LogEntry(req, 'Login').write(ts)
     })
     .catch(error => {
       res.clearCookie('files', cookieOptions.files)

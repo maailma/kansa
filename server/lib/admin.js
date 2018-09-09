@@ -1,7 +1,7 @@
 const config = require('@kansa/common/config')
 const { InputError } = require('@kansa/common/errors')
+const LogEntry = require('@kansa/common/log-entry')
 const isTrueish = require('@kansa/common/trueish')
-const LogEntry = require('./types/logentry')
 
 module.exports = { getAdmins, setAdmin }
 
@@ -25,7 +25,6 @@ function setAdmin(req, res, next) {
   if (!data.email || fields.length == 0) {
     return next(new InputError('Missing email or valid fields'))
   }
-  const log = new LogEntry(req, 'Set admin rights for ' + data.email)
   const fCols = fields.join(', ')
   const fValues = fields.map(fn => `$(${fn})`).join(', ')
   const fSet = fields.map(fn => `${fn} = EXCLUDED.${fn}`).join(', ')
@@ -38,7 +37,7 @@ function setAdmin(req, res, next) {
         ON CONFLICT (email) DO UPDATE SET ${fSet}`,
         data
       )
-      await tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
+      await new LogEntry(req, 'Set admin rights for ' + data.email).write(tx)
       res.json({ status: 'success', set: data })
     })
     .catch(next)

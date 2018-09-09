@@ -1,6 +1,6 @@
 const { InputError } = require('@kansa/common/errors')
+const LogEntry = require('@kansa/common/log-entry')
 const { updateMailRecipient } = require('@kansa/common/mail')
-const LogEntry = require('./types/logentry')
 const Person = require('./types/person')
 
 module.exports = { authUpgradePerson, upgradePerson }
@@ -20,8 +20,7 @@ function upgradePaperPubs(req, db, data) {
       err.status = 402
       throw err
     }
-    const log = new LogEntry(req, 'Add paper pubs')
-    await tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
+    await new LogEntry(req, 'Add paper pubs').write(tx)
     const { member_number } = row
     return { member_number, updated: ['paper_pubs'] }
   })
@@ -68,7 +67,7 @@ function upgradeMembership(req, db, data) {
     const log = new LogEntry(req, `Upgrade to ${data.membership}`)
     if (data.paper_pubs) log.description += ' and add paper pubs'
     log.subject = data.id
-    await tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
+    await log.write(tx)
     updateMailRecipient(db, email)
     return { member_number, updated: fields }
   })

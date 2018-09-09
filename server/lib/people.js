@@ -1,8 +1,8 @@
 const config = require('@kansa/common/config')
 const { InputError } = require('@kansa/common/errors')
+const LogEntry = require('@kansa/common/log-entry')
 const { sendMail, updateMailRecipient } = require('@kansa/common/mail')
 const { setKeyChecked } = require('./key')
-const LogEntry = require('./types/logentry')
 const Person = require('./types/person')
 
 const selectAllPeopleData = `
@@ -221,7 +221,7 @@ function addPerson(req, db, person) {
     Object.assign(person.data, { id, member_number })
     const log = new LogEntry(req, 'Add new person')
     log.subject = id
-    await tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
+    await log.write(tx)
     if (passDays.length > 0) {
       const pdStr = passDays.join(',')
       const trueDays = passDays.map(d => 'true').join(',')
@@ -288,65 +288,60 @@ function updatePerson(req, res, next) {
     parseInt(req.params.id),
     req.session.user.member_admin
   )
-  const log = new LogEntry(req, 'Update fields: ' + fields.join(', '))
-  log.subject = values.id
-  req.app.locals.db.task(dbTask => {
-    dbTask
-      .tx(tx =>
-        tx.batch([
-          tx.one(query, values),
-          values.email
-            ? tx.oneOrNone(`SELECT key FROM Keys WHERE email=$(email)`, values)
-            : {},
-          tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
-        ])
+  req.app.locals.db.task(ts => {
+    ts.tx(async tx => {
+      const data = await tx.oneOrNone(query, values)
+      if (!data) {
+        if (!ppCond) throw new Error('Update failed')
+        const err = new InputError(
+          'Paper publications have not been enabled for this person'
+        )
+        err.status = 402
+        throw err
+      }
+      const log = new LogEntry(req, 'Update fields: ' + fields.join(', '))
+      log.subject = values.id
+      await log.write(tx)
+      if (!values.email) return { data, prevKey: {} }
+      const prevKey = await tx.oneOrNone(
+        `SELECT key FROM Keys WHERE email=$(email)`,
+        values
       )
+      return { data, prevKey }
+    })
       .then(
-        ([
-          { hugo_nominator, wsfs_member, next_email, prev_email, name },
+        async ({
+          data: { hugo_nominator, wsfs_member, next_email, prev_email, name },
           prevKey
-        ]) => {
+        }) => {
           values.email = next_email
+          let key = null
           if (next_email !== prev_email) {
-            updateMailRecipient(dbTask, prev_email)
+            updateMailRecipient(ts, prev_email)
             if (hugo_nominator || wsfs_member) {
-              return prevKey
-                ? { key: prevKey.key, name }
-                : setKeyChecked(req, dbTask, { email: values.email }).then(
-                    ({ key }) => ({ key, name })
-                  )
+              if (prevKey) {
+                key = prevKey.key
+              } else {
+                key = await setKeyChecked(req, ts, {
+                  email: values.email
+                }).then(({ key }) => key)
+              }
             }
           }
-          return {}
-        }
-      )
-      .then(
-        ({ key, name }) =>
-          !!(
-            key &&
-            sendMail('hugo-update-email', {
+          let key_sent = false
+          if (key) {
+            await sendMail('hugo-update-email', {
               email: values.email,
               key,
               memberId: values.id,
               name
             })
-          )
-      )
-      .then(key_sent => {
-        res.json({ status: 'success', updated: fields, key_sent })
-        updateMailRecipient(dbTask, values.email)
-      })
-      .catch(err => {
-        if (ppCond && Array.isArray(err) && !err[0].success) {
-          const { message } = err.result || {}
-          if (message === 'No data returned from the query.') {
-            err = new InputError(
-              'Paper publications have not been enabled for this person'
-            )
-            err.status = 402
+            key_sent = true
           }
+          res.json({ status: 'success', updated: fields, key_sent })
+          updateMailRecipient(ts, values.email)
         }
-        next(err)
-      })
+      )
+      .catch(next)
   })
 }
