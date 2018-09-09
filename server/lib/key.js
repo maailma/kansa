@@ -1,5 +1,5 @@
 const randomstring = require('randomstring')
-const { InputError } = require('@kansa/errors')
+const { InputError } = require('@kansa/common/errors')
 const config = require('./config')
 const { mailTask, updateMailRecipient } = require('./mail')
 const LogEntry = require('./types/logentry')

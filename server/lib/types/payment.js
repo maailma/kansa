@@ -1,5 +1,5 @@
 const Stripe = require('stripe')
-const { InputError } = require('@kansa/errors')
+const { InputError } = require('@kansa/common/errors')
 const config = require('../config')
 const { generateToken } = require('../siteselect')
 

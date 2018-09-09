@@ -1,4 +1,4 @@
-const { InputError } = require('@kansa/errors')
+const { InputError } = require('@kansa/common/errors')
 const util = require('../util')
 
 class Person {

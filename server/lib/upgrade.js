@@ -1,4 +1,4 @@
-const { InputError } = require('@kansa/errors')
+const { InputError } = require('@kansa/common/errors')
 const LogEntry = require('./types/logentry')
 const Person = require('./types/person')
 const { updateMailRecipient } = require('./mail')

@@ -10,7 +10,7 @@
     "form-data": "^2.3.2"
   },
   "peerDependencies": {
-    "@kansa/errors": "1.x",
+    "@kansa/common": "1.x",
     "express": "4.x",
     "node-fetch": "*"
   }

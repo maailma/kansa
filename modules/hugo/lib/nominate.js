@@ -1,5 +1,5 @@
 const fetch = require('node-fetch')
-const { AuthError, InputError } = require('@kansa/errors')
+const { AuthError, InputError } = require('@kansa/common/errors')
 
 class Nominate {
   static access(req, db) {

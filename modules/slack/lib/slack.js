@@ -1,6 +1,6 @@
 const FormData = require('form-data')
 const fetch = require('node-fetch')
-const { AuthError, InputError } = require('@kansa/errors')
+const { AuthError, InputError } = require('@kansa/common/errors')
 
 function sendInvite(org, data) {
   const body = new FormData()

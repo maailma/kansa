@@ -1,7 +1,7 @@
 const bodyParser = require('body-parser')
 require('csv-express')
 const express = require('express')
-const { AuthError } = require('@kansa/errors')
+const { AuthError } = require('@kansa/common/errors')
 const Queries = require('./queries')
 
 module.exports = pgp => {

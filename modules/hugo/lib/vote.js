@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const { AuthError, InputError } = require('@kansa/errors')
+const { AuthError, InputError } = require('@kansa/common/errors')
 const sendEmail = require('./kyyhky-send-email')
 
 class Vote {

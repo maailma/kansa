@@ -1,5 +1,5 @@
 const express = require('express')
-const { AuthError } = require('@kansa/errors')
+const { AuthError } = require('@kansa/common/errors')
 const Admin = require('./admin')
 const CanonStream = require('./canon-stream')
 

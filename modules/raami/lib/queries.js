@@ -1,7 +1,7 @@
 const archiver = require('archiver')
 const fs = require('fs')
 const path = require('path')
-const { AuthError, InputError } = require('@kansa/errors')
+const { AuthError, InputError } = require('@kansa/common/errors')
 
 class Queries {
   constructor(db) {

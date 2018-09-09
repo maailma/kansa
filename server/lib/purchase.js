@@ -1,4 +1,4 @@
-const { AuthError, InputError } = require('@kansa/errors')
+const { AuthError, InputError } = require('@kansa/common/errors')
 const config = require('./config')
 const Payment = require('./types/payment')
 const Person = require('./types/person')
