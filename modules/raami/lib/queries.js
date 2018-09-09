@@ -1,7 +1,7 @@
 const archiver = require('archiver')
 const fs = require('fs')
 const path = require('path')
-const { AuthError, InputError } = require('@kansa/common/errors')
+const { matchesId } = require('@kansa/common/auth-user')
 
 class Queries {
   constructor(db) {
@@ -19,38 +19,21 @@ class Queries {
   }
 
   access(req) {
-    const id = parseInt(req.params.id)
-    if (isNaN(id) || id < 0)
-      return Promise.reject(new InputError('Bad id number'))
-    if (!req.session || !req.session.user || !req.session.user.email)
-      return Promise.reject(new AuthError())
-    return this.db
-      .oneOrNone('SELECT email FROM kansa.People WHERE id = $1', id)
-      .then(data => {
-        if (
-          !data ||
-          (!req.session.user.raami_admin &&
-            req.session.user.email !== data.email)
-        )
-          throw new AuthError()
-        return {
-          id
-        }
-      })
+    return matchesId(this.db, req, 'raami_admin')
   }
 
   getArtist(req, res, next) {
     this.access(req)
-      .then(({ id }) =>
+      .then(id =>
         this.db.oneOrNone(`SELECT * FROM Artist WHERE people_id = $1`, id)
       )
-      .then(data => res.status(200).json(data || {}))
+      .then(data => res.json(data || {}))
       .catch(next)
   }
 
   upsertArtist(req, res, next) {
     this.access(req)
-      .then(({ id }) => {
+      .then(id => {
         const artist = Object.assign({}, req.body, { people_id: id })
         const keys = [
           'people_id',
@@ -84,7 +67,7 @@ class Queries {
           artist
         )
       })
-      .then(people_id => res.status(200).json({ status: 'success', people_id }))
+      .then(people_id => res.json({ status: 'success', people_id }))
       .catch(next)
   }
 
@@ -92,29 +75,27 @@ class Queries {
 
   getWorks(req, res, next) {
     this.access(req)
-      .then(({ id }) =>
-        this.db.any(`SELECT * FROM Works WHERE people_id=$1`, id)
-      )
-      .then(data => res.status(200).json(data))
+      .then(id => this.db.any(`SELECT * FROM Works WHERE people_id=$1`, id))
+      .then(data => res.json(data))
       .catch(next)
   }
 
   getWork(req, res, next) {
     this.access(req)
-      .then(({ id }) => {
+      .then(id => {
         const params = Object.assign({}, req.params, { people_id: id })
         this.db.one(
           `SELECT * FROM Works WHERE id=$(work) AND people_id=$(people_id)`,
           params
         )
       })
-      .then(data => res.status(200).json(data))
+      .then(data => res.json(data))
       .catch(next)
   }
 
   createWork(req, res, next) {
     this.access(req)
-      .then(({ id }) => {
+      .then(id => {
         const work = Object.assign({}, req.body, { people_id: id })
         const keys = [
           'people_id',
@@ -146,15 +127,13 @@ class Queries {
           work
         )
       })
-      .then(({ id }) =>
-        res.status(200).json({ status: 'success', inserted: id })
-      )
+      .then(({ id }) => res.json({ status: 'success', inserted: id }))
       .catch(next)
   }
 
   updateWork(req, res, next) {
     this.access(req)
-      .then(({ id }) => {
+      .then(id => {
         const work = Object.assign({}, req.body, {
           people_id: id,
           work: req.params.work
@@ -188,13 +167,13 @@ class Queries {
           work
         )
       })
-      .then(() => res.status(200).json({ status: 'success' }))
+      .then(() => res.json({ status: 'success' }))
       .catch(next)
   }
 
   removeWork(req, res, next) {
     this.access(req)
-      .then(({ id }) =>
+      .then(id =>
         this.db.result(
           `
       DELETE FROM Works
@@ -202,15 +181,13 @@ class Queries {
           { people_id: id, work: req.params.work }
         )
       )
-      .then(() => res.status(200).json({ status: 'success' }))
+      .then(() => res.json({ status: 'success' }))
       .catch(next)
   }
 
   /**** exports ****/
 
   exportArtists(req, res, next) {
-    if (!req.session.user.raami_admin)
-      return res.status(401).json({ status: 'unauthorized' })
     this.db
       .any(
         `
@@ -221,30 +198,23 @@ class Queries {
         FROM Artist as a, kansa.people as p WHERE a.people_id = p.ID order by p.member_number
     `
       )
-      .then(data => res.status(200).csv(data, true))
+      .then(data => res.csv(data, true))
       .catch(next)
   }
 
   exportPreview(req, res, next) {
     //const dir = '/tmp/raamitmp/'
     const output = fs.createWriteStream('/tmp/raamipreview.zip')
-    const zip = archiver('zip', {
-      store: true // Sets the compression method to STORE.
-    })
+    const zip = archiver('zip', { store: true })
     output.on('close', () => {
       console.log(zip.pointer() + ' total bytes')
       fs.stat('/tmp/raamipreview.zip', (err, stats) => {
-        if (err) return console.error(err)
+        if (err) return next(err)
         console.log(stats)
       })
       res.sendFile(path.resolve('/tmp/raamipreview.zip'))
     })
-    zip.on('error', err => {
-      throw err
-    })
-
-    if (!req.session.user.raami_admin)
-      return res.status(401).json({ status: 'unauthorized' })
+    zip.on('error', next)
     this.db
       .any(
         `
@@ -274,8 +244,6 @@ class Queries {
   }
 
   exportWorks(req, res, next) {
-    const { user } = req.session || {}
-    if (!user || !user.raami_admin) return next(new AuthError())
     this.db
       .any(
         `

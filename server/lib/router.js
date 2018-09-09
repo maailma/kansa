@@ -1,5 +1,6 @@
 const cors = require('cors')
 const express = require('express')
+const { isSignedIn, hasRole } = require('@kansa/common/auth-user')
 
 const admin = require('./admin')
 const badge = require('./badge')
@@ -43,25 +44,41 @@ module.exports = (pgp, db) => {
   router.get('/purchase/data', purchase.getPurchaseData)
   router.get('/purchase/daypass-prices', purchase.getDaypassPrices)
   router.post('/purchase/daypass', purchase.makeDaypassPurchase)
-  router.post('/purchase/invoice', purchase.createInvoice)
+  router.post(
+    '/purchase/invoice',
+    hasRole('member_admin'),
+    purchase.createInvoice
+  )
   router.get('/purchase/keys', purchase.getStripeKeys)
-  router.get('/purchase/list', purchase.getPurchases)
+  router.get('/purchase/list', isSignedIn, purchase.getPurchases)
   router.post('/purchase/other', purchase.makeOtherPurchase)
   router.post('/webhook/stripe', purchase.handleStripeWebhook)
 
-  router.all('/logout', user.authenticate, user.logout)
+  router.all('/logout', isSignedIn, user.logout)
 
-  router.use('/members', user.authenticate)
-  router.get('/members/emails', people.getMemberEmails)
-  router.get('/members/paperpubs', people.getMemberPaperPubs)
+  router.use('/members', isSignedIn)
+  router.get('/members/emails', hasRole('member_admin'), people.getMemberEmails)
+  router.get(
+    '/members/paperpubs',
+    hasRole('member_admin'),
+    people.getMemberPaperPubs
+  )
 
-  router.use('/people', user.authenticate)
-  router.get('/people', people.getPeople)
-  router.post('/people', people.authAddPerson)
-  router.post('/people/lookup', publicData.lookupPerson)
-  router.get('/people/prev-names.:fmt', people.getAllPrevNames)
+  router.use('/people', isSignedIn)
+  router.get(
+    '/people',
+    hasRole(['member_admin', 'member_list']),
+    people.getPeople
+  )
+  router.post('/people', hasRole('member_admin'), people.authAddPerson)
+  router.post('/people/lookup', isSignedIn, publicData.lookupPerson)
+  router.get(
+    '/people/prev-names.:fmt',
+    hasRole(['member_admin', 'member_list']),
+    people.getAllPrevNames
+  )
 
-  router.all('/people/:id*', user.verifyPeopleAccess)
+  router.use('/people/:id*', user.verifyPeopleAccess)
   router.get('/people/:id', people.getPerson)
   router.post('/people/:id', people.updatePerson)
   router.get('/people/:id/badge', badge.getBadge)
@@ -72,22 +89,26 @@ module.exports = (pgp, db) => {
   router.get('/people/:id/barcode.:fmt', badge.getBarcode)
   router.get('/people/:id/log', log.getPersonLog)
   router.get('/people/:id/prev-names', people.getPrevNames)
-  router.post('/people/:id/print', badge.logPrint)
-  router.post('/people/:id/upgrade', upgrade.authUpgradePerson)
+  router.post('/people/:id/print', hasRole('member_admin'), badge.logPrint)
+  router.post(
+    '/people/:id/upgrade',
+    hasRole('member_admin'),
+    upgrade.authUpgradePerson
+  )
 
-  router.use('/user', user.authenticate)
+  router.use('/user', isSignedIn)
   router.get('/user', user.getInfo)
   router.get('/user/log', log.getUserLog)
 
   const siteselect = new Siteselect(db)
-  router.use('/siteselect', siteselect.verifyAccess)
+  router.use('/siteselect', hasRole('siteselection'))
   router.get('/siteselect/tokens.:fmt', siteselect.getTokens)
   router.get('/siteselect/tokens/:token', siteselect.findToken)
   router.get('/siteselect/voters.:fmt', siteselect.getVoters)
   router.get('/siteselect/voters/:id', siteselect.findVoterTokens)
   router.post('/siteselect/voters/:id', siteselect.vote)
 
-  router.use('/admin', admin.isAdminAdmin)
+  router.use('/admin', hasRole('admin_admin'))
   router.get('/admin', admin.getAdmins)
   router.post('/admin', admin.setAdmin)
   router.post('/admin/set-keys', key.setAllKeys)

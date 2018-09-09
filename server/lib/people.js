@@ -1,4 +1,4 @@
-const { AuthError, InputError } = require('@kansa/common/errors')
+const { InputError } = require('@kansa/common/errors')
 const config = require('./config')
 const { setKeyChecked } = require('./key')
 const { mailTask, updateMailRecipient } = require('./mail')
@@ -40,13 +40,11 @@ function getPeopleQuery(req, res, next) {
   })
   req.app.locals.db
     .any(`${selectAllPeopleData} WHERE ${cond.join(' AND ')}`, req.query)
-    .then(data => res.status(200).json(data))
-    .catch(err => next(err))
+    .then(data => res.json(data))
+    .catch(next)
 }
 
 function getMemberEmails(req, res, next) {
-  if (!req.session.user.member_admin)
-    return res.status(401).json({ status: 'unauthorized' })
   req.app.locals.db
     .any(
       `
@@ -87,14 +85,12 @@ function getMemberEmails(req, res, next) {
         const name = getCombinedName(namesByEmail[email])
         return { email, name }
       })
-      res.status(200).csv(data, true)
+      res.csv(data, true)
     })
     .catch(next)
 }
 
 function getMemberPaperPubs(req, res, next) {
-  if (!req.session.user.member_admin)
-    return res.status(401).json({ status: 'unauthorized' })
   req.app.locals.db
     .any(
       `
@@ -106,16 +102,11 @@ function getMemberPaperPubs(req, res, next) {
       LEFT JOIN membership_types m USING (membership)
     WHERE paper_pubs IS NOT NULL AND m.member = true`
     )
-    .then(data => {
-      res.status(200).csv(data, true)
-    })
+    .then(data => res.csv(data, true))
     .catch(next)
 }
 
 function getPeople(req, res, next) {
-  if (!req.session.user.member_admin && !req.session.user.member_list) {
-    return res.status(401).json({ status: 'unauthorized' })
-  }
   if (Object.keys(req.query).length > 0) getPeopleQuery(req, res, next)
   else
     req.app.locals.db
@@ -140,10 +131,10 @@ function getPeople(req, res, next) {
               { id: p.id }
             )
           })
-          res.status(200).json(arr)
+          res.json(arr)
         }
       })
-      .catch(err => next(err))
+      .catch(next)
 }
 
 function getPerson(req, res, next) {
@@ -167,9 +158,6 @@ function getPerson(req, res, next) {
 }
 
 function getAllPrevNames(req, res, next) {
-  const { user } = req.session
-  if (!user || (!user.member_admin && !user.member_list))
-    return next(new AuthError())
   const csv = req.params.fmt === 'csv'
   req.app.locals.db
     .any(
@@ -225,46 +213,29 @@ function addPerson(req, db, person) {
     person.data.membership = 'NonMember'
     person.data.member_number = null
   }
-  const log = new LogEntry(req, 'Add new person')
-  let res
-  return db
-    .tx(tx =>
-      tx
-        .one(
-          `
-      INSERT INTO People ${person.sqlValues}
-      RETURNING id, member_number`,
-          person.data
-        )
-        .then(data => {
-          person.data.id = data.id
-          person.data.member_number = data.member_number
-          res = data
-          log.subject = data.id
-          return tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
-        })
-        .then(() => {
-          if (passDays.length === 0) return null
-          const trueDays = passDays.map(d => 'true').join(',')
-          return tx.none(
-            `
-          INSERT INTO daypasses (person_id,status,${passDays.join(',')})
-          VALUES ($(id),$(status),${trueDays})`,
-            { id: res.id, status }
-          )
-        })
+  return db.tx(async tx => {
+    const { id, member_number } = await tx.one(
+      `INSERT INTO People ${person.sqlValues} RETURNING id, member_number`,
+      person.data
     )
-    .then(() => res)
+    Object.assign(person.data, { id, member_number })
+    const log = new LogEntry(req, 'Add new person')
+    log.subject = id
+    await tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
+    if (passDays.length > 0) {
+      const pdStr = passDays.join(',')
+      const trueDays = passDays.map(d => 'true').join(',')
+      await tx.none(
+        `INSERT INTO daypasses (person_id,status,${pdStr})
+        VALUES ($(id),$(status),${trueDays})`,
+        { id, status }
+      )
+    }
+    return { id, member_number }
+  })
 }
 
 function authAddPerson(req, res, next) {
-  if (
-    !req.session.user.member_admin ||
-    (typeof req.body.member_number !== 'undefined' &&
-      !req.session.user.admin_admin)
-  ) {
-    return res.status(401).json({ status: 'unauthorized' })
-  }
   let person
   try {
     person = new Person(req.body)
@@ -273,7 +244,7 @@ function authAddPerson(req, res, next) {
   }
   addPerson(req, req.app.locals.db, person)
     .then(({ id, member_number }) =>
-      res.status(200).json({ status: 'success', id, member_number })
+      res.json({ status: 'success', id, member_number })
     )
     .catch(next)
 }

@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const { matchesId } = require('@kansa/common/auth-user')
 const { AuthError, InputError } = require('@kansa/common/errors')
 const sendEmail = require('./kyyhky-send-email')
 
@@ -26,32 +27,25 @@ class Vote {
       db.many(`${pgp.helpers.insert(data, svCS)} RETURNING time`)
   }
 
-  access(req) {
+  access(req, requireVoter) {
+    if (!requireVoter) return matchesId(this.db, req, 'hugo_admin')
     const id = parseInt(req.params.id)
+    const { user } = req.session
     if (isNaN(id) || id < 0)
       return Promise.reject(new InputError('Bad id number'))
-    if (!req.session || !req.session.user || !req.session.user.email)
-      return Promise.reject(new AuthError())
+    if (!user || !user.email) return Promise.reject(new AuthError())
+    if (user.hugo_admin) return Promise.resolve(id)
     return this.db
       .oneOrNone(
-        `
-      SELECT p.email, m.wsfs_member
-      FROM kansa.People p
-        LEFT JOIN kansa.membership_types m USING (membership)
-      WHERE id = $1`,
+        `SELECT wsfs_member
+        FROM kansa.people LEFT JOIN kansa.membership_types USING (membership)
+        WHERE id = $1 AND email = $2`,
         id
       )
       .then(data => {
-        if (
-          !data ||
-          (!req.session.user.hugo_admin &&
-            req.session.user.email !== data.email)
-        )
-          throw new AuthError()
-        return {
-          id,
-          voter: !!data.wsfs_member
-        }
+        if (!data) throw new AuthError()
+        if (!data.wsfs_member) throw new AuthError('Not a Hugo voter')
+        return id
       })
   }
 
@@ -61,7 +55,7 @@ class Vote {
         `SELECT category, id, title, subtitle FROM Finalists ORDER BY sortindex, id`
       )
       .then(data =>
-        res.status(200).json(
+        res.json(
           data.reduce((res, { category, id, title, subtitle }) => {
             const finalist = { id, title, subtitle: subtitle || undefined }
             if (res[category]) res[category].push(finalist)
@@ -75,11 +69,10 @@ class Vote {
 
   getPacket(req, res, next) {
     const options = { httpOnly: true, path: '/hugo-packet', secure: true }
-    this.access(req)
+    this.access(req, true)
       .then(
-        ({ id, voter }) =>
+        id =>
           new Promise((resolve, reject) => {
-            if (!voter) return reject(new AuthError('Not a Hugo voter'))
             jwt.sign(
               { scope: 'wsfs' },
               process.env.JWT_SECRET,
@@ -122,17 +115,14 @@ class Vote {
   }
 
   packetSeriesExtra(req, res, next) {
-    this.access(req)
-      .then(({ id, voter }) => {
-        if (!voter) throw new AuthError()
-        return this.db.one(
-          `
-          SELECT email, kansa.preferred_name(p) as name
-            FROM kansa.People AS p
-           WHERE id = $1`,
+    this.access(req, true)
+      .then(id =>
+        this.db.one(
+          `SELECT email, kansa.preferred_name(p) AS name
+          FROM kansa.people AS p WHERE id = $1`,
           id
         )
-      })
+      )
       .then(({ email, name }) =>
         sendEmail('hugo-packet-series-extra', { email, name })
       )
@@ -141,14 +131,12 @@ class Vote {
   }
 
   getVotes(req, res, next) {
-    this.access(req)
-      .then(({ id }) =>
+    this.access(req, false)
+      .then(id =>
         this.db.any(
-          `
-          SELECT DISTINCT ON (category) category, votes, time
-            FROM Votes
-           WHERE person_id = $1
-        ORDER BY category, time DESC`,
+          `SELECT DISTINCT ON (category) category, votes, time
+          FROM Votes WHERE person_id = $1
+          ORDER BY category, time DESC`,
           id
         )
       )
@@ -218,9 +206,8 @@ class Vote {
         return next(new InputError(e.message))
       }
     let data = null
-    this.access(req)
-      .then(({ id, voter }) => {
-        if (!voter) throw new AuthError()
+    this.access(req, true)
+      .then(id => {
         data = Object.keys(votes).map(category => ({
           client_ip: req.ip,
           client_ua: req.headers['user-agent'] || null,

@@ -1,4 +1,4 @@
-const { AuthError, InputError } = require('@kansa/common/errors')
+const { InputError } = require('@kansa/common/errors')
 const config = require('./config')
 
 module.exports = {
@@ -103,8 +103,6 @@ function getLookupQuery({ email, member_number, name }) {
 }
 
 function lookupPerson(req, res, next) {
-  if (!req.session || !req.session.user || !req.session.user.email)
-    return next(new AuthError())
   const { query, values } = getLookupQuery(req.body)
   req.app.locals.db
     .any(query, values)

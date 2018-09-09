@@ -1,5 +1,5 @@
 const randomstring = require('randomstring')
-const { AuthError, InputError } = require('@kansa/common/errors')
+const { InputError } = require('@kansa/common/errors')
 
 class Siteselect {
   static generateToken() {
@@ -25,17 +25,11 @@ class Siteselect {
 
   constructor(db) {
     this.db = db
-    this.verifyAccess = this.verifyAccess.bind(this)
     this.findToken = this.findToken.bind(this)
     this.findVoterTokens = this.findVoterTokens.bind(this)
     this.getTokens = this.getTokens.bind(this)
     this.getVoters = this.getVoters.bind(this)
     this.vote = this.vote.bind(this)
-  }
-
-  verifyAccess(req, res, next) {
-    if (req.session.user && req.session.user.siteselection) next()
-    else next(new AuthError())
   }
 
   findToken(req, res, next) {

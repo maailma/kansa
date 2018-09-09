@@ -21,202 +21,138 @@ describe('Check that API services are up', function() {
     }
   })
 
-  it('Should respond with json on api/', done => {
-    unlogged
-      .get('/api/')
-      .expect('Content-Type', /json/)
-      .end(done)
-  })
+  it('Should respond with json on api/', () =>
+    unlogged.get('/api/').expect('Content-Type', /json/))
 
-  it('Should respond with json on api/hugo/', done => {
-    unlogged
-      .get('/api/hugo/')
-      .expect('Content-Type', /json/)
-      .end(done)
-  })
+  it('Should respond with json on api/hugo/', () =>
+    unlogged.get('/api/hugo/').expect('Content-Type', /json/))
 })
 
 describe('Public data', () => {
-  it('Member list is an array', done => {
+  it('Member list is an array', () =>
     unlogged
       .get('/api/public/people')
+      .expect(200)
       .expect(res => {
-        if (res.status !== 200 || !Array.isArray(res.body)) {
-          throw new Error(`Fail! ${JSON.stringify(res.body)}`)
-        }
-      })
-      .end(done)
-  })
+        assert(Array.isArray(res.body))
+      }))
 
-  it('Country statistics includes totals', done => {
+  it('Country statistics includes totals', () =>
     unlogged
       .get('/api/public/stats')
+      .expect(200)
       .expect(res => {
-        if (
-          res.status !== 200 ||
-          !res.body ||
-          !res.body['='].hasOwnProperty('=')
-        ) {
-          throw new Error(`Fail! ${JSON.stringify(res.body)}`)
-        }
-      })
-      .end(done)
-  })
+        assert(res.body['='].hasOwnProperty('='))
+      }))
 
-  it('Configuration is an object with id, name', done => {
+  it('Configuration is an object with id, name', () =>
     unlogged
       .get('/api/config')
+      .expect(200)
       .expect(res => {
-        if (res.status !== 200 || !res.body || !res.body.id || !res.body.name) {
-          throw new Error(`Fail! ${JSON.stringify(res.body)}`)
-        }
-      })
-      .end(done)
-  })
+        assert(!!res.body.id)
+        assert(!!res.body.name)
+      }))
 })
 
 describe('Login', () => {
   context('Successful login', () => {
-    it('gets a session cookie or it gets the hose again.', done => {
+    it('gets a session cookie or it gets the hose again.', () =>
       admin
         .get('/api/login')
         .query(loginparams)
         .expect('set-cookie', /w75/)
-        .expect(200, { status: 'success', email: loginparams.email })
-        .end(done)
-    })
+        .expect(200, { status: 'success', email: loginparams.email }))
 
-    it('gets user information', done => {
-      admin
-        .get('/api/user')
-        .expect(200)
-        .end(done)
-    })
+    it('gets user information', () => admin.get('/api/user').expect(200))
   })
 
   context('Login with wrong email', () => {
-    it('gets 401 response', done => {
+    it('gets 401 response', () =>
       unlogged
         .get('/api/login')
         .query({ email: 'foo@doo.com', key: loginparams.key })
-        .expect(401)
-        .end(done)
-    })
+        .expect(401))
 
-    it('gets unauthorized from /api/user', done => {
-      unlogged
-        .get('/api/user')
-        .expect(401, { status: 'unauthorized' })
-        .end(done)
-    })
+    it('gets unauthorized from /api/user', () =>
+      unlogged.get('/api/user').expect(401))
   })
 
   context('Login with wrong key', () => {
-    it('gets 401 response', done => {
+    it('gets 401 response', () =>
       unlogged
         .get('/api/login')
         .query({ email: loginparams.email, key: 'foo' })
-        .expect(401)
-        .end(done)
-    })
+        .expect(401))
 
-    it('gets unauthorized from /api/user', done => {
-      unlogged
-        .get('/api/user')
-        .expect(401, { status: 'unauthorized' })
-        .end(done)
-    })
+    it('gets unauthorized from /api/user', () =>
+      unlogged.get('/api/user').expect(401))
   })
 
   context('Login with expired key', () => {
-    it('gets 403 response', done => {
+    it('gets 403 response', () => {
       const email = 'expired@example.com'
-      unlogged
+      return unlogged
         .get('/api/login')
         .query({ email, key: 'key' })
         .expect(403, { email, status: 'expired' })
-        .end(done)
     })
 
-    it('gets unauthorized from /api/user', done => {
-      unlogged
-        .get('/api/user')
-        .expect(401, { status: 'unauthorized' })
-        .end(done)
-    })
+    it('gets unauthorized from /api/user', () =>
+      unlogged.get('/api/user').expect(401))
   })
 })
 
 describe('Logout', () => {
   const testagent = request.agent(host, { ca })
 
-  before(done => {
+  before(() =>
     testagent
       .get('/api/login')
       .query(loginparams)
       .expect('set-cookie', /w75/)
       .expect(200, { status: 'success', email: loginparams.email })
-      .end(done)
-  })
+  )
 
   context('Successful logout', () => {
-    it('should be successful', done => {
+    it('should be successful', () =>
       testagent
         .get('/api/logout')
-        .expect(200, { status: 'success', email: loginparams.email })
-        .end(done)
-    })
+        .expect(200, { status: 'success', email: loginparams.email }))
 
-    it('gets unauthorized from /api/user', done => {
-      testagent
-        .get('/api/user')
-        .expect(401, { status: 'unauthorized' })
-        .end(done)
-    })
+    it('gets unauthorized from /api/user', () =>
+      testagent.get('/api/user').expect(401))
   })
 
   context('Not logged in', () => {
-    it('logout should be unauthorized', done => {
-      unlogged
-        .get('/api/logout')
-        .expect(401, { status: 'unauthorized' })
-        .end(done)
-    })
+    it('logout should be unauthorized', () =>
+      unlogged.get('/api/logout').expect(401))
 
-    it('gets unauthorized from /api/user', done => {
-      testagent
-        .get('/api/user')
-        .expect(401, { status: 'unauthorized' })
-        .end(done)
-    })
+    it('gets unauthorized from /api/user', () =>
+      testagent.get('/api/user').expect(401))
   })
 })
 
 describe('Key request', () => {
-  before(done => {
+  before(() =>
     admin
       .get('/api/logout')
       .expect(200, { status: 'success', email: loginparams.email })
-      .end(done)
-  })
+  )
 
   context('Should not reset by default', () => {
-    it('should be successful', done => {
+    it('should be successful', () =>
       admin
         .post('/api/key')
         .send({ email: loginparams.email })
-        .expect(200, { status: 'success', email: loginparams.email })
-        .end(done)
-    })
+        .expect(200, { status: 'success', email: loginparams.email }))
 
-    it('should still be able to login', done => {
+    it('should still be able to login', () =>
       admin
         .get('/api/login')
         .query(loginparams)
         .expect('set-cookie', /w75/)
-        .expect(200, { status: 'success', email: loginparams.email })
-        .end(done)
-    })
+        .expect(200, { status: 'success', email: loginparams.email }))
   })
 
   context('Account creation', () => {
@@ -225,12 +161,10 @@ describe('Key request', () => {
       'test-' + (Math.random().toString(36) + '00000000000000000').slice(2, 7)
     const testEmail = testName + '@example.com'
 
-    it('Should create non-member accounts', done => {
+    it('Should create non-member accounts', () =>
       agent
         .post('/api/key')
         .send({ email: testEmail, name: testName })
-        .expect(200, { status: 'success', email: testEmail })
-        .end(done)
-    })
+        .expect(200, { status: 'success', email: testEmail }))
   })
 })

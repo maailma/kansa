@@ -45,9 +45,7 @@ class Slack {
     this.invite = this.invite.bind(this)
   }
 
-  getUserData(user) {
-    const email = user && user.email
-    if (!email) return Promise.reject(new AuthError())
+  getUserData({ email }) {
     let select = `
       SELECT public_first_name, public_last_name
       FROM People LEFT JOIN membership_types USING (membership)

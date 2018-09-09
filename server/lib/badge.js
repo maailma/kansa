@@ -9,13 +9,12 @@ function getBadge(req, res, next) {
   const id = parseInt(req.params.id || '0')
   req.app.locals.db
     .oneOrNone(
-      `
-    SELECT
-      p.member_number, membership,
-      get_badge_name(p) AS name, get_badge_subtitle(p) AS subtitle
-    FROM people p
-      LEFT JOIN membership_types m USING (membership)
-    WHERE id = $1 AND m.badge = true`,
+      `SELECT
+        p.member_number, membership,
+        get_badge_name(p) AS name, get_badge_subtitle(p) AS subtitle
+      FROM people p
+        LEFT JOIN membership_types m USING (membership)
+      WHERE id = $1 AND m.badge = true`,
       id
     )
     .then(data => {
@@ -113,18 +112,16 @@ function getBarcode(req, res, next) {
 }
 
 function logPrint(req, res, next) {
-  const { member_admin } = req.session.user || {}
-  if (!member_admin) return next(new AuthError())
-  const id = parseInt(req.params.id)
   req.app.locals.db
     .one(
-      `
-    INSERT INTO badge_and_daypass_prints (person, membership, member_number, daypass) (
-         SELECT p.id, p.membership, p.member_number, d.id
-           FROM people p LEFT JOIN daypasses d ON (p.id = d.person_id)
-          WHERE p.id = $1
-    ) RETURNING timestamp`,
-      id
+      `INSERT INTO badge_and_daypass_prints
+        (person, membership, member_number, daypass)
+      (
+        SELECT p.id, p.membership, p.member_number, d.id
+        FROM people p LEFT JOIN daypasses d ON (p.id = d.person_id)
+        WHERE p.id = $1
+      ) RETURNING timestamp`,
+      parseInt(req.params.id)
     )
     .then(({ timestamp }) => res.json({ status: 'success', timestamp }))
     .catch(next)

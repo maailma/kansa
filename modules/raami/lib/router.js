@@ -1,7 +1,7 @@
 const bodyParser = require('body-parser')
 require('csv-express')
 const express = require('express')
-const { AuthError } = require('@kansa/common/errors')
+const { isSignedIn, hasRole } = require('@kansa/common/auth-user')
 const Queries = require('./queries')
 
 module.exports = pgp => {
@@ -19,11 +19,7 @@ module.exports = pgp => {
       parameterLimit: 2000
     })
   )
-  router.use((req, res, next) => {
-    const { user } = req.session
-    if (user && user.email) next()
-    else next(new AuthError())
-  })
+  router.use(isSignedIn)
 
   const queries = new Queries(db)
   router.get('/:id/artist', queries.getArtist)
@@ -34,6 +30,7 @@ module.exports = pgp => {
   router.post('/:id/works/:work', queries.updateWork)
   router.delete('/:id/works/:work', queries.removeWork)
 
+  router.use('/export', hasRole('raami_admin'))
   router.get('/export/artists', queries.exportArtists)
   router.get('/export/preview', queries.exportPreview)
   router.get('/export/works.csv', queries.exportWorks)

@@ -1,15 +1,11 @@
 const express = require('express')
-const { AuthError } = require('@kansa/common/errors')
+const { hasRole } = require('@kansa/common/auth-user')
 const Admin = require('./admin')
 const CanonStream = require('./canon-stream')
 
 module.exports = (pgp, db) => {
   const router = express.Router()
-  router.use((req, res, next) => {
-    const { user } = req.session
-    if (user && user.hugo_admin) next()
-    else next(new AuthError())
-  })
+  router.use(hasRole('hugo_admin'))
 
   const admin = new Admin(pgp, db)
   router.get('/ballots', admin.getAllBallots)

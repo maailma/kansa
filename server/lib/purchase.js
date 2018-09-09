@@ -1,4 +1,4 @@
-const { AuthError, InputError } = require('@kansa/common/errors')
+const { InputError } = require('@kansa/common/errors')
 const config = require('./config')
 const Payment = require('./types/payment')
 const Person = require('./types/person')
@@ -94,7 +94,7 @@ class Purchase {
   }
 
   getPurchases(req, res, next) {
-    let email = req.session.user.email
+    let { email } = req.session.user
     if (req.session.user.member_admin) {
       if (req.query.email) {
         email = req.query.email
@@ -102,21 +102,19 @@ class Purchase {
         return this.db
           .any(`SELECT * FROM Payments`)
           .then(data => res.json(data))
+          .catch(next)
       }
     }
-    if (!email) return next(new AuthError())
     this.db
       .any(
-        `
-      SELECT *
-        FROM Payments
-       WHERE payment_email=$1 OR
-             person_id IN (
-               SELECT id FROM People WHERE email=$1
-             )`,
+        `SELECT * FROM Payments
+        WHERE payment_email=$1 OR person_id IN (
+          SELECT id FROM People WHERE email=$1
+        )`,
         email
       )
       .then(data => res.json(data))
+      .catch(next)
   }
 
   handleStripeWebhook(req, res, next) {
@@ -538,8 +536,6 @@ class Purchase {
   }
 
   createInvoice(req, res, next) {
-    if (!req.session.user || !req.session.user.member_admin)
-      throw new AuthError()
     const { email, items } = req.body
     if (!email || !items || items.length === 0)
       throw new InputError('Required parameters: email, items')
