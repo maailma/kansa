@@ -1,9 +1,11 @@
 const assert = require('assert')
 const fs = require('fs')
 const request = require('supertest')
-//const YAML = require('yaml').default
+const YAML = require('yaml').default
 
-//const config = YAML.parse(fs.readFileSync('../config/kansa.yaml', 'utf8'))
+const config = YAML.parse(fs.readFileSync('../config/kansa.yaml', 'utf8'))
+if (!config.modules.badge) return
+
 const ca = fs.readFileSync('../proxy/ssl/localhost.cert', 'utf8')
 const host = 'localhost:4430'
 
@@ -41,12 +43,12 @@ describe('Badges & barcodes', () => {
 
     it('get own badge', () =>
       member
-        .get(`/api/people/${id}/badge`)
+        .get(`/api/badge/${id}`)
         .expect(200)
         .expect('Content-Type', pngType))
 
     it("fail to get other's badge", () =>
-      member.get(`/api/people/${id - 1}/badge`).expect(401))
+      member.get(`/api/badge/${id - 1}`).expect(401))
 
     it('get own barcode with id as PNG', () =>
       member
@@ -62,7 +64,7 @@ describe('Badges & barcodes', () => {
 
     it('fail to log own badge as printed', () =>
       member
-        .post(`/api/people/${id}/print`)
+        .post(`/api/badge/${id}/print`)
         .send()
         .expect(401))
   })
@@ -72,12 +74,12 @@ describe('Badges & barcodes', () => {
 
     it('get blank badge', () =>
       anonymous
-        .get('/api/blank-badge')
+        .get('/api/badge/blank')
         .expect(200)
         .expect('Content-Type', pngType))
 
     it("fail to get member's badge", () =>
-      anonymous.get(`/api/people/${id}/badge`).expect(401))
+      anonymous.get(`/api/badge/${id}`).expect(401))
 
     it("get member's barcode with key as PNG", () =>
       anonymous
@@ -109,7 +111,7 @@ describe('Badges & barcodes', () => {
 
     it("get member's badge", () =>
       admin
-        .get(`/api/people/${id}/badge`)
+        .get(`/api/badge/${id}`)
         .expect(200)
         .expect('Content-Type', pngType))
 
@@ -127,7 +129,7 @@ describe('Badges & barcodes', () => {
 
     it("log the member's badge as printed", () =>
       admin
-        .post(`/api/people/${id}/print`)
+        .post(`/api/badge/${id}/print`)
         .send()
         .expect(200)
         .expect(res => assert.equal(res.body.status, 'success')))

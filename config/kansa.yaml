@@ -42,6 +42,10 @@ modules:
   # Superadmin actions: get & set admin levels, mass sync actions
   admin: true
 
+  # Badge previews and print logging. Uses tarra, the badge-printer, which in
+  # turn will need to have the proper fonts included.
+  badge: false
+
   # Nomination and voting for the Hugo Awards
   hugo: true
 
