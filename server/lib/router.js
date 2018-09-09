@@ -1,11 +1,9 @@
-const cors = require('cors')
 const express = require('express')
 const { isSignedIn, hasRole } = require('@kansa/common/auth-user')
 
-const badge = require('./badge')
-const peopleRouter = require('./people/router')
 const adminRouter = require('./admin/router')
 const getConfig = require('./get-config')
+const peopleRouter = require('./people/router')
 const Purchase = require('./purchase')
 const userRouter = require('./user/router')
 
@@ -19,9 +17,6 @@ module.exports = (db, ctx) => {
   )
 
   router.use(userRouter(db, ctx))
-
-  router.get('/barcode/:key/:id.:fmt', badge.getBarcode)
-  router.get('/blank-badge', badge.getBadge)
 
   const purchase = new Purchase(db)
   router.post('/purchase', purchase.makeMembershipPurchase)
