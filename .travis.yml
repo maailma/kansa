@@ -8,6 +8,7 @@ node_js:
   - 'node'
 
 before_install:
+  - mv common/$(cd common && npm pack) server/kansa-common.tgz
   - docker-compose
     -f config/docker-compose.base.yaml
     -f config/docker-compose.dev.yaml

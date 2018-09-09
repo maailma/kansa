@@ -8,7 +8,7 @@ WORKDIR /kansa
 COPY package.json .
 RUN npm install && npm cache clean --force
 COPY . .
-RUN [ -r kansa-common.tgz ] && npm install ./kansa-common.tgz
+RUN npm install ./kansa-common.tgz
 
 EXPOSE 80
 CMD [ "npm", "start" ]
