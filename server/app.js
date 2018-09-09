@@ -60,12 +60,14 @@ app.use('/', appRouter(pgp, db))
 Object.keys(config.modules).forEach(name => {
   const mc = config.modules[name]
   if (!mc) return
-  debug('kansa:modules')(`Installing ${name}...`)
+  debug('kansa:server')(`Installing module ${name}...`)
   const cwd = path.resolve(__dirname, 'modules', name)
-  execSync('npm install', { cwd, encoding: 'utf8' })
+  execSync('npm install 2>&1', { cwd, encoding: 'utf8' })
+    .split('\n')
+    .filter(line => line && !/^npm WARN .* requires a peer/.test(line))
+    .forEach(line => debug('kansa:server')(`${name}: ${line}`))
   const module = require(cwd)
   app.use(`/${name}`, module(pgp, db, mc))
-  debug('kansa:modules')(`Added ${name}.`)
 })
 
 // no match from router -> 404
