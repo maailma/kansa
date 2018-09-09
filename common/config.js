@@ -10,6 +10,7 @@ const shape = {
   name: 'string',
   paid_paper_pubs: 'boolean',
   auth: {
+    admin_roles: ['string'],
     key_timeout: {
       admin: 'duration',
       normal: 'duration'
@@ -41,6 +42,15 @@ function parseConfig(config, path, shape) {
         `Expected value for '${key}' to match regular expression ${shape}`
       )
     }
+  } else if (Array.isArray(shape)) {
+    if (!Array.isArray(value)) {
+      throw new Error(
+        `Expected array value for '${key}', but found ${typeof value}`
+      )
+    }
+    value.forEach((v, i) => {
+      parseConfig(config, path.concat(i), shape[0])
+    })
   } else if (typeof shape === 'object') {
     if (typeof value !== 'object') {
       throw new Error(

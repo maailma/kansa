@@ -5,11 +5,12 @@ const config = require('@kansa/common/config')
 const { AuthError, InputError } = require('@kansa/common/errors')
 const isTrueish = require('@kansa/common/trueish')
 const { resetExpiredKey } = require('./key')
-const Admin = require('./types/admin')
 const LogEntry = require('./types/logentry')
 const { selectAllPeopleData } = require('./people')
 
 module.exports = { verifyPeopleAccess, login, logout, getInfo }
+
+const adminSqlRoles = config.auth.admin_roles.join(', ')
 
 function verifyPeopleAccess(req, res, next) {
   const roles = ['member_admin']
@@ -35,7 +36,7 @@ function login(req, res, next) {
       SELECT
         k.email,
         k.expires IS NOT NULL AND k.expires < now() AS expired,
-        ${Admin.sqlRoles}
+        ${adminSqlRoles}
       FROM kansa.Keys k
         LEFT JOIN admin.Admins a USING (email)
       WHERE email=$(email) AND key=$(key)`,
@@ -118,7 +119,7 @@ function getInfo(req, res, next) {
         email
       )
       const roleData = await t.oneOrNone(
-        `SELECT ${Admin.sqlRoles} FROM admin.Admins WHERE email=$1`,
+        `SELECT ${adminSqlRoles} FROM admin.Admins WHERE email=$1`,
         email
       )
       const roles = roleData

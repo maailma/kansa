@@ -1,6 +1,6 @@
+const config = require('@kansa/common/config')
 const { InputError } = require('@kansa/common/errors')
 const isTrueish = require('@kansa/common/trueish')
-const Admin = require('./types/admin')
 const LogEntry = require('./types/logentry')
 
 module.exports = { getAdmins, setAdmin }
@@ -21,7 +21,7 @@ function getAdmins(req, res, next) {
 
 function setAdmin(req, res, next) {
   const data = Object.assign({}, req.body)
-  const fields = Admin.roleFields.filter(fn => data.hasOwnProperty(fn))
+  const fields = config.auth.admin_roles.filter(fn => data.hasOwnProperty(fn))
   if (!data.email || fields.length == 0) {
     return next(new InputError('Missing email or valid fields'))
   }
