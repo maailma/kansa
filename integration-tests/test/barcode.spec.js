@@ -4,21 +4,23 @@ const request = require('supertest')
 const YAML = require('yaml').default
 
 const config = YAML.parse(fs.readFileSync('../config/kansa.yaml', 'utf8'))
-if (!config.modules.badge) return
+if (!config.modules.barcode) return
 
 const ca = fs.readFileSync('../proxy/ssl/localhost.cert', 'utf8')
 const host = 'localhost:4430'
 
+let pdfType = 'application/pdf'
 let pngType = 'image/png'
 
 if (process.env.CI) {
   // Tarra requires fonts that are normally mounted from the file system, and
   // are not included in the build on the CI servers. So we hack around the
   // problem for now by expecting the responses to fail. -- Eemeli, 2018-09-09
+  pdfType = 'text/html; charset=UTF-8'
   pngType = 'text/html; charset=UTF-8'
 }
 
-describe('Badges', () => {
+describe('Barcodes', () => {
   const key = 'key'
   let id = null
 
@@ -39,33 +41,42 @@ describe('Badges', () => {
         })
     })
 
-    it('get own badge', () =>
+    it('get own barcode with id as PNG', () =>
       member
-        .get(`/api/badge/${id}`)
+        .get(`/api/people/${id}/barcode.png`)
         .expect(200)
         .expect('Content-Type', pngType))
 
-    it("fail to get other's badge", () =>
-      member.get(`/api/badge/${id - 1}`).expect(401))
-
-    it('fail to log own badge as printed', () =>
+    it('get own barcode with id as PDF', () =>
       member
-        .post(`/api/badge/${id}/print`)
-        .send()
-        .expect(401))
+        .get(`/api/people/${id}/barcode.pdf`)
+        .expect(200)
+        .expect('Content-Type', pdfType))
+
+    it("fail to get other's barcode", () =>
+      member.get(`/api/people/${id - 1}/barcode.png`).expect(401))
+
+    it('fail to get own barcode with bad key', () =>
+      member.get(`/api/barcode/${key + 'x'}/${id}.png`).expect(401))
   })
 
   describe('anonymous access', () => {
     const anonymous = request.agent(`https://${host}`, { ca })
 
-    it('get blank badge', () =>
+    it("get member's barcode with key as PNG", () =>
       anonymous
-        .get('/api/badge/blank')
+        .get(`/api/barcode/${key}/${id}.png`)
         .expect(200)
         .expect('Content-Type', pngType))
 
-    it("fail to get member's badge", () =>
-      anonymous.get(`/api/badge/${id}`).expect(401))
+    it("get member's barcode with key as PDF", () =>
+      anonymous
+        .get(`/api/barcode/${key}/${id}.pdf`)
+        .expect(200)
+        .expect('Content-Type', pdfType))
+
+    it('fail to get barcode with bad key', () =>
+      anonymous.get(`/api/barcode/${key + 'x'}/${id}.png`).expect(401))
   })
 
   describe('admin access', () => {
@@ -83,17 +94,16 @@ describe('Badges', () => {
         })
     })
 
-    it("get member's badge", () =>
+    it("get member's barcode with id as PNG", () =>
       admin
-        .get(`/api/badge/${id}`)
+        .get(`/api/people/${id}/barcode.png`)
         .expect(200)
         .expect('Content-Type', pngType))
 
-    it("log the member's badge as printed", () =>
+    it("get member's barcode with id as PDF", () =>
       admin
-        .post(`/api/badge/${id}/print`)
-        .send()
+        .get(`/api/people/${id}/barcode.pdf`)
         .expect(200)
-        .expect(res => assert.equal(res.body.status, 'success')))
+        .expect('Content-Type', pdfType))
   })
 })
