@@ -46,6 +46,10 @@ modules:
   # turn will need to have the proper fonts included.
   badge: false
 
+  # Barcodes to help speed up registration. Uses tarra, the badge-printer, which
+  # in turn will need to have the proper fonts included.
+  barcode: false
+
   # Nomination and voting for the Hugo Awards
   hugo: true
 

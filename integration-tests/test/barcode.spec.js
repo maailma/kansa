@@ -43,18 +43,18 @@ describe('Barcodes', () => {
 
     it('get own barcode with id as PNG', () =>
       member
-        .get(`/api/people/${id}/barcode.png`)
+        .get(`/api/barcode/${id}.png`)
         .expect(200)
         .expect('Content-Type', pngType))
 
     it('get own barcode with id as PDF', () =>
       member
-        .get(`/api/people/${id}/barcode.pdf`)
+        .get(`/api/barcode/${id}.pdf`)
         .expect(200)
         .expect('Content-Type', pdfType))
 
     it("fail to get other's barcode", () =>
-      member.get(`/api/people/${id - 1}/barcode.png`).expect(401))
+      member.get(`/api/barcode/${id - 1}.png`).expect(401))
 
     it('fail to get own barcode with bad key', () =>
       member.get(`/api/barcode/${key + 'x'}/${id}.png`).expect(401))
@@ -96,13 +96,13 @@ describe('Barcodes', () => {
 
     it("get member's barcode with id as PNG", () =>
       admin
-        .get(`/api/people/${id}/barcode.png`)
+        .get(`/api/barcode/${id}.png`)
         .expect(200)
         .expect('Content-Type', pngType))
 
     it("get member's barcode with id as PDF", () =>
       admin
-        .get(`/api/people/${id}/barcode.pdf`)
+        .get(`/api/barcode/${id}.pdf`)
         .expect(200)
         .expect('Content-Type', pdfType))
   })
