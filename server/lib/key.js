@@ -1,7 +1,7 @@
 const randomstring = require('randomstring')
 const config = require('@kansa/common/config')
 const { InputError } = require('@kansa/common/errors')
-const { mailTask, updateMailRecipient } = require('./mail')
+const { sendMail, updateMailRecipient } = require('@kansa/common/mail')
 const LogEntry = require('./types/logentry')
 
 module.exports = {
@@ -49,7 +49,7 @@ function resetExpiredKey(req, db, { email, path }) {
     log.author = email
     await tx.none(`INSERT INTO Log ${log.sqlValues}`, log)
     await updateMailRecipient(tx, email)
-    await mailTask('kansa-set-key', { email, key, path })
+    await sendMail('kansa-set-key', { email, key, path })
   })
 }
 
@@ -100,7 +100,7 @@ function setKey(req, res, next) {
         const { key, set } = reset
           ? await setKeyChecked(req, ts, { email })
           : await refreshKey(req, ts, email)
-        await mailTask('kansa-set-key', { email, key, path, set })
+        await sendMail('kansa-set-key', { email, key, path, set })
         res.json({ status: 'success', email })
       } else {
         if (!name)
@@ -111,7 +111,7 @@ function setKey(req, res, next) {
           email: reqEmail,
           name
         })
-        await mailTask('kansa-create-account', { email, key, name, path })
+        await sendMail('kansa-create-account', { email, key, name, path })
         res.json({ status: 'success', email })
       }
     })

@@ -1,13 +1,13 @@
 const cors = require('cors')
 const express = require('express')
 const { isSignedIn, hasRole } = require('@kansa/common/auth-user')
+const { setAllMailRecipients } = require('@kansa/common/mail')
 
 const admin = require('./admin')
 const badge = require('./badge')
 const Ballot = require('./ballot')
 const key = require('./key')
 const log = require('./log')
-const { setAllMailRecipients } = require('./mail')
 const people = require('./people')
 const PeopleStream = require('./PeopleStream')
 const publicData = require('./public')
@@ -112,7 +112,11 @@ module.exports = (pgp, db) => {
   router.get('/admin', admin.getAdmins)
   router.post('/admin', admin.setAdmin)
   router.post('/admin/set-keys', key.setAllKeys)
-  router.post('/admin/set-recipients', setAllMailRecipients)
+  router.post('/admin/set-recipients', (req, res, next) => {
+    setAllMailRecipients(req.app.locals.db)
+      .then(count => res.json({ success: true, count }))
+      .catch(next)
+  })
 
   const peopleStream = new PeopleStream(db)
   router.ws('/people/updates', (ws, req) => {

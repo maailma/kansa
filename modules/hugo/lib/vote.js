@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 const { matchesId } = require('@kansa/common/auth-user')
 const { AuthError, InputError } = require('@kansa/common/errors')
-const sendEmail = require('./kyyhky-send-email')
+const { sendMail } = require('@kansa/common/mail')
 
 class Vote {
   constructor(pgp, db) {
@@ -124,7 +124,7 @@ class Vote {
         )
       )
       .then(({ email, name }) =>
-        sendEmail('hugo-packet-series-extra', { email, name })
+        sendMail('hugo-packet-series-extra', { email, name })
       )
       .then(() => res.json({ status: 'success' }))
       .catch(next)
@@ -186,7 +186,7 @@ class Vote {
         ])
       )
       .then(([person, votes]) =>
-        sendEmail(
+        sendMail(
           'hugo-update-votes',
           Object.assign({ memberId: id, votes }, person),
           30

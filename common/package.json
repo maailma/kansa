@@ -5,6 +5,7 @@
   "license": "Apache-2.0",
   "repository": "maailma/kansa",
   "dependencies": {
+    "node-fetch": "^2.2.0",
     "timestring": "^5.0.1",
     "yaml": "^1.0.0-rc.8"
   }

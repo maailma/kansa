@@ -1,5 +1,5 @@
-const fetch = require('node-fetch')
 const { AuthError, InputError } = require('@kansa/common/errors')
+const { sendMail } = require('@kansa/common/mail')
 
 class Nominate {
   static access(req, db) {
@@ -67,10 +67,9 @@ class Nominate {
         )
       ])
       .then(([person, nominations]) =>
-        fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
+        sendMail(
+          'hugo-update-nominations',
+          {
             email: person.email,
             key: person.key,
             memberId: id,
@@ -80,8 +79,9 @@ class Nominate {
                 .join(' ')
                 .trim() || person.legal_name,
             nominations
-          })
-        })
+          },
+          30
+        )
       )
       .catch(err => console.error(err))
   }

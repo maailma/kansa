@@ -1,9 +1,9 @@
 const config = require('@kansa/common/config')
 const { InputError } = require('@kansa/common/errors')
+const { sendMail } = require('@kansa/common/mail')
 const Payment = require('./types/payment')
 const Person = require('./types/person')
 const { refreshKey } = require('./key')
-const { mailTask } = require('./mail')
 const { addPerson } = require('./people')
 const { upgradePerson } = require('./upgrade')
 
@@ -150,7 +150,7 @@ class Purchase {
                 )
                 .then(({ shape, types }) => {
                   const typeData = types.find(td => td.key === item.type)
-                  return mailTask(
+                  return sendMail(
                     'kansa-update-payment',
                     Object.assign(
                       {
@@ -348,7 +348,7 @@ class Purchase {
           return refreshKey(req, db, u.email)
         })
         .then(({ key }) =>
-          mailTask(
+          sendMail(
             (!u.membership || u.membership === u.prev_membership) &&
             u.paper_pubs
               ? 'kansa-add-paper-pubs'
@@ -374,7 +374,7 @@ class Purchase {
             { charge_id, key, name: m.preferredName },
             m.data
           )
-          return mailTask('kansa-new-member', data).then(
+          return sendMail('kansa-new-member', data).then(
             () => (set ? data.email : null)
           )
         })
@@ -469,7 +469,7 @@ class Purchase {
               .then(() => refreshKey(req, this.db, p.data.email))
               .then(({ key, set }) => {
                 if (set) newEmailAddresses[p.data.email] = true
-                return mailTask(
+                return sendMail(
                   'kansa-new-daypass',
                   Object.assign(
                     { charge_id, key, name: p.preferredName },
@@ -508,7 +508,7 @@ class Purchase {
               )
               .then(({ shape, types }) => {
                 const typeData = types.find(td => td.key === item.type)
-                return mailTask(
+                return sendMail(
                   'kansa-new-payment',
                   Object.assign(
                     {
@@ -545,7 +545,7 @@ class Purchase {
         if (items.some(item => !item.id || item.status !== 'invoice')) {
           throw new Error('Bad item: ' + JSON.stringify(item))
         }
-        return mailTask('kansa-new-invoice', { email, items })
+        return sendMail('kansa-new-invoice', { email, items })
       })
       .then(() => res.json({ status: 'success', email }))
       .catch(next)

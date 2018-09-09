@@ -1,12 +1,12 @@
 const fetch = require('node-fetch')
 
 module.exports = {
-  mailTask,
+  sendMail,
   setAllMailRecipients,
   updateMailRecipient
 }
 
-function mailTask(type, data, delay) {
+function sendMail(type, data, delay) {
   let url = `http://kyyhky/email/${type}`
   if (delay) url += `?delay=${Number(delay)}` // in minutes
   return fetch(url, {
@@ -65,21 +65,17 @@ function rxUpdateTask(recipients) {
   })
 }
 
-function setAllMailRecipients(req, res, next) {
-  req.app.locals.db
-    .any(`${mailRecipient.selector} ORDER BY email`)
-    .then(res => {
-      const er = res.reduce((set, r) => {
-        if (set[r.email]) set[r.email].push(r)
-        else set[r.email] = [r]
-        return set
-      }, {})
-      const emails = Object.keys(er)
-      const recipients = emails.map(email => mailRecipient(email, er[email]))
-      return rxUpdateTask(recipients).then(() => emails.length)
-    })
-    .then(count => res.json({ success: true, count }))
-    .catch(next)
+function setAllMailRecipients(db) {
+  return db.any(`${mailRecipient.selector} ORDER BY email`).then(res => {
+    const er = res.reduce((set, r) => {
+      if (set[r.email]) set[r.email].push(r)
+      else set[r.email] = [r]
+      return set
+    }, {})
+    const emails = Object.keys(er)
+    const recipients = emails.map(email => mailRecipient(email, er[email]))
+    return rxUpdateTask(recipients).then(() => emails.length)
+  })
 }
 
 function updateMailRecipient(db, email) {

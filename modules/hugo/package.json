@@ -6,15 +6,11 @@
   "license": "Apache-2.0",
   "repository": "maailma/kansa",
   "main": "lib/router.js",
-  "scripts": {
-    "start": "node server"
-  },
   "peerDependencies": {
     "@kansa/common": "1.x",
     "express": "4.x",
     "express-ws": ">=2",
     "jsonwebtoken": ">=7",
-    "node-fetch": "*",
     "yaml": "^1.0.0-rc.7"
   }
 }

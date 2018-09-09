@@ -1,7 +1,7 @@
 const config = require('@kansa/common/config')
 const { InputError } = require('@kansa/common/errors')
+const { sendMail, updateMailRecipient } = require('@kansa/common/mail')
 const { setKeyChecked } = require('./key')
-const { mailTask, updateMailRecipient } = require('./mail')
 const LogEntry = require('./types/logentry')
 const Person = require('./types/person')
 
@@ -324,7 +324,7 @@ function updatePerson(req, res, next) {
         ({ key, name }) =>
           !!(
             key &&
-            mailTask('hugo-update-email', {
+            sendMail('hugo-update-email', {
               email: values.email,
               key,
               memberId: values.id,

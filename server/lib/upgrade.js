@@ -1,7 +1,7 @@
 const { InputError } = require('@kansa/common/errors')
+const { updateMailRecipient } = require('@kansa/common/mail')
 const LogEntry = require('./types/logentry')
 const Person = require('./types/person')
-const { updateMailRecipient } = require('./mail')
 
 module.exports = { authUpgradePerson, upgradePerson }
 

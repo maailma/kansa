@@ -53,7 +53,20 @@ const { AuthError, InputError } = require('@kansa/common/errors')
 
 Handled by the server's error handling. May also have their `status` set.
 
-## @kansa/common/split-name
+## Mail
+
+### `function sendMail(type: string, data: any, delay?: number): Promise`
+
+Schedule an email message of `type` with `data` to be sent, with an optional
+`delay` in minutes. The message should have a correspondingly named template
+available under `config/message-templates/`.
+
+### `function updateMailRecipient(db, email: string): Promise`
+
+Using the `pg-promise` instance `db`, fetch the appropriate data for `email`
+and forward it to be sent to Sendgrid. Returns a promise that will never reject.
+
+## Split names
 
 ```js
 const splitName = require('@kansa/common/split-name')
