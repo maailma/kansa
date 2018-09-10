@@ -6,7 +6,7 @@ const { AuthError, InputError } = require('@kansa/common/errors')
 const LogEntry = require('@kansa/common/log-entry')
 const isTrueish = require('@kansa/common/trueish')
 const { resetExpiredKey } = require('./key')
-const { selectAllPeopleData } = require('./people')
+const Person = require('./people/person')
 
 module.exports = { verifyPeopleAccess, login, logout, getInfo }
 
@@ -112,7 +112,7 @@ function getInfo(req, res, next) {
   req.app.locals.db
     .task(async t => {
       const people = await t.any(
-        `${selectAllPeopleData}
+        `${Person.SELECT}
         WHERE email=$1
         ORDER BY coalesce(public_last_name, preferred_name(p))`,
         email

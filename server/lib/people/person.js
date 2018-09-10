@@ -2,6 +2,11 @@ const { InputError } = require('@kansa/common/errors')
 const isTrueish = require('@kansa/common/trueish')
 
 class Person {
+  static get SELECT() {
+    return `SELECT p.*, preferred_name(p), d.status AS daypass, daypass_days(d)
+      FROM people p LEFT JOIN daypasses d ON (p.id = d.person_id)`
+  }
+
   static get fields() {
     return [
       // id SERIAL PRIMARY KEY
