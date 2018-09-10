@@ -2,10 +2,10 @@ const config = require('@kansa/common/config')
 const { InputError } = require('@kansa/common/errors')
 const { sendMail } = require('@kansa/common/mail')
 const Payment = require('./types/payment')
-const Person = require('./types/person')
 const { refreshKey } = require('./key')
 const { addPerson } = require('./people')
-const { upgradePerson } = require('./upgrade')
+const Person = require('./people/person')
+const { upgradePerson } = require('./people/upgrade')
 
 class Purchase {
   constructor(pgp, db) {

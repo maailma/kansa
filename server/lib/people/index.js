@@ -2,8 +2,8 @@ const config = require('@kansa/common/config')
 const { InputError } = require('@kansa/common/errors')
 const LogEntry = require('@kansa/common/log-entry')
 const { sendMail, updateMailRecipient } = require('@kansa/common/mail')
-const { setKeyChecked } = require('./key')
-const Person = require('./types/person')
+const { setKeyChecked } = require('../key')
+const Person = require('./person')
 
 const selectAllPeopleData = `
   SELECT p.*, preferred_name(p), d.status AS daypass, daypass_days(d)

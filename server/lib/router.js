@@ -7,11 +7,11 @@ const Ballot = require('./ballot')
 const key = require('./key')
 const log = require('./log')
 const people = require('./people')
-const PeopleStream = require('./PeopleStream')
+const PeopleStream = require('./people/stream')
 const publicData = require('./public')
 const Purchase = require('./purchase')
 const Siteselect = require('./siteselect')
-const upgrade = require('./upgrade')
+const upgrade = require('./people/upgrade')
 const user = require('./user')
 
 module.exports = (pgp, db) => {
