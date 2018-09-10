@@ -103,8 +103,8 @@ DECLARE
     ac text;
     bc text;
 BEGIN
-    ac := lower(trim(regexp_replace(a, '\s+', ' ', 'g')));
-    bc := lower(trim(regexp_replace(b, '\s+', ' ', 'g')));
+    ac := substr(lower(trim(regexp_replace(a, '\s+', ' ', 'g'))), 0, 255);
+    bc := substr(lower(trim(regexp_replace(b, '\s+', ' ', 'g'))), 0, 255);
     RETURN levenshtein_less_equal(ac, bc, 3) <= 3;
 END;
 $$ LANGUAGE plpgsql;
