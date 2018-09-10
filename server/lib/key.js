@@ -8,8 +8,7 @@ module.exports = {
   refreshKey,
   resetExpiredKey,
   setKeyChecked,
-  setKey,
-  setAllKeys
+  setKey
 }
 
 const getKeyMaxAge = (db, email) =>
@@ -114,33 +113,6 @@ function setKey(req, res, next) {
         await sendMail('kansa-create-account', { email, key, name, path })
         res.json({ status: 'success', email })
       }
-    })
-    .catch(next)
-}
-
-function setAllKeys(req, res, next) {
-  req.app.locals.db
-    .tx(async tx => {
-      const data = await tx.any(`
-      SELECT DISTINCT p.email, a.email IS NOT NULL AS is_admin
-      FROM people p
-        LEFT JOIN keys k USING (email)
-        LEFT JOIN admin.admins a USING (email)
-      WHERE k.email IS NULL`)
-      const kt = config.auth.key_timeout
-      await tx.sequence(i => {
-        if (!data[i]) return undefined
-        const { email, is_admin } = data[i]
-        const key = randomstring.generate(12)
-        const maxAge = (is_admin ? kt.admin : kt.normal) / 1000
-        return tx.any(
-          `
-        INSERT INTO Keys (email, key, expires)
-        VALUES ($(email), $(key), now() + $(maxAge) * interval '1 second')`,
-          { email, key, maxAge }
-        )
-      })
-      res.json({ status: 'success', count: data.length })
     })
     .catch(next)
 }

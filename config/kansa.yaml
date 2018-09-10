@@ -43,6 +43,9 @@ auth:
 #   const module = require(`./modules/${name}`)
 #   app.use(`/${name}`, module(pgp, db, config.modules[name]))
 modules:
+  # Superadmin actions: get & set admin levels, mass sync actions
+  admin: true
+
   # Nomination and voting for the Hugo Awards
   hugo: true
 
