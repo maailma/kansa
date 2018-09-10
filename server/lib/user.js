@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken')
 const { promisify } = require('util')
-const { matchesId } = require('@kansa/common/auth-user')
 const config = require('@kansa/common/config')
 const { AuthError, InputError } = require('@kansa/common/errors')
 const LogEntry = require('@kansa/common/log-entry')
@@ -8,17 +7,9 @@ const isTrueish = require('@kansa/common/trueish')
 const { resetExpiredKey } = require('./key')
 const Person = require('./people/person')
 
-module.exports = { verifyPeopleAccess, login, logout, getInfo }
+module.exports = { login, logout, getInfo }
 
 const adminSqlRoles = config.auth.admin_roles.join(', ')
-
-function verifyPeopleAccess(req, res, next) {
-  const roles = ['member_admin']
-  if (req.method === 'GET') roles.push('member_list')
-  matchesId(req.app.locals.db, req, roles)
-    .then(() => next())
-    .catch(next)
-}
 
 function login(req, res, next) {
   const cookieOptions = {

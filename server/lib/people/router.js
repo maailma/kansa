@@ -1,11 +1,10 @@
 const express = require('express')
-const { isSignedIn, hasRole } = require('@kansa/common/auth-user')
+const { isSignedIn, hasRole, matchesId } = require('@kansa/common/auth-user')
 
 const badge = require('../badge')
 const Ballot = require('../ballot')
 const log = require('../log')
 const publicData = require('../public')
-const user = require('../user')
 
 const {
   getPeopleSpaced,
@@ -70,7 +69,14 @@ module.exports = db => {
   router.post('/', hasRole('member_admin'), people.authAddPerson)
   router.post('/lookup', isSignedIn, publicData.lookupPerson)
 
-  router.use('/:id*', user.verifyPeopleAccess)
+  router.use('/:id*', (req, res, next) => {
+    const roles = ['member_admin']
+    if (req.method === 'GET') roles.push('member_list')
+    matchesId(db, req, roles)
+      .then(() => next())
+      .catch(next)
+  })
+
   router.get('/:id', people.getPerson)
   router.post('/:id', people.updatePerson)
   router.get('/:id/badge', badge.getBadge)
