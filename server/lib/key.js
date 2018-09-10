@@ -34,52 +34,59 @@ function refreshKey(req, db, email) {
 }
 
 function resetExpiredKey(req, db, { email, path }) {
-  return db.tx(async tx => {
-    const key = randomstring.generate(12)
-    const maxAge = await getKeyMaxAge(tx, email)
-    await tx.none(
-      `
-      UPDATE keys SET key=$(key),
-        expires = now() + $(maxAge) * interval '1 second'
-      WHERE email = $(email)`,
-      { email, key, maxAge }
-    )
-    const log = new LogEntry(req, 'Reset access key')
-    log.author = email
-    await log.write(tx)
-    await updateMailRecipient(tx, email)
-    await sendMail('kansa-set-key', { email, key, path })
-  })
+  return db
+    .tx(async tx => {
+      const key = randomstring.generate(12)
+      const maxAge = await getKeyMaxAge(tx, email)
+      await tx.none(
+        `UPDATE keys
+        SET key=$(key), expires = now() + $(maxAge) * interval '1 second'
+        WHERE email = $(email)`,
+        { email, key, maxAge }
+      )
+      const log = new LogEntry(req, 'Reset access key')
+      log.author = email
+      await log.write(tx)
+      return key
+    })
+    .then(async key => {
+      await updateMailRecipient(db, email)
+      return sendMail('kansa-set-key', { email, key, path })
+    })
 }
 
 function setKeyChecked(req, db, { email, maxAge, name }) {
-  return db.tx(async tx => {
-    if (!maxAge) maxAge = await getKeyMaxAge(tx, email)
-    const key = randomstring.generate(12)
-    await tx.none(
-      `
+  return db
+    .tx(async tx => {
+      if (!maxAge) maxAge = await getKeyMaxAge(tx, email)
+      const key = randomstring.generate(12)
+      await tx.none(
+        `
       INSERT INTO Keys (email, key, expires)
       VALUES ($(email), $(key), now() + $(maxAge) * interval '1 second')
       ON CONFLICT (email) DO
         UPDATE SET key = EXCLUDED.key, expires = EXCLUDED.expires`,
-      { email, key, maxAge }
-    )
-    let description = 'Set access key'
-    if (name) {
-      await tx.none(
-        `
+        { email, key, maxAge }
+      )
+      let description = 'Set access key'
+      if (name) {
+        await tx.none(
+          `
         INSERT INTO People (membership, legal_name, email)
         VALUES ('NonMember', $1, $2)`,
-        [name, email]
-      )
-      description = 'Create non-member account'
-    }
-    const log = new LogEntry(req, description)
-    log.author = email
-    await log.write(tx)
-    await updateMailRecipient(tx, email)
-    return { email, key, maxAge, set: true }
-  })
+          [name, email]
+        )
+        description = 'Create non-member account'
+      }
+      const log = new LogEntry(req, description)
+      log.author = email
+      await log.write(tx)
+      return { key, maxAge }
+    })
+    .then(async ({ key, maxAge }) => {
+      await updateMailRecipient(db, email)
+      return { email, key, maxAge, set: true }
+    })
 }
 
 function setKey(req, res, next) {

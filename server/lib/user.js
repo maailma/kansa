@@ -61,7 +61,7 @@ function login(req, res, next) {
       )
       res.cookie('files', token, cookieOptions.files)
       res.json({ status: 'success', email })
-      new LogEntry(req, 'Login').write(ts)
+      await new LogEntry(req, 'Login').write(ts)
     })
     .catch(error => {
       res.clearCookie('files', cookieOptions.files)

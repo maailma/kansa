@@ -288,7 +288,8 @@ function updatePerson(req, res, next) {
     parseInt(req.params.id),
     req.session.user.member_admin
   )
-  req.app.locals.db.task(ts => {
+  const { db } = req.app.locals
+  db.task(ts => {
     ts.tx(async tx => {
       const data = await tx.oneOrNone(query, values)
       if (!data) {
@@ -317,7 +318,7 @@ function updatePerson(req, res, next) {
           values.email = next_email
           let key = null
           if (next_email !== prev_email) {
-            updateMailRecipient(ts, prev_email)
+            updateMailRecipient(db, prev_email)
             if (hugo_nominator || wsfs_member) {
               if (prevKey) {
                 key = prevKey.key
@@ -339,7 +340,7 @@ function updatePerson(req, res, next) {
             key_sent = true
           }
           res.json({ status: 'success', updated: fields, key_sent })
-          updateMailRecipient(ts, values.email)
+          updateMailRecipient(db, values.email)
         }
       )
       .catch(next)
