@@ -76,6 +76,14 @@ module.exports = (pgp, db) => {
     people.getAllPrevNames
   )
 
+  const peopleStream = new PeopleStream(db)
+  router.ws('/people/updates', (ws, req) => {
+    hasRole(['member_admin', 'member_list'])(req, null, err => {
+      if (err) ws.close(4001, 'Unauthorized')
+      else peopleStream.addClient(ws)
+    })
+  })
+
   router.use('/people/:id*', user.verifyPeopleAccess)
   router.get('/people/:id', people.getPerson)
   router.post('/people/:id', people.updatePerson)
@@ -105,12 +113,6 @@ module.exports = (pgp, db) => {
   router.get('/siteselect/voters.:fmt', siteselect.getVoters)
   router.get('/siteselect/voters/:id', siteselect.findVoterTokens)
   router.post('/siteselect/voters/:id', siteselect.vote)
-
-  const peopleStream = new PeopleStream(db)
-  router.ws('/people/updates', (ws, req) => {
-    if (req.session.user.member_admin) peopleStream.addClient(ws)
-    else ws.close(4001, 'Unauthorized')
-  })
 
   return router
 }
