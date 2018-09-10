@@ -3,15 +3,12 @@ const express = require('express')
 const { isSignedIn, hasRole } = require('@kansa/common/auth-user')
 
 const badge = require('./badge')
-const Ballot = require('./ballot')
 const key = require('./key')
 const log = require('./log')
-const people = require('./people')
-const PeopleStream = require('./people/stream')
+const peopleRouter = require('./people/router')
 const publicData = require('./public')
 const Purchase = require('./purchase')
 const Siteselect = require('./siteselect')
-const upgrade = require('./people/upgrade')
 const user = require('./user')
 
 module.exports = (pgp, db) => {
@@ -54,53 +51,9 @@ module.exports = (pgp, db) => {
 
   router.all('/logout', isSignedIn, user.logout)
 
-  router.use('/members', isSignedIn)
-  router.get('/members/emails', hasRole('member_admin'), people.getMemberEmails)
-  router.get(
-    '/members/paperpubs',
-    hasRole('member_admin'),
-    people.getMemberPaperPubs
-  )
-
-  router.use('/people', isSignedIn)
-  router.get(
-    '/people',
-    hasRole(['member_admin', 'member_list']),
-    people.getPeople
-  )
-  router.post('/people', hasRole('member_admin'), people.authAddPerson)
-  router.post('/people/lookup', isSignedIn, publicData.lookupPerson)
-  router.get(
-    '/people/prev-names.:fmt',
-    hasRole(['member_admin', 'member_list']),
-    people.getAllPrevNames
-  )
-
-  const peopleStream = new PeopleStream(db)
-  router.ws('/people/updates', (ws, req) => {
-    hasRole(['member_admin', 'member_list'])(req, null, err => {
-      if (err) ws.close(4001, 'Unauthorized')
-      else peopleStream.addClient(ws)
-    })
-  })
-
-  router.use('/people/:id*', user.verifyPeopleAccess)
-  router.get('/people/:id', people.getPerson)
-  router.post('/people/:id', people.updatePerson)
-  router.get('/people/:id/badge', badge.getBadge)
-
-  const ballot = new Ballot(db)
-  router.get('/people/:id/ballot', ballot.getBallot)
-
-  router.get('/people/:id/barcode.:fmt', badge.getBarcode)
-  router.get('/people/:id/log', log.getPersonLog)
-  router.get('/people/:id/prev-names', people.getPrevNames)
-  router.post('/people/:id/print', hasRole('member_admin'), badge.logPrint)
-  router.post(
-    '/people/:id/upgrade',
-    hasRole('member_admin'),
-    upgrade.authUpgradePerson
-  )
+  const pr = peopleRouter(db)
+  router.use('/members', pr.membersRouter)
+  router.use('/people', pr)
 
   router.use('/user', isSignedIn)
   router.get('/user', user.getInfo)
