@@ -62,7 +62,7 @@ Object.keys(config.modules).forEach(name => {
   debug('kansa:server')(`Adding module ${name}`)
   const mp = path.resolve(__dirname, 'modules', name)
   const module = require(mp)
-  app.use(`/${name}`, module(pgp, db, mc))
+  app.use(`/${name}`, module(db, mc))
 })
 
 // no match from router -> 404

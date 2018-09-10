@@ -3,9 +3,10 @@ const adminRouter = require('./admin/router')
 const Nominate = require('./nominate')
 const Vote = require('./vote')
 
-module.exports = pgp => {
+module.exports = origDb => {
   const url = process.env.HUGO_PG_URL
   if (!url) throw new Error('The hugo module requires the HUGO_PG_URL env var')
+  const { pgp } = origDb.$config
   const db = pgp(url)
 
   const router = express.Router()

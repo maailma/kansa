@@ -4,7 +4,7 @@ const LogEntry = require('@kansa/common/log-entry')
 const { setAllMailRecipients } = require('@kansa/common/mail')
 const { getAdmins, setAdmin, setAllKeys } = require('./admin')
 
-module.exports = (pgp, db) => {
+module.exports = db => {
   const router = express.Router()
   router.use(hasRole('admin_admin'))
 
