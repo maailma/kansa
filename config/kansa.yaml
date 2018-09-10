@@ -38,10 +38,6 @@ auth:
 # system. This configuration controls the behaviour of the API server; if you
 # make changes you may want to also modify your Docker Compose and/or Postgres
 # configuration. To disable a module, set its value to `null` or `false`.
-#
-# Modules will be loaded by the express.js server roughly as follows:
-#   const module = require(`./modules/${name}`)
-#   app.use(`/${name}`, module(pgp, db, config.modules[name]))
 modules:
   # Superadmin actions: get & set admin levels, mass sync actions
   admin: true
