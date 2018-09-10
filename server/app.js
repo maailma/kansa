@@ -1,5 +1,4 @@
 const bodyParser = require('body-parser')
-const { execSync } = require('child_process')
 const cors = require('cors')
 require('csv-express')
 const debug = require('debug')
@@ -60,13 +59,9 @@ app.use('/', appRouter(pgp, db))
 Object.keys(config.modules).forEach(name => {
   const mc = config.modules[name]
   if (!mc) return
-  debug('kansa:server')(`Installing module ${name}...`)
-  const cwd = path.resolve(__dirname, 'modules', name)
-  execSync('npm install 2>&1', { cwd, encoding: 'utf8' })
-    .split('\n')
-    .filter(line => line && !/^npm WARN .* requires a peer/.test(line))
-    .forEach(line => debug('kansa:server')(`${name}: ${line}`))
-  const module = require(cwd)
+  debug('kansa:server')(`Adding module ${name}`)
+  const mp = path.resolve(__dirname, 'modules', name)
+  const module = require(mp)
   app.use(`/${name}`, module(pgp, db, mc))
 })
 

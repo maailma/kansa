@@ -6,10 +6,10 @@ PROD_CFG_TMPL = config/docker-compose.prod-template.yaml
 
 DC = docker-compose -f $(BASE_CFG) -f $(DEV_CFG) -p $(NAME)
 
-start: server/kansa-common.tgz
+start:
 	$(DC) up --build
 
-start-detached: server/kansa-common.tgz
+start-detached:
 	$(DC) up -d --build
 
 update-%:
@@ -17,9 +17,6 @@ update-%:
 
 stop:
 	$(DC) stop
-
-server/kansa-common.tgz: common/*
-	mv common/$$(cd common && npm pack) $@
 
 test-reset:
 	docker exec kansa_postgres_1 psql api kansa -c "SELECT reset_test_users();"

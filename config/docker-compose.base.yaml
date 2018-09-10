@@ -21,7 +21,7 @@ services:
       /usr/local/openresty/bin/openresty -g 'daemon off;'"
 
   server:
-    build: ../server
+    build: ../
     image: kansa-server
     entrypoint: ./wait-for-it.sh postgres:5432 -- npm start
     links:
@@ -34,7 +34,6 @@ services:
     volumes:
       - ../config/kansa.yaml:/kansa.yaml:ro
       - ../config/siteselection/ballot-data.js:/ss-ballot-data.js:ro
-      - ../modules:/kansa/modules
 
   tarra:
     image: worldcon75devops/label-printer:0.3.0
