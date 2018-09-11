@@ -7,8 +7,8 @@ const { sendMail, updateMailRecipient } = require('@kansa/common/mail')
 module.exports = {
   refreshKey,
   resetExpiredKey,
-  setKeyChecked,
-  setKey
+  setKey,
+  sendKey
 }
 
 const getKeyMaxAge = (db, email) =>
@@ -29,7 +29,7 @@ function refreshKey(req, db, email) {
       RETURNING email, key`,
       { email, maxAge }
     )
-    return data || setKeyChecked(req, ts, { email, maxAge })
+    return data || setKey(req, ts, { email, maxAge })
   })
 }
 
@@ -55,7 +55,7 @@ function resetExpiredKey(req, db, { email, path }) {
     })
 }
 
-function setKeyChecked(req, db, { email, maxAge, name }) {
+function setKey(req, db, { email, maxAge, name }) {
   return db
     .tx(async tx => {
       if (!maxAge) maxAge = await getKeyMaxAge(tx, email)
@@ -89,7 +89,7 @@ function setKeyChecked(req, db, { email, maxAge, name }) {
     })
 }
 
-function setKey(req, db) {
+function sendKey(req, db) {
   const { email: reqEmail, name, path, reset } = req.body
   if (!reqEmail) {
     const msg = 'An email address is required for setting its key!'
@@ -105,7 +105,7 @@ function setKey(req, db) {
       if (rows.length > 0) {
         const { email } = rows[0]
         const { key, set } = reset
-          ? await setKeyChecked(req, ts, { email })
+          ? await setKey(req, ts, { email })
           : await refreshKey(req, ts, email)
         msgTmpl = 'kansa-set-key'
         return { email, key, path, set }
@@ -114,7 +114,7 @@ function setKey(req, db) {
         const msg = `Email address ${JSON.stringify(email)} not found`
         throw new InputError(msg)
       }
-      const { email, key } = await setKeyChecked(req, ts, {
+      const { email, key } = await setKey(req, ts, {
         email: reqEmail,
         name
       })

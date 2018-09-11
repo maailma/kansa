@@ -2,7 +2,7 @@ const config = require('@kansa/common/config')
 const { InputError } = require('@kansa/common/errors')
 const LogEntry = require('@kansa/common/log-entry')
 const { sendMail, updateMailRecipient } = require('@kansa/common/mail')
-const { setKeyChecked } = require('../key')
+const { setKey } = require('../key')
 const Person = require('./person')
 
 module.exports = updatePerson
@@ -80,7 +80,7 @@ function updatePerson(db, req) {
             if (prevKey) {
               key = prevKey.key
             } else {
-              key = await setKeyChecked(req, db, {
+              key = await setKey(req, db, {
                 email: values.email
               }).then(({ key }) => key)
             }

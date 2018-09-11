@@ -3,7 +3,7 @@ const express = require('express')
 const { isSignedIn, hasRole } = require('@kansa/common/auth-user')
 
 const badge = require('./badge')
-const { setKey } = require('./key')
+const { sendKey } = require('./key')
 const peopleRouter = require('./people/router')
 const adminRouter = require('./admin/router')
 const getConfig = require('./get-config')
@@ -21,7 +21,7 @@ module.exports = (db, ctx) => {
   )
 
   router.post('/key', (req, res, next) =>
-    setKey(req, db)
+    sendKey(req, db)
       .then(email => res.json({ status: 'success', email }))
       .catch(next)
   )
