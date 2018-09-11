@@ -8,7 +8,7 @@ const peopleRouter = require('../people/router')
 const userRouter = require('../user/router')
 
 module.exports = (db, app, root) => {
-  const ctx = {}
+  const ctx = { config }
 
   app.get('/config', (req, res, next) =>
     getConfig(db)

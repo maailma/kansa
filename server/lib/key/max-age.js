@@ -1,6 +1,4 @@
-const config = require('@kansa/common/config')
-
-module.exports = function getKeyMaxAge(db, email) {
+module.exports = function getKeyMaxAge(db, config, email) {
   return db
     .one(`SELECT exists(SELECT 1 FROM admin.admins WHERE email = $1)`, email)
     .then(({ exists }) => {

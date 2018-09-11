@@ -1,4 +1,3 @@
-const config = require('@kansa/common/config')
 const { InputError } = require('@kansa/common/errors')
 const LogEntry = require('@kansa/common/log-entry')
 const { sendMail, updateMailRecipient } = require('@kansa/common/mail')
@@ -7,7 +6,7 @@ const Person = require('./person')
 
 module.exports = updatePerson
 
-function getUpdateQuery(data, id, isAdmin) {
+function getUpdateQuery(config, data, id, isAdmin) {
   const values = Object.assign({}, data, { id })
   const fieldSrc = isAdmin ? Person.fields : Person.userModFields
   const fields = fieldSrc.filter(f => values.hasOwnProperty(f))
@@ -40,8 +39,9 @@ function getUpdateQuery(data, id, isAdmin) {
   return { fields, ppCond, query, values }
 }
 
-function updatePerson(db, req) {
+function updatePerson(db, config, req) {
   const { fields, ppCond, query, values } = getUpdateQuery(
+    config,
     req.body,
     parseInt(req.params.id),
     req.session.user.member_admin
@@ -80,7 +80,7 @@ function updatePerson(db, req) {
             if (prevKey) {
               key = prevKey.key
             } else {
-              key = await setKey(req, db, {
+              key = await setKey(db, config, req, {
                 email: values.email
               }).then(({ key }) => key)
             }

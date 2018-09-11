@@ -1,13 +1,10 @@
 const jwt = require('jsonwebtoken')
 const { promisify } = require('util')
-const config = require('@kansa/common/config')
 const { AuthError, InputError } = require('@kansa/common/errors')
 const LogEntry = require('@kansa/common/log-entry')
-const resetExpiredKey = require('../key/reset')
+const resetKey = require('../key/reset')
 
-const adminSqlRoles = config.auth.admin_roles.join(', ')
-
-module.exports = function login(db, req) {
+module.exports = function login(db, config, req) {
   const email = (req.body && req.body.email) || req.query.email
   const key = (req.body && req.body.key) || req.query.key
   if (!email || !key) {
@@ -19,7 +16,7 @@ module.exports = function login(db, req) {
       `SELECT
         k.email,
         k.expires IS NOT NULL AND k.expires < now() AS expired,
-        ${adminSqlRoles}
+        ${config.auth.admin_roles.join(', ')}
       FROM kansa.Keys k
         LEFT JOIN admin.Admins a USING (email)
       WHERE email=$(email) AND key=$(key)`,
@@ -28,7 +25,7 @@ module.exports = function login(db, req) {
     if (!user) throw new AuthError(`Email and key don't match`)
     if (user.expired) {
       const path = req.body && req.body.path
-      await resetExpiredKey(req, ts, { email, path })
+      await resetKey(ts, config, req, { email, path })
       const error = new InputError('Expired key')
       error.status = 403
       throw error

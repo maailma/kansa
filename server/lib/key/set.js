@@ -3,10 +3,10 @@ const LogEntry = require('@kansa/common/log-entry')
 const { updateMailRecipient } = require('@kansa/common/mail')
 const getKeyMaxAge = require('./max-age')
 
-module.exports = function setKey(req, db, { email, maxAge, name }) {
+module.exports = function setKey(db, config, req, { email, maxAge, name }) {
   return db
     .tx(async tx => {
-      if (!maxAge) maxAge = await getKeyMaxAge(tx, email)
+      if (!maxAge) maxAge = await getKeyMaxAge(tx, config, email)
       const key = randomstring.generate(12)
       await tx.none(
         `INSERT INTO Keys (email, key, expires)

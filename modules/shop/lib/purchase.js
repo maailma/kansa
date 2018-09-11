@@ -345,7 +345,7 @@ class Purchase {
         .upgradePerson(req, db, u)
         .then(({ member_number }) => {
           u.member_number = member_number
-          return this.ctx.user.refreshKey(req, db, u.email)
+          return this.ctx.user.refreshKey(db, this.ctx.config, req, u.email)
         })
         .then(({ key }) =>
           sendMail(
@@ -369,7 +369,9 @@ class Purchase {
             ])
           )
         })
-        .then(() => this.ctx.user.refreshKey(req, db, m.data.email))
+        .then(() =>
+          this.ctx.user.refreshKey(db, this.ctx.config, req, m.data.email)
+        )
         .then(({ key, set }) => {
           const data = Object.assign(
             { charge_id, key, name: m.preferredName },
@@ -470,7 +472,14 @@ class Purchase {
                   )
                 )
               })
-              .then(() => this.ctx.user.refreshKey(req, this.db, p.data.email))
+              .then(() =>
+                this.ctx.user.refreshKey(
+                  this.db,
+                  this.ctx.config,
+                  req,
+                  p.data.email
+                )
+              )
               .then(({ key, set }) => {
                 if (set) newEmailAddresses[p.data.email] = true
                 return sendMail(

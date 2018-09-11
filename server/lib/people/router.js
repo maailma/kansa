@@ -59,7 +59,7 @@ module.exports = (db, ctx) => {
   )
 
   router.post('/:id', (req, res, next) =>
-    updatePerson(db, req)
+    updatePerson(db, ctx.config, req)
       .then(data => res.json(data))
       .catch(next)
   )

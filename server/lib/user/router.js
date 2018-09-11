@@ -1,6 +1,5 @@
 const express = require('express')
 const { isSignedIn } = require('@kansa/common/auth-user')
-const config = require('@kansa/common/config')
 
 const refreshKey = require('../key/refresh')
 const sendKey = require('../key/send')
@@ -11,27 +10,27 @@ const getLog = require('./log')
 const login = require('./login')
 const logout = require('./logout')
 
-const cookieOptions = {
-  files: { httpOnly: true, path: '/member-files', secure: true },
-  session: {
-    httpOnly: true,
-    path: '/',
-    maxAge: config.auth.session_timeout
-  }
-}
-
 module.exports = (db, ctx) => {
   ctx.user = { getInfo, refreshKey, setKey }
   const router = express.Router()
 
   router.post('/key', (req, res, next) =>
-    sendKey(req, db)
+    sendKey(db, ctx.config, req)
       .then(email => res.json({ status: 'success', email }))
       .catch(next)
   )
 
+  const cookieOptions = {
+    files: { httpOnly: true, path: '/member-files', secure: true },
+    session: {
+      httpOnly: true,
+      path: '/',
+      maxAge: ctx.config.auth.session_timeout
+    }
+  }
+
   router.all('/login', (req, res, next) =>
-    login(db, req)
+    login(db, ctx.config, req)
       .then(({ email, token }) => {
         res.cookie('files', token, cookieOptions.files)
         res.json({ status: 'success', email })
@@ -40,13 +39,13 @@ module.exports = (db, ctx) => {
   )
   router.use('/login', (err, req, res, next) => {
     res.clearCookie('files', cookieOptions.files)
-    res.clearCookie(config.id, cookieOptions.session)
+    res.clearCookie(ctx.config.id, cookieOptions.session)
     next(err)
   })
 
   router.all('/logout', isSignedIn, (req, res, next) => {
     res.clearCookie('files', cookieOptions.files)
-    res.clearCookie(config.id, cookieOptions.session)
+    res.clearCookie(ctx.config.id, cookieOptions.session)
     logout(db, req)
       .then(data => {
         data.status = 'success'
@@ -56,7 +55,7 @@ module.exports = (db, ctx) => {
   })
 
   router.get('/user', isSignedIn, (req, res, next) =>
-    getInfo(db, req)
+    getInfo(db, ctx.config, req)
       .then(data => res.json(data))
       .catch(next)
   )
