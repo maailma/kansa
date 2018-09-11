@@ -2,7 +2,10 @@ const express = require('express')
 const { isSignedIn } = require('@kansa/common/auth-user')
 const config = require('@kansa/common/config')
 
+const refreshKey = require('../key/refresh')
 const sendKey = require('../key/send')
+const setKey = require('../key/set')
+
 const getInfo = require('./info')
 const getLog = require('./log')
 const login = require('./login')
@@ -18,6 +21,7 @@ const cookieOptions = {
 }
 
 module.exports = (db, ctx) => {
+  ctx.user = { getInfo, refreshKey, setKey }
   const router = express.Router()
 
   router.post('/key', (req, res, next) =>
