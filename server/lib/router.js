@@ -6,7 +6,7 @@ const badge = require('./badge')
 const { setKey } = require('./key')
 const peopleRouter = require('./people/router')
 const adminRouter = require('./admin/router')
-const publicData = require('./public')
+const getConfig = require('./get-config')
 const Purchase = require('./purchase')
 const Siteselect = require('./siteselect')
 const user = require('./user')
@@ -14,19 +14,11 @@ const user = require('./user')
 module.exports = (pgp, db) => {
   const router = express.Router()
 
-  // these are accessible without authentication
-  router.get(
-    '/public/people',
-    cors({ origin: '*' }),
-    publicData.getPublicPeople
+  router.get('/config', (req, res, next) =>
+    getConfig(db)
+      .then(data => res.json(data))
+      .catch(next)
   )
-  router.get('/public/stats', cors({ origin: '*' }), publicData.getPublicStats)
-  router.get(
-    '/public/daypass-stats',
-    cors({ origin: '*' }),
-    publicData.getDaypassStats
-  )
-  router.get('/config', publicData.getConfig)
 
   router.post('/key', (req, res, next) =>
     setKey(req, db)

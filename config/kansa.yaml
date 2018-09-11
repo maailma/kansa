@@ -45,6 +45,12 @@ modules:
   # Nomination and voting for the Hugo Awards
   hugo: true
 
+  # Member statistics and other publicly accessible data, which may be made
+  # available for use from other domains with CORS. Note: proxy/nginx.conf
+  # includes caching configuration for paths under /api/public/.
+  public:
+    cors_origin: '*'
+
   # Art show management
   raami: false
 
