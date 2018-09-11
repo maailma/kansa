@@ -1,4 +1,4 @@
-const Person = require('./person')
+const Person = require('../people/person')
 
 module.exports = {
   getPeople,
