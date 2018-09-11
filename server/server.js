@@ -1,5 +1,5 @@
 const debug = require('debug')('kansa:server')
-const { app, server } = require('./app')
+const { app, server } = require('./lib/app')
 
 // Normalize the port into a number, string, or false.
 const port = (val => {

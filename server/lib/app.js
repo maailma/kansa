@@ -9,7 +9,7 @@ const http = require('http')
 const path = require('path')
 
 const config = require('@kansa/common/config')
-const appRouter = require('./lib/router')
+const appRouter = require('./router')
 
 const pgOptions = {}
 const pgp = require('pg-promise')(pgOptions)
@@ -60,7 +60,7 @@ Object.keys(config.modules).forEach(name => {
   const mc = config.modules[name]
   if (!mc) return
   debug('kansa:server')(`Adding module ${name}`)
-  const mp = path.resolve(__dirname, 'modules', name)
+  const mp = path.resolve(__dirname, '..', 'modules', name)
   const module = require(mp)
   app.use(`/${name}`, module(db, mc))
 })
