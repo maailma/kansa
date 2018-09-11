@@ -1,6 +1,9 @@
 const express = require('express')
 const { isSignedIn, hasRole } = require('@kansa/common/auth-user')
 
+const buyDaypass = require('./buy-daypass')
+const buyMembership = require('./buy-membership')
+const buyOther = require('./buy-other')
 const Purchase = require('./purchase')
 
 module.exports = (db, ctx) => {
@@ -8,13 +11,30 @@ module.exports = (db, ctx) => {
 
   const purchase = new Purchase(db, ctx)
   router.get('/data', purchase.getPurchaseData)
+
   router.get('/daypass-prices', purchase.getDaypassPrices)
-  router.post('/daypass', purchase.makeDaypassPurchase)
+  router.post('/daypass', (req, res, next) =>
+    buyDaypass(db, ctx, req)
+      .then(data => res.json(data))
+      .catch(next)
+  )
+
   router.post('/invoice', hasRole('member_admin'), purchase.createInvoice)
   router.get('/keys', purchase.getStripeKeys)
   router.get('/list', isSignedIn, purchase.getPurchases)
-  router.post('/membership', purchase.makeMembershipPurchase)
-  router.post('/other', purchase.makeOtherPurchase)
+
+  router.post('/membership', (req, res, next) =>
+    buyMembership(db, ctx, req)
+      .then(data => res.json(data))
+      .catch(next)
+  )
+
+  router.post('/other', (req, res, next) =>
+    buyOther(db, ctx, req)
+      .then(data => res.json(data))
+      .catch(next)
+  )
+
   router.post('/webhook/stripe', purchase.handleStripeWebhook)
 
   return router
