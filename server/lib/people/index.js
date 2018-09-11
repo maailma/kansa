@@ -8,6 +8,7 @@ const Person = require('./person')
 module.exports = {
   getPerson,
   getPrevNames,
+  getPersonLog,
   addPerson,
   authAddPerson,
   updatePerson
@@ -50,6 +51,14 @@ function getPrevNames(req, res, next) {
   ORDER BY h.legal_name,l.timestamp`,
       id
     )
+    .then(data => res.json(data))
+    .catch(next)
+}
+
+function getPersonLog(req, res, next) {
+  const id = parseInt(req.params.id)
+  req.app.locals.db
+    .any('SELECT * FROM Log WHERE subject = $1', id)
     .then(data => res.json(data))
     .catch(next)
 }

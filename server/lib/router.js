@@ -4,7 +4,6 @@ const { isSignedIn, hasRole } = require('@kansa/common/auth-user')
 
 const badge = require('./badge')
 const key = require('./key')
-const log = require('./log')
 const peopleRouter = require('./people/router')
 const publicData = require('./public')
 const Purchase = require('./purchase')
@@ -57,7 +56,7 @@ module.exports = (pgp, db) => {
 
   router.use('/user', isSignedIn)
   router.get('/user', user.getInfo)
-  router.get('/user/log', log.getUserLog)
+  router.get('/user/log', user.getLog)
 
   const siteselect = new Siteselect(db)
   router.use('/siteselect', hasRole('siteselection'))

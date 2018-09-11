@@ -7,7 +7,7 @@ const isTrueish = require('@kansa/common/trueish')
 const { resetExpiredKey } = require('./key')
 const Person = require('./people/person')
 
-module.exports = { login, logout, getInfo }
+module.exports = { login, logout, getInfo, getLog }
 
 const adminSqlRoles = config.auth.admin_roles.join(', ')
 
@@ -117,5 +117,14 @@ function getInfo(req, res, next) {
         : []
       res.json({ email, people, roles })
     })
+    .catch(next)
+}
+
+function getLog(req, res, next) {
+  const { user } = req.session
+  const email = (user.member_admin && req.query.email) || user.email
+  req.app.locals.db
+    .any('SELECT * FROM Log WHERE author = $1', email)
+    .then(log => res.json({ email, log }))
     .catch(next)
 }

@@ -3,7 +3,6 @@ const { isSignedIn, hasRole, matchesId } = require('@kansa/common/auth-user')
 
 const badge = require('../badge')
 const Ballot = require('../ballot')
-const log = require('../log')
 
 const {
   getPeopleSpaced,
@@ -90,7 +89,7 @@ module.exports = db => {
   router.get('/:id/ballot', ballot.getBallot)
 
   router.get('/:id/barcode.:fmt', badge.getBarcode)
-  router.get('/:id/log', log.getPersonLog)
+  router.get('/:id/log', people.getPersonLog)
   router.get('/:id/prev-names', people.getPrevNames)
   router.post('/:id/print', hasRole('member_admin'), badge.logPrint)
   router.post(
