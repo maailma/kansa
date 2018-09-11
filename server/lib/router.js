@@ -3,7 +3,7 @@ const express = require('express')
 const { isSignedIn, hasRole } = require('@kansa/common/auth-user')
 
 const badge = require('./badge')
-const { sendKey } = require('./key')
+const sendKey = require('./key/send')
 const peopleRouter = require('./people/router')
 const adminRouter = require('./admin/router')
 const getConfig = require('./get-config')

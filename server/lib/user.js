@@ -4,7 +4,7 @@ const config = require('@kansa/common/config')
 const { AuthError, InputError } = require('@kansa/common/errors')
 const LogEntry = require('@kansa/common/log-entry')
 const isTrueish = require('@kansa/common/trueish')
-const { resetExpiredKey } = require('./key')
+const resetExpiredKey = require('./key/reset')
 const Person = require('./people/person')
 
 module.exports = { login, logout, getInfo, getLog }
