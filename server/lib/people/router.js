@@ -7,10 +7,18 @@ const Ballot = require('../ballot')
 const addPerson = require('./add')
 const { getPerson, getPrevNames, getPersonLog } = require('./get')
 const lookupPerson = require('./lookup')
+const Person = require('./person')
 const updatePerson = require('./update')
 const upgradePerson = require('./upgrade')
 
-module.exports = db => {
+module.exports = (db, ctx) => {
+  ctx.people = {
+    addPerson,
+    getPerson,
+    updatePerson,
+    upgradePerson,
+    Person
+  }
   const router = express.Router()
 
   router.post('/', hasRole('member_admin'), (req, res, next) => {

@@ -11,7 +11,7 @@ const Purchase = require('./purchase')
 const Siteselect = require('./siteselect')
 const user = require('./user')
 
-module.exports = db => {
+module.exports = (db, ctx) => {
   const router = express.Router()
 
   router.get('/config', (req, res, next) =>
@@ -51,7 +51,7 @@ module.exports = db => {
   const ar = adminRouter(db)
   router.use('/members', ar.membersRouter)
   router.use('/people', ar)
-  router.use('/people', peopleRouter(db))
+  router.use('/people', peopleRouter(db, ctx))
 
   router.use('/user', isSignedIn)
   router.get('/user', user.getInfo)
