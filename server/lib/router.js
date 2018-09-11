@@ -18,7 +18,7 @@ module.exports = (db, ctx) => {
 
   router.use(userRouter(db, ctx))
 
-  const purchase = new Purchase(db)
+  const purchase = new Purchase(db, ctx)
   router.get('/shop/data', purchase.getPurchaseData)
   router.get('/shop/daypass-prices', purchase.getDaypassPrices)
   router.post('/shop/daypass', purchase.makeDaypassPurchase)

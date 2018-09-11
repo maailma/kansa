@@ -2,14 +2,11 @@ const config = require('@kansa/common/config')
 const { InputError } = require('@kansa/common/errors')
 const { sendMail } = require('@kansa/common/mail')
 const Payment = require('./types/payment')
-const refreshKey = require('./key/refresh')
-const addPerson = require('./people/add')
-const Person = require('./people/person')
-const upgradePerson = require('./people/upgrade')
 
 class Purchase {
-  constructor(db) {
+  constructor(db, ctx) {
     this.db = db
+    this.ctx = ctx
     this.pgHelpers = db.$config.pgp.helpers
     this.createInvoice = this.createInvoice.bind(this)
     this.getDaypassPrices = this.getDaypassPrices.bind(this)
@@ -230,7 +227,9 @@ class Purchase {
             amount,
             email: prev.email,
             name: prev.name,
-            paper_pubs: Person.cleanPaperPubs(upgrade.paper_pubs),
+            paper_pubs: this.ctx.people.Person.cleanPaperPubs(
+              upgrade.paper_pubs
+            ),
             prev_membership: prev.membership
           })
         })
@@ -292,7 +291,7 @@ class Purchase {
     if (reqNewMembers.length === 0 && reqUpgrades.length === 0) {
       throw new InputError('Non-empty new_members or upgrades is required')
     }
-    const newMembers = reqNewMembers.map(src => new Person(src))
+    const newMembers = reqNewMembers.map(src => new this.ctx.people.Person(src))
     return db
       .any(
         `
@@ -342,10 +341,11 @@ class Purchase {
     { charge_id, newMembers, upgrades }
   ) {
     const applyUpgrade = u =>
-      upgradePerson(req, db, u)
+      this.ctx.people
+        .upgradePerson(req, db, u)
         .then(({ member_number }) => {
           u.member_number = member_number
-          return refreshKey(req, db, u.email)
+          return this.ctx.user.refreshKey(req, db, u.email)
         })
         .then(({ key }) =>
           sendMail(
@@ -357,7 +357,8 @@ class Purchase {
           )
         )
     const applyNewMember = m =>
-      addPerson(db, req, m)
+      this.ctx.people
+        .addPerson(db, req, m)
         .then(() => {
           const pi = paidItems.find(item => item.data === m.data)
           return (
@@ -368,7 +369,7 @@ class Purchase {
             ])
           )
         })
-        .then(() => refreshKey(req, db, m.data.email))
+        .then(() => this.ctx.user.refreshKey(req, db, m.data.email))
         .then(({ key, set }) => {
           const data = Object.assign(
             { charge_id, key, name: m.preferredName },
@@ -423,7 +424,9 @@ class Purchase {
       return next(
         new InputError('Required parameters: amount, email, passes, source')
       )
-    const passPeople = (req.body.passes || []).map(src => new Person(src))
+    const passPeople = (req.body.passes || []).map(
+      src => new this.ctx.people.Person(src)
+    )
     if (passPeople.some(p => p.passDays.length === 0))
       return next(new InputError('All passes must include at least one day'))
     const newEmailAddresses = {}
@@ -455,7 +458,8 @@ class Purchase {
         charge_id = items[0].stripe_charge_id
         return Promise.all(
           passPeople.map(p =>
-            addPerson(this.db, req, p)
+            this.ctx.people
+              .addPerson(this.db, req, p)
               .then(() => {
                 const pi = items.find(item => item.data === p.data)
                 return (
@@ -466,7 +470,7 @@ class Purchase {
                   )
                 )
               })
-              .then(() => refreshKey(req, this.db, p.data.email))
+              .then(() => this.ctx.user.refreshKey(req, this.db, p.data.email))
               .then(({ key, set }) => {
                 if (set) newEmailAddresses[p.data.email] = true
                 return sendMail(
