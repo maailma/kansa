@@ -1,12 +1,10 @@
 const config = require('@kansa/common/config')
-const { InputError } = require('@kansa/common/errors')
 
 module.exports = {
   getConfig,
   getDaypassStats,
   getPublicPeople,
-  getPublicStats,
-  lookupPerson
+  getPublicStats
 }
 
 function getConfig(req, res, next) {
@@ -69,52 +67,6 @@ function getPublicStats(req, res, next) {
         else data[country] = { [membership]: Number(count) }
       })
       res.json(data)
-    })
-    .catch(next)
-}
-
-function getLookupQuery({ email, member_number, name }) {
-  const parts = []
-  const values = {}
-  if (email && /.@./.test(email)) {
-    parts.push('lower(email) = $(email)')
-    values.email = email.trim().toLowerCase()
-  }
-  if (member_number > 0) {
-    parts.push('(member_number = $(number) OR id = $(number))')
-    values.number = Number(member_number)
-  }
-  if (name) {
-    parts.push(
-      '(lower(legal_name) = $(name) OR lower(public_name(p)) = $(name))'
-    )
-    values.name = name.trim().toLowerCase()
-  }
-  if (parts.length === 0 || (parts.length === 1 && values.number)) {
-    throw new InputError('No valid parameters')
-  }
-  const query = `
-    SELECT id, membership, preferred_name(p) AS name
-    FROM people p
-      LEFT JOIN membership_types m USING (membership)
-    WHERE ${parts.join(' AND ')} AND
-      m.allow_lookup = true`
-  return { query, values }
-}
-
-function lookupPerson(req, res, next) {
-  const { query, values } = getLookupQuery(req.body)
-  req.app.locals.db
-    .any(query, values)
-    .then(results => {
-      switch (results.length) {
-        case 0:
-          return res.json({ status: 'not found' })
-        case 1:
-          return res.json(Object.assign({ status: 'success' }, results[0]))
-        default:
-          return res.json({ status: 'multiple' })
-      }
     })
     .catch(next)
 }

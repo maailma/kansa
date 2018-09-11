@@ -4,7 +4,6 @@ const { isSignedIn, hasRole, matchesId } = require('@kansa/common/auth-user')
 const badge = require('../badge')
 const Ballot = require('../ballot')
 const log = require('../log')
-const publicData = require('../public')
 
 const {
   getPeopleSpaced,
@@ -14,6 +13,7 @@ const {
   getMemberPaperPubs
 } = require('./admin-info')
 const people = require('./index')
+const lookupPerson = require('./lookup')
 const PeopleStream = require('./stream')
 const upgrade = require('./upgrade')
 
@@ -67,7 +67,12 @@ module.exports = db => {
   })
 
   router.post('/', hasRole('member_admin'), people.authAddPerson)
-  router.post('/lookup', isSignedIn, publicData.lookupPerson)
+
+  router.post('/lookup', isSignedIn, (req, res, next) => {
+    lookupPerson(db, req.body)
+      .then(data => res.json(data))
+      .catch(next)
+  })
 
   router.use('/:id*', (req, res, next) => {
     const roles = ['member_admin']
