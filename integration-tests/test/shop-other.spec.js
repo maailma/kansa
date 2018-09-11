@@ -14,7 +14,7 @@ describe('Other purchases', () => {
   context('Parameters', () => {
     it('should require required parameters', done => {
       agent
-        .post('/api/purchase/other')
+        .post('/api/shop/other')
         .send({
           email: 'nonesuch@example.com',
           source: { id: 'x' },
@@ -34,7 +34,7 @@ describe('Other purchases', () => {
 
     it('should require a valid category', done => {
       agent
-        .post('/api/purchase/other')
+        .post('/api/shop/other')
         .send({
           email: 'nonesuch@example.com',
           source: { id: 'x' },
@@ -54,7 +54,7 @@ describe('Other purchases', () => {
 
     it('should require custom data', done => {
       agent
-        .post('/api/purchase/other')
+        .post('/api/shop/other')
         .send({
           email: 'nonesuch@example.com',
           source: { id: 'x' },
@@ -84,7 +84,7 @@ describe('Other purchases', () => {
 
     it('should require a known email address', done => {
       agent
-        .post('/api/purchase/other')
+        .post('/api/shop/other')
         .send({
           email: 'nonesuch@example.com',
           source: { id: 'x' },
@@ -111,7 +111,7 @@ describe('Other purchases', () => {
 
     it('should require person_id to be valid if not null', done => {
       agent
-        .post('/api/purchase/other')
+        .post('/api/shop/other')
         .send({
           email: 'admin@example.com',
           source: { id: 'x' },
@@ -143,7 +143,7 @@ describe('Other purchases', () => {
 
     it('should get data', done => {
       agent
-        .get('/api/purchase/data')
+        .get('/api/shop/data')
         .expect(200)
         .expect(({ body }) => {
           const { shape, types } = (body && body.new_member) || {}
@@ -201,7 +201,7 @@ describe('Other purchases', () => {
         })
         .then(source => {
           agent
-            .post('/api/purchase/other')
+            .post('/api/shop/other')
             .send({
               email: `${testName}@example.com`,
               source,
@@ -225,7 +225,7 @@ describe('Other purchases', () => {
 
     it('should be listed', done => {
       admin
-        .get('/api/purchase/list')
+        .get('/api/shop/list')
         .query({ email: `${testName}@example.com` })
         .expect(res => {
           if (res.status !== 200)
@@ -272,7 +272,7 @@ describe('Other purchases', () => {
 
     it('invoice should be created', done => {
       admin
-        .post('/api/purchase/invoice')
+        .post('/api/shop/invoice')
         .send({
           email,
           items: [
@@ -294,7 +294,7 @@ describe('Other purchases', () => {
 
     it('invoice should be listed', done => {
       admin
-        .get('/api/purchase/list')
+        .get('/api/shop/list')
         .expect(200)
         .expect(({ body }) => {
           if (!Array.isArray(body))
@@ -319,7 +319,7 @@ describe('Other purchases', () => {
         })
         .then(source => {
           agent
-            .post('/api/purchase/other')
+            .post('/api/shop/other')
             .send({
               email,
               source,

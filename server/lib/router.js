@@ -19,19 +19,15 @@ module.exports = (db, ctx) => {
   router.use(userRouter(db, ctx))
 
   const purchase = new Purchase(db)
-  router.post('/purchase', purchase.makeMembershipPurchase)
-  router.get('/purchase/data', purchase.getPurchaseData)
-  router.get('/purchase/daypass-prices', purchase.getDaypassPrices)
-  router.post('/purchase/daypass', purchase.makeDaypassPurchase)
-  router.post(
-    '/purchase/invoice',
-    hasRole('member_admin'),
-    purchase.createInvoice
-  )
-  router.get('/purchase/keys', purchase.getStripeKeys)
-  router.get('/purchase/list', isSignedIn, purchase.getPurchases)
-  router.post('/purchase/other', purchase.makeOtherPurchase)
-  router.post('/webhook/stripe', purchase.handleStripeWebhook)
+  router.get('/shop/data', purchase.getPurchaseData)
+  router.get('/shop/daypass-prices', purchase.getDaypassPrices)
+  router.post('/shop/daypass', purchase.makeDaypassPurchase)
+  router.post('/shop/invoice', hasRole('member_admin'), purchase.createInvoice)
+  router.get('/shop/keys', purchase.getStripeKeys)
+  router.get('/shop/list', isSignedIn, purchase.getPurchases)
+  router.post('/shop/membership', purchase.makeMembershipPurchase)
+  router.post('/shop/other', purchase.makeOtherPurchase)
+  router.post('/shop/webhook/stripe', purchase.handleStripeWebhook)
 
   const ar = adminRouter(db)
   router.use('/members', ar.membersRouter)

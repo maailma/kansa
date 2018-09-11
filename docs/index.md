@@ -32,12 +32,12 @@ some relevant data and/or a `message` field.
   - [`POST people/:id/upgrade`](#post-peopleidupgrade)
   - [`POST people/lookup`](#post-peoplelookup)
   - [WebSocket: `people/updates`](#websocket-peopleupdates)
-- [Purchases](#purchases)
-  - [`POST purchase`](#post-purchase)
-  - [`GET purchase/data`](#get-purchasedata)
-  - [`GET purchase/keys`](#get-purchasekeys)
-  - [`GET purchase/list`](#get-purchaselist)
-  - [`POST purchase/other`](#post-purchaseother)
+- [Shop](#shop)
+  - [`GET shop/data`](#get-shopdata)
+  - [`GET shop/keys`](#get-shopkeys)
+  - [`GET shop/list`](#get-shoplist)
+  - [`POST shop/membership`](#post-shopmembership)
+  - [`POST shop/other`](#post-shopother)
 - [Slack](#slack)
 
   - [`POST slack/invite`](#post-slackinvite)
@@ -367,33 +367,11 @@ events to signal `'Unauthorized'` and `'Not Found'` (respectively) to the client
 '{"id":#,"member_number":…,"legal_name":…,…}'
 ```
 
-## Purchases
+## Shop
 
-### `POST purchase`
+### `GET shop/data`
 
-- Parameters: `account`, `amount`, `email`, `source`,
-  `new_members: [ { membership, email, legal_name, public_first_name, public_last_name, city, state, country, paper_pubs }, ... ]`,
-  `upgrades: [ { id, membership, paper_pubs }, ... ]`
-
-Using the `source` (or token) object received from Stripe, make a charge of
-`amount` on the card (once verified against the server-side calculated sum from
-the items) and add the `new_members` to the database as well as applying the
-specified `upgrades`. For new members, generate a login key and include it in
-the welcome email sent to each address. Sends an info message to each new or
-upgraded member.
-
-#### Response
-
-```
-{
-  status: 'success',
-  charge_id
-}
-```
-
-### `GET purchase/data`
-
-Current purchase data for non-membership purchases. Top-level keys correspond to
+Current data for non-membership purchases. Top-level keys correspond to
 pre-defined payment categories and their `types`. `shape` values define the
 shapes of the expected `data` object, with matching JS `type`. Shape values with
 `required: true` need to have a non-empty value in the matching request.
@@ -449,10 +427,10 @@ shapes of the expected `data` object, with matching JS `type`. Shape values with
 }
 ```
 
-### `GET purchase/keys`
+### `GET shop/keys`
 
 Current public Stripe keys. Includes at least the `default` key. If a non-default
-key is used, its name should be passed to `POST` purchase calls as the value of
+key is used, its name should be passed to `POST` shop calls as the value of
 `account`.
 
 #### Response
@@ -464,7 +442,7 @@ key is used, its name should be passed to `POST` purchase calls as the value of
 }
 ```
 
-### `GET purchase/list`
+### `GET shop/list`
 
 Purchases made using this account's `email` address, or one set as a query
 parameter (requires `member_admin` access).
@@ -492,7 +470,29 @@ parameter (requires `member_admin` access).
 ]
 ```
 
-### `POST purchase/other`
+### `POST shop/membership`
+
+- Parameters: `account`, `amount`, `email`, `source`,
+  `new_members: [ { membership, email, legal_name, public_first_name, public_last_name, city, state, country, paper_pubs }, ... ]`,
+  `upgrades: [ { id, membership, paper_pubs }, ... ]`
+
+Using the `source` (or token) object received from Stripe, make a charge of
+`amount` on the card (once verified against the server-side calculated sum from
+the items) and add the `new_members` to the database as well as applying the
+specified `upgrades`. For new members, generate a login key and include it in
+the welcome email sent to each address. Sends an info message to each new or
+upgraded member.
+
+#### Response
+
+```
+{
+  status: 'success',
+  charge_id
+}
+```
+
+### `POST shop/other`
 
 Parameters:
 
@@ -503,7 +503,7 @@ Parameters:
   - `amount`, `currency`: The charge amount, in integer cents of `currency`
   - `person_id`, `person_name`: The beneficiary of the payment (optional)
   - `category`, `type`, `data`: Required to match entries returned by
-    [`GET purchase/data`](#get-purchasedata)
+    [`GET shop/data`](#get-shopdata)
   - `comments`, `invoice`: Optional strings
 
 Using the `source` received from Stripe, make a charge on the card or account
