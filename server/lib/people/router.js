@@ -7,6 +7,7 @@ const Ballot = require('../ballot')
 const people = require('./index')
 const lookupPerson = require('./lookup')
 const Person = require('./person')
+const updatePerson = require('./update')
 const upgradePerson = require('./upgrade')
 
 module.exports = db => {
@@ -42,9 +43,14 @@ module.exports = db => {
   })
 
   router.get('/:id', people.getPerson)
-  router.post('/:id', people.updatePerson)
   router.get('/:id/log', people.getPersonLog)
   router.get('/:id/prev-names', people.getPrevNames)
+
+  router.post('/:id', (req, res, next) =>
+    updatePerson(db, req)
+      .then(data => res.json(data))
+      .catch(next)
+  )
 
   router.post('/:id/upgrade', hasRole('member_admin'), (req, res, next) => {
     const data = Object.assign({}, req.body)
