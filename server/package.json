@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "repository": "maailma/kansa",
   "scripts": {
-    "start": "node lib/app"
+    "start": "node lib/server"
   },
   "engines": {
     "node": ">=8"

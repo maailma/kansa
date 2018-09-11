@@ -2,12 +2,12 @@ const debug = require('debug')('kansa:server')
 const path = require('path')
 
 const config = require('@kansa/common/config')
-const adminRouter = require('./admin/router')
-const getConfig = require('./get-config')
-const peopleRouter = require('./people/router')
-const userRouter = require('./user/router')
+const adminRouter = require('../admin/router')
+const getConfig = require('../get-config')
+const peopleRouter = require('../people/router')
+const userRouter = require('../user/router')
 
-module.exports = (db, app) => {
+module.exports = (db, app, root) => {
   const ctx = {}
 
   app.get('/config', (req, res, next) =>
@@ -24,7 +24,7 @@ module.exports = (db, app) => {
     const mc = config.modules[name]
     if (!mc) return
     debug(`Adding module ${name}`)
-    const mp = path.resolve(__dirname, '..', 'modules', name)
+    const mp = path.resolve(root, name)
     app.use(`/${name}`, require(mp)(db, ctx, mc))
   })
 
