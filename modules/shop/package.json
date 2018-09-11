@@ -1,0 +1,17 @@
+{
+  "name": "@kansa/shop",
+  "version": "1.0.0",
+  "description": "Kansa web shop for memberships, daypasses, and other things",
+  "private": true,
+  "license": "Apache-2.0",
+  "repository": "maailma/kansa",
+  "main": "lib/router.js",
+  "dependencies": {
+    "stripe": "^6.3.0"
+  },
+  "peerDependencies": {
+    "@kansa/common": "1.x",
+    "express": "4.x",
+    "randomstring": "1.x"
+  }
+}

@@ -62,6 +62,9 @@ modules:
   # Art show management
   raami: false
 
+  # Web shop for memberships, daypasses, and other things
+  shop: true
+
   # Site selection token management
   siteselect: true
 

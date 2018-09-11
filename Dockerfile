@@ -13,6 +13,9 @@ RUN npm install && \
 COPY modules/raami/package.json modules/raami/
 RUN cd modules/raami && npm install && npm cache clean --force
 
+COPY modules/shop/package.json modules/shop/
+RUN cd modules/shop && npm install && npm cache clean --force
+
 COPY modules/slack/package.json modules/slack/
 RUN cd modules/slack && npm install && npm cache clean --force
 

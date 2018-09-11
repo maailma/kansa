@@ -1,7 +1,7 @@
 const config = require('@kansa/common/config')
 const { InputError } = require('@kansa/common/errors')
 const { sendMail } = require('@kansa/common/mail')
-const Payment = require('./types/payment')
+const Payment = require('./payment')
 
 class Purchase {
   constructor(db, ctx) {
