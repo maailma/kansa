@@ -59,7 +59,7 @@ describe('Login', () => {
       return unlogged
         .get('/api/login')
         .query({ email, key: 'key' })
-        .expect(403, { email, status: 'expired' })
+        .expect(403)
     })
 
     it('gets unauthorized from /api/user', () =>

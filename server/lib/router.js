@@ -9,7 +9,7 @@ const adminRouter = require('./admin/router')
 const getConfig = require('./get-config')
 const Purchase = require('./purchase')
 const Siteselect = require('./siteselect')
-const user = require('./user')
+const userRouter = require('./user/router')
 
 module.exports = (db, ctx) => {
   const router = express.Router()
@@ -26,7 +26,7 @@ module.exports = (db, ctx) => {
       .catch(next)
   )
 
-  router.all('/login', user.login)
+  router.use(userRouter(db, ctx))
 
   router.get('/barcode/:key/:id.:fmt', badge.getBarcode)
   router.get('/blank-badge', badge.getBadge)
@@ -46,16 +46,10 @@ module.exports = (db, ctx) => {
   router.post('/purchase/other', purchase.makeOtherPurchase)
   router.post('/webhook/stripe', purchase.handleStripeWebhook)
 
-  router.all('/logout', isSignedIn, user.logout)
-
   const ar = adminRouter(db)
   router.use('/members', ar.membersRouter)
   router.use('/people', ar)
   router.use('/people', peopleRouter(db, ctx))
-
-  router.use('/user', isSignedIn)
-  router.get('/user', user.getInfo)
-  router.get('/user/log', user.getLog)
 
   const siteselect = new Siteselect(db)
   router.use('/siteselect', hasRole('siteselection'))
