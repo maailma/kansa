@@ -13,6 +13,7 @@ const {
 } = require('./admin-info')
 const people = require('./index')
 const lookupPerson = require('./lookup')
+const Person = require('./person')
 const PeopleStream = require('./stream')
 const upgrade = require('./upgrade')
 
@@ -65,7 +66,20 @@ module.exports = db => {
     })
   })
 
-  router.post('/', hasRole('member_admin'), people.authAddPerson)
+  router.post('/', hasRole('member_admin'), (req, res, next) => {
+    let person
+    try {
+      person = new Person(req.body)
+    } catch (err) {
+      return next(err)
+    }
+    people
+      .addPerson(req, db, person)
+      .then(({ id, member_number }) =>
+        res.json({ status: 'success', id, member_number })
+      )
+      .catch(next)
+  })
 
   router.post('/lookup', isSignedIn, (req, res, next) => {
     lookupPerson(db, req.body)
@@ -92,11 +106,17 @@ module.exports = db => {
   router.get('/:id/log', people.getPersonLog)
   router.get('/:id/prev-names', people.getPrevNames)
   router.post('/:id/print', hasRole('member_admin'), badge.logPrint)
-  router.post(
-    '/:id/upgrade',
-    hasRole('member_admin'),
-    upgrade.authUpgradePerson
-  )
+  router.post('/:id/upgrade', hasRole('member_admin'), (req, res, next) => {
+    const data = Object.assign({}, req.body, {
+      id: parseInt(req.params.id)
+    })
+    upgrade
+      .upgradePerson(req, db, data)
+      .then(({ member_number, updated }) =>
+        res.json({ status: 'success', member_number, updated })
+      )
+      .catch(next)
+  })
 
   return router
 }

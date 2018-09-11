@@ -3,7 +3,7 @@ const LogEntry = require('@kansa/common/log-entry')
 const { updateMailRecipient } = require('@kansa/common/mail')
 const Person = require('./person')
 
-module.exports = { authUpgradePerson, upgradePerson }
+module.exports = { upgradePerson }
 
 function upgradePaperPubs(req, db, data) {
   if (!data.paper_pubs) throw new InputError('No valid parameters')
@@ -84,15 +84,4 @@ function upgradePerson(req, db, data) {
   return data.membership
     ? upgradeMembership(req, db, data)
     : upgradePaperPubs(req, db, data)
-}
-
-function authUpgradePerson(req, res, next) {
-  const data = Object.assign({}, req.body, {
-    id: parseInt(req.params.id)
-  })
-  upgradePerson(req, req.app.locals.db, data)
-    .then(({ member_number, updated }) =>
-      res.json({ status: 'success', member_number, updated })
-    )
-    .catch(next)
 }

@@ -10,7 +10,6 @@ module.exports = {
   getPrevNames,
   getPersonLog,
   addPerson,
-  authAddPerson,
   updatePerson
 }
 
@@ -90,20 +89,6 @@ function addPerson(req, db, person) {
     }
     return { id, member_number }
   })
-}
-
-function authAddPerson(req, res, next) {
-  let person
-  try {
-    person = new Person(req.body)
-  } catch (err) {
-    return next(err)
-  }
-  addPerson(req, req.app.locals.db, person)
-    .then(({ id, member_number }) =>
-      res.json({ status: 'success', id, member_number })
-    )
-    .catch(next)
 }
 
 function getUpdateQuery(data, id, isAdmin) {
