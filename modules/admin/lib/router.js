@@ -4,7 +4,7 @@ const LogEntry = require('@kansa/common/log-entry')
 const { setAllMailRecipients } = require('@kansa/common/mail')
 const { getAdmins, setAdmin, setAllKeys } = require('./admin')
 
-module.exports = db => {
+module.exports = (db, ctx) => {
   const router = express.Router()
   router.use(hasRole('admin_admin'))
 
@@ -17,7 +17,7 @@ module.exports = db => {
   router.post('/', (req, res, next) => {
     const data = Object.assign({}, req.body)
     db.tx(async tx => {
-      await setAdmin(tx, data)
+      await setAdmin(tx, ctx.config.auth, data)
       await new LogEntry(req, 'Set admin rights for ' + data.email).write(tx)
     })
       .then(() => res.json({ status: 'success', set: data }))
@@ -25,7 +25,7 @@ module.exports = db => {
   })
 
   router.post('/set-keys', (req, res, next) => {
-    setAllKeys(db)
+    setAllKeys(db, ctx.config.auth)
       .then(count => res.json({ status: 'success', count }))
       .catch(next)
   })

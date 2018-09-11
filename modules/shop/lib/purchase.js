@@ -1,4 +1,3 @@
-const config = require('@kansa/common/config')
 const { InputError } = require('@kansa/common/errors')
 const { sendMail } = require('@kansa/common/mail')
 const Payment = require('./payment')
@@ -7,7 +6,6 @@ class Purchase {
   constructor(db, ctx) {
     this.db = db
     this.ctx = ctx
-    this.pgHelpers = db.$config.pgp.helpers
     this.createInvoice = this.createInvoice.bind(this)
     this.getDaypassPrices = this.getDaypassPrices.bind(this)
     this.getPurchaseData = this.getPurchaseData.bind(this)
@@ -200,7 +198,7 @@ class Purchase {
           }
 
           if (upgrade.paper_pubs) {
-            if (!config.paid_paper_pubs)
+            if (!this.ctx.config.paid_paper_pubs)
               throw new InputError(
                 'Paper pubs are not a paid option, so cannot be a part of an upgrade'
               )
@@ -211,7 +209,7 @@ class Purchase {
           } else if (!upgrade.membership) {
             throw new InputError(
               `Change in ${
-                config.paid_paper_pubs
+                this.ctx.config.paid_paper_pubs
                   ? 'at least one of membership and/or paper_pubs'
                   : 'membership'
               } is required for upgrade`
@@ -247,7 +245,10 @@ class Purchase {
         )
       }
       const pp =
-        (config.paid_paper_pubs && data.paper_pubs && prices.paper_pubs) || 0
+        (this.ctx.config.paid_paper_pubs &&
+          data.paper_pubs &&
+          prices.paper_pubs) ||
+        0
       return {
         amount: mp + pp,
         category: 'new_member',
@@ -396,7 +397,7 @@ class Purchase {
             if (data.amount === 0) return []
             const { account, email, source, items } = data
             return new Payment(
-              this.pgHelpers,
+              this.ctx,
               dbTask,
               account,
               email,
@@ -448,7 +449,7 @@ class Purchase {
           data: p.data
         }))
         return new Payment(
-          this.pgHelpers,
+          this.ctx,
           this.db,
           'default',
           email,
@@ -505,7 +506,7 @@ class Purchase {
 
   makeOtherPurchase(req, res, next) {
     const { account, email, items, source } = req.body
-    new Payment(this.pgHelpers, this.db, account, email, source, items)
+    new Payment(this.ctx, this.db, account, email, source, items)
       .process()
       .then(items =>
         Promise.all(
@@ -552,7 +553,7 @@ class Purchase {
     const { email, items } = req.body
     if (!email || !items || items.length === 0)
       throw new InputError('Required parameters: email, items')
-    new Payment(this.pgHelpers, this.db, 'default', email, null, items)
+    new Payment(this.ctx, this.db, 'default', email, null, items)
       .process()
       .then(items => {
         if (items.some(item => !item.id || item.status !== 'invoice')) {

@@ -1,6 +1,5 @@
 const fetch = require('node-fetch')
 const { matchesId } = require('@kansa/common/auth-user')
-const config = require('@kansa/common/config')
 const { InputError } = require('@kansa/common/errors')
 const splitName = require('@kansa/common/split-name')
 
@@ -24,8 +23,9 @@ const fetchBadge = ({ member_number, membership, names, subtitle }) =>
   })
 
 class Badge {
-  constructor(db) {
+  constructor(db, config) {
     this.db = db
+    this.config = config
     this.getBadge = this.getBadge.bind(this)
     this.getBlank = this.getBlank.bind(this)
     this.logPrint = this.logPrint.bind(this)
@@ -37,7 +37,7 @@ class Badge {
       .then(({ body, headers }) => {
         res.setHeader(
           'Content-Disposition',
-          `inline; filename="${config.id}-badge.png"`
+          `inline; filename="${this.config.id}-badge.png"`
         )
         res.setHeader('Content-Type', headers.get('content-type'))
         res.setHeader('Content-Length', headers.get('content-length'))
@@ -71,7 +71,7 @@ class Badge {
         })
         res.setHeader(
           'Content-Disposition',
-          `inline; filename="${config.id}-badge-${id}.png"`
+          `inline; filename="${this.config.id}-badge-${id}.png"`
         )
         res.setHeader('Content-Type', headers.get('content-type'))
         res.setHeader('Content-Length', headers.get('content-length'))

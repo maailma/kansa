@@ -1,5 +1,4 @@
 const randomstring = require('randomstring')
-const config = require('@kansa/common/config')
 const { InputError } = require('@kansa/common/errors')
 const isTrueish = require('@kansa/common/trueish')
 
@@ -9,8 +8,8 @@ function getAdmins(db) {
   return db.any('SELECT * FROM admin.Admins')
 }
 
-function setAdmin(db, data) {
-  const fields = config.auth.admin_roles.filter(fn => data.hasOwnProperty(fn))
+function setAdmin(db, authCfg, data) {
+  const fields = authCfg.admin_roles.filter(fn => data.hasOwnProperty(fn))
   if (!data.email || fields.length == 0) {
     return Promise.reject(new InputError('Missing email or valid fields'))
   }
@@ -30,7 +29,7 @@ function setAdmin(db, data) {
   )
 }
 
-function setAllKeys(db) {
+function setAllKeys(db, authCfg) {
   return db.tx(async tx => {
     const data = await tx.any(
       `SELECT DISTINCT p.email, a.email IS NOT NULL AS is_admin
@@ -39,7 +38,7 @@ function setAllKeys(db) {
         LEFT JOIN admin.admins a USING (email)
       WHERE k.email IS NULL`
     )
-    const kt = config.auth.key_timeout
+    const kt = authCfg.key_timeout
     await tx.sequence(i => {
       if (!data[i]) return undefined
       const { email, is_admin } = data[i]

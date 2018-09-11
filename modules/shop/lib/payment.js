@@ -1,5 +1,4 @@
 const Stripe = require('stripe')
-const config = require('@kansa/common/config')
 const { InputError } = require('@kansa/common/errors')
 const { generateToken } = require('./token')
 
@@ -44,18 +43,12 @@ class Payment {
     ]
   }
 
-  // https://stripe.com/docs/api/node#create_charge-statement_descriptor
-  // max 22 chars
-  static get statement_descriptor() {
-    return `${config.name} membership`
-  }
-
   static get table() {
     return 'payments'
   }
 
-  constructor(pgHelpers, db, account, email, source, items) {
-    this.pgHelpers = pgHelpers
+  constructor(ctx, db, account, email, source, items) {
+    this.pgHelpers = ctx.pgp.helpers
     this.db = db
     this.account = account || 'default'
     this.email = email
@@ -80,6 +73,8 @@ class Payment {
       invoice: item.invoice || null,
       comments: item.comments || null
     }))
+    // https://stripe.com/docs/api/node#create_charge-statement_descriptor
+    this.statement_descriptor = `${ctx.config.name} membership`.substr(0, 22)
   }
 
   get stripe() {
@@ -306,7 +301,7 @@ class Payment {
         metadata: { items: this.items.map(item => item.id).join(',') },
         receipt_email: this.email,
         source: this.source.id,
-        statement_descriptor: Payment.statement_descriptor
+        statement_descriptor: this.statement_descriptor
       })
       .then(charge => {
         const _charge = {

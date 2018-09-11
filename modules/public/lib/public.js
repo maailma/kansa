@@ -1,5 +1,3 @@
-const config = require('@kansa/common/config')
-
 module.exports = {
   getDaypassStats,
   getPublicPeople,

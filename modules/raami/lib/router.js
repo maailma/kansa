@@ -4,12 +4,11 @@ const express = require('express')
 const { isSignedIn, hasRole } = require('@kansa/common/auth-user')
 const Queries = require('./queries')
 
-module.exports = origDb => {
+module.exports = (origDb, ctx) => {
   const url = process.env.RAAMI_PG_URL
   if (!url)
     throw new Error('The raami module requires the RAAMI_PG_URL env var')
-  const { pgp } = origDb.$config
-  const db = pgp(url)
+  const db = ctx.pgp(url)
 
   const router = express.Router()
   router.use(bodyParser.json({ limit: '2mb' }))
