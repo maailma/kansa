@@ -5,9 +5,9 @@ const debug = require('debug')
 const express = require('express')
 const session = require('express-session')
 const pgSession = require('connect-pg-simple')(session)
-const http = require('http')
 
 const config = require('@kansa/common/config')
+const { NotFoundError } = require('@kansa/common/errors')
 const loadModules = require('./modules')
 
 const pgOptions = {}
@@ -17,13 +17,11 @@ if (debug.enabled('kansa:db')) {
   pgMonitor.attach(pgOptions)
 }
 const db = pgp(process.env.DATABASE_URL)
-const debugErrors = debug('kansa:errors')
 
+const PORT = 80
 const app = express()
-const server = http.createServer(app)
-require('express-ws')(app, server)
+require('express-ws')(app)
 
-app.locals.db = db
 if (debug.enabled('kansa:http')) {
   const logger = require('morgan')
   app.use(logger('dev'))
@@ -55,18 +53,12 @@ app.use(
 
 loadModules(db, app)
 
-// no match from routers -> 404
-app.use((req, res, next) => {
-  const err = new Error('Not Found')
-  err.status = 404
-  next(err)
-})
+app.use((req, res, next) => next(new NotFoundError()))
 
-// error handler
 const isDevEnv = app.get('env') === 'development'
 app.use((err, req, res, next) => {
   const error = err.error || err
-  debugErrors(error instanceof Error ? error.message : err)
+  debug('kansa:errors')(error instanceof Error ? error.message : err)
   const data = { status: 'error', message: error.message }
   if (isDevEnv) data.error = err
   const status =
@@ -74,4 +66,4 @@ app.use((err, req, res, next) => {
   res.status(status).json(data)
 })
 
-module.exports = { app, server }
+app.listen(PORT, () => debug('kansa:server')('Kansa kuuntelee.\n'))
