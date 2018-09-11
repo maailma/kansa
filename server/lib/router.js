@@ -11,7 +11,7 @@ const Purchase = require('./purchase')
 const Siteselect = require('./siteselect')
 const user = require('./user')
 
-module.exports = (pgp, db) => {
+module.exports = db => {
   const router = express.Router()
 
   router.get('/config', (req, res, next) =>
@@ -31,7 +31,7 @@ module.exports = (pgp, db) => {
   router.get('/barcode/:key/:id.:fmt', badge.getBarcode)
   router.get('/blank-badge', badge.getBadge)
 
-  const purchase = new Purchase(pgp, db)
+  const purchase = new Purchase(db)
   router.post('/purchase', purchase.makeMembershipPurchase)
   router.get('/purchase/data', purchase.getPurchaseData)
   router.get('/purchase/daypass-prices', purchase.getDaypassPrices)

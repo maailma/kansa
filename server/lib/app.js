@@ -6,10 +6,9 @@ const express = require('express')
 const session = require('express-session')
 const pgSession = require('connect-pg-simple')(session)
 const http = require('http')
-const path = require('path')
 
 const config = require('@kansa/common/config')
-const appRouter = require('./router')
+const loadModules = require('./modules')
 
 const pgOptions = {}
 const pgp = require('pg-promise')(pgOptions)
@@ -54,18 +53,9 @@ app.use(
   })
 )
 
-app.use('/', appRouter(pgp, db))
+loadModules(db, app)
 
-Object.keys(config.modules).forEach(name => {
-  const mc = config.modules[name]
-  if (!mc) return
-  debug('kansa:server')(`Adding module ${name}`)
-  const mp = path.resolve(__dirname, '..', 'modules', name)
-  const module = require(mp)
-  app.use(`/${name}`, module(db, mc))
-})
-
-// no match from router -> 404
+// no match from routers -> 404
 app.use((req, res, next) => {
   const err = new Error('Not Found')
   err.status = 404

@@ -8,9 +8,9 @@ const Person = require('./people/person')
 const upgradePerson = require('./people/upgrade')
 
 class Purchase {
-  constructor(pgp, db) {
-    this.pgp = pgp
+  constructor(db) {
     this.db = db
+    this.pgHelpers = db.$config.pgp.helpers
     this.createInvoice = this.createInvoice.bind(this)
     this.getDaypassPrices = this.getDaypassPrices.bind(this)
     this.getPurchaseData = this.getPurchaseData.bind(this)
@@ -393,7 +393,7 @@ class Purchase {
             if (data.amount === 0) return []
             const { account, email, source, items } = data
             return new Payment(
-              this.pgp,
+              this.pgHelpers,
               dbTask,
               account,
               email,
@@ -443,7 +443,7 @@ class Purchase {
           data: p.data
         }))
         return new Payment(
-          this.pgp,
+          this.pgHelpers,
           this.db,
           'default',
           email,
@@ -492,7 +492,7 @@ class Purchase {
 
   makeOtherPurchase(req, res, next) {
     const { account, email, items, source } = req.body
-    new Payment(this.pgp, this.db, account, email, source, items)
+    new Payment(this.pgHelpers, this.db, account, email, source, items)
       .process()
       .then(items =>
         Promise.all(
@@ -539,7 +539,7 @@ class Purchase {
     const { email, items } = req.body
     if (!email || !items || items.length === 0)
       throw new InputError('Required parameters: email, items')
-    new Payment(this.pgp, this.db, 'default', email, null, items)
+    new Payment(this.pgHelpers, this.db, 'default', email, null, items)
       .process()
       .then(items => {
         if (items.some(item => !item.id || item.status !== 'invoice')) {

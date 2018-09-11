@@ -54,8 +54,8 @@ class Payment {
     return 'payments'
   }
 
-  constructor(pgp, db, account, email, source, items) {
-    this.pgp = pgp
+  constructor(pgHelpers, db, account, email, source, items) {
+    this.pgHelpers = pgHelpers
     this.db = db
     this.account = account || 'default'
     this.email = email
@@ -265,7 +265,7 @@ class Payment {
       throw new Error('Payment already made? charge ids:' + charges)
     const newItems = this.items.filter(item => !item.id)
     if (newItems.length === 0) return null
-    const sqlInsert = this.pgp.helpers.insert(
+    const sqlInsert = this.pgHelpers.insert(
       newItems,
       Payment.fields,
       Payment.table
