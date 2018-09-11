@@ -2,6 +2,7 @@ const express = require('express')
 const { isSignedIn } = require('@kansa/common/auth-user')
 const config = require('@kansa/common/config')
 
+const sendKey = require('../key/send')
 const getInfo = require('./info')
 const getLog = require('./log')
 const login = require('./login')
@@ -18,6 +19,12 @@ const cookieOptions = {
 
 module.exports = (db, ctx) => {
   const router = express.Router()
+
+  router.post('/key', (req, res, next) =>
+    sendKey(req, db)
+      .then(email => res.json({ status: 'success', email }))
+      .catch(next)
+  )
 
   router.all('/login', (req, res, next) =>
     login(db, req)
