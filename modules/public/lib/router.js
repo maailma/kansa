@@ -3,7 +3,7 @@ const express = require('express')
 
 const { getDaypassStats, getPublicPeople, getPublicStats } = require('./public')
 
-module.exports = (db, cfg) => {
+module.exports = (db, ctx, cfg) => {
   const router = express.Router()
   if (cfg.cors_origin) router.use(cors({ origin: cfg.cors_origin }))
 
