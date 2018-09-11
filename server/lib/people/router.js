@@ -4,9 +4,9 @@ const { isSignedIn, hasRole, matchesId } = require('@kansa/common/auth-user')
 const badge = require('../badge')
 const Ballot = require('../ballot')
 
+const addPerson = require('./add')
 const people = require('./index')
 const lookupPerson = require('./lookup')
-const Person = require('./person')
 const updatePerson = require('./update')
 const upgradePerson = require('./upgrade')
 
@@ -14,14 +14,7 @@ module.exports = db => {
   const router = express.Router()
 
   router.post('/', hasRole('member_admin'), (req, res, next) => {
-    let person
-    try {
-      person = new Person(req.body)
-    } catch (err) {
-      return next(err)
-    }
-    people
-      .addPerson(req, db, person)
+    addPerson(db, req, req.body)
       .then(({ id, member_number }) =>
         res.json({ status: 'success', id, member_number })
       )

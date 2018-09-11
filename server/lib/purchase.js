@@ -3,7 +3,7 @@ const { InputError } = require('@kansa/common/errors')
 const { sendMail } = require('@kansa/common/mail')
 const Payment = require('./types/payment')
 const { refreshKey } = require('./key')
-const { addPerson } = require('./people')
+const addPerson = require('./people/add')
 const Person = require('./people/person')
 const upgradePerson = require('./people/upgrade')
 
@@ -357,7 +357,7 @@ class Purchase {
           )
         )
     const applyNewMember = m =>
-      addPerson(req, db, m)
+      addPerson(db, req, m)
         .then(() => {
           const pi = paidItems.find(item => item.data === m.data)
           return (
@@ -455,7 +455,7 @@ class Purchase {
         charge_id = items[0].stripe_charge_id
         return Promise.all(
           passPeople.map(p =>
-            addPerson(req, this.db, p)
+            addPerson(this.db, req, p)
               .then(() => {
                 const pi = items.find(item => item.data === p.data)
                 return (
