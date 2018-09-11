@@ -1,57 +1,21 @@
-const host = 'https://localhost:4430'
-const request = require('supertest')
 const assert = require('assert')
 const fs = require('fs')
+const request = require('supertest')
 
-// Create agent for unlogged and admin sessions
 const ca = fs.readFileSync('../proxy/ssl/localhost.cert', 'utf8')
+const host = 'https://localhost:4430'
 const unlogged = request.agent(host, { ca })
 const admin = request.agent(host, { ca })
 const loginparams = { email: 'admin@example.com', key: 'key' }
 
-describe('Check that API services are up', function() {
-  this.timeout(120000)
-  this.retries(10)
-
-  afterEach(function(done) {
-    if (this.currentTest.state !== 'passed') {
-      setTimeout(done, 2000)
-    } else {
-      done()
-    }
-  })
-
-  it('Should respond with json on api/', () =>
-    unlogged.get('/api/').expect('Content-Type', /json/))
-
-  it('Should respond with json on api/hugo/', () =>
-    unlogged.get('/api/hugo/').expect('Content-Type', /json/))
-})
-
-describe('Public data', () => {
-  it('Member list is an array', () =>
-    unlogged
-      .get('/api/public/people')
-      .expect(200)
-      .expect(res => {
-        assert(Array.isArray(res.body))
-      }))
-
-  it('Country statistics includes totals', () =>
-    unlogged
-      .get('/api/public/stats')
-      .expect(200)
-      .expect(res => {
-        assert(res.body['='].hasOwnProperty('='))
-      }))
-
+describe('Configuration', () => {
   it('Configuration is an object with id, name', () =>
     unlogged
       .get('/api/config')
       .expect(200)
       .expect(res => {
-        assert(!!res.body.id)
-        assert(!!res.body.name)
+        assert(typeof res.body.id, 'string')
+        assert(typeof res.body.name, 'string')
       }))
 })
 
