@@ -3,7 +3,7 @@ const LogEntry = require('@kansa/common/log-entry')
 const { updateMailRecipient } = require('@kansa/common/mail')
 const Person = require('./person')
 
-module.exports = { upgradePerson }
+module.exports = upgradePerson
 
 function upgradePaperPubs(req, db, data) {
   if (!data.paper_pubs) throw new InputError('No valid parameters')

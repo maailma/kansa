@@ -5,7 +5,7 @@ const Payment = require('./types/payment')
 const { refreshKey } = require('./key')
 const { addPerson } = require('./people')
 const Person = require('./people/person')
-const { upgradePerson } = require('./people/upgrade')
+const upgradePerson = require('./people/upgrade')
 
 class Purchase {
   constructor(pgp, db) {

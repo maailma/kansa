@@ -15,7 +15,7 @@ const people = require('./index')
 const lookupPerson = require('./lookup')
 const Person = require('./person')
 const PeopleStream = require('./stream')
-const upgrade = require('./upgrade')
+const upgradePerson = require('./upgrade')
 
 module.exports = db => {
   const router = express.Router()
@@ -107,11 +107,9 @@ module.exports = db => {
   router.get('/:id/prev-names', people.getPrevNames)
   router.post('/:id/print', hasRole('member_admin'), badge.logPrint)
   router.post('/:id/upgrade', hasRole('member_admin'), (req, res, next) => {
-    const data = Object.assign({}, req.body, {
-      id: parseInt(req.params.id)
-    })
-    upgrade
-      .upgradePerson(req, db, data)
+    const data = Object.assign({}, req.body)
+    data.id = parseInt(req.params.id)
+    upgradePerson(req, db, data)
       .then(({ member_number, updated }) =>
         res.json({ status: 'success', member_number, updated })
       )
