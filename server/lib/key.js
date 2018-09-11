@@ -89,13 +89,14 @@ function setKeyChecked(req, db, { email, maxAge, name }) {
     })
 }
 
-function setKey(req, res, next) {
+function setKey(req, db) {
   const { email: reqEmail, name, path, reset } = req.body
-  if (!reqEmail)
-    return next(
-      new InputError('An email address is required for setting its key!')
-    )
-  req.app.locals.db
+  if (!reqEmail) {
+    const msg = 'An email address is required for setting its key!'
+    return Promise.reject(new InputError(msg))
+  }
+  let msgTmpl
+  return db
     .task(async ts => {
       const rows = await ts.any(
         'SELECT email FROM People WHERE email ILIKE $1',
@@ -106,20 +107,22 @@ function setKey(req, res, next) {
         const { key, set } = reset
           ? await setKeyChecked(req, ts, { email })
           : await refreshKey(req, ts, email)
-        await sendMail('kansa-set-key', { email, key, path, set })
-        res.json({ status: 'success', email })
-      } else {
-        if (!name)
-          return next(
-            new InputError(`Email address ${JSON.stringify(email)} not found`)
-          )
-        const { email, key } = await setKeyChecked(req, ts, {
-          email: reqEmail,
-          name
-        })
-        await sendMail('kansa-create-account', { email, key, name, path })
-        res.json({ status: 'success', email })
+        msgTmpl = 'kansa-set-key'
+        return { email, key, path, set }
       }
+      if (!name) {
+        const msg = `Email address ${JSON.stringify(email)} not found`
+        throw new InputError(msg)
+      }
+      const { email, key } = await setKeyChecked(req, ts, {
+        email: reqEmail,
+        name
+      })
+      msgTmpl = 'kansa-create-account'
+      return { email, key, name, path }
     })
-    .catch(next)
+    .then(async data => {
+      await sendMail(msgTmpl, data)
+      return data.email
+    })
 }

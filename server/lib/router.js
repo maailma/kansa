@@ -3,7 +3,7 @@ const express = require('express')
 const { isSignedIn, hasRole } = require('@kansa/common/auth-user')
 
 const badge = require('./badge')
-const key = require('./key')
+const { setKey } = require('./key')
 const peopleRouter = require('./people/router')
 const adminRouter = require('./admin/router')
 const publicData = require('./public')
@@ -28,7 +28,12 @@ module.exports = (pgp, db) => {
   )
   router.get('/config', publicData.getConfig)
 
-  router.post('/key', key.setKey)
+  router.post('/key', (req, res, next) =>
+    setKey(req, db)
+      .then(email => res.json({ status: 'success', email }))
+      .catch(next)
+  )
+
   router.all('/login', user.login)
 
   router.get('/barcode/:key/:id.:fmt', badge.getBarcode)
