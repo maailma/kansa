@@ -109,10 +109,10 @@ describe('People', () => {
     it('fail to list all people', () => member.get(`/api/people`).expect(401))
 
     it('fail to list member emails', () =>
-      member.get(`/api/members/emails`).expect(401))
+      member.get(`/api/people/member-emails`).expect(401))
 
     it('fail to list member paper pubs', () =>
-      member.get(`/api/members/emails`).expect(401))
+      member.get(`/api/people/member-emails`).expect(401))
 
     it('fail to open WebSocket connection for people updates', done => {
       const sessionCookie = member.jar.getCookie(config.id, { path: '/' })
@@ -207,7 +207,7 @@ describe('People', () => {
 
     it('list member emails', () =>
       admin
-        .get(`/api/members/emails`)
+        .get(`/api/people/member-emails`)
         .expect(200)
         .expect('Content-Type', 'text/csv; charset=utf-8')
         .expect(res => {
@@ -216,7 +216,7 @@ describe('People', () => {
 
     it('list member paper pubs', () =>
       admin
-        .get(`/api/members/emails`)
+        .get(`/api/people/member-paperpubs`)
         .expect(200)
         .expect('Content-Type', 'text/csv; charset=utf-8'))
 

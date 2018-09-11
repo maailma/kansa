@@ -17,10 +17,7 @@ module.exports = (db, app) => {
   )
 
   app.use(userRouter(db, ctx))
-
-  const ar = adminRouter(db)
-  app.use('/members', ar.membersRouter)
-  app.use('/people', ar)
+  app.use('/people', adminRouter(db, ctx))
   app.use('/people', peopleRouter(db, ctx))
 
   Object.keys(config.modules).forEach(name => {
