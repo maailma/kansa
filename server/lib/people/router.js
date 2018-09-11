@@ -5,7 +5,7 @@ const badge = require('../badge')
 const Ballot = require('../ballot')
 
 const addPerson = require('./add')
-const people = require('./index')
+const { getPerson, getPrevNames, getPersonLog } = require('./get')
 const lookupPerson = require('./lookup')
 const updatePerson = require('./update')
 const upgradePerson = require('./upgrade')
@@ -35,9 +35,23 @@ module.exports = db => {
       .catch(next)
   })
 
-  router.get('/:id', people.getPerson)
-  router.get('/:id/log', people.getPersonLog)
-  router.get('/:id/prev-names', people.getPrevNames)
+  router.get('/:id', (req, res, next) =>
+    getPerson(db, req.params.id)
+      .then(data => res.json(data))
+      .catch(next)
+  )
+
+  router.get('/:id/log', (req, res, next) =>
+    getPersonLog(db, req.params.id)
+      .then(data => res.json(data))
+      .catch(next)
+  )
+
+  router.get('/:id/prev-names', (req, res, next) =>
+    getPrevNames(db, req.params.id)
+      .then(data => res.json(data))
+      .catch(next)
+  )
 
   router.post('/:id', (req, res, next) =>
     updatePerson(db, req)
