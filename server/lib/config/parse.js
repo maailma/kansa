@@ -1,24 +1,4 @@
-const fs = require('fs')
 const timestring = require('timestring')
-const YAML = require('yaml').default
-
-const src = fs.readFileSync('/kansa.yaml', 'utf8')
-const config = YAML.parse(src)
-
-const shape = {
-  id: /^\w+$/,
-  name: 'string',
-  paid_paper_pubs: 'boolean',
-  auth: {
-    admin_roles: ['string'],
-    key_timeout: {
-      admin: 'duration',
-      normal: 'duration'
-    },
-    session_timeout: 'duration'
-  },
-  modules: 'object'
-}
 
 const getIn = (config, path) => {
   let value = config
@@ -28,7 +8,7 @@ const getIn = (config, path) => {
   return value
 }
 
-function parseConfig(config, path, shape) {
+module.exports = function parseConfig(config, path, shape) {
   const key = path.join('.')
   const value = getIn(config, path)
   if (shape instanceof RegExp) {
@@ -85,6 +65,3 @@ function parseConfig(config, path, shape) {
     )
   }
 }
-parseConfig(config, [], shape)
-
-module.exports = config

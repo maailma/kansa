@@ -1,9 +1,9 @@
 const debug = require('debug')('kansa:server')
 const path = require('path')
 
-const config = require('@kansa/common/config')
 const adminRouter = require('../admin/router')
-const getConfig = require('../get-config')
+const config = require('../config')
+const getPublicConfig = require('../config/public')
 const peopleRouter = require('../people/router')
 const userRouter = require('../user/router')
 
@@ -11,7 +11,7 @@ module.exports = (db, app, root) => {
   const ctx = { config, pgp: db.$config.pgp }
 
   app.get('/config', (req, res, next) =>
-    getConfig(db)
+    getPublicConfig(db)
       .then(data => res.json(data))
       .catch(next)
   )

@@ -1,6 +1,6 @@
 const session = require('express-session')
 const pgSession = require('connect-pg-simple')(session)
-const config = require('@kansa/common/config')
+const config = require('../config')
 
 module.exports = (pgPromise, secret) =>
   session({

@@ -1,8 +1,6 @@
-const config = require('@kansa/common/config')
+const config = require('./index')
 
-module.exports = getConfig
-
-function getConfig(db) {
+module.exports = function getPublicConfig(db) {
   return db
     .any(
       `SELECT membership, badge, hugo_nominator, member, wsfs_member

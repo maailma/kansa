@@ -30,17 +30,6 @@ user may have that grant access without a matching `email`.
 instance. Returns a promise that either resolves to the `id` value, or rejects
 with either `AuthError`, `InputError`, or a database error.
 
-### `new AuthError(message: string)`
-
-## Configuration
-
-```js
-const config = require('@kansa/common/config')
-```
-
-The server configuration, sourced from `config/kansa.yaml` and read during
-server start.
-
 ## Errors
 
 ```js
