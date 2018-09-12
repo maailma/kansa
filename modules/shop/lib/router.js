@@ -4,6 +4,7 @@ const { isSignedIn, hasRole } = require('@kansa/common/auth-user')
 const buyDaypass = require('./buy-daypass')
 const buyMembership = require('./buy-membership')
 const buyOther = require('./buy-other')
+const createInvoice = require('./create-invoice')
 const Purchase = require('./purchase')
 const handleStripeWebhook = require('./stripe-webhook')
 
@@ -20,7 +21,12 @@ module.exports = (db, ctx) => {
       .catch(next)
   )
 
-  router.post('/invoice', hasRole('member_admin'), purchase.createInvoice)
+  router.post('/invoice', hasRole('member_admin'), (req, res, next) =>
+    createInvoice(db, ctx, req.body)
+      .then(email => res.json({ status: 'success', email }))
+      .catch(next)
+  )
+
   router.get('/keys', purchase.getStripeKeys)
   router.get('/list', isSignedIn, purchase.getPurchases)
 

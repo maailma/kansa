@@ -1,12 +1,7 @@
-const { InputError } = require('@kansa/common/errors')
-const { sendMail } = require('@kansa/common/mail')
-const Payment = require('./payment')
-
 class Purchase {
   constructor(db, ctx) {
     this.db = db
     this.ctx = ctx
-    this.createInvoice = this.createInvoice.bind(this)
     this.getDaypassPrices = this.getDaypassPrices.bind(this)
     this.getPurchaseData = this.getPurchaseData.bind(this)
     this.getPurchases = this.getPurchases.bind(this)
@@ -86,22 +81,6 @@ class Purchase {
         email
       )
       .then(data => res.json(data))
-      .catch(next)
-  }
-
-  createInvoice(req, res, next) {
-    const { email, items } = req.body
-    if (!email || !items || items.length === 0)
-      throw new InputError('Required parameters: email, items')
-    new Payment(this.ctx, this.db, 'default', email, null, items)
-      .process()
-      .then(items => {
-        if (items.some(item => !item.id || item.status !== 'invoice')) {
-          throw new Error('Bad item: ' + JSON.stringify(item))
-        }
-        return sendMail('kansa-new-invoice', { email, items })
-      })
-      .then(() => res.json({ status: 'success', email }))
       .catch(next)
   }
 }
