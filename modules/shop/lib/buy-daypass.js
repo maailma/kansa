@@ -49,7 +49,7 @@ module.exports = function buyDaypass(db, ctx, req) {
         type: `daypass-${p.data.membership}`,
         data: p.data
       }))
-      return new Payment(ctx, db, 'default', email, source, items).process()
+      return new Payment('default', email, source, items).process(ctx, db)
     })
     .then(items => {
       charge_id = items[0].stripe_charge_id
@@ -61,10 +61,10 @@ module.exports = function buyDaypass(db, ctx, req) {
               const pi = items.find(item => item.data === p.data)
               return (
                 pi &&
-                db.none(
-                  `UPDATE ${Payment.table} SET person_id=$1 WHERE id=$2`,
-                  [p.data.id, pi.id]
-                )
+                db.none(`UPDATE payments SET person_id=$1 WHERE id=$2`, [
+                  p.data.id,
+                  pi.id
+                ])
               )
             })
             .then(() => ctx.user.refreshKey(db, ctx.config, req, p.data.email))

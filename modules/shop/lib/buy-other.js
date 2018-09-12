@@ -3,8 +3,8 @@ const Payment = require('./payment')
 
 module.exports = function buyOther(db, ctx, req) {
   const { account, email, items, source } = req.body
-  return new Payment(ctx, db, account, email, source, items)
-    .process()
+  return new Payment(account, email, source, items)
+    .process(ctx, db)
     .then(items =>
       Promise.all(
         items.map(item =>

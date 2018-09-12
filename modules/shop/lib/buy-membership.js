@@ -197,7 +197,7 @@ function applyMembershipPurchase(
         const pi = paidItems.find(item => item.data === m.data)
         return (
           pi &&
-          db.none(`UPDATE ${Payment.table} SET person_id=$1 WHERE id=$2`, [
+          db.none(`UPDATE payments SET person_id=$1 WHERE id=$2`, [
             m.data.id,
             pi.id
           ])
@@ -226,7 +226,7 @@ module.exports = function buyMembership(db, ctx, req) {
         data = d
         if (data.amount === 0) return []
         const { account, email, source, items } = data
-        return new Payment(ctx, dbTask, account, email, source, items).process()
+        return new Payment(account, email, source, items).process(ctx, dbTask)
       })
       .then(paidItems => {
         if (paidItems[0]) data.charge_id = paidItems[0].stripe_charge_id
