@@ -5,16 +5,46 @@ const buyDaypass = require('./buy-daypass')
 const buyMembership = require('./buy-membership')
 const buyOther = require('./buy-other')
 const createInvoice = require('./create-invoice')
-const Purchase = require('./purchase')
+const {
+  getDaypassPrices,
+  getPurchaseData,
+  getPurchases,
+  getStripeKeys
+} = require('./get')
 const handleStripeWebhook = require('./stripe-webhook')
 
 module.exports = (db, ctx) => {
   const router = express.Router()
 
-  const purchase = new Purchase(db, ctx)
-  router.get('/data', purchase.getPurchaseData)
+  router.get('/data', (req, res, next) =>
+    getPurchaseData(db)
+      .then(data => res.json(data))
+      .catch(next)
+  )
 
-  router.get('/daypass-prices', purchase.getDaypassPrices)
+  router.get('/daypass-prices', (req, res, next) =>
+    getDaypassPrices(db)
+      .then(data => res.json(data))
+      .catch(next)
+  )
+
+  router.get('/keys', (req, res, next) =>
+    getStripeKeys(db, process.env.STRIPE_SECRET_APIKEY)
+      .then(data => res.json(data))
+      .catch(next)
+  )
+
+  router.get('/list', isSignedIn, (req, res, next) => {
+    const { user } = req.session
+    let { email } = user
+    if (user.member_admin) {
+      email = req.query.all ? null : req.query.email || user.email
+    }
+    getPurchases(db, email)
+      .then(data => res.json(data))
+      .catch(next)
+  })
+
   router.post('/daypass', (req, res, next) =>
     buyDaypass(db, ctx, req)
       .then(data => res.json(data))
@@ -26,9 +56,6 @@ module.exports = (db, ctx) => {
       .then(email => res.json({ status: 'success', email }))
       .catch(next)
   )
-
-  router.get('/keys', purchase.getStripeKeys)
-  router.get('/list', isSignedIn, purchase.getPurchases)
 
   router.post('/membership', (req, res, next) =>
     buyMembership(db, ctx, req)
