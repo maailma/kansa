@@ -5,6 +5,7 @@ const buyDaypass = require('./buy-daypass')
 const buyMembership = require('./buy-membership')
 const buyOther = require('./buy-other')
 const Purchase = require('./purchase')
+const handleStripeWebhook = require('./stripe-webhook')
 
 module.exports = (db, ctx) => {
   const router = express.Router()
@@ -35,7 +36,11 @@ module.exports = (db, ctx) => {
       .catch(next)
   )
 
-  router.post('/webhook/stripe', purchase.handleStripeWebhook)
+  router.post('/webhook/stripe', (req, res, next) =>
+    handleStripeWebhook(db, req.body)
+      .then(() => res.status(200).end())
+      .catch(next)
+  )
 
   return router
 }

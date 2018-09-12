@@ -11,7 +11,6 @@ class Purchase {
     this.getPurchaseData = this.getPurchaseData.bind(this)
     this.getPurchases = this.getPurchases.bind(this)
     this.getStripeKeys = this.getStripeKeys.bind(this)
-    this.handleStripeWebhook = this.handleStripeWebhook.bind(this)
   }
 
   getDaypassPrices(req, res, next) {
@@ -88,58 +87,6 @@ class Purchase {
       )
       .then(data => res.json(data))
       .catch(next)
-  }
-
-  handleStripeWebhook(req, res, next) {
-    const updated = new Date(req.body.created * 1000)
-    const { id, object, status } = req.body.data.object
-    if (isNaN(updated) || !id || !status || object !== 'charge') {
-      res.status(400).end()
-      console.error('Error: Unexpected Stripe webhook data', req.body)
-    } else {
-      this.db
-        .any(
-          `
-           UPDATE payments
-              SET updated=$(updated), status=$(status)
-            WHERE stripe_charge_id=$(id) and status!=$(status)
-        RETURNING *`,
-          { id, status, updated }
-        )
-        .catch(() => res.status(500).end())
-        .then(items => {
-          res.status(200).end()
-          return Promise.all(
-            items.map(item => {
-              console.log('Updated payment', item.id, 'status to', status)
-              return this.db
-                .one(
-                  `
-              SELECT f.fields AS shape, t.types
-                FROM payment_fields_by_category f
-                     LEFT JOIN payment_types_by_category t USING (key)
-               WHERE key = $1`,
-                  item.category
-                )
-                .then(({ shape, types }) => {
-                  const typeData = types.find(td => td.key === item.type)
-                  return sendMail(
-                    'kansa-update-payment',
-                    Object.assign(
-                      {
-                        email: item.person_email || item.payment_email,
-                        name: item.person_name || null,
-                        shape,
-                        typeLabel: (typeData && typeData.label) || item.type
-                      },
-                      item
-                    )
-                  )
-                })
-            })
-          )
-        })
-    }
   }
 
   createInvoice(req, res, next) {

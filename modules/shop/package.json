@@ -11,6 +11,7 @@
   },
   "peerDependencies": {
     "@kansa/common": "1.x",
+    "debug": "3.x",
     "express": "4.x",
     "randomstring": "1.x"
   }
