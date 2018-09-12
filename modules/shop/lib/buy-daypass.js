@@ -19,7 +19,7 @@ function calcDaypassAmounts(db, passPeople) {
   })
 }
 
-module.exports = function buyDaypass(db, ctx, req) {
+module.exports = function buyDaypass(db, ctx, cfg, req) {
   const amount = Number(req.body.amount)
   const { email, passes, source } = req.body
   if (!amount || !email || !passes || passes.length === 0 || !source)
@@ -49,7 +49,7 @@ module.exports = function buyDaypass(db, ctx, req) {
         type: `daypass-${p.data.membership}`,
         data: p.data
       }))
-      return new Payment('default', email, source, items).process(ctx, db)
+      return new Payment('default', email, source, items).process(ctx, db, cfg)
     })
     .then(items => {
       charge_id = items[0].stripe_charge_id

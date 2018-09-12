@@ -38,8 +38,8 @@ function getPurchaseData(db) {
     )
 }
 
-function getStripeKeys(db, secret) {
-  const type = 'pk_' + secret.slice(3, 7)
+function getStripeKeys(db, name) {
+  const type = process.env[name].startsWith('sk_live') ? 'pk_live' : 'pk_test'
   return db
     .any(`SELECT name, key FROM stripe_keys WHERE type = $1`, type)
     .then(data =>

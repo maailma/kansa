@@ -218,7 +218,7 @@ function applyMembershipPurchase(
   )
 }
 
-module.exports = function buyMembership(db, ctx, req) {
+module.exports = function buyMembership(db, ctx, cfg, req) {
   let data
   return db.task(dbTask =>
     getMembershipPurchaseData(dbTask, ctx, req.body)
@@ -226,7 +226,11 @@ module.exports = function buyMembership(db, ctx, req) {
         data = d
         if (data.amount === 0) return []
         const { account, email, source, items } = data
-        return new Payment(account, email, source, items).process(ctx, dbTask)
+        return new Payment(account, email, source, items).process(
+          ctx,
+          dbTask,
+          cfg
+        )
       })
       .then(paidItems => {
         if (paidItems[0]) data.charge_id = paidItems[0].stripe_charge_id

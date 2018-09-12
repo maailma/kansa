@@ -62,8 +62,12 @@ modules:
   # Art show management
   raami: false
 
-  # Web shop for memberships, daypasses, and other things
-  shop: true
+  # Web shop for memberships, daypasses, and other things. Uses Stripe for
+  # payment processing, hence needs to know where to find its API keys.
+  shop:
+    apikey_vars:
+      default: STRIPE_SECRET_APIKEY
+      siteselect: STRIPE_SECRET_APIKEY_siteselect
 
   # Site selection token management
   siteselect: true

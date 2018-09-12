@@ -1,4 +1,3 @@
-const Stripe = require('stripe')
 const processPayment = require('./process')
 
 class Payment {
@@ -27,15 +26,8 @@ class Payment {
     }))
   }
 
-  get stripe() {
-    let keyvar = 'STRIPE_SECRET_APIKEY'
-    if (this.account !== 'default') keyvar += '_' + this.account
-    const key = process.env[keyvar]
-    return new Stripe(key)
-  }
-
-  async process(ctx, db) {
-    await processPayment(ctx, db, this)
+  async process(ctx, db, cfg) {
+    await processPayment(ctx, db, cfg.apikey_vars, this)
     return this.items
   }
 }

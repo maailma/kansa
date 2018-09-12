@@ -1,10 +1,10 @@
 const { sendMail } = require('@kansa/common/mail')
 const Payment = require('./payment')
 
-module.exports = function buyOther(db, ctx, req) {
+module.exports = function buyOther(db, ctx, cfg, req) {
   const { account, email, items, source } = req.body
   return new Payment(account, email, source, items)
-    .process(ctx, db)
+    .process(ctx, db, cfg)
     .then(items =>
       Promise.all(
         items.map(item =>

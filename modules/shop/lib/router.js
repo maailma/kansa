@@ -13,7 +13,11 @@ const {
 } = require('./get')
 const handleStripeWebhook = require('./stripe-webhook')
 
-module.exports = (db, ctx) => {
+module.exports = (db, ctx, cfg) => {
+  if (!cfg.apikey_vars)
+    throw new Error('Shop needs to know where to find your Stripe secrets')
+  if (!cfg.apikey_vars.default)
+    throw new Error('The "default" Stripe API key is required')
   const router = express.Router()
 
   router.get('/data', (req, res, next) =>
@@ -29,7 +33,7 @@ module.exports = (db, ctx) => {
   )
 
   router.get('/keys', (req, res, next) =>
-    getStripeKeys(db, process.env.STRIPE_SECRET_APIKEY)
+    getStripeKeys(db, cfg.apikey_vars.default)
       .then(data => res.json(data))
       .catch(next)
   )
@@ -46,7 +50,7 @@ module.exports = (db, ctx) => {
   })
 
   router.post('/daypass', (req, res, next) =>
-    buyDaypass(db, ctx, req)
+    buyDaypass(db, ctx, cfg, req)
       .then(data => res.json(data))
       .catch(next)
   )
@@ -58,13 +62,13 @@ module.exports = (db, ctx) => {
   )
 
   router.post('/membership', (req, res, next) =>
-    buyMembership(db, ctx, req)
+    buyMembership(db, ctx, cfg, req)
       .then(data => res.json(data))
       .catch(next)
   )
 
   router.post('/other', (req, res, next) =>
-    buyOther(db, ctx, req)
+    buyOther(db, ctx, cfg, req)
       .then(data => res.json(data))
       .catch(next)
   )

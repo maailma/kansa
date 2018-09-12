@@ -1,3 +1,4 @@
+const Stripe = require('stripe')
 const { InputError } = require('@kansa/common/errors')
 const { getCategoryData, getItemData, getEmailData } = require('./get-data')
 const { validateParameters, validateItem } = require('./validate')
@@ -108,18 +109,21 @@ function getChargeDescription(categories, items) {
     .join(', ')
 }
 
-function charge(db, config, categories, { email, items, source, stripe }) {
-  const amount = items.reduce((sum, item) => sum + item.amount, 0)
-  const currency = items[0].currency
-  const description = getChargeDescription(categories, items)
-  return stripe.charges
+function charge(db, config, apiKeys, categories, payment) {
+  const amount = payment.items.reduce((sum, item) => sum + item.amount, 0)
+  const currency = payment.items[0].currency
+  const description = getChargeDescription(categories, payment.items)
+  const secret = process.env[apiKeys[payment.account]]
+  if (!secret)
+    throw new Error(`Stripe API key not found for ${payment.account} payment`)
+  return new Stripe(secret).charges
     .create({
       amount,
       currency,
       description,
-      metadata: { items: items.map(item => item.id).join(',') },
-      receipt_email: email,
-      source: source.id,
+      metadata: { items: payment.items.map(item => item.id).join(',') },
+      receipt_email: payment.email,
+      source: payment.source.id,
       // https://stripe.com/docs/api/node#create_charge-statement_descriptor
       statement_descriptor: config.name.substr(0, 22)
     })
@@ -130,7 +134,7 @@ function charge(db, config, categories, { email, items, source, stripe }) {
         stripe_receipt: charge.receipt_number,
         stripe_charge_id: charge.id
       }
-      _charge.items = items.map(item => {
+      _charge.items = payment.items.map(item => {
         Object.assign(item, _charge)
         return item.id
       })
@@ -146,7 +150,12 @@ function charge(db, config, categories, { email, items, source, stripe }) {
     })
 }
 
-module.exports = function processPayment({ config, pgp }, db, payment) {
+module.exports = function processPayment(
+  { config, pgp },
+  db,
+  apiKeys,
+  payment
+) {
   return db
     .task(async ts => {
       const categories = await validateAndComplete(ts, payment)
@@ -154,7 +163,8 @@ module.exports = function processPayment({ config, pgp }, db, payment) {
       return categories
     })
     .then(categories => {
-      if (payment.source) return charge(db, config, categories, payment)
+      if (payment.source)
+        return charge(db, config, apiKeys, categories, payment)
     })
     .catch(async error => {
       const ids = payment.items.map(it => it.id).filter(id => id)
