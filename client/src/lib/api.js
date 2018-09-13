@@ -7,9 +7,11 @@ class API {
   }
 
   static parse(response) {
-    return response
-      .json()
-      .then(json => (response.ok ? json : Promise.reject(json)))
+    return response.json().then(json => {
+      if (response.ok) return json
+      json.response = response
+      throw json
+    })
   }
 
   static queryFromObj(obj) {
