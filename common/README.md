@@ -44,12 +44,14 @@ server start.
 ## Errors
 
 ```js
-const { AuthError, InputError } = require('@kansa/common/errors')
+const { AuthError, InputError, NotFoundError } = require('@kansa/common/errors')
 ```
 
 ### `new AuthError(message: string)`
 
 ### `new InputError(message: string)`
+
+### `new NotFoundError(message: string)`
 
 Handled by the server's error handling. May also have their `status` set.
 

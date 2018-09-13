@@ -10,6 +10,8 @@ const host = 'localhost:4430'
 const admin = request.agent(`https://${host}`, { ca })
 const nominator = request.agent(`https://${host}`, { ca })
 
+if (!config.modules.hugo) return
+
 const randomString = () => (Math.random().toString(36) + '0000000').slice(2, 7)
 
 describe('Hugo nominations', () => {

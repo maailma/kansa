@@ -13,4 +13,12 @@ function InputError(message = 'Input error') {
 }
 InputError.prototype = new Error()
 
-module.exports = { AuthError, InputError }
+function NotFoundError(message = 'Not Found') {
+  this.name = 'NotFoundError'
+  this.message = message
+  this.status = 404
+  this.stack = new Error().stack
+}
+NotFoundError.prototype = new Error()
+
+module.exports = { AuthError, InputError, NotFoundError }
