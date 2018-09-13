@@ -1,6 +1,6 @@
 {
   "name": "@kansa/common",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Common objects and utilities shared across the Kansa server & modules",
   "license": "Apache-2.0",
   "repository": "maailma/kansa",

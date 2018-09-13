@@ -7,7 +7,7 @@
   "repository": "maailma/kansa",
   "main": "lib/router.js",
   "peerDependencies": {
-    "@kansa/common": "1.x",
+    "@kansa/common": "^1.1.0",
     "express": "4.x",
     "express-ws": ">=2",
     "jsonwebtoken": ">=7",
