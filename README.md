@@ -5,23 +5,29 @@
 <h1>Kansa</h1>
 </div>
 
-Kansa is a convention member management system originally developed for [Worldcon 75](http://www.worldcon.fi),
+Kansa is a convention member management system originally developed for [Worldcon 75],
 the World Science Fiction Convention organised in Helsinki in 2017. It is also used by
-[Dublin 2019: An Irish Worldcon](https://dublin2019.com/).
+[Dublin 2019: An Irish Worldcon] and [CoNZealand], the 2020 Worldcon.
 
-The system is modular and extensible. Together with its
-[front-end client](https://github.com/maailma/kansa-client) it provides the following services:
+The system is modular and extensible. Together with its [front-end client] it provides
+the following services:
 
 - Member admin services, including an easy-to use admin front-end
 - Support for multiple membership types, as well as for non-member accounts
-- [Stripe](https://stripe.com/) integration for membership and other purchases (via credit cards or
+- [Stripe] integration for membership and other purchases (via credit cards or
   SEPA direct debit)
 - Individual and bulk import of member data and transactions from other systems
 - Member-facing front-end for e.g. name and address changes
 - Passwordless authentication using login links sent by email
-- Emails sent using [Sendgrid](https://sendgrid.com/) and customisable
-  [templates](config/message-templates/)
+- Emails sent using [Sendgrid] and customisable [templates](config/message-templates/)
 - Synchronisation of contact info to Sendgrid for mass mailings
+
+[worldcon 75]: http://www.worldcon.fi
+[dublin 2019: an irish worldcon]: https://dublin2019.com/
+[conzealand]: https://conzealand.nz/
+[front-end client]: https://github.com/maailma/kansa-client
+[stripe]: https://stripe.com/
+[sendgrid]: https://sendgrid.com/
 
 To help with at-con registration, Kansa has:
 
@@ -101,21 +107,26 @@ Email messages are based on message templates, which are
 
 ### Directory Overview
 
-- **`config`** - System configuration
-- **`hugo`** - Provides the Hugo Nominations and Awards parts of the [REST API](docs/index.md)
-- **`integration-tests`** - Tests for the REST API, targeting the Stripe and Sendgrid interfaces in particular
-- **`kansa`** - Provides the core parts of the [REST API](docs/index.md)
-- **`kyyhky`** - Internal mailing service & [SendGrid](https://sendgrid.com/) integration for hugo & kansa
-- **`nginx`** - An SSL-terminating reverse proxy & file server, using [OpenResty](https://openresty.org/)
+- **`common`** - Shared utilities for the server & modules, published on npm as [`@kansa/common`][kc]
+- **`config`** - System configuration, see in particular [`config/kansa.yaml`](config/kansa.yaml)
+- **`integration-tests`** - Tests for the REST API endpoints
+- **`kyyhky`** - Internal mailing service & [SendGrid] integration for hugo & kansa
+- **`modules`** - Optional server modules providing additional functionality
 - **`postgres`** - Configuration & schemas for our database
-- **`raami`** - Art show management [REST API](docs/raami.md)
+- **`proxy`** - An SSL-terminating reverse proxy & file server, using [OpenResty]
+- **`server`** - Provides the core parts of the [REST API](docs/index.md)
 - **`tools`** - Semi-automated tools for importing data, and for other tasks
 - **`tuohi`** - Fills out a PDF form, for `GET /people/:id/ballot`
 
-[Kansa](https://en.wiktionary.org/wiki/kansa#Finnish) is Finnish for "people" or "tribe", and it's
-the name for our member registry. The [Hugo Awards](http://www.thehugoawards.org/) are awards that
-are nominated and selected by the members of each year's Worldcon. Kyyhky is Finnish for "pigeon",
-Raami is "frame", and Tuohi is the bark of a birch tree.
+The [Hugo Awards] are awards that are nominated and selected by the members of each year's Worldcon.
+[Kansa] is Finnish for "people" or "tribe", Kyyhky is "pigeon", Raami is "frame", and Tuohi is the
+bark of a birch tree.
+
+[kc]: https://www.npmjs.com/package/@kansa/common
+[sendgrid]: https://sendgrid.com/
+[openresty]: https://openresty.org/
+[hugo awards]: http://www.thehugoawards.org/
+[kansa]: https://en.wiktionary.org/wiki/kansa#Finnish
 
 ### Common Issues
 
@@ -125,7 +136,7 @@ The particular places that may need manual adjustment are:
   [self-signed certificate](http://www.selfsignedcertificate.com/) for `localhost`. This will not
   be automatically accepted by browsers or other clients. If you have a signed certificate you can
   use (and therefore a publicly visible address), you'll want to add the certificate files to
-  `nginx/ssl/` and adjust the environment values set for the `nginx` service in
+  `proxy/ssl/` and adjust the environment values set for the `proxy` service in
   [docker-compose.override.yaml](config/docker-compose.override.yaml) and/or your
   `docker-compose.prod.yaml`.
 
@@ -134,7 +145,7 @@ The particular places that may need manual adjustment are:
   default, the value should match the `http://localhost:8080` address of the client Webpack dev
   servers.
 
-- If you're running the server on a separate machine or if you've changed the `nginx` port
+- If you're running the server on a separate machine or if you've changed the `proxy` port
   configuration, you may need to tell clients where to find the server, using something like
   `export API_HOST='remote.example.com'` before running `npm start`.
 

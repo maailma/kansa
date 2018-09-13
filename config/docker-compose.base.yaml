@@ -9,26 +9,20 @@ volumes:
   pgdata: null
 
 services:
-  nginx:
-    build: ../nginx
+  proxy:
+    build: ../proxy
+    image: kansa-proxy
     links:
-      - hugo
-      - kansa
-      - raami
-    entrypoint: /bin/bash -c "envsubst '$$SERVER_NAME $$SSL_CERTIFICATE $$SSL_CERTIFICATE_KEY' < /nginx.conf.template > /usr/local/openresty/nginx/conf/nginx.conf && /usr/local/openresty/bin/openresty -g 'daemon off;'"
+      - server
+    entrypoint: >
+      /bin/bash -c
+      "envsubst '$$SERVER_NAME $$SSL_CERTIFICATE $$SSL_CERTIFICATE_KEY' < /nginx.conf.template
+      > /usr/local/openresty/nginx/conf/nginx.conf &&
+      /usr/local/openresty/bin/openresty -g 'daemon off;'"
 
-  hugo:
-    build: ../hugo
-    entrypoint: ./wait-for-it.sh postgres:5432 -- npm start
-    links:
-      - postgres
-    expose:
-      - '80'
-    volumes:
-      - ../config/kansa.yaml:/kansa.yaml:ro
-
-  kansa:
-    build: ../kansa
+  server:
+    build: ../
+    image: kansa-server
     entrypoint: ./wait-for-it.sh postgres:5432 -- npm start
     links:
       - kyyhky
@@ -40,16 +34,6 @@ services:
     volumes:
       - ../config/kansa.yaml:/kansa.yaml:ro
       - ../config/siteselection/ballot-data.js:/ss-ballot-data.js:ro
-
-  raami:
-    build: ../raami
-    entrypoint: ./wait-for-it.sh postgres:5432 -- npm start
-    links:
-      - postgres
-    expose:
-      - '3000'
-    volumes:
-      - ../config/kansa.yaml:/kansa.yaml:ro
 
   tarra:
     image: worldcon75devops/label-printer:0.3.0
@@ -67,6 +51,7 @@ services:
 
   kyyhky:
     build: ../kyyhky
+    image: kansa-kyyhky
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
@@ -101,7 +86,7 @@ services:
       - ../postgres/init/25-public-data.sql:/docker-entrypoint-initdb.d/25-public-data.sql:ro
       - ../postgres/init/28-siteselection.sql:/docker-entrypoint-initdb.d/28-siteselection.sql:ro
       - ../config/database/membership-types.sql:/docker-entrypoint-initdb.d/29-membership-types.sql:ro
-      - ../postgres/init/30-hugo-init.sql:/docker-entrypoint-initdb.d/30-hugo-init.sql:ro
-      - ../config/database/31-hugo-categories.sql:/docker-entrypoint-initdb.d/31-hugo-categories.sql:ro
-      - ../postgres/init/32-hugo-tables.sql:/docker-entrypoint-initdb.d/32-hugo-tables.sql:ro
-      - ../postgres/init/40-raami-init.sql:/docker-entrypoint-initdb.d/40-raami-init.sql:ro
+      - ../modules/hugo/database/init.sql:/docker-entrypoint-initdb.d/30-hugo-init.sql:ro
+      - ../config/database/hugo-categories.sql:/docker-entrypoint-initdb.d/31-hugo-categories.sql:ro
+      - ../modules/hugo/database/tables.sql:/docker-entrypoint-initdb.d/32-hugo-tables.sql:ro
+      - ../modules/raami/database/init.sql:/docker-entrypoint-initdb.d/40-raami-init.sql:ro

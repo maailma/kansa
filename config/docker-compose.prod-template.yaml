@@ -12,7 +12,7 @@ version: '2'
 # DO NOT COMMIT PRODUCTION SECRETS TO ANY REPOSITORY
 
 services:
-  nginx:
+  proxy:
     environment:
       JWT_SECRET: ''
       SERVER_NAME: ''
@@ -23,14 +23,7 @@ services:
       - '443:443'
     restart: always
 
-  hugo:
-    environment:
-      DATABASE_URL: ''
-      JWT_SECRET: ''
-      SESSION_SECRET: ''
-    restart: always
-
-  kansa:
+  server:
     environment:
       DATABASE_URL: ''
       DEBUG: kansa:errors
@@ -38,11 +31,6 @@ services:
       SESSION_SECRET: ''
       STRIPE_SECRET_APIKEY: ''
     restart: always
-
-  raami:
-    environment:
-      DATABASE_URL: ''
-      SESSION_SECRET: ''
 
   kyyhky:
     environment:

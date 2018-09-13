@@ -1,6 +1,7 @@
 .*
 config/docker-compose.prod.yaml
 config/docker-compose.prod.yml
+kansa-common*.tgz
 node_modules/
 package-lock.json
 

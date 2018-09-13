@@ -5,7 +5,7 @@ const WebSocket = require('ws')
 const YAML = require('yaml').default
 
 const config = YAML.parse(fs.readFileSync('../config/kansa.yaml', 'utf8'))
-const ca = fs.readFileSync('../nginx/ssl/localhost.cert', 'utf8')
+const ca = fs.readFileSync('../proxy/ssl/localhost.cert', 'utf8')
 const host = 'localhost:4430'
 const admin = request.agent(`https://${host}`, { ca })
 const nominator = request.agent(`https://${host}`, { ca })
@@ -185,18 +185,47 @@ describe('Hugo nominations', () => {
         assert.equal(o[1], n[1])
       }))
 
+  it('admin: WebSocket connection to unhandled path', done => {
+    const sessionCookie = admin.jar.getCookie(config.id, { path: '/' })
+    const ws = new WebSocket(`wss://${host}/api/hugo/admin/nosuchpath`, {
+      ca,
+      headers: { Cookie: String(sessionCookie) }
+    })
+    let ok = false
+    ws.onclose = () => {
+      if (ok) done()
+      else done(new Error('Expected error before WebSocket close'))
+    }
+    ws.onerror = err => {
+      assert.equal(err.message, 'Unexpected server response: 404')
+      ok = true
+      ws.close()
+    }
+    ws.onmessage = ({ data }) => {
+      throw new Error(`Unexpected message! ${data}`)
+    }
+    ws.onopen = () => {
+      throw new Error('Unexpected WebSocket open event!')
+    }
+  })
+
   it('admin: WebSocket client', done => {
     const sessionCookie = admin.jar.getCookie(config.id, { path: '/' })
     const ws = new WebSocket(`wss://${host}/api/hugo/admin/canon-updates`, {
       ca,
       headers: { Cookie: String(sessionCookie) }
     })
-    ws.onclose = () => done()
+    let ok = false
+    ws.onclose = () => {
+      if (ok) done()
+      else done(new Error('WebSocket closed before message received'))
+    }
     ws.onerror = done
     ws.onmessage = ({ data }) => {
       const obj = JSON.parse(data)
       assert.equal(obj && typeof obj.canon, 'object')
       assert.equal(obj.canon.nomination.author, otherAuthor)
+      ok = true
       ws.close()
     }
     ws.onopen = () =>

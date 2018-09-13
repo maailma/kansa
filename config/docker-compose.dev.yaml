@@ -6,7 +6,7 @@ version: '2'
 #   docker-compose -f config/docker-compose.base.yaml -f config/docker-compose.dev.yaml up -d
 
 services:
-  nginx:
+  proxy:
     environment:
       JWT_SECRET: dev secret
       SERVER_NAME: localhost
@@ -15,35 +15,22 @@ services:
     ports:
       - '4430:443'
     volumes:
-      - ../nginx/hugo-packet:/srv/hugo-packet:ro
-      - ../nginx/member-files:/srv/member-files:ro
-      - ../nginx/ssl:/ssl:ro
+      - ../proxy/hugo-packet:/srv/hugo-packet:ro
+      - ../proxy/member-files:/srv/member-files:ro
+      - ../proxy/ssl:/ssl:ro
 
-  hugo:
-    environment:
-      CORS_ORIGIN: http://localhost:8080
-      DATABASE_URL: postgres://hugo:pwd@postgres:5432/api
-      JWT_SECRET: dev secret
-      SESSION_SECRET: dev secret
-
-  kansa:
+  server:
     environment:
       CORS_ORIGIN: http://localhost:8080
       DATABASE_URL: postgres://kansa:pwd@postgres:5432/api
       DEBUG: kansa:*
       JWT_SECRET: dev secret
       SESSION_SECRET: dev secret
-      SLACK_ORG: worldcon75
-      SLACK_REQ_MEMBER: 'true'
+      HUGO_PG_URL: postgres://hugo:pwd@postgres:5432/api
+      RAAMI_PG_URL: postgres://raami:pwd@postgres:5432/api
       SLACK_TOKEN: ''
       STRIPE_SECRET_APIKEY: sk_test_zq022Drx7npYPVEtXAVMaOJT
       STRIPE_SECRET_APIKEY_siteselect: sk_test_35SiP34s6qovtenwPPLguIyY
-
-  raami:
-    environment:
-      CORS_ORIGIN: http://localhost:8080
-      DATABASE_URL: postgres://raami:pwd@postgres:5432/api
-      SESSION_SECRET: dev secret
 
   tarra:
     volumes:

@@ -13,6 +13,17 @@ paid_paper_pubs: false
 # Authentication configuration. Duration values should use suffixes to indicate
 # units, e.g. "1d 3h" or "4w".
 auth:
+  # This should correspond to a subset of the columns in the admin.admins
+  # Postgres table that are currently in use. Including unused roles here is
+  # fine, as long as they have corresponding database columns.
+  admin_roles:
+    - admin_admin
+    - hugo_admin
+    - member_admin
+    - member_list
+    - raami_admin
+    - siteselection
+
   # If an expired key is used for login, the key is reset and automatically
   # sent by email. Admin users are those with any administrative privileges.
   key_timeout:
@@ -22,3 +33,28 @@ auth:
   # After session timeout, a user is redirected to the sign-in page at their
   # next request.
   session_timeout: 5d
+
+# Modules add optional functionality to the core Kansa member management
+# system. This configuration controls the behaviour of the API server; if you
+# make changes you may want to also modify your Docker Compose and/or Postgres
+# configuration. To disable a module, set its value to `null` or `false`.
+modules:
+  # Superadmin actions: get & set admin levels, mass sync actions
+  admin: true
+
+  # Nomination and voting for the Hugo Awards
+  hugo: true
+
+  # Member statistics and other publicly accessible data, which may be made
+  # available for use from other domains with CORS. Note: proxy/nginx.conf
+  # includes caching configuration for paths under /api/public/.
+  public:
+    cors_origin: '*'
+
+  # Art show management
+  raami: false
+
+  # Invite generator for a Slack organisation
+  slack:
+    #org: worldcon75
+    #require_membership: true
