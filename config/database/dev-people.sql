@@ -42,6 +42,7 @@ ALTER SEQUENCE member_number_seq RESTART WITH 42;
 CREATE FUNCTION reset_test_users() RETURNS void AS $$
 BEGIN
   UPDATE keys SET key='key', expires=NULL WHERE email='admin@example.com';
+  UPDATE keys SET key='key', expires=NULL WHERE email='site-select@example.com';
   UPDATE keys SET key='key', expires='2017-08-13' WHERE email='expired@example.com';
 END;
 $$ LANGUAGE plpgsql;

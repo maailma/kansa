@@ -1,13 +1,10 @@
-const cors = require('cors')
 const express = require('express')
 const { isSignedIn, hasRole } = require('@kansa/common/auth-user')
 
-const badge = require('./badge')
-const peopleRouter = require('./people/router')
 const adminRouter = require('./admin/router')
 const getConfig = require('./get-config')
+const peopleRouter = require('./people/router')
 const Purchase = require('./purchase')
-const Siteselect = require('./siteselect')
 const userRouter = require('./user/router')
 
 module.exports = (db, ctx) => {
@@ -20,9 +17,6 @@ module.exports = (db, ctx) => {
   )
 
   router.use(userRouter(db, ctx))
-
-  router.get('/barcode/:key/:id.:fmt', badge.getBarcode)
-  router.get('/blank-badge', badge.getBadge)
 
   const purchase = new Purchase(db)
   router.post('/purchase', purchase.makeMembershipPurchase)
@@ -43,14 +37,6 @@ module.exports = (db, ctx) => {
   router.use('/members', ar.membersRouter)
   router.use('/people', ar)
   router.use('/people', peopleRouter(db, ctx))
-
-  const siteselect = new Siteselect(db)
-  router.use('/siteselect', hasRole('siteselection'))
-  router.get('/siteselect/tokens.:fmt', siteselect.getTokens)
-  router.get('/siteselect/tokens/:token', siteselect.findToken)
-  router.get('/siteselect/voters.:fmt', siteselect.getVoters)
-  router.get('/siteselect/voters/:id', siteselect.findVoterTokens)
-  router.post('/siteselect/voters/:id', siteselect.vote)
 
   return router
 }

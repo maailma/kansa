@@ -1,9 +1,6 @@
 const express = require('express')
 const { isSignedIn, hasRole, matchesId } = require('@kansa/common/auth-user')
 
-const badge = require('../badge')
-const Ballot = require('../ballot')
-
 const addPerson = require('./add')
 const { getPerson, getPrevNames, getPersonLog } = require('./get')
 const lookupPerson = require('./lookup')
@@ -76,12 +73,6 @@ module.exports = (db, ctx) => {
       )
       .catch(next)
   })
-
-  const ballot = new Ballot(db)
-  router.get('/:id/ballot', ballot.getBallot)
-  router.get('/:id/badge', badge.getBadge)
-  router.get('/:id/barcode.:fmt', badge.getBarcode)
-  router.post('/:id/print', hasRole('member_admin'), badge.logPrint)
 
   return router
 }

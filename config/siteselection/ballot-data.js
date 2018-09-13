@@ -1,14 +1,16 @@
-function ballotData({
-  member_number,
-  legal_name,
-  email,
-  city,
-  state,
-  country,
-  badge_name,
-  paper_pubs,
+function ballotData(
+  {
+    member_number,
+    legal_name,
+    email,
+    city,
+    state,
+    country,
+    badge_name,
+    paper_pubs
+  },
   token
-}) {
+) {
   const address = (paper_pubs && paper_pubs.address.split(/[\n\r]+/)) || ['']
   return {
     info: {
@@ -24,7 +26,7 @@ function ballotData({
       City: city || '',
       Country: paper_pubs ? paper_pubs.country : country || '',
       'Membership number': member_number || '........',
-      'Voting token': token,
+      'Voting token': token || '',
       'E-mail': email,
       'State/Province/Prefecture': state || '',
       'Badge name': badge_name || '',
