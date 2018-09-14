@@ -1,0 +1,32 @@
+{
+  "legal_name": "Nimi",
+  "legal_name_hint": "Jäsenyys tarkistetaan virallista henkilöllisyystodistusta vastaan tapahtumapaikalla, mutta muutoin osallistujien nimet ovat luottamuksellisia, eikä niitä julkaista tai luovuteta eteenpäin ilman erillistä lupaa.",
+  "email": "Sähköposti",
+  "new_email_hint": "Olemme sinuun tarvittaessa yhteydessä sähköpostitse, minkä lisäksi lähetämme sähköpostiisi tärkeää tietoa Hugo-palkinnoista ja paikanvalintaäänestyksestä.",
+  "edit_email_hint": "",
+  "public_first_name": "Julkaistava etunimi",
+  "public_last_name": "Julkaistava sukunimi",
+  "public_name_hint": "Voit määrittää, millä nimellä listaamme sinut nettisivuillamme ja julkaisuissamme ilmestyviin jäsenlistoihin. Mikäli et halua näkyä listauksissa ollenkaan, voit jättää nämä kohdat tyhjiksi. Mikäli annat julkistettavaksi sekä etu- että sukunimen, aakkostamme jälkimmäisen mukaan (välilyönnit ovat sallittuja kummassakin). Lähempänä tapahtumaa voit vielä erikseen muokata badgesi tekstiä.",
+  "city": "Kaupunki",
+  "state": "Osavaltio/maakunta",
+  "country": "Maa",
+  "location_hint": "Mistä tulet. Tämä ei ole välttämätön tieto, mutta me haluaisimme tietää, kuinkaa kauka ja läheltä tapahtumallamme on osallistujia. Vastaa siis niin tarkasti, kuin haluat.",
+  "paper_pubs": {
+    "name": "Nimi",
+    "address": "Osoite",
+    "country": "Maa",
+    "label": "Haluan julkaisut painettuna postitse{paid_paper_pubs, select, true{ ({amount}€)} other{}}",
+    "hint_checkbox": "Olemme sinuun yhteydessä pääsääntöisesti sähköisesti antaaksemme tietoa valmistelujemme edistymisestä. Mikäli haluat lisäksi Progress Reportit ja muut julkaisut painettuina versioina ja postitettuna, valitse tämä kohta.{paid_paper_pubs, select, true{ Huomaathan, että tämä vaihtoehto sisältää lisämaksun.} other{}}",
+    "hint_fields": "Ole hyvä ja syötä osoitetietosi kuten haluat ne tulostettavan osoitetarraan."
+  },
+  "membership_type": "Jäsenyyden tyyppi",
+  "Supporter": "Worldcon-tukijäsenyys",
+  "KidInTow": "Alle kouluikäisen Worldcon-jäsenyys",
+  "Child": "Lapsen Worldcon-jäsenyys",
+  "Youth": "Nuoren Worldcon-täysjäsenyys",
+  "FirstWorldcon": "Ensikertalaisen Worldcon-täysjäsenyys",
+  "Adult": "Aikuisen Worldcon-täysjäsenyys",
+  "required": "pakollinen",
+  "total": "Summa",
+  "pay_by_card": "Maksa kortilla"
+}

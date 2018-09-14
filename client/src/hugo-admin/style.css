@@ -1,0 +1,92 @@
+@import 'https://fonts.googleapis.com/css?family=Open+Sans:300,400,600';
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+}
+
+main {
+  display: flex;
+  height: calc(100vh - 48px);
+  margin: 48px 0 0;
+}
+
+main > * {
+  flex: 1 1 auto;
+}
+
+#ursa {
+  display: none;
+}
+
+/* react-virtualized tables */
+
+[role='grid'] {
+  outline: none;
+}
+
+[role='row'] {
+  cursor: pointer;
+  outline: none;
+}
+
+[role='row'].disqualified,
+[role='row'].disqualified svg {
+  color: rgba(0, 0, 0, 0.3) !important;
+  text-decoration: line-through;
+}
+
+[role='row'].selected {
+  background: #008080;
+}
+
+/* nomination-toolbar */
+.toolbar {
+  background-color: rgba(214, 206, 147, 0.3) !important;
+  height: 78px;
+  left: 0;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+}
+.toolbar > div {
+  align-items: center;
+  display: flex;
+  height: 48px;
+  padding: 0 12px;
+  pointer-events: auto;
+  width: 100%;
+}
+
+/* finalist-results */
+.finalist {
+  background: #eea236;
+}
+
+/* canon-nomination-list */
+.canon-entry > * {
+  text-decoration: underline;
+}
+
+.canon-entry > *:first-child {
+  text-decoration: none;
+}
+
+.drop-nom {
+  visibility: hidden;
+}
+
+.ReactVirtualized__Table__row:hover .drop-nom {
+  visibility: visible;
+}

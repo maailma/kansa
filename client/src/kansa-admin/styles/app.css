@@ -1,0 +1,32 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+}
+
+.user-info {
+  position: fixed;
+  z-index: 1;
+  right: 0;
+  height: 30px;
+  margin: 0;
+  padding: 10px 10px 0 0;
+  color: gray;
+  font-size: 0.7em;
+}
+.user-info li {
+  display: inline;
+}
+.user-info li:before {
+  content: ' | ';
+}
+.user-info li:first-child:before {
+  content: '';
+}
+.user-info a:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+#ursa {
+  display: none;
+}

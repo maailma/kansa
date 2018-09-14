@@ -1,0 +1,5 @@
+.*
+*.ejs
+*.jpg
+*.png
+package.json
