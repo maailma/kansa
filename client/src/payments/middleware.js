@@ -11,7 +11,7 @@ export default ({ dispatch }) => next => action => {
         {
           const { amount, callback, email, person, source } = action
           api
-            .POST('purchase/daypass', {
+            .POST('shop/buy-daypass', {
               amount,
               email,
               source,
@@ -34,7 +34,7 @@ export default ({ dispatch }) => next => action => {
         {
           const { amount, callback, email, member, source } = action
           api
-            .POST('purchase', {
+            .POST('shop/buy-membership', {
               amount,
               email,
               source,
@@ -57,7 +57,7 @@ export default ({ dispatch }) => next => action => {
         {
           const { account, callback, email, items, source } = action
           api
-            .POST('purchase/other', {
+            .POST('shop/buy-other', {
               account,
               email,
               source,
@@ -83,7 +83,7 @@ export default ({ dispatch }) => next => action => {
             source
           } = action
           api
-            .POST('purchase', {
+            .POST('shop/buy-membership', {
               amount,
               email,
               source,
@@ -99,7 +99,7 @@ export default ({ dispatch }) => next => action => {
       case 'GET_DAYPASS_PRICES':
         {
           api
-            .GET('purchase/daypass-prices')
+            .GET('shop/daypass-prices')
             .then(prices => next({ ...action, prices }))
             .catch(handleError)
         }
@@ -108,7 +108,7 @@ export default ({ dispatch }) => next => action => {
       case 'GET_PURCHASE_DATA':
         {
           api
-            .GET('purchase/data')
+            .GET('shop/data')
             .then(data => next({ ...action, data }))
             .catch(handleError)
         }
@@ -117,7 +117,7 @@ export default ({ dispatch }) => next => action => {
       case 'GET_PURCHASE_LIST':
         {
           api
-            .GET('purchase/list')
+            .GET('shop/list')
             .then(list => next({ ...action, list }))
             .catch(handleError)
         }
@@ -126,7 +126,7 @@ export default ({ dispatch }) => next => action => {
       case 'GET_STRIPE_KEYS':
         {
           api
-            .GET('purchase/keys')
+            .GET('shop/keys')
             .then(keys => next({ ...action, keys }))
             .catch(handleError)
         }

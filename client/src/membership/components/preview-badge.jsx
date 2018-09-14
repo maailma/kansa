@@ -37,7 +37,7 @@ export default class PreviewBadge extends React.Component {
 
   get badgeImgUrl() {
     const { memberId, name, subtitle } = this.props
-    const path = memberId ? `people/${memberId}/badge` : 'blank-badge'
+    const path = `badge/${memberId || 'blank'}`
     const q = []
     if (name) q.push(`name=${encodeURIComponent(name)}`)
     if (subtitle) q.push(`subtitle=${encodeURIComponent(subtitle)}`)

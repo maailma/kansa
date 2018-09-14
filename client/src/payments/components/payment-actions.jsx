@@ -57,7 +57,7 @@ const PaymentActions = ({ buyOther, purchase, showMessage, userIds }) => {
           if (person_id && userIds && userIds.includes(person_id)) {
             actions.push(
               <FlatButton
-                href={`${API_ROOT}people/${person_id}/ballot`}
+                href={`${API_ROOT}siteselect/${person_id}/ballot`}
                 key="ss-token"
                 label="Download personal ballot"
                 primary

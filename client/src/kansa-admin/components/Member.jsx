@@ -134,7 +134,7 @@ class Member extends PureComponent {
         key="invoice"
         onSubmit={invoice =>
           api
-            .POST(`purchase/invoice`, {
+            .POST(`shop/invoice`, {
               email,
               items: [invoice]
             })
@@ -224,7 +224,7 @@ class Member extends PureComponent {
         )
         throw err
       })
-      .then(() => api.POST(`people/${member.get('id')}/print`))
+      .then(() => api.POST(`badge/${member.get('id')}/print`))
       .then(() => (changes.size > 0 ? this.save() : null))
       .then(handleClose)
   }

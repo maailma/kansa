@@ -35,9 +35,9 @@ api
       store.dispatch({ type: 'SET PERSON', data })
     }
   })
-  .then(() => api.GET('purchase/list', { all: 1 }))
+  .then(() => api.GET('shop/list', { all: 1 }))
   .then(data => store.dispatch({ type: 'INIT PAYMENTS', data }))
-  .then(() => api.GET('purchase/data'))
+  .then(() => api.GET('shop/data'))
   .then(data => store.dispatch({ type: 'SET PAYMENT DATA', data }))
   .catch(e => console.error(e))
 

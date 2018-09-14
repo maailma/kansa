@@ -36,7 +36,7 @@ export default class ShowBarcode extends React.Component {
 
   barcodeUrl(fmt) {
     const { memberId } = this.props
-    return `${API_ROOT}people/${memberId}/barcode.${fmt}`
+    return `${API_ROOT}barcode/${memberId}.${fmt}`
   }
 
   handleClose = () => this.setState({ isOpen: false })
