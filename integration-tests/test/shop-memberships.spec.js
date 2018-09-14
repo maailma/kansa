@@ -36,7 +36,7 @@ describe('Membership purchases', () => {
   context('Parameters', () => {
     it('should require required parameters', done => {
       agent
-        .post('/api/shop/membership')
+        .post('/api/shop/buy-membership')
         .send({ amount: 0, email: '@', source: { id: 'x' } })
         .expect(res => {
           const exp = {
@@ -55,7 +55,7 @@ describe('Membership purchases', () => {
 
     it('should require at least one optional parameter', done => {
       agent
-        .post('/api/shop/membership')
+        .post('/api/shop/buy-membership')
         .send({ amount: 1, email: '@', source: { id: 'x' } })
         .expect(res => {
           const exp = {
@@ -74,7 +74,7 @@ describe('Membership purchases', () => {
 
     it('should require a correct amount', done => {
       agent
-        .post('/api/shop/membership')
+        .post('/api/shop/buy-membership')
         .send({
           amount: 1,
           email: '@',
@@ -117,7 +117,7 @@ describe('Membership purchases', () => {
         })
         .then(source => {
           agent
-            .post('/api/shop/membership')
+            .post('/api/shop/buy-membership')
             .send({
               amount:
                 prices.supporter +
@@ -198,7 +198,7 @@ describe('Membership purchases', () => {
         })
         .then(source => {
           agent
-            .post('/api/shop/membership')
+            .post('/api/shop/buy-membership')
             .send({
               amount: prices.adult - prices.supporter,
               email: `${testName}@example.com`,
@@ -228,7 +228,7 @@ describe('Membership purchases', () => {
         })
         .then(source => {
           agent
-            .post('/api/shop/membership')
+            .post('/api/shop/buy-membership')
             .send({
               amount: prices.paperPubs,
               email: `${testName}@example.com`,

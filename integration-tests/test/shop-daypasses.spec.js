@@ -14,7 +14,7 @@ describe('Daypass purchases', () => {
   context('Parameters', () => {
     it('should require required parameters', done => {
       agent
-        .post('/api/shop/daypass')
+        .post('/api/shop/buy-daypass')
         .send({ amount: 0, email: '@', source: { id: 'x' } })
         .expect(res => {
           const exp = {
@@ -33,7 +33,7 @@ describe('Daypass purchases', () => {
 
     it('should require at least one pass with a day', done => {
       agent
-        .post('/api/shop/daypass')
+        .post('/api/shop/buy-daypass')
         .send({
           amount: 1,
           email: '@',
@@ -57,7 +57,7 @@ describe('Daypass purchases', () => {
 
     it('should require a correct amount', done => {
       agent
-        .post('/api/shop/daypass')
+        .post('/api/shop/buy-daypass')
         .send({
           amount: 1,
           email: '@',
@@ -117,7 +117,7 @@ describe('Daypass purchases', () => {
         })
         .then(source => {
           agent
-            .post('/api/shop/daypass')
+            .post('/api/shop/buy-daypass')
             .send({
               amount: 7000,
               email: `${testName}@example.com`,

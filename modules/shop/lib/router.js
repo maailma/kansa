@@ -49,8 +49,20 @@ module.exports = (db, ctx, cfg) => {
       .catch(next)
   })
 
-  router.post('/daypass', (req, res, next) =>
+  router.post('/buy-daypass', (req, res, next) =>
     buyDaypass(db, ctx, cfg, req)
+      .then(data => res.json(data))
+      .catch(next)
+  )
+
+  router.post('/buy-membership', (req, res, next) =>
+    buyMembership(db, ctx, cfg, req)
+      .then(data => res.json(data))
+      .catch(next)
+  )
+
+  router.post('/buy-other', (req, res, next) =>
+    buyOther(db, ctx, cfg, req)
       .then(data => res.json(data))
       .catch(next)
   )
@@ -58,18 +70,6 @@ module.exports = (db, ctx, cfg) => {
   router.post('/invoice', hasRole('member_admin'), (req, res, next) =>
     createInvoice(db, ctx, req.body)
       .then(email => res.json({ status: 'success', email }))
-      .catch(next)
-  )
-
-  router.post('/membership', (req, res, next) =>
-    buyMembership(db, ctx, cfg, req)
-      .then(data => res.json(data))
-      .catch(next)
-  )
-
-  router.post('/other', (req, res, next) =>
-    buyOther(db, ctx, cfg, req)
-      .then(data => res.json(data))
       .catch(next)
   )
 

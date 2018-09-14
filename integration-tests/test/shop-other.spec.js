@@ -14,7 +14,7 @@ describe('Other purchases', () => {
   context('Parameters', () => {
     it('should require required parameters', done => {
       agent
-        .post('/api/shop/other')
+        .post('/api/shop/buy-other')
         .send({
           email: 'nonesuch@example.com',
           source: { id: 'x' },
@@ -34,7 +34,7 @@ describe('Other purchases', () => {
 
     it('should require a valid category', done => {
       agent
-        .post('/api/shop/other')
+        .post('/api/shop/buy-other')
         .send({
           email: 'nonesuch@example.com',
           source: { id: 'x' },
@@ -54,7 +54,7 @@ describe('Other purchases', () => {
 
     it('should require custom data', done => {
       agent
-        .post('/api/shop/other')
+        .post('/api/shop/buy-other')
         .send({
           email: 'nonesuch@example.com',
           source: { id: 'x' },
@@ -84,7 +84,7 @@ describe('Other purchases', () => {
 
     it('should require a known email address', done => {
       agent
-        .post('/api/shop/other')
+        .post('/api/shop/buy-other')
         .send({
           email: 'nonesuch@example.com',
           source: { id: 'x' },
@@ -111,7 +111,7 @@ describe('Other purchases', () => {
 
     it('should require person_id to be valid if not null', done => {
       agent
-        .post('/api/shop/other')
+        .post('/api/shop/buy-other')
         .send({
           email: 'admin@example.com',
           source: { id: 'x' },
@@ -201,7 +201,7 @@ describe('Other purchases', () => {
         })
         .then(source => {
           agent
-            .post('/api/shop/other')
+            .post('/api/shop/buy-other')
             .send({
               email: `${testName}@example.com`,
               source,
@@ -319,7 +319,7 @@ describe('Other purchases', () => {
         })
         .then(source => {
           agent
-            .post('/api/shop/other')
+            .post('/api/shop/buy-other')
             .send({
               email,
               source,
