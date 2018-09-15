@@ -8,11 +8,6 @@ import Snackbar from 'material-ui/Snackbar'
 import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar'
 import Menu from 'material-ui/svg-icons/navigation/menu'
 
-import {
-  ConfigProvider,
-  defaultConfig,
-  getConfig
-} from '../../lib/config-context'
 import Worldcon75 from '../../lib/worldcon75'
 import { primary2Color } from '../../theme/colors'
 import { hideMessage } from '../actions/app'
@@ -99,13 +94,9 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = Object.assign(
-      { config: defaultConfig, menuOpen: false },
+      { menuOpen: false },
       getMenuState(props.allowMenuDocked)
     )
-  }
-
-  componentDidMount() {
-    getConfig().then(config => this.setState({ config }))
   }
 
   componentWillReceiveProps(nextProps) {
@@ -174,15 +165,13 @@ class App extends Component {
 
   render() {
     return (
-      <ConfigProvider value={this.state.config}>
-        <EventListener onResize={this.handleResize} target="window">
-          <div>
-            {this.renderHeader()}
-            <main>{this.props.children}</main>
-            {this.renderFooter()}
-          </div>
-        </EventListener>
-      </ConfigProvider>
+      <EventListener onResize={this.handleResize} target="window">
+        <div>
+          {this.renderHeader()}
+          <main>{this.props.children}</main>
+          {this.renderFooter()}
+        </div>
+      </EventListener>
     )
   }
 }

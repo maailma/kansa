@@ -7,6 +7,7 @@ import { browserHistory, hashHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 import { createStore } from 'redux'
 
+import AppContext from './context'
 import middleware from './middleware'
 import reducers from './reducers'
 import AppRouter from './router'
@@ -44,7 +45,9 @@ history.listen(({ pathname }) => {
 ReactDOM.render(
   <Provider store={store}>
     <MuiThemeProvider muiTheme={theme}>
-      <AppRouter history={syncHistoryWithStore(history, store)} />
+      <AppContext>
+        <AppRouter history={syncHistoryWithStore(history, store)} />
+      </AppContext>
     </MuiThemeProvider>
   </Provider>,
   document.getElementById('react')

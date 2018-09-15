@@ -16,6 +16,7 @@ import { requestSlackInvite } from '../actions'
 import * as MemberPropTypes from '../proptypes'
 import MemberEdit from './MemberEdit'
 import ShowBarcode from './show-barcode'
+import { ModuleConsumer } from '../../context'
 
 const Action = props => (
   <ListItem innerDivStyle={{ paddingLeft: 60 }} {...props} />
@@ -163,21 +164,40 @@ const SouvenirBookAction = ({ attr }) =>
 
 const MemberActions = ({ member }) => (
   <ConfigConsumer>
-    {({ getMemberAttr, paid_paper_pubs }) => {
-      const attr = getMemberAttr(member)
-      return (
-        <List style={{ paddingTop: 0 }}>
-          <EditAction member={member} />
-          <UpgradeAction member={member} paidPaperPubs={paid_paper_pubs} />
-          <BarcodeAction attr={attr} member={member} />
-          <HugoNominateAction getMemberAttr={getMemberAttr} member={member} />
-          <HugoVoteAction getMemberAttr={getMemberAttr} member={member} />
-          <SiteSelectionTokenAction attr={attr} />
-          <SlackInviteAction attr={attr} />
-          <SouvenirBookAction attr={attr} />
-        </List>
-      )
-    }}
+    {({ getMemberAttr, paid_paper_pubs }) => (
+      <ModuleConsumer>
+        {modules => {
+          const attr = getMemberAttr(member)
+          const actions = modules.reduce(
+            (actions, mod) =>
+              mod.actions ? actions.concat(mod.actions(attr, member)) : actions,
+            [
+              <EditAction key="edit" member={member} />,
+              <UpgradeAction
+                key="upgrade"
+                member={member}
+                paidPaperPubs={paid_paper_pubs}
+              />,
+              <BarcodeAction key="barcode" attr={attr} member={member} />,
+              <HugoNominateAction
+                key="hugo-nom"
+                getMemberAttr={getMemberAttr}
+                member={member}
+              />,
+              <HugoVoteAction
+                key="hugo-vote"
+                getMemberAttr={getMemberAttr}
+                member={member}
+              />,
+              <SiteSelectionTokenAction key="siteselect" attr={attr} />,
+              <SlackInviteAction key="slack" attr={attr} />,
+              <SouvenirBookAction key="souvenir-book" attr={attr} />
+            ]
+          )
+          return <List style={{ paddingTop: 0 }}>{actions}</List>
+        }}
+      </ModuleConsumer>
+    )}
   </ConfigConsumer>
 )
 
