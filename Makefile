@@ -12,6 +12,9 @@ start:
 start-detached:
 	$(DC) up -d --build
 
+restart-%:
+	$(DC) restart $*
+
 update-%:
 	$(DC) up -d --build --no-deps $*
 
