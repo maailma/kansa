@@ -19,8 +19,3 @@ export const memberUpdate = (id, changes) => ({
   id,
   changes
 })
-
-export const requestSlackInvite = () => ({
-  module: 'kansa',
-  type: 'REQUEST_SLACK_INVITE'
-})

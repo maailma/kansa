@@ -48,7 +48,7 @@ class Slack {
   getUserData({ email }) {
     let select = `
       SELECT public_first_name, public_last_name
-      FROM People LEFT JOIN membership_types USING (membership)
+      FROM People LEFT JOIN membership_types m USING (membership)
       WHERE email = $1`
     if (this.reqMembership) select += ` AND m.member = true`
     return this.db.any(select, email).then(people => {

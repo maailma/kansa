@@ -10,9 +10,7 @@ import LocationCity from 'material-ui/svg-icons/social/location-city'
 
 import { ConfigConsumer } from '../../lib/config-context'
 import Rocket from '../../lib/rocket-icon'
-import SlackIcon from '../../lib/slack-icon'
 import SouvenirBook from '../../lib/souvenir-book'
-import { requestSlackInvite } from '../actions'
 import * as MemberPropTypes from '../proptypes'
 import MemberEdit from './MemberEdit'
 import ShowBarcode from './show-barcode'
@@ -138,19 +136,6 @@ SiteSelectionTokenAction = connect(
   { push }
 )(SiteSelectionTokenAction)
 
-let SlackInviteAction = ({ attr, requestSlackInvite }) =>
-  attr.member ? (
-    <Action
-      leftIcon={<SlackIcon />}
-      onClick={requestSlackInvite}
-      primaryText="Request Slack invite"
-    />
-  ) : null
-SlackInviteAction = connect(
-  null,
-  { requestSlackInvite }
-)(SlackInviteAction)
-
 const SouvenirBookAction = ({ attr }) =>
   attr.wsfs_member ? (
     <Action
@@ -190,7 +175,6 @@ const MemberActions = ({ member }) => (
                 member={member}
               />,
               <SiteSelectionTokenAction key="siteselect" attr={attr} />,
-              <SlackInviteAction key="slack" attr={attr} />,
               <SouvenirBookAction key="souvenir-book" attr={attr} />
             ]
           )
