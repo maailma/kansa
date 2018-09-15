@@ -11,7 +11,7 @@ const cfg = {
     'kansa-admin': ['./src/kansa-admin/index.jsx']
   },
   output: {
-    path: path.join(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'dist'),
     publicPath: '/',
     filename: '[name].js'
   },
@@ -36,7 +36,24 @@ const cfg = {
           }
         ]
       },
-      { test: /\.jsx?$/, exclude: /node_modules/, use: 'babel-loader' },
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              require('babel-preset-react'),
+              [require('babel-preset-env'), { targets: { browsers: '> 1%' } }]
+            ],
+            plugins: [
+              require('babel-plugin-syntax-dynamic-import'),
+              require('babel-plugin-transform-class-properties'),
+              require('babel-plugin-transform-object-rest-spread')
+            ]
+          }
+        }
+      },
       {
         test: /\.(jpe?g|png|gif|svg)$/i,
         use: {
@@ -53,7 +70,11 @@ const cfg = {
     ]
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.json']
+    alias: {
+      '@kansa/client-lib': path.resolve(__dirname, 'src/lib/')
+    },
+    extensions: ['.js', '.jsx', '.json'],
+    modules: [path.resolve(__dirname, 'node_modules')]
   },
   plugins: []
 }
