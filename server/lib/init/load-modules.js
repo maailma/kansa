@@ -24,7 +24,7 @@ module.exports = (db, app, root) => {
     const mc = config.modules[name]
     if (!mc) return
     debug(`Adding module ${name}`)
-    const mp = path.resolve(root, name)
+    const mp = path.resolve(root, name, 'server')
     app.use(`/${name}`, require(mp)(db, ctx, mc))
   })
 

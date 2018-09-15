@@ -1,18 +1,16 @@
 {
-  "name": "@kansa/raami",
+  "name": "@kansa/server-slack-module",
   "version": "1.0.0",
-  "description": "API for art show",
-  "main": "lib/router.js",
+  "description": "Slack invites for Kansa",
   "private": true,
   "license": "Apache-2.0",
   "repository": "maailma/kansa",
   "dependencies": {
-    "archiver": "^1.3.0"
+    "form-data": "^2.3.2"
   },
   "peerDependencies": {
     "@kansa/common": "^1.1.0",
-    "body-parser": "1.*",
-    "csv-express": "1.*",
-    "express": "4.*"
+    "express": "4.x",
+    "node-fetch": "*"
   }
 }

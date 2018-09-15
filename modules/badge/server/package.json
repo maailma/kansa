@@ -1,15 +1,13 @@
 {
-  "name": "@kansa/siteselect",
+  "name": "@kansa/server-badge-module",
   "version": "1.0.0",
-  "description": "Worldcon Site Selection for Kansa",
+  "description": "Badge generator for Kansa",
   "private": true,
   "license": "Apache-2.0",
   "repository": "maailma/kansa",
-  "main": "lib/router.js",
   "peerDependencies": {
     "@kansa/common": "1.x",
     "express": "4.x",
-    "node-fetch": "*",
-    "randomstring": "1.x"
+    "node-fetch": "*"
   }
 }

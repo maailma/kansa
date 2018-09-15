@@ -1,16 +1,13 @@
 {
-  "name": "@kansa/hugo",
+  "name": "@kansa/server-public-module",
   "version": "1.0.0",
-  "description": "API for Hugo Awards",
+  "description": "Kansa public data endpoints",
   "private": true,
   "license": "Apache-2.0",
   "repository": "maailma/kansa",
-  "main": "lib/router.js",
   "peerDependencies": {
     "@kansa/common": "^1.1.0",
     "express": "4.x",
-    "express-ws": ">=2",
-    "jsonwebtoken": ">=7",
-    "yaml": "^1.0.0-rc.7"
+    "randomstring": "1.x"
   }
 }

@@ -1,0 +1,17 @@
+{
+  "name": "@kansa/server-raami-module",
+  "version": "1.0.0",
+  "description": "API for art show",
+  "private": true,
+  "license": "Apache-2.0",
+  "repository": "maailma/kansa",
+  "dependencies": {
+    "archiver": "^1.3.0"
+  },
+  "peerDependencies": {
+    "@kansa/common": "^1.1.0",
+    "body-parser": "1.*",
+    "csv-express": "1.*",
+    "express": "4.*"
+  }
+}

@@ -1,17 +1,13 @@
 {
-  "name": "@kansa/slack",
+  "name": "@kansa/server-admin-module",
   "version": "1.0.0",
-  "description": "Slack invites for Kansa",
+  "description": "Kansa admin functionality",
   "private": true,
   "license": "Apache-2.0",
   "repository": "maailma/kansa",
-  "main": "lib/router.js",
-  "dependencies": {
-    "form-data": "^2.3.2"
-  },
   "peerDependencies": {
     "@kansa/common": "^1.1.0",
     "express": "4.x",
-    "node-fetch": "*"
+    "randomstring": "1.x"
   }
 }
