@@ -16,11 +16,11 @@ const SlackAction = ({ org }) => (
   />
 )
 
-export default function slackModule(config) {
+export default function SlackModule(config) {
   const { org, require_membership } = config.modules.slack
   const actions = ({ member }) =>
     require_membership && !member ? null : (
-      <SlackAction key="slack" org={org} order={90} />
+      <SlackAction key="90-slack" org={org} />
     )
   return { actions }
 }

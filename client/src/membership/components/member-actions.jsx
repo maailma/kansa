@@ -157,27 +157,28 @@ const MemberActions = ({ member }) => (
             (actions, mod) =>
               mod.actions ? actions.concat(mod.actions(attr, member)) : actions,
             [
-              <EditAction key="edit" member={member} />,
+              <EditAction key="10-edit" member={member} />,
               <UpgradeAction
-                key="upgrade"
+                key="20-upgrade"
                 member={member}
                 paidPaperPubs={paid_paper_pubs}
               />,
               <BarcodeAction key="barcode" attr={attr} member={member} />,
               <HugoNominateAction
-                key="hugo-nom"
+                key="30-hugo-nom"
                 getMemberAttr={getMemberAttr}
                 member={member}
               />,
               <HugoVoteAction
-                key="hugo-vote"
+                key="30-hugo-vote"
                 getMemberAttr={getMemberAttr}
                 member={member}
               />,
-              <SiteSelectionTokenAction key="siteselect" attr={attr} />,
-              <SouvenirBookAction key="souvenir-book" attr={attr} />
+              <SiteSelectionTokenAction key="40-siteselect" attr={attr} />,
+              <SouvenirBookAction key="50-souvenir-book" attr={attr} />
             ]
           )
+          actions.sort((a, b) => ((a && a.key) < (b && b.key) ? -1 : 1))
           return <List style={{ paddingTop: 0 }}>{actions}</List>
         }}
       </ModuleConsumer>
