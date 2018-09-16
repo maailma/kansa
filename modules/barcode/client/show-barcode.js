@@ -1,9 +1,11 @@
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
+import Receipt from 'material-ui/svg-icons/action/receipt'
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { Component } from 'react'
 
-import { API_ROOT } from '../../constants'
+import Action from '@kansa/client-lib/action'
+import api from '@kansa/client-lib/api'
 
 const BARCODE_WIDTH = 709
 const BARCODE_HEIGHT = 551
@@ -25,8 +27,9 @@ const styles = {
   }
 }
 
-export default class ShowBarcode extends React.Component {
+export default class ShowBarcode extends Component {
   static propTypes = {
+    eventId: PropTypes.string.isRequired,
     memberId: PropTypes.number.isRequired
   }
 
@@ -36,7 +39,7 @@ export default class ShowBarcode extends React.Component {
 
   barcodeUrl(fmt) {
     const { memberId } = this.props
-    return `${API_ROOT}barcode/${memberId}.${fmt}`
+    return api.path(`barcode/${memberId}.${fmt}`)
   }
 
   handleClose = () => this.setState({ isOpen: false })
@@ -44,17 +47,19 @@ export default class ShowBarcode extends React.Component {
   handleOpen = () => this.setState({ isOpen: true })
 
   render() {
-    const { memberId } = this.props
+    const { eventId, memberId } = this.props
     const { isOpen } = this.state
     return (
       <div>
-        {React.Children.map(this.props.children, child =>
-          React.cloneElement(child, { onClick: this.handleOpen })
-        )}
+        <Action
+          leftIcon={<Receipt />}
+          onClick={this.handleOpen}
+          primaryText="Show registration barcode"
+        />
         <Dialog
           actions={
             <FlatButton
-              download={`w75-barcode-${memberId}.pdf`}
+              download={`${eventId}-barcode-${memberId}.pdf`}
               href={this.barcodeUrl('pdf')}
               label="Download PDF"
               primary

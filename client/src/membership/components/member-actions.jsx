@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
 import { List, ListItem } from 'material-ui/List'
-import Receipt from 'material-ui/svg-icons/action/receipt'
 import ThumbUp from 'material-ui/svg-icons/action/thumb-up'
 import ContentCreate from 'material-ui/svg-icons/content/create'
 import LocationCity from 'material-ui/svg-icons/social/location-city'
@@ -13,7 +12,6 @@ import Rocket from '../../lib/rocket-icon'
 import SouvenirBook from '../../lib/souvenir-book'
 import * as MemberPropTypes from '../proptypes'
 import MemberEdit from './MemberEdit'
-import ShowBarcode from './show-barcode'
 import { ModuleConsumer } from '../../context'
 
 const Action = props => (
@@ -92,14 +90,6 @@ const EditAction = ({ member }) => {
   )
 }
 
-const BarcodeAction = ({ attr, member }) => {
-  return attr.badge || member.get('daypass') ? (
-    <ShowBarcode memberId={member.get('id')}>
-      <Action leftIcon={<Receipt />} primaryText="Show registration barcode" />
-    </ShowBarcode>
-  ) : null
-}
-
 let UpgradeAction = ({ member, paidPaperPubs, purchaseData, push }) => {
   const mpt = purchaseData && purchaseData.getIn(['new_member', 'types'])
   if (!mpt) return null
@@ -163,7 +153,6 @@ const MemberActions = ({ member }) => (
                 member={member}
                 paidPaperPubs={paid_paper_pubs}
               />,
-              <BarcodeAction key="barcode" attr={attr} member={member} />,
               <HugoNominateAction
                 key="30-hugo-nom"
                 getMemberAttr={getMemberAttr}

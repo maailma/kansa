@@ -14,6 +14,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@kansa/client-barcode-module": "file:../modules/barcode/client",
     "@kansa/client-slack-module": "file:../modules/slack/client",
     "file-saver": "^1.3.8",
     "flexboxgrid": "^6.3.1",

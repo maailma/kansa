@@ -1,0 +1,13 @@
+{
+  "name": "@kansa/client-barcode-module",
+  "version": "1.0.0",
+  "description": "Barcode generator for Kansa",
+  "private": true,
+  "license": "Apache-2.0",
+  "repository": "maailma/kansa",
+  "peerDependencies": {
+    "@kansa/client-lib": "*",
+    "material-ui": "^0.20.1",
+    "react": "16.x"
+  }
+}
