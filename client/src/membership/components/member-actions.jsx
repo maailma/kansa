@@ -1,18 +1,17 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
 import { List, ListItem } from 'material-ui/List'
 import ThumbUp from 'material-ui/svg-icons/action/thumb-up'
-import ContentCreate from 'material-ui/svg-icons/content/create'
 import LocationCity from 'material-ui/svg-icons/social/location-city'
 
+import { ModuleConsumer } from '../../context'
 import { ConfigConsumer } from '../../lib/config-context'
 import Rocket from '../../lib/rocket-icon'
 import SouvenirBook from '../../lib/souvenir-book'
 import * as MemberPropTypes from '../proptypes'
-import MemberEdit from './MemberEdit'
-import { ModuleConsumer } from '../../context'
+import MemberEditAction from './member-edit-action'
 
 const Action = props => (
   <ListItem innerDivStyle={{ paddingLeft: 60 }} {...props} />
@@ -59,50 +58,6 @@ const HugoVoteAction = props => (
     {...props}
   />
 )
-
-const EditAction = ({ badge, member }) => {
-  const infoStyle = { color: 'rgba(0, 0, 0, 0.870588)' }
-  let badgeLine = null
-  if (badge) {
-    const badgeName = member.get('badge_name') || member.get('preferred_name')
-    badgeLine = (
-      <Fragment>
-        Badge name: <span style={infoStyle}>{badgeName}</span>
-        <br />
-      </Fragment>
-    )
-  }
-  const pfn = member.get('public_first_name') || ''
-  const pln = member.get('public_last_name') || ''
-  const publicName = `${pfn} ${pln}`.trim()
-  const publicNameLine = publicName ? (
-    <Fragment>
-      Public name: <span style={infoStyle}>{publicName}</span>
-      <br />
-    </Fragment>
-  ) : (
-    <Fragment>
-      No public name
-      <br />
-    </Fragment>
-  )
-  const secondaryText = (
-    <p>
-      {badgeLine}
-      {publicNameLine}
-    </p>
-  )
-  return (
-    <MemberEdit member={member}>
-      <Action
-        leftIcon={<ContentCreate style={{ top: 12 }} />}
-        primaryText="Edit personal information"
-        secondaryText={secondaryText}
-        secondaryTextLines={badgeLine ? 2 : 1}
-      />
-    </MemberEdit>
-  )
-}
 
 let UpgradeAction = ({ member, paidPaperPubs, purchaseData, push }) => {
   const mpt = purchaseData && purchaseData.getIn(['new_member', 'types'])
@@ -153,7 +108,7 @@ const SouvenirBookAction = ({ attr }) =>
 
 const MemberActions = ({ member }) => (
   <ConfigConsumer>
-    {({ getMemberAttr, modules: moduleCfg, paid_paper_pubs }) => (
+    {({ getMemberAttr, paid_paper_pubs }) => (
       <ModuleConsumer>
         {modules => {
           const attr = getMemberAttr(member)
@@ -161,11 +116,7 @@ const MemberActions = ({ member }) => (
             (actions, mod) =>
               mod.actions ? actions.concat(mod.actions(attr, member)) : actions,
             [
-              <EditAction
-                key="10-edit"
-                badge={moduleCfg && moduleCfg.badge}
-                member={member}
-              />,
+              <MemberEditAction key="10-edit" member={member} />,
               <UpgradeAction
                 key="20-upgrade"
                 member={member}
