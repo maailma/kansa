@@ -1,57 +1,83 @@
-import FlatButton from 'material-ui/FlatButton'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Col, Row } from 'react-flexbox-grid'
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
-import TextInput from '../../lib/text-input'
-import PreviewBadge from './preview-badge'
 import { ConfigConsumer } from '../../lib/config-context'
+import DataTextField from '../../lib/data-text-field'
+import PreviewBadge from './preview-badge'
 
-const PreviewBadgeButton = ({ member, style }) => (
-  <PreviewBadge
-    memberId={member.get('id')}
-    name={member.get('badge_name') || member.get('preferred_name')}
-    subtitle={member.get('badge_subtitle') || member.get('country')}
-  >
-    <FlatButton label="Preview" primary style={style} />
-  </PreviewBadge>
+import { disabledColor } from '../../theme/colors'
+const hintStyle = {
+  color: disabledColor,
+  fontSize: 13,
+  marginBottom: 24
+}
+
+const BadgeNameField = ({ member, onChange, prevMember }) => (
+  <DataTextField
+    data={member}
+    hintText={member.get('preferred_name')}
+    multiLine
+    onChange={onChange}
+    path="badge_name"
+    prev={prevMember}
+    rowsMax={2}
+  />
 )
 
-const BadgeRow = ({ getMsg, inputProps, isAdmin, member }) => (
+const BadgeSubtitleField = ({ member, onChange, prevMember }) => (
+  <DataTextField
+    data={member}
+    hintText={member.get('country')}
+    onChange={onChange}
+    path="badge_subtitle"
+    prev={prevMember}
+  />
+)
+
+const BadgeRow = ({ getMsg, isAdmin, member, onChange, prevMember }) => {
+  const props = { member, onChange, prevMember }
+  return isAdmin ? (
+    <Row style={{ alignItems: 'flex-end' }}>
+      <Col xs={12} sm={6}>
+        <BadgeNameField {...props} />
+      </Col>
+      <Col xs={12} sm={3} md={4}>
+        <BadgeSubtitleField {...props} />
+      </Col>
+      <Col xs={12} sm={3} md={2}>
+        <PreviewBadge buttonStyle={{ float: 'right' }} member={member} />
+      </Col>
+    </Row>
+  ) : (
+    <Row style={{ alignItems: 'flex-end' }}>
+      <Col xs={12} sm={6}>
+        <BadgeNameField {...props} />
+      </Col>
+      <Col xs={12} sm={6}>
+        <BadgeSubtitleField {...props} />
+      </Col>
+      <Col xs={12} style={hintStyle}>
+        <PreviewBadge buttonStyle={{ float: 'right' }} member={member} />
+        {getMsg('badge_hint')}
+      </Col>
+    </Row>
+  )
+}
+
+BadgeRow.propTypes = {
+  getMsg: PropTypes.func.isRequired,
+  isAdmin: PropTypes.bool,
+  member: ImmutablePropTypes.map.isRequired,
+  onChange: PropTypes.func.isRequired,
+  prevMember: ImmutablePropTypes.map
+}
+
+export default props => (
   <ConfigConsumer>
     {({ getMemberAttr }) =>
-      getMemberAttr(member).badge ? (
-        <Row style={{ alignItems: 'flex-end' }}>
-          <Col xs={12} sm={6}>
-            <TextInput
-              hintText={member.get('preferred_name')}
-              multiLine
-              path="badge_name"
-              rowsMax={2}
-              {...inputProps}
-            />
-          </Col>
-          <Col xs={12} sm={isAdmin ? 3 : 6} md={isAdmin ? 4 : 6}>
-            <TextInput
-              {...inputProps}
-              path="badge_subtitle"
-              hintText={member.get('country')}
-            />
-          </Col>
-          {isAdmin ? (
-            <Col xs={12} sm={3} md={2}>
-              <PreviewBadgeButton member={member} style={{ float: 'right' }} />
-            </Col>
-          ) : (
-            <Col xs={12} style={hintStyle}>
-              <PreviewBadgeButton member={member} style={{ float: 'right' }} />
-              {getMsg('badge_hint')}
-            </Col>
-          )}
-        </Row>
-      ) : null
+      getMemberAttr(props.member).badge ? <BadgeRow {...props} /> : null
     }
   </ConfigConsumer>
 )
-
-export default BadgeRow

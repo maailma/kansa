@@ -89,25 +89,28 @@ export default class MemberForm extends Component {
     return fn ? fn(params) : key
   }
 
-  onChange = (path, value) => {
-    this.setState(
-      {
-        member: this.state.member.setIn(path, value)
-      },
-      () => {
-        this.props.onChange(this.isValid, this.changes)
-      }
-    )
+  handleChange = member => {
+    this.setState({ member }, () => {
+      this.props.onChange(this.isValid, this.changes)
+    })
   }
 
   render() {
-    const { data, isAdmin, lc, newDaypass, newMember, tabIndex } = this.props
+    const {
+      data,
+      isAdmin,
+      lc,
+      member: prevMember,
+      newDaypass,
+      newMember,
+      tabIndex
+    } = this.props
     const { member } = this.state
     const inputProps = {
       getDefaultValue: this.getDefaultValue,
       getValue: this.getValue,
       lc,
-      onChange: this.onChange,
+      onChange: (path, value) => this.handleChange(member.setIn(path, value)),
       tabIndex
     }
     return (
@@ -161,9 +164,10 @@ export default class MemberForm extends Component {
         {lc !== 'daypass' && (
           <BadgeRow
             getMsg={this.msg}
-            inputProps={inputProps}
             isAdmin={isAdmin}
             member={member}
+            onChange={this.handleChange}
+            prevMember={prevMember}
           />
         )}
         <Row>

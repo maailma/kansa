@@ -1,8 +1,10 @@
 import Dialog from 'material-ui/Dialog'
+import FlatButton from 'material-ui/FlatButton'
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { Component, Fragment } from 'react'
+import ImmutablePropTypes from 'react-immutable-proptypes'
 
-import { API_ROOT } from '../../constants'
+import api from '../../lib/api'
 
 const BADGE_WIDTH = 709
 const BADGE_HEIGHT = 299
@@ -24,25 +26,23 @@ const styles = {
   }
 }
 
-export default class PreviewBadge extends React.Component {
+const getBadgeImgSrc = member => {
+  const memberId = member.get('id')
+  const path = `badge/${memberId || 'blank'}`
+  const name = member.get('badge_name') || member.get('preferred_name') || ''
+  const subtitle = member.get('badge_subtitle') || member.get('country') || ''
+  const params = name || subtitle ? { name, subtitle } : null
+  return api.path(path, params)
+}
+
+export default class PreviewBadge extends Component {
   static propTypes = {
-    memberId: PropTypes.number,
-    name: PropTypes.string,
-    subtitle: PropTypes.string
+    buttonStyle: PropTypes.object,
+    member: ImmutablePropTypes.map.isRequired
   }
 
   state = {
     isOpen: false
-  }
-
-  get badgeImgUrl() {
-    const { memberId, name, subtitle } = this.props
-    const path = `badge/${memberId || 'blank'}`
-    const q = []
-    if (name) q.push(`name=${encodeURIComponent(name)}`)
-    if (subtitle) q.push(`subtitle=${encodeURIComponent(subtitle)}`)
-    const qs = q.length === 0 ? '' : '?' + q.join('&')
-    return API_ROOT + path + qs
   }
 
   handleClose = () => this.setState({ isOpen: false })
@@ -50,12 +50,16 @@ export default class PreviewBadge extends React.Component {
   handleOpen = () => this.setState({ isOpen: true })
 
   render() {
+    const { buttonStyle, member } = this.props
     const { isOpen } = this.state
     return (
-      <div>
-        {React.Children.map(this.props.children, child =>
-          React.cloneElement(child, { onClick: this.handleOpen })
-        )}
+      <Fragment>
+        <FlatButton
+          label="Preview"
+          onClick={this.handleOpen}
+          primary
+          style={buttonStyle}
+        />
         <Dialog
           bodyStyle={{ padding: 0 }}
           onRequestClose={this.handleClose}
@@ -65,13 +69,13 @@ export default class PreviewBadge extends React.Component {
             {isOpen && (
               <img
                 onClick={this.handleClose}
-                src={this.badgeImgUrl}
+                src={getBadgeImgSrc(member)}
                 style={styles.image}
               />
             )}
           </div>
         </Dialog>
-      </div>
+      </Fragment>
     )
   }
 }
