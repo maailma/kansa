@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 
@@ -60,31 +60,45 @@ const HugoVoteAction = props => (
   />
 )
 
-const EditAction = ({ member }) => {
+const EditAction = ({ badge, member }) => {
   const infoStyle = { color: 'rgba(0, 0, 0, 0.870588)' }
-  const badgeName = member.get('badge_name') || member.get('preferred_name')
-  const publicName = [
-    member.get('public_first_name'),
-    member.get('public_last_name')
-  ]
-    .filter(n => n)
-    .join(' ')
-    .trim()
+  let badgeLine = null
+  if (badge) {
+    const badgeName = member.get('badge_name') || member.get('preferred_name')
+    badgeLine = (
+      <Fragment>
+        Badge name: <span style={infoStyle}>{badgeName}</span>
+        <br />
+      </Fragment>
+    )
+  }
+  const pfn = member.get('public_first_name') || ''
+  const pln = member.get('public_last_name') || ''
+  const publicName = `${pfn} ${pln}`.trim()
+  const publicNameLine = publicName ? (
+    <Fragment>
+      Public name: <span style={infoStyle}>{publicName}</span>
+      <br />
+    </Fragment>
+  ) : (
+    <Fragment>
+      No public name
+      <br />
+    </Fragment>
+  )
+  const secondaryText = (
+    <p>
+      {badgeLine}
+      {publicNameLine}
+    </p>
+  )
   return (
     <MemberEdit member={member}>
       <Action
         leftIcon={<ContentCreate style={{ top: 12 }} />}
         primaryText="Edit personal information"
-        secondaryText={
-          <p>
-            Badge name: <span style={infoStyle}>{badgeName}</span>
-            <br />
-            Public name:{' '}
-            <span style={infoStyle}>{publicName || '[not set]'}</span>
-            <br />
-          </p>
-        }
-        secondaryTextLines={2}
+        secondaryText={secondaryText}
+        secondaryTextLines={badgeLine ? 2 : 1}
       />
     </MemberEdit>
   )
@@ -139,7 +153,7 @@ const SouvenirBookAction = ({ attr }) =>
 
 const MemberActions = ({ member }) => (
   <ConfigConsumer>
-    {({ getMemberAttr, paid_paper_pubs }) => (
+    {({ getMemberAttr, modules: moduleCfg, paid_paper_pubs }) => (
       <ModuleConsumer>
         {modules => {
           const attr = getMemberAttr(member)
@@ -147,7 +161,11 @@ const MemberActions = ({ member }) => (
             (actions, mod) =>
               mod.actions ? actions.concat(mod.actions(attr, member)) : actions,
             [
-              <EditAction key="10-edit" member={member} />,
+              <EditAction
+                key="10-edit"
+                badge={moduleCfg && moduleCfg.badge}
+                member={member}
+              />,
               <UpgradeAction
                 key="20-upgrade"
                 member={member}

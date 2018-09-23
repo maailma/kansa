@@ -1,6 +1,6 @@
 import { Map } from 'immutable'
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 import Dialog from 'material-ui/Dialog'
@@ -11,7 +11,7 @@ import { accent1Color } from '../../theme/colors'
 import { memberUpdate } from '../actions'
 import MemberForm from './MemberForm'
 
-class MemberEdit extends React.Component {
+class MemberEdit extends Component {
   static propTypes = {
     member: ImmutablePropTypes.mapContains({
       paper_pubs: ImmutablePropTypes.map
@@ -64,12 +64,12 @@ class MemberEdit extends React.Component {
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if (nextState.changes !== this.state.changes) return true
-    if (nextState.isOpen !== this.state.isOpen) return true
-    if (!nextProps.member.equals(this.props.member)) return true
-    return false
-  }
+  //shouldComponentUpdate(nextProps, nextState) {
+  //  if (nextState.changes !== this.state.changes) return true
+  //  if (nextState.isOpen !== this.state.isOpen) return true
+  //  if (!nextProps.member.equals(this.props.member)) return true
+  //  return false
+  //}
 
   render() {
     const { member, children } = this.props

@@ -76,8 +76,10 @@ BadgeRow.propTypes = {
 
 export default props => (
   <ConfigConsumer>
-    {({ getMemberAttr }) =>
-      getMemberAttr(props.member).badge ? <BadgeRow {...props} /> : null
+    {({ getMemberAttr, modules }) =>
+      modules.badge && getMemberAttr(props.member).badge ? (
+        <BadgeRow {...props} />
+      ) : null
     }
   </ConfigConsumer>
 )
