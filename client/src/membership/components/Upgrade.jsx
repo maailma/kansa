@@ -15,7 +15,7 @@ import * as PaymentPropTypes from '../../payments/proptypes'
 import * as MemberPropTypes from '../proptypes'
 import MemberLookupSelector from './MemberLookupSelector'
 import MemberTypeList from './MemberTypeList'
-import PaperPubs, { paperPubsIsValid } from './paper-pubs'
+import PaperPubs, { paperPubsIsValid } from '../form/paper-pubs-edit'
 
 const UPGRADE_TARGET_TYPES = ['Adult', 'Youth', 'FirstWorldcon', 'Child']
 

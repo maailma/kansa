@@ -112,7 +112,7 @@ const PaperPubsCheckbox = ({ data, ppMsg, paid_paper_pubs, ...props }) => {
   )
 }
 
-const PaperPubs = ({
+const PaperPubsEdit = ({
   data,
   getDefaultValue,
   getValue,
@@ -180,7 +180,7 @@ const PaperPubs = ({
   </ConfigConsumer>
 )
 
-PaperPubs.propTypes = {
+PaperPubsEdit.propTypes = {
   data: PaymentPropTypes.data,
   getDefaultValue: PropTypes.func,
   getValue: PropTypes.func.isRequired,
@@ -191,4 +191,4 @@ PaperPubs.propTypes = {
   tabIndex: PropTypes.number
 }
 
-export default PaperPubs
+export default PaperPubsEdit

@@ -8,7 +8,7 @@ import BadgeEdit from '../form/badge-edit'
 import LocationEdit from '../form/location-edit'
 import NameEmailEdit from '../form/name-email-edit'
 import PublicNameEdit from '../form/public-name-edit'
-import PaperPubs, { paperPubsIsValid } from './paper-pubs'
+import PaperPubs, { paperPubsIsValid } from '../form/paper-pubs-edit'
 
 export default class MemberForm extends Component {
   static propTypes = {

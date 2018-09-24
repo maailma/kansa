@@ -5,7 +5,7 @@ import TextField from 'material-ui/TextField'
 import PropTypes from 'prop-types'
 import React from 'react'
 
-import { newPaperPubs } from '../../membership/components/paper-pubs'
+import { newPaperPubs } from '../../membership/form/paper-pubs-edit'
 import { membershipTypes } from './Member'
 
 const styles = {
