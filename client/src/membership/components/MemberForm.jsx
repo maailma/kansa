@@ -9,6 +9,7 @@ import { hintStyle } from '../../lib/hint-text'
 import TextInput from '../../lib/text-input'
 import * as PaymentPropTypes from '../../payments/proptypes'
 import BadgeRow from '../form/badge-row'
+import LocationRow from '../form/location-row'
 import NameEmailRow from '../form/name-email-row'
 import PublicNameRow from '../form/public-name-row'
 import PaperPubs, { paperPubsIsValid } from './paper-pubs'
@@ -120,22 +121,12 @@ export default class MemberForm extends Component {
           onChange={this.handleChange}
           prevMember={prevMember}
         />
-        <Row>
-          <Col xs={12} sm={4}>
-            <TextInput {...inputProps} path="city" />
-          </Col>
-          <Col xs={12} sm={4}>
-            <TextInput {...inputProps} path="state" />
-          </Col>
-          <Col xs={12} sm={4}>
-            <TextInput {...inputProps} path="country" />
-          </Col>
-          {!isAdmin && (
-            <Col xs={12} style={hintStyle}>
-              <Message id="location_hint" />
-            </Col>
-          )}
-        </Row>
+        <LocationRow
+          isAdmin={isAdmin}
+          member={member}
+          onChange={this.handleChange}
+          prevMember={prevMember}
+        />
         <PaperPubs
           data={data}
           isAdmin={isAdmin}
