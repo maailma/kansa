@@ -2,7 +2,7 @@ import React from 'react'
 import { Col, Row } from 'react-flexbox-grid'
 import { Message } from 'react-message-context'
 
-import TextInput from '../../lib/text-input'
+import DataTextField from '../../lib/data-text-field'
 import { disabledColor } from '../../theme/colors'
 
 const hintStyle = {
@@ -11,16 +11,43 @@ const hintStyle = {
   marginBottom: 24
 }
 
-const NameEmailRow = ({ inputProps, inputRef, isAdmin, isNew }) => {
+const NameField = ({ inputRef, member, onChange, prevMember }) => (
+  <DataTextField
+    data={member}
+    hintText={member.get('legal_name')}
+    inputRef={inputRef}
+    onChange={onChange}
+    path="legal_name"
+    prev={prevMember}
+    required
+  />
+)
+
+const EmailField = ({ disabled, member, onChange, prevMember }) => (
+  <DataTextField
+    data={member}
+    disabled={disabled}
+    onChange={onChange}
+    path="email"
+    prev={prevMember}
+    required={!disabled}
+  />
+)
+
+const NameEmailRow = ({
+  inputRef,
+  isAdmin,
+  isNew,
+  member,
+  onChange,
+  prevMember
+}) => {
+  const props = { member, onChange, prevMember }
+  const disabledEmail = !isAdmin && !isNew
   return (
     <Row>
       <Col xs={12} sm={6}>
-        <TextInput
-          {...inputProps}
-          inputRef={inputRef}
-          path="legal_name"
-          required
-        />
+        <NameField inputRef={inputRef} {...props} />
         {!isAdmin && (
           <div style={hintStyle}>
             <Message id="legal_name_hint" />
@@ -28,25 +55,20 @@ const NameEmailRow = ({ inputProps, inputRef, isAdmin, isNew }) => {
         )}
       </Col>
       <Col xs={12} sm={6}>
-        {isAdmin || isNew
-          ? [
-              <TextInput {...inputProps} key="input" path="email" required />,
-              !isAdmin && (
-                <div key="hint" style={hintStyle}>
-                  <Message id="new_email_hint" />
-                </div>
-              )
-            ]
-          : [
-              <TextInput {...inputProps} key="input" path="email" disabled />,
-              <div key="hint" style={hintStyle}>
-                To change the email address associated with this membership,
-                please get in touch with us at{' '}
-                <a href="mailto:registration@worldcon.fi">
-                  registration@worldcon.fi
-                </a>
-              </div>
-            ]}
+        <EmailField disabled={disabledEmail} {...props} />
+        {isAdmin ? null : isNew ? (
+          <div key="hint" style={hintStyle}>
+            <Message id="new_email_hint" />
+          </div>
+        ) : (
+          <div key="hint" style={hintStyle}>
+            To change the email address associated with this membership, please
+            get in touch with us at{' '}
+            <a href="mailto:registration@worldcon.fi">
+              registration@worldcon.fi
+            </a>
+          </div>
+        )}
       </Col>
     </Row>
   )

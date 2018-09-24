@@ -111,12 +111,14 @@ export default class MemberForm extends Component {
     return (
       <form>
         <NameEmailRow
-          inputProps={inputProps}
           inputRef={ref => {
             this.focusRef = ref
           }}
           isAdmin={isAdmin}
           isNew={newDaypass || newMember}
+          member={member}
+          onChange={this.handleChange}
+          prevMember={prevMember}
         />
         {lc !== 'daypass' && (
           <BadgeRow
