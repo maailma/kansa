@@ -132,10 +132,11 @@ class NewMemberForm extends React.Component {
                 </Col>
               </Row>
               <MemberForm
-                data={data}
+                locale="en"
                 member={member}
                 newMember
                 onChange={(valid, member) => this.setState({ member, valid })}
+                shopData={data}
                 tabIndex={2}
               />
             </CardText>

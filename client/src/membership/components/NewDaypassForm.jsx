@@ -197,7 +197,7 @@ class NewDaypassForm extends React.Component {
                 })}
               </Row>
               <MemberForm
-                lc="daypass"
+                locale="daypass"
                 member={person}
                 newDaypass
                 onChange={(valid, person) => this.setState({ person, valid })}

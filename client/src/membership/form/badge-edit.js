@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { Col, Row } from 'react-flexbox-grid'
 import ImmutablePropTypes from 'react-immutable-proptypes'
-import { Message } from 'react-message-context'
+import { Message, withLocale } from 'react-message-context'
 
 import { ConfigConsumer } from '../../lib/config-context'
 import DataTextField from '../../lib/data-text-field'
@@ -68,12 +68,16 @@ BadgeEdit.propTypes = {
   prevMember: ImmutablePropTypes.map
 }
 
-export default props => (
+export default withLocale(props => (
   <ConfigConsumer>
     {({ getMemberAttr, modules }) =>
-      modules.badge && getMemberAttr(props.member).badge ? (
+      modules &&
+      modules.badge &&
+      props.locale !== 'daypass' &&
+      !props.member.get('daypass') &&
+      getMemberAttr(props.member).badge ? (
         <BadgeEdit {...props} />
       ) : null
     }
   </ConfigConsumer>
-)
+))

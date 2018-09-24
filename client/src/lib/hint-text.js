@@ -10,15 +10,16 @@ export const hintStyle = {
   marginBottom: 24
 }
 
-const HintText = ({ children, msgId, ...props }) => (
+const HintText = ({ children, msgId, msgParams, ...props }) => (
   <div style={hintStyle} {...props}>
-    {msgId && <Message id={msgId} />}
+    {msgId && <Message id={msgId} params={msgParams} />}
     {children}
   </div>
 )
 
 HintText.propTypes = {
-  msgId: PropTypes.oneOfType([PropTypes.string, PropTypes.array])
+  msgId: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+  msgParams: PropTypes.object
 }
 
 export default HintText

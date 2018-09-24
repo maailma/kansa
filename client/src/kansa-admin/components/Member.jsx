@@ -268,6 +268,7 @@ class Member extends PureComponent {
               <ConfigProvider value={config}>
                 <MemberForm
                   isAdmin={true}
+                  locale="en"
                   member={member}
                   onChange={this.handleChange}
                   tabIndex={1}
