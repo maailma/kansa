@@ -27,7 +27,7 @@ const EmailField = ({ disabled, member, onChange, prevMember }) => (
   />
 )
 
-const NameEmailRow = ({ inputRef, isAdmin, isNew, ...props }) => {
+const NameEmailEdit = ({ inputRef, isAdmin, isNew, ...props }) => {
   const disabledEmail = !isAdmin && !isNew
   return (
     <Row>
@@ -52,4 +52,4 @@ const NameEmailRow = ({ inputRef, isAdmin, isNew, ...props }) => {
     </Row>
   )
 }
-export default NameEmailRow
+export default NameEmailEdit

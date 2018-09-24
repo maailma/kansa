@@ -5,7 +5,7 @@ import { Message } from 'react-message-context'
 import DataTextField from '../../lib/data-text-field'
 import { hintStyle } from '../../lib/hint-text'
 
-const PublicNameRow = ({ isAdmin, member, onChange, prevMember }) => (
+const PublicNameEdit = ({ isAdmin, member, onChange, prevMember }) => (
   <Row>
     <Col xs={12} sm={6}>
       <DataTextField
@@ -31,4 +31,4 @@ const PublicNameRow = ({ isAdmin, member, onChange, prevMember }) => (
   </Row>
 )
 
-export default PublicNameRow
+export default PublicNameEdit

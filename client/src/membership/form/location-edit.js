@@ -5,7 +5,7 @@ import { Message } from 'react-message-context'
 import DataTextField from '../../lib/data-text-field'
 import { hintStyle } from '../../lib/hint-text'
 
-const LocationRow = ({ isAdmin, member, onChange, prevMember }) => (
+const LocationEdit = ({ isAdmin, member, onChange, prevMember }) => (
   <Row>
     <Col xs={12} sm={4}>
       <DataTextField
@@ -39,4 +39,4 @@ const LocationRow = ({ isAdmin, member, onChange, prevMember }) => (
   </Row>
 )
 
-export default LocationRow
+export default LocationEdit

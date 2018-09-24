@@ -31,7 +31,7 @@ const BadgeSubtitleField = ({ member, onChange, prevMember }) => (
   />
 )
 
-const BadgeRow = ({ isAdmin, member, onChange, prevMember }) => {
+const BadgeEdit = ({ isAdmin, member, onChange, prevMember }) => {
   const props = { member, onChange, prevMember }
   return isAdmin ? (
     <Row style={{ alignItems: 'flex-end' }}>
@@ -61,7 +61,7 @@ const BadgeRow = ({ isAdmin, member, onChange, prevMember }) => {
   )
 }
 
-BadgeRow.propTypes = {
+BadgeEdit.propTypes = {
   isAdmin: PropTypes.bool,
   member: ImmutablePropTypes.map.isRequired,
   onChange: PropTypes.func.isRequired,
@@ -72,7 +72,7 @@ export default props => (
   <ConfigConsumer>
     {({ getMemberAttr, modules }) =>
       modules.badge && getMemberAttr(props.member).badge ? (
-        <BadgeRow {...props} />
+        <BadgeEdit {...props} />
       ) : null
     }
   </ConfigConsumer>

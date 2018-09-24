@@ -1,17 +1,13 @@
 import { Map } from 'immutable'
 import PropTypes from 'prop-types'
 import React, { Component } from 'react'
-import { Col, Row } from 'react-flexbox-grid'
 import ImmutablePropTypes from 'react-immutable-proptypes'
-import { Message } from 'react-message-context'
 
-import { hintStyle } from '../../lib/hint-text'
-import TextInput from '../../lib/text-input'
 import * as PaymentPropTypes from '../../payments/proptypes'
-import BadgeRow from '../form/badge-row'
-import LocationRow from '../form/location-row'
-import NameEmailRow from '../form/name-email-row'
-import PublicNameRow from '../form/public-name-row'
+import BadgeEdit from '../form/badge-edit'
+import LocationEdit from '../form/location-edit'
+import NameEmailEdit from '../form/name-email-edit'
+import PublicNameEdit from '../form/public-name-edit'
 import PaperPubs, { paperPubsIsValid } from './paper-pubs'
 
 export default class MemberForm extends Component {
@@ -97,7 +93,7 @@ export default class MemberForm extends Component {
     }
     return (
       <form>
-        <NameEmailRow
+        <NameEmailEdit
           inputRef={ref => {
             this.focusRef = ref
           }}
@@ -108,20 +104,20 @@ export default class MemberForm extends Component {
           prevMember={prevMember}
         />
         {lc !== 'daypass' && (
-          <BadgeRow
+          <BadgeEdit
             isAdmin={isAdmin}
             member={member}
             onChange={this.handleChange}
             prevMember={prevMember}
           />
         )}
-        <PublicNameRow
+        <PublicNameEdit
           isAdmin={isAdmin}
           member={member}
           onChange={this.handleChange}
           prevMember={prevMember}
         />
-        <LocationRow
+        <LocationEdit
           isAdmin={isAdmin}
           member={member}
           onChange={this.handleChange}
