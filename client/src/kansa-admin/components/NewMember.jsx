@@ -7,7 +7,7 @@ import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import MemberForm from '../../membership/components/MemberForm'
+import MemberForm from '../../membership/form'
 import { CommentField, CommonFields, UpgradeFields } from './form'
 import { defaultMember } from './Member'
 

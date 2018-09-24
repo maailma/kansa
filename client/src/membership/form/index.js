@@ -4,11 +4,11 @@ import React, { Component, createRef } from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 import { MessageProvider } from 'react-message-context'
 
-import BadgeEdit from '../form/badge-edit'
-import LocationEdit from '../form/location-edit'
-import NameEmailEdit from '../form/name-email-edit'
-import PublicNameEdit from '../form/public-name-edit'
-import PaperPubsEdit, { paperPubsIsValid } from '../form/paper-pubs-edit'
+import BadgeEdit from './badge-edit'
+import LocationEdit from './location-edit'
+import NameEmailEdit from './name-email-edit'
+import PublicNameEdit from './public-name-edit'
+import PaperPubsEdit, { paperPubsIsValid } from './paper-pubs-edit'
 import messages from '../messages'
 
 export default class MemberForm extends Component {

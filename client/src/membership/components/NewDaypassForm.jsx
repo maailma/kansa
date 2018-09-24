@@ -18,7 +18,7 @@ import {
   getPurchaseData
 } from '../../payments/actions'
 import StripeCheckout from '../../payments/components/stripe-checkout'
-import MemberForm from './MemberForm'
+import MemberForm from '../form'
 
 const DaypassTypeSelect = ({ daypassData, onChange, value }) => (
   <SelectField

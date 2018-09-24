@@ -6,7 +6,7 @@ import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 
 import { ConfigConsumer, ConfigProvider } from '../../lib/config-context'
-import MemberForm from '../../membership/components/MemberForm'
+import MemberForm from '../../membership/form'
 import * as MemberPropTypes from '../../membership/proptypes'
 import printBadge from '../printBadge'
 import MemberLog from './MemberLog'

@@ -12,7 +12,7 @@ import getMemberPrice from '../../lib/get-member-price'
 import { buyMembership, getPurchaseData } from '../../payments/actions'
 import StripeCheckout from '../../payments/components/stripe-checkout'
 import * as PaymentPropTypes from '../../payments/proptypes'
-import MemberForm from './MemberForm'
+import MemberForm from '../form'
 import MembershipSelect from './membership-select'
 
 class NewMemberForm extends React.Component {

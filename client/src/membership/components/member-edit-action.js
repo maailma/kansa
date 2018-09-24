@@ -9,7 +9,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes'
 import { ConfigConsumer, ConfigProvider } from '../../lib/config-context'
 import { accent1Color } from '../../theme/colors'
 import { memberUpdate } from '../actions'
-import MemberForm from './MemberForm'
+import MemberForm from '../form'
 import MemberEditActionButton from './member-edit-action-button'
 
 class MemberEditAction extends Component {
