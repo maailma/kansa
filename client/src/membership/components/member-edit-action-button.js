@@ -11,7 +11,8 @@ const memberEditSummaryLines = (badge, member) => {
   const pfn = member.get('public_first_name') || ''
   const pln = member.get('public_last_name') || ''
   const publicName = `${pfn} ${pln}`.trim()
-  if (publicName) lines.push({ dt: 'Public name: ', dd: publicName })
+  if (publicName)
+    lines.push({ dt: 'Public name: ', dd: publicName, key: 'public' })
   else lines.push({ dt: 'No public name', key: 'public' })
   return lines
 }

@@ -27,15 +27,7 @@ const EmailField = ({ disabled, member, onChange, prevMember }) => (
   />
 )
 
-const NameEmailRow = ({
-  inputRef,
-  isAdmin,
-  isNew,
-  member,
-  onChange,
-  prevMember
-}) => {
-  const props = { member, onChange, prevMember }
+const NameEmailRow = ({ inputRef, isAdmin, isNew, ...props }) => {
   const disabledEmail = !isAdmin && !isNew
   return (
     <Row>

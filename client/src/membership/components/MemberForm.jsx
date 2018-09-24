@@ -47,41 +47,32 @@ export default class MemberForm extends Component {
     this.focusRef && this.focusRef.focus()
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { member, onChange } = nextProps
+  componentWillReceiveProps({ member, newDaypass, newMember, onChange }) {
     if (!member) {
       this.setState({ member: Map() })
     } else if (!member.equals(this.props.member)) {
       this.setState({ member }, () => {
-        onChange(this.isValid, this.changes)
+        const valid = MemberForm.isValid(member)
+        const changes = newDaypass || newMember ? member.filter(Boolean) : {}
+        onChange(valid, changes)
       })
     }
   }
 
-  get changes() {
-    const { member, newDaypass, newMember } = this.props
-    return this.state.member.filter(
-      newDaypass || newMember || !member
-        ? value => value
-        : (value, key) => {
-            let v0 = member.get(key)
-            if (typeof value === 'string' && !v0) v0 = ''
-            return Map.isMap(value) ? !value.equals(v0) : value !== v0
-          }
-    )
-  }
-
-  getDefaultValue = path =>
-    (this.props.member && this.props.member.getIn(path)) || ''
-  getValue = path => this.state.member.getIn(path) || ''
-
-  get isValid() {
-    return MemberForm.isValid(this.state.member)
-  }
-
   handleChange = member => {
     this.setState({ member }, () => {
-      this.props.onChange(this.isValid, this.changes)
+      const { member: prev, newDaypass, newMember, onChange } = this.props
+      const valid = MemberForm.isValid(member)
+      const changes = member.filter(
+        newDaypass || newMember || !prev
+          ? Boolean
+          : (value, key) => {
+              let v0 = prev.get(key)
+              if (typeof value === 'string' && !v0) v0 = ''
+              return Map.isMap(value) ? !value.equals(v0) : value !== v0
+            }
+      )
+      onChange(valid, changes)
     })
   }
 
@@ -97,8 +88,8 @@ export default class MemberForm extends Component {
     } = this.props
     const { member } = this.state
     const inputProps = {
-      getDefaultValue: this.getDefaultValue,
-      getValue: this.getValue,
+      getDefaultValue: path => (prevMember && prevMember.getIn(path)) || '',
+      getValue: path => member.getIn(path) || '',
       lc,
       onChange: (path, value) => this.handleChange(member.setIn(path, value)),
       tabIndex
