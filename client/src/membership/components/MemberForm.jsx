@@ -10,6 +10,7 @@ import TextInput from '../../lib/text-input'
 import * as PaymentPropTypes from '../../payments/proptypes'
 import BadgeRow from '../form/badge-row'
 import NameEmailRow from '../form/name-email-row'
+import PublicNameRow from '../form/public-name-row'
 import PaperPubs, { paperPubsIsValid } from './paper-pubs'
 
 export default class MemberForm extends Component {
@@ -122,19 +123,12 @@ export default class MemberForm extends Component {
             prevMember={prevMember}
           />
         )}
-        <Row>
-          <Col xs={12} sm={6}>
-            <TextInput {...inputProps} path="public_first_name" />
-          </Col>
-          <Col xs={12} sm={6}>
-            <TextInput {...inputProps} path="public_last_name" />
-          </Col>
-          {!isAdmin && (
-            <Col xs={12} style={hintStyle}>
-              <Message id="public_name_hint" />
-            </Col>
-          )}
-        </Row>
+        <PublicNameRow
+          isAdmin={isAdmin}
+          member={member}
+          onChange={this.handleChange}
+          prevMember={prevMember}
+        />
         <Row>
           <Col xs={12} sm={4}>
             <TextInput {...inputProps} path="city" />
