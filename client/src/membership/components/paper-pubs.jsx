@@ -9,9 +9,9 @@ import ContentMail from 'material-ui/svg-icons/content/mail'
 import { Col, Row } from 'react-flexbox-grid'
 
 import { ConfigConsumer } from '../../lib/config-context'
+import HintText, { hintStyle } from '../../lib/hint-text'
 import * as PaymentPropTypes from '../../payments/proptypes'
 import messages from '../messages'
-import { hintStyle } from './MemberForm'
 
 export const paperPubsIsValid = pp =>
   !pp || (pp.get('name') && pp.get('address') && !!pp.get('country'))
@@ -147,12 +147,10 @@ const PaperPubs = ({
                 tabIndex={tabIndex}
               />
               {!isAdmin && (
-                <div style={hintStyle}>
-                  {ppMsg.hint_checkbox({ paid: true })}
-                </div>
+                <HintText>{ppMsg.hint_checkbox({ paid: true })}</HintText>
               )}
               {!isAdmin && hasPaperPubs ? (
-                <div style={hintStyle}>{ppMsg.hint_fields()}</div>
+                <HintText>{ppMsg.hint_fields()}</HintText>
               ) : null}
             </Col>
           ) : isAdmin ? (

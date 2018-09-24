@@ -5,18 +5,12 @@ import { Col, Row } from 'react-flexbox-grid'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 import { Message } from 'react-message-context'
 
+import { hintStyle } from '../../lib/hint-text'
 import TextInput from '../../lib/text-input'
-import { disabledColor } from '../../theme/colors'
 import * as PaymentPropTypes from '../../payments/proptypes'
 import BadgeRow from '../form/badge-row'
 import NameEmailRow from '../form/name-email-row'
 import PaperPubs, { paperPubsIsValid } from './paper-pubs'
-
-export const hintStyle = {
-  color: disabledColor,
-  fontSize: 13,
-  marginBottom: 24
-}
 
 export default class MemberForm extends Component {
   static propTypes = {

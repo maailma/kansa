@@ -6,14 +6,8 @@ import { Message } from 'react-message-context'
 
 import { ConfigConsumer } from '../../lib/config-context'
 import DataTextField from '../../lib/data-text-field'
+import { hintStyle } from '../../lib/hint-text'
 import PreviewBadge from './preview-badge'
-
-import { disabledColor } from '../../theme/colors'
-const hintStyle = {
-  color: disabledColor,
-  fontSize: 13,
-  marginBottom: 24
-}
 
 const BadgeNameField = ({ member, onChange, prevMember }) => (
   <DataTextField
