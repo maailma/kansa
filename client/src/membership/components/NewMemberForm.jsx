@@ -136,7 +136,6 @@ class NewMemberForm extends React.Component {
                 member={member}
                 newMember
                 onChange={(valid, member) => this.setState({ member, valid })}
-                shopData={data}
                 tabIndex={2}
               />
             </CardText>

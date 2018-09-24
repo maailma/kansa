@@ -8,11 +8,10 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { Col, Row } from 'react-flexbox-grid'
 import { Message } from 'react-message-context'
+import { connect } from 'react-redux'
 
 import { ConfigConsumer } from '../../lib/config-context'
 import HintText, { hintStyle } from '../../lib/hint-text'
-import * as PaymentPropTypes from '../../payments/proptypes'
-import messages from '../messages'
 
 export const paperPubsIsValid = pp =>
   !pp || (pp.get('name') && pp.get('address') && !!pp.get('country'))
@@ -82,27 +81,29 @@ const PaperPubsFields = ({ autoFocus, member, onChange, tabIndex }) => {
   )
 }
 
-const PaperPubsCheckbox = ({ paid_paper_pubs, shopData, ...props }) => {
-  const amount =
-    (shopData &&
-      shopData.getIn(['paper_pubs', 'types', 'paper_pubs', 'amount'])) ||
-    0
-  return (
-    <Checkbox
-      checkedIcon={<ContentMail />}
-      disabled={paid_paper_pubs && !amount}
-      label={
-        <Message
-          id="paper_pubs.label"
-          amount={amount / 100}
-          paid_paper_pubs={paid_paper_pubs}
-        />
-      }
-      style={{ marginBottom: 4 }}
-      {...props}
-    />
-  )
-}
+let PaperPubsCheckbox = ({ paid_paper_pubs, ppAmount, ...props }) => (
+  <Checkbox
+    checkedIcon={<ContentMail />}
+    disabled={paid_paper_pubs && !ppAmount}
+    label={
+      <Message
+        id="paper_pubs.label"
+        amount={ppAmount / 100}
+        paid_paper_pubs={paid_paper_pubs}
+      />
+    }
+    style={{ marginBottom: 4 }}
+    {...props}
+  />
+)
+
+PaperPubsCheckbox = connect(
+  ({ purchase }) => {
+    const path = ['data', 'paper_pubs', 'types', 'paper_pubs', 'amount']
+    return { ppAmount: purchase.getIn(path) || 0 }
+  },
+  {}
+)(PaperPubsCheckbox)
 
 const PaperPubsEdit = ({
   isAdmin,
@@ -111,7 +112,6 @@ const PaperPubsEdit = ({
   onChange,
   paid_paper_pubs,
   prevMember,
-  shopData,
   tabIndex
 }) => {
   const hasPaperPubs = !!member.get('paper_pubs')
@@ -128,7 +128,6 @@ const PaperPubsEdit = ({
               onChange(member.set('paper_pubs', pp))
             }}
             paid_paper_pubs={paid_paper_pubs}
-            shopData={shopData}
             tabIndex={tabIndex}
           />
           {!isAdmin && [
@@ -170,7 +169,6 @@ PaperPubsEdit.propTypes = {
   isNew: PropTypes.bool,
   lc: PropTypes.string,
   onChange: PropTypes.func.isRequired,
-  shopData: PaymentPropTypes.data,
   tabIndex: PropTypes.number
 }
 

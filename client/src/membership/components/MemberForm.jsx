@@ -4,7 +4,6 @@ import React, { Component, createRef } from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 import { MessageProvider } from 'react-message-context'
 
-import * as PaymentPropTypes from '../../payments/proptypes'
 import BadgeEdit from '../form/badge-edit'
 import LocationEdit from '../form/location-edit'
 import NameEmailEdit from '../form/name-email-edit'
@@ -22,7 +21,6 @@ export default class MemberForm extends Component {
     newDaypass: PropTypes.bool,
     newMember: PropTypes.bool,
     onChange: PropTypes.func.isRequired,
-    shopData: PaymentPropTypes.data,
     tabIndex: PropTypes.number
   }
 
@@ -87,7 +85,6 @@ export default class MemberForm extends Component {
       member: prevMember,
       newDaypass,
       newMember,
-      shopData,
       tabIndex
     } = this.props
     const { member } = this.state
@@ -109,7 +106,7 @@ export default class MemberForm extends Component {
           <BadgeEdit {...editProps} />
           <PublicNameEdit {...editProps} />
           <LocationEdit {...editProps} />
-          <PaperPubsEdit {...editProps} isNew={newMember} shopData={shopData} />
+          <PaperPubsEdit {...editProps} isNew={newMember} />
         </form>
       </MessageProvider>
     )
