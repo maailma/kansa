@@ -9,6 +9,7 @@ import TextInput from '../../lib/text-input'
 import { disabledColor } from '../../theme/colors'
 import * as PaymentPropTypes from '../../payments/proptypes'
 import BadgeRow from '../form/badge-row'
+import NameEmailRow from '../form/name-email-row'
 import PaperPubs, { paperPubsIsValid } from './paper-pubs'
 
 export const hintStyle = {
@@ -109,54 +110,14 @@ export default class MemberForm extends Component {
     }
     return (
       <form>
-        <Row>
-          <Col xs={12} sm={6}>
-            <TextInput
-              {...inputProps}
-              inputRef={ref => {
-                this.focusRef = ref
-              }}
-              path="legal_name"
-              required
-            />
-            {!isAdmin && (
-              <div style={hintStyle}>
-                <Message id="legal_name_hint" />
-              </div>
-            )}
-          </Col>
-          <Col xs={12} sm={6}>
-            {isAdmin || newDaypass || newMember
-              ? [
-                  <TextInput
-                    {...inputProps}
-                    key="input"
-                    path="email"
-                    required
-                  />,
-                  !isAdmin && (
-                    <div key="hint" style={hintStyle}>
-                      <Message id="new_email_hint" />
-                    </div>
-                  )
-                ]
-              : [
-                  <TextInput
-                    {...inputProps}
-                    key="input"
-                    path="email"
-                    disabled
-                  />,
-                  <div key="hint" style={hintStyle}>
-                    To change the email address associated with this membership,
-                    please get in touch with us at{' '}
-                    <a href="mailto:registration@worldcon.fi">
-                      registration@worldcon.fi
-                    </a>
-                  </div>
-                ]}
-          </Col>
-        </Row>
+        <NameEmailRow
+          inputProps={inputProps}
+          inputRef={ref => {
+            this.focusRef = ref
+          }}
+          isAdmin={isAdmin}
+          isNew={newDaypass || newMember}
+        />
         {lc !== 'daypass' && (
           <BadgeRow
             isAdmin={isAdmin}
