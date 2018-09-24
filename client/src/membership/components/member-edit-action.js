@@ -1,14 +1,16 @@
 import { Map } from 'immutable'
+import Dialog from 'material-ui/Dialog'
+import FlatButton from 'material-ui/FlatButton'
 import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import ImmutablePropTypes from 'react-immutable-proptypes'
-import Dialog from 'material-ui/Dialog'
-import FlatButton from 'material-ui/FlatButton'
+import { MessageProvider } from 'react-message-context'
 
 import { ConfigConsumer, ConfigProvider } from '../../lib/config-context'
 import { accent1Color } from '../../theme/colors'
 import { memberUpdate } from '../actions'
+import messages from '../messages'
 import MemberForm from './MemberForm'
 import MemberEditActionButton from './member-edit-action-button'
 
@@ -74,6 +76,7 @@ class MemberEditAction extends Component {
   render() {
     const { config, member } = this.props
     const { isOpen } = this.state
+    const lc = member.get('daypass') ? 'daypass' : 'en'
 
     // FIXME: The material-ui 0.20 <Dialog> does not allow context to pass
     // through like it should; hence this Consumer/Dialog/Provider hack.
@@ -109,14 +112,16 @@ class MemberEditAction extends Component {
           titleStyle={{ color: accent1Color, textShadow: 'none' }}
         >
           <ConfigProvider value={config}>
-            <MemberForm
-              lc={member.get('daypass') ? 'daypass' : 'en'}
-              member={member}
-              onChange={(valid, changes) => {
-                if (valid) this.setState({ changes })
-              }}
-              tabIndex={1}
-            />
+            <MessageProvider fallback="en" locale={lc} messages={messages}>
+              <MemberForm
+                lc={lc}
+                member={member}
+                onChange={(valid, changes) => {
+                  if (valid) this.setState({ changes })
+                }}
+                tabIndex={1}
+              />
+            </MessageProvider>
           </ConfigProvider>
         </Dialog>
       </div>

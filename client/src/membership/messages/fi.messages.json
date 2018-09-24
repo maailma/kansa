@@ -27,6 +27,7 @@
   "FirstWorldcon": "Ensikertalaisen Worldcon-täysjäsenyys",
   "Adult": "Aikuisen Worldcon-täysjäsenyys",
   "required": "pakollinen",
+  "required_label": "{label} (pakollinen)",
   "total": "Summa",
   "pay_by_card": "Maksa kortilla"
 }

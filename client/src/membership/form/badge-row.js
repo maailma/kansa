@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { Col, Row } from 'react-flexbox-grid'
 import ImmutablePropTypes from 'react-immutable-proptypes'
+import { Message } from 'react-message-context'
 
 import { ConfigConsumer } from '../../lib/config-context'
 import DataTextField from '../../lib/data-text-field'
@@ -36,7 +37,7 @@ const BadgeSubtitleField = ({ member, onChange, prevMember }) => (
   />
 )
 
-const BadgeRow = ({ getMsg, isAdmin, member, onChange, prevMember }) => {
+const BadgeRow = ({ isAdmin, member, onChange, prevMember }) => {
   const props = { member, onChange, prevMember }
   return isAdmin ? (
     <Row style={{ alignItems: 'flex-end' }}>
@@ -60,14 +61,13 @@ const BadgeRow = ({ getMsg, isAdmin, member, onChange, prevMember }) => {
       </Col>
       <Col xs={12} style={hintStyle}>
         <PreviewBadge buttonStyle={{ float: 'right' }} member={member} />
-        {getMsg('badge_hint')}
+        <Message id="badge_hint" />
       </Col>
     </Row>
   )
 }
 
 BadgeRow.propTypes = {
-  getMsg: PropTypes.func.isRequired,
   isAdmin: PropTypes.bool,
   member: ImmutablePropTypes.map.isRequired,
   onChange: PropTypes.func.isRequired,

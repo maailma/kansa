@@ -2,16 +2,9 @@ import TextField from 'material-ui/TextField'
 import PropTypes from 'prop-types'
 import React from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
+import { Message } from 'react-message-context'
 
-import messages from '../membership/messages'
 import { disabledColor, accent1Color } from '../theme/colors'
-
-const getLabel = (lc, path) => {
-  const fn = messages[lc][path]
-  if (fn) return fn()
-  const ps = path.join(' ')
-  return ps.charAt(0).toUpperCase() + ps.slice(1).replace(/_/g, ' ')
-}
 
 const styles = {
   label: {
@@ -28,11 +21,26 @@ const styles = {
   }
 }
 
+const Label = ({ label, path, required }) => (
+  <Message id={path}>
+    {msgLabel => {
+      if (!label) {
+        if (msgLabel) {
+          label = msgLabel()
+        } else {
+          const ps = path.join(' ')
+          label = ps.charAt(0).toUpperCase() + ps.slice(1).replace(/_/g, ' ')
+        }
+      }
+      return required ? <Message id="required_label" label={label} /> : label
+    }}
+  </Message>
+)
+
 const DataTextField = ({
   data,
   inputRef,
   label,
-  lc = 'en',
   onChange,
   path = [],
   prev,
@@ -41,8 +49,6 @@ const DataTextField = ({
 }) => {
   if (!Array.isArray(path)) path = [path]
   const value = data.getIn(path) || ''
-  if (!label) label = getLabel(lc, path)
-  if (required) label += ` (${messages[lc].required()})`
   const ulStyle =
     required && !value
       ? styles.underline.required
@@ -54,7 +60,9 @@ const DataTextField = ({
       className="memberInput"
       floatingLabelFixed
       floatingLabelStyle={value ? styles.label.default : styles.label.empty}
-      floatingLabelText={label}
+      floatingLabelText={
+        <Label label={label} path={path} required={required} />
+      }
       fullWidth
       onChange={(ev, value) => onChange(data.setIn(path, value))}
       ref={inputRef}

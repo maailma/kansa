@@ -3,12 +3,12 @@ import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import { Col, Row } from 'react-flexbox-grid'
 import ImmutablePropTypes from 'react-immutable-proptypes'
+import { Message } from 'react-message-context'
 
 import TextInput from '../../lib/text-input'
 import { disabledColor } from '../../theme/colors'
 import * as PaymentPropTypes from '../../payments/proptypes'
 import BadgeRow from '../form/badge-row'
-import messages from '../messages'
 import PaperPubs, { paperPubsIsValid } from './paper-pubs'
 
 export const hintStyle = {
@@ -83,12 +83,6 @@ export default class MemberForm extends Component {
     return MemberForm.isValid(this.state.member)
   }
 
-  msg = (key, params) => {
-    const { lc = 'en' } = this.props
-    const fn = messages[lc][key]
-    return fn ? fn(params) : key
-  }
-
   handleChange = member => {
     this.setState({ member }, () => {
       this.props.onChange(this.isValid, this.changes)
@@ -126,7 +120,9 @@ export default class MemberForm extends Component {
               required
             />
             {!isAdmin && (
-              <div style={hintStyle}>{this.msg('legal_name_hint')}</div>
+              <div style={hintStyle}>
+                <Message id="legal_name_hint" />
+              </div>
             )}
           </Col>
           <Col xs={12} sm={6}>
@@ -140,7 +136,7 @@ export default class MemberForm extends Component {
                   />,
                   !isAdmin && (
                     <div key="hint" style={hintStyle}>
-                      {this.msg('new_email_hint')}
+                      <Message id="new_email_hint" />
                     </div>
                   )
                 ]
@@ -163,7 +159,6 @@ export default class MemberForm extends Component {
         </Row>
         {lc !== 'daypass' && (
           <BadgeRow
-            getMsg={this.msg}
             isAdmin={isAdmin}
             member={member}
             onChange={this.handleChange}
@@ -179,7 +174,7 @@ export default class MemberForm extends Component {
           </Col>
           {!isAdmin && (
             <Col xs={12} style={hintStyle}>
-              {this.msg('public_name_hint')}
+              <Message id="public_name_hint" />
             </Col>
           )}
         </Row>
@@ -195,7 +190,7 @@ export default class MemberForm extends Component {
           </Col>
           {!isAdmin && (
             <Col xs={12} style={hintStyle}>
-              {this.msg('location_hint')}
+              <Message id="location_hint" />
             </Col>
           )}
         </Row>

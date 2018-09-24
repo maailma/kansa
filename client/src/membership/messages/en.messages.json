@@ -24,6 +24,7 @@
   },
   "membership_type": "Membership type",
   "required": "Required",
+  "required_label": "{label} (Required)",
   "total": "Total",
   "pay_by_card": "Pay by card"
 }
