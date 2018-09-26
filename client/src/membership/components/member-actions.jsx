@@ -6,7 +6,7 @@ import { List, ListItem } from 'material-ui/List'
 import ThumbUp from 'material-ui/svg-icons/action/thumb-up'
 import LocationCity from 'material-ui/svg-icons/social/location-city'
 
-import { ModuleConsumer } from '../../context'
+import HookModules from '../../hook-modules'
 import { ConfigConsumer } from '../../lib/config-context'
 import Rocket from '../../lib/rocket-icon'
 import SouvenirBook from '../../lib/souvenir-book'
@@ -108,39 +108,34 @@ const SouvenirBookAction = ({ attr }) =>
 
 const MemberActions = ({ member }) => (
   <ConfigConsumer>
-    {({ getMemberAttr, paid_paper_pubs }) => (
-      <ModuleConsumer>
-        {modules => {
-          const attr = getMemberAttr(member)
-          const actions = modules.reduce(
-            (actions, mod) =>
-              mod.actions ? actions.concat(mod.actions(attr, member)) : actions,
-            [
-              <MemberEditAction key="10-edit" member={member} />,
-              <UpgradeAction
-                key="20-upgrade"
-                member={member}
-                paidPaperPubs={paid_paper_pubs}
-              />,
-              <HugoNominateAction
-                key="30-hugo-nom"
-                getMemberAttr={getMemberAttr}
-                member={member}
-              />,
-              <HugoVoteAction
-                key="30-hugo-vote"
-                getMemberAttr={getMemberAttr}
-                member={member}
-              />,
-              <SiteSelectionTokenAction key="40-siteselect" attr={attr} />,
-              <SouvenirBookAction key="50-souvenir-book" attr={attr} />
-            ]
-          )
-          actions.sort((a, b) => ((a && a.key) < (b && b.key) ? -1 : 1))
-          return <List style={{ paddingTop: 0 }}>{actions}</List>
-        }}
-      </ModuleConsumer>
-    )}
+    {({ getMemberAttr, paid_paper_pubs }) => {
+      const attr = getMemberAttr(member)
+      const baseActions = [
+        <MemberEditAction key="10-edit" member={member} />,
+        <UpgradeAction
+          key="20-upgrade"
+          member={member}
+          paidPaperPubs={paid_paper_pubs}
+        />,
+        <HugoNominateAction
+          key="30-hugo-nom"
+          getMemberAttr={getMemberAttr}
+          member={member}
+        />,
+        <HugoVoteAction
+          key="30-hugo-vote"
+          getMemberAttr={getMemberAttr}
+          member={member}
+        />,
+        <SiteSelectionTokenAction key="40-siteselect" attr={attr} />,
+        <SouvenirBookAction key="50-souvenir-book" attr={attr} />
+      ]
+      return (
+        <HookModules base={baseActions} hook="actions" member={member}>
+          {actions => <List style={{ paddingTop: 0 }}>{actions}</List>}
+        </HookModules>
+      )
+    }}
   </ConfigConsumer>
 )
 

@@ -4,8 +4,7 @@ import React, { Component, createRef } from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 import { MessageProvider } from 'react-message-context'
 
-import { ModuleConsumer } from '../../context'
-import { ConfigConsumer } from '../../lib/config-context'
+import HookModules from '../../hook-modules'
 import messages from '../messages'
 import LocationEdit from './location-edit'
 import NameEmailEdit from './name-email-edit'
@@ -96,7 +95,7 @@ export default class MemberForm extends Component {
       prevMember,
       tabIndex
     }
-    let fields = [
+    const baseFields = [
       <NameEmailEdit
         key="10-name"
         {...editProps}
@@ -108,31 +107,16 @@ export default class MemberForm extends Component {
       <PaperPubsEdit key="40-paperpubs" {...editProps} isNew={newMember} />
     ]
     return (
-      <ConfigConsumer>
-        {({ getMemberAttr }) => (
-          <ModuleConsumer>
-            {modules => {
-              const attr = getMemberAttr(member)
-              modules.forEach(({ memberFormFields }) => {
-                if (memberFormFields) {
-                  const mf = memberFormFields(attr, member, editProps)
-                  if (mf) fields = fields.concat(mf)
-                }
-              })
-              fields.sort((a, b) => ((a && a.key) < (b && b.key) ? -1 : 1))
-              return (
-                <MessageProvider
-                  fallback="en"
-                  locale={locale}
-                  messages={messages}
-                >
-                  <form>{fields}</form>
-                </MessageProvider>
-              )
-            }}
-          </ModuleConsumer>
-        )}
-      </ConfigConsumer>
+      <MessageProvider fallback="en" locale={locale} messages={messages}>
+        <HookModules
+          args={[editProps]}
+          base={baseFields}
+          hook="memberFormFields"
+          member={member}
+        >
+          {fields => <form>{fields}</form>}
+        </HookModules>
+      </MessageProvider>
     )
   }
 }
