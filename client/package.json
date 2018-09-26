@@ -14,6 +14,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@kansa/client-badge-module": "file:../modules/badge/client",
     "@kansa/client-barcode-module": "file:../modules/barcode/client",
     "@kansa/client-slack-module": "file:../modules/slack/client",
     "file-saver": "^1.3.8",

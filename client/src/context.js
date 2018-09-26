@@ -5,6 +5,7 @@ import { ConfigProvider, defaultConfig, getConfig } from './lib/config-context'
 
 const ModuleContext = createContext([])
 export const ModuleConsumer = ModuleContext.Consumer
+export const ModuleProvider = ModuleContext.Provider
 
 function loadModules(config) {
   const names = []

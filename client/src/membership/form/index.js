@@ -4,12 +4,13 @@ import React, { Component, createRef } from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 import { MessageProvider } from 'react-message-context'
 
-import BadgeEdit from './badge-edit'
+import { ModuleConsumer } from '../../context'
+import { ConfigConsumer } from '../../lib/config-context'
+import messages from '../messages'
 import LocationEdit from './location-edit'
 import NameEmailEdit from './name-email-edit'
 import PublicNameEdit from './public-name-edit'
 import PaperPubsEdit, { paperPubsIsValid } from './paper-pubs-edit'
-import messages from '../messages'
 
 export default class MemberForm extends Component {
   static propTypes = {
@@ -95,20 +96,43 @@ export default class MemberForm extends Component {
       prevMember,
       tabIndex
     }
+    let fields = [
+      <NameEmailEdit
+        key="10-name"
+        {...editProps}
+        inputRef={this.focusRef}
+        isNew={newDaypass || newMember}
+      />,
+      <PublicNameEdit key="20-public" {...editProps} />,
+      <LocationEdit key="30-location" {...editProps} />,
+      <PaperPubsEdit key="40-paperpubs" {...editProps} isNew={newMember} />
+    ]
     return (
-      <MessageProvider fallback="en" locale={locale} messages={messages}>
-        <form>
-          <NameEmailEdit
-            {...editProps}
-            inputRef={this.focusRef}
-            isNew={newDaypass || newMember}
-          />
-          <BadgeEdit {...editProps} />
-          <PublicNameEdit {...editProps} />
-          <LocationEdit {...editProps} />
-          <PaperPubsEdit {...editProps} isNew={newMember} />
-        </form>
-      </MessageProvider>
+      <ConfigConsumer>
+        {({ getMemberAttr }) => (
+          <ModuleConsumer>
+            {modules => {
+              const attr = getMemberAttr(member)
+              modules.forEach(({ memberFormFields }) => {
+                if (memberFormFields) {
+                  const mf = memberFormFields(attr, member, editProps)
+                  if (mf) fields = fields.concat(mf)
+                }
+              })
+              fields.sort((a, b) => ((a && a.key) < (b && b.key) ? -1 : 1))
+              return (
+                <MessageProvider
+                  fallback="en"
+                  locale={locale}
+                  messages={messages}
+                >
+                  <form>{fields}</form>
+                </MessageProvider>
+              )
+            }}
+          </ModuleConsumer>
+        )}
+      </ConfigConsumer>
     )
   }
 }

@@ -4,10 +4,9 @@ import { Col, Row } from 'react-flexbox-grid'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 import { Message, withLocale } from 'react-message-context'
 
-import { ConfigConsumer } from '../../lib/config-context'
-import DataTextField from '../../lib/data-text-field'
-import { hintStyle } from '../../lib/hint-text'
-import PreviewBadge from './preview-badge'
+import DataTextField from '@kansa/client-lib/data-text-field'
+import { hintStyle } from '@kansa/client-lib/hint-text'
+import BadgePreview from './preview'
 
 const BadgeNameField = ({ member, onChange, prevMember }) => (
   <DataTextField
@@ -42,7 +41,7 @@ const BadgeEdit = ({ isAdmin, member, onChange, prevMember }) => {
         <BadgeSubtitleField {...props} />
       </Col>
       <Col xs={12} sm={3} md={2}>
-        <PreviewBadge buttonStyle={{ float: 'right' }} member={member} />
+        <BadgePreview buttonStyle={{ float: 'right' }} member={member} />
       </Col>
     </Row>
   ) : (
@@ -54,7 +53,7 @@ const BadgeEdit = ({ isAdmin, member, onChange, prevMember }) => {
         <BadgeSubtitleField {...props} />
       </Col>
       <Col xs={12} style={hintStyle}>
-        <PreviewBadge buttonStyle={{ float: 'right' }} member={member} />
+        <BadgePreview buttonStyle={{ float: 'right' }} member={member} />
         <Message id="badge_hint" />
       </Col>
     </Row>
@@ -68,16 +67,9 @@ BadgeEdit.propTypes = {
   prevMember: ImmutablePropTypes.map
 }
 
-export default withLocale(props => (
-  <ConfigConsumer>
-    {({ getMemberAttr, modules }) =>
-      modules &&
-      modules.badge &&
-      props.locale !== 'daypass' &&
-      !props.member.get('daypass') &&
-      getMemberAttr(props.member).badge ? (
-        <BadgeEdit {...props} />
-      ) : null
-    }
-  </ConfigConsumer>
-))
+export default withLocale(
+  props =>
+    props.locale !== 'daypass' && !props.member.get('daypass') ? (
+      <BadgeEdit {...props} />
+    ) : null
+)

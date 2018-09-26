@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import React, { Component, Fragment } from 'react'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 
-import api from '../../lib/api'
+import api from '@kansa/client-lib/api'
 
 const BADGE_WIDTH = 709
 const BADGE_HEIGHT = 299
@@ -35,7 +35,7 @@ const getBadgeImgSrc = member => {
   return api.path(path, params)
 }
 
-export default class PreviewBadge extends Component {
+export default class BadgePreview extends Component {
   static propTypes = {
     buttonStyle: PropTypes.object,
     member: ImmutablePropTypes.map.isRequired

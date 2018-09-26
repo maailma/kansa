@@ -1,0 +1,16 @@
+{
+  "name": "@kansa/client-badge-module",
+  "version": "1.0.0",
+  "description": "Badge generator for Kansa",
+  "private": true,
+  "license": "Apache-2.0",
+  "repository": "maailma/kansa",
+  "peerDependencies": {
+    "@kansa/client-lib": "*",
+    "material-ui": "^0.20.1",
+    "prop-types": "^15.6.2",
+    "react": "16.x",
+    "react-immutable-proptypes": "^2.1.0",
+    "react-message-context": "^0.3.1"
+  }
+}

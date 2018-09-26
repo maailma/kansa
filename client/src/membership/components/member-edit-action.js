@@ -7,6 +7,7 @@ import { connect } from 'react-redux'
 import ImmutablePropTypes from 'react-immutable-proptypes'
 
 import { ConfigConsumer, ConfigProvider } from '../../lib/config-context'
+import { ModuleConsumer, ModuleProvider } from '../../context'
 import { accent1Color } from '../../theme/colors'
 import { memberUpdate } from '../actions'
 import MemberForm from '../form'
@@ -68,11 +69,12 @@ class MemberEditAction extends Component {
     if (nextState.isOpen !== this.state.isOpen) return true
     if (!nextProps.member.equals(this.props.member)) return true
     if (nextProps.config !== this.props.config) return true
+    if (nextProps.modules !== this.props.modules) return true
     return false
   }
 
   render() {
-    const { config, member } = this.props
+    const { config, member, modules } = this.props
     const { isOpen } = this.state
 
     // FIXME: The material-ui 0.20 <Dialog> does not allow context to pass
@@ -109,14 +111,16 @@ class MemberEditAction extends Component {
           titleStyle={{ color: accent1Color, textShadow: 'none' }}
         >
           <ConfigProvider value={config}>
-            <MemberForm
-              locale={member.get('daypass') ? 'daypass' : 'en'}
-              member={member}
-              onChange={(valid, changes) => {
-                if (valid) this.setState({ changes })
-              }}
-              tabIndex={1}
-            />
+            <ModuleProvider value={modules}>
+              <MemberForm
+                locale={member.get('daypass') ? 'daypass' : 'en'}
+                member={member}
+                onChange={(valid, changes) => {
+                  if (valid) this.setState({ changes })
+                }}
+                tabIndex={1}
+              />
+            </ModuleProvider>
           </ConfigProvider>
         </Dialog>
       </div>
@@ -131,6 +135,12 @@ export default connect(
   }
 )(props => (
   <ConfigConsumer>
-    {config => <MemberEditAction {...props} config={config} />}
+    {config => (
+      <ModuleConsumer>
+        {modules => (
+          <MemberEditAction {...props} config={config} modules={modules} />
+        )}
+      </ModuleConsumer>
+    )}
   </ConfigConsumer>
 ))
