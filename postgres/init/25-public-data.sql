@@ -46,13 +46,13 @@ BEGIN
     SELECT country INTO ct FROM kansa.countries WHERE entry = cn;
     RETURN coalesce(ct, cn);
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql STABLE;
 
 CREATE FUNCTION public_name(p people) RETURNS varchar AS $$
 BEGIN
     RETURN nullif(trim(both from concat_ws(' ', p.public_first_name, p.public_last_name)), '');
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql IMMUTABLE;
 
 CREATE VIEW country_stats AS
   SELECT

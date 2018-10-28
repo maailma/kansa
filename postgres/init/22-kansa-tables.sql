@@ -84,19 +84,19 @@ BEGIN
     pn := concat_ws(' ', p.public_first_name, p.public_last_name);
     RETURN coalesce(nullif(trim(both from pn), ''), p.legal_name) AS name;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql IMMUTABLE;
 
 CREATE FUNCTION get_badge_name(p people) RETURNS varchar AS $$
 BEGIN
     RETURN coalesce(nullif(p.badge_name, ''), preferred_name(p)) AS name;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql IMMUTABLE;
 
 CREATE FUNCTION get_badge_subtitle(p people) RETURNS varchar AS $$
 BEGIN
     RETURN coalesce(nullif(p.badge_subtitle, ''), p.country, '') AS name;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql IMMUTABLE;
 
 CREATE FUNCTION name_match(a text, b text) RETURNS boolean AS $$
 DECLARE
@@ -107,7 +107,7 @@ BEGIN
     bc := substr(lower(trim(regexp_replace(b, '\s+', ' ', 'g'))), 0, 255);
     RETURN levenshtein_less_equal(ac, bc, 3) <= 3;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql IMMUTABLE;
 
 CREATE VIEW past_names AS
     SELECT l.subject AS id, l.timestamp, l.parameters->>'legal_name' AS legal_name
