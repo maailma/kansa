@@ -30,7 +30,7 @@ module.exports = (db, ctx) => {
   }
 
   router.all('/login', (req, res, next) =>
-    login(db, ctx.config, req)
+    login(db, ctx, req)
       .then(({ email, token }) => {
         res.cookie('files', token, cookieOptions.files)
         res.json({ status: 'success', email })

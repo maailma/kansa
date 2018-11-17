@@ -8,7 +8,7 @@ const peopleRouter = require('../people/router')
 const userRouter = require('../user/router')
 
 module.exports = (db, app, root) => {
-  const ctx = { config, pgp: db.$config.pgp }
+  const ctx = { config, hooks: { login: [] }, pgp: db.$config.pgp }
 
   app.get('/config', (req, res, next) =>
     getPublicConfig(db)
