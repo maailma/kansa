@@ -9,10 +9,11 @@
     "test": "mocha"
   },
   "dependencies": {
+    "chai": "^4.2.0",
     "mocha": "^5.2.0",
-    "stripe": "^6.10.0",
+    "stripe": "^6.15.0",
     "supertest": "^3.3.0",
-    "ws": "^6.0.0",
-    "yaml": "^1.0.0-rc.8"
+    "ws": "^6.1.2",
+    "yaml": "^1.0.2"
   }
 }
