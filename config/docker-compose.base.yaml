@@ -90,3 +90,9 @@ services:
       - ../config/database/hugo-categories.sql:/docker-entrypoint-initdb.d/31-hugo-categories.sql:ro
       - ../modules/hugo/database/tables.sql:/docker-entrypoint-initdb.d/32-hugo-tables.sql:ro
       - ../modules/raami/database/init.sql:/docker-entrypoint-initdb.d/40-raami-init.sql:ro
+      - ../modules/events/database/50-init.sql:/docker-entrypoint-initdb.d/50-event-init.sql:ro
+      - ../modules/events/database/52-spaces.sql:/docker-entrypoint-initdb.d/52-event-spaces.sql:ro
+      - ../modules/events/database/54-events.sql:/docker-entrypoint-initdb.d/54-event-events.sql:ro
+      - ../modules/events/database/56-participants.sql:/docker-entrypoint-initdb.d/56-event-participants.sql:ro
+      - ../modules/events/database/58-messages.sql:/docker-entrypoint-initdb.d/58-event-messages.sql:ro
+      - ../modules/events/database/60-log.sql:/docker-entrypoint-initdb.d/60-event-log.sql:ro

@@ -1,0 +1,16 @@
+{
+  "name": "@kansa/server-events-module",
+  "version": "1.0.0",
+  "description": "Events management",
+  "private": true,
+  "license": "Apache-2.0",
+  "repository": "maailma/kansa",
+  "dependencies": {
+    "@graphile-contrib/pg-simplify-inflector": "^3.0.0",
+    "postgraphile": "^4.1.0-rc.1"
+  },
+  "peerDependencies": {
+    "@kansa/common": "^1.1.0",
+    "express": "4.x"
+  }
+}

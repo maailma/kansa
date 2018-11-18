@@ -18,6 +18,7 @@ auth:
   # fine, as long as they have corresponding database columns.
   admin_roles:
     - admin_admin
+    - events_admin
     - hugo_admin
     - member_admin
     - member_list
@@ -49,6 +50,16 @@ modules:
   # Barcodes to help speed up registration. Uses tarra, the badge-printer, which
   # in turn will need to have the proper fonts included.
   barcode: false
+
+  # Event programme development and management
+  events:
+    # Who counts as a participant? One of:
+    #   everyone - anyone logged in
+    #   members - anyone with "member" status
+    #   selected - all participants in all events
+    #   confirmed - all confirmed participants
+    #   none - disable participant access
+    participants: everyone
 
   # Nomination and voting for the Hugo Awards
   hugo: true
