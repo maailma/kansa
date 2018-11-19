@@ -13,5 +13,8 @@
     "debug": "3.x",
     "express": "4.x",
     "randomstring": "1.x"
+  },
+  "devDependencies": {
+    "yaml": "^1.0.2"
   }
 }

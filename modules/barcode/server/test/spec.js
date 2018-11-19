@@ -1,8 +1,3 @@
-const config = require('../kansa-config')
-const Agent = require('../test-agent')
-
-if (!config.modules.barcode) return
-
 let pdfType = 'application/pdf'
 let pngType = 'image/png'
 
@@ -14,7 +9,7 @@ if (process.env.CI) {
   pngType = 'text/html; charset=UTF-8'
 }
 
-describe('Barcodes', () => {
+module.exports = Agent => {
   const key = 'key'
   let id = null
 
@@ -85,4 +80,4 @@ describe('Barcodes', () => {
         .expect(200)
         .expect('Content-Type', pdfType))
   })
-})
+}

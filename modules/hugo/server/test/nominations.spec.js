@@ -1,15 +1,8 @@
-const assert = require('assert')
-const config = require('../kansa-config')
-const Agent = require('../test-agent')
-
-const admin = new Agent()
-const nominator = new Agent()
-
-if (!config.modules.hugo) return
-
 const randomString = () => (Math.random().toString(36) + '0000000').slice(2, 7)
 
-describe('Hugo nominations', () => {
+module.exports = Agent => {
+  const admin = new Agent()
+  const nominator = new Agent()
   const category = 'Novel'
   const signature = randomString()
   const author = randomString()
@@ -219,4 +212,4 @@ describe('Hugo nominations', () => {
         .expect(200, { status: 'success' })
         .catch(done)
   })
-})
+}

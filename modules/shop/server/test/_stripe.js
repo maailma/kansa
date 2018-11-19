@@ -5,7 +5,7 @@ const YAML = require('yaml')
 
 const dcConfigPath = path.resolve(
   __dirname,
-  '../config/docker-compose.dev.yaml'
+  '../../../../config/docker-compose.dev.yaml'
 )
 const dcConfig = YAML.parse(fs.readFileSync(dcConfigPath, 'utf8'))
 const { STRIPE_SECRET_APIKEY } = dcConfig.services.server.environment

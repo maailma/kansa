@@ -1,7 +1,6 @@
-const { card, stripe } = require('../dev-stripe')
-const Agent = require('../test-agent')
+const { card, stripe } = require('./_stripe')
 
-describe('Membership purchases', () => {
+module.exports = Agent => {
   const agent = new Agent()
   let config
   const prices = { adult: 0, supporter: 0, paperPubs: 0 }
@@ -216,4 +215,4 @@ describe('Membership purchases', () => {
           })
       ))
   })
-})
+}

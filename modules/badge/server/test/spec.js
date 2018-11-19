@@ -1,9 +1,3 @@
-const assert = require('assert')
-const config = require('../kansa-config')
-const Agent = require('../test-agent')
-
-if (!config.modules.badge) return
-
 let pngType = 'image/png'
 
 if (process.env.CI) {
@@ -13,8 +7,7 @@ if (process.env.CI) {
   pngType = 'text/html; charset=UTF-8'
 }
 
-describe('Badges', () => {
-  const key = 'key'
+module.exports = Agent => {
   let id = null
 
   describe('member access', () => {
@@ -76,4 +69,4 @@ describe('Badges', () => {
         .expect(200)
         .expect(res => assert.equal(res.body.status, 'success')))
   })
-})
+}

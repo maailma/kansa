@@ -1,14 +1,8 @@
-const assert = require('assert')
-const config = require('../kansa-config')
-const Agent = require('../test-agent')
-
-const admin = new Agent()
-const member = new Agent()
-
-if (!config.modules.siteselect) return
-
-describe('Site selection', () => {
+module.exports = Agent => {
+  const admin = new Agent()
+  const member = new Agent()
   let id = null
+
   before(() =>
     member
       .loginAsMember()
@@ -73,4 +67,4 @@ describe('Site selection', () => {
       .get(`/api/siteselect/voters.csv`)
       .expect(200)
       .expect('Content-Type', /text\/csv/))
-})
+}

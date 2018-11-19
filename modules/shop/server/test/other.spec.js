@@ -1,7 +1,6 @@
-const { card, stripe } = require('../dev-stripe')
-const Agent = require('../test-agent')
+const { card, stripe } = require('./_stripe')
 
-describe('Other purchases', () => {
+module.exports = Agent => {
   const agent = new Agent()
 
   context('Parameters', () => {
@@ -288,4 +287,4 @@ describe('Other purchases', () => {
           })
       ))
   })
-})
+}
