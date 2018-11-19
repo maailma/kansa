@@ -1,14 +1,8 @@
 const assert = require('assert')
-const fs = require('fs')
-const request = require('supertest')
-const WebSocket = require('ws')
-const YAML = require('yaml').default
+const Agent = require('../test-agent')
 
-const config = YAML.parse(fs.readFileSync('../config/kansa.yaml', 'utf8'))
-const ca = fs.readFileSync('../proxy/ssl/localhost.cert', 'utf8')
-const host = 'localhost:4430'
-const admin = request.agent(`https://${host}`, { ca })
-const member = request.agent(`https://${host}`, { ca })
+const admin = new Agent()
+const member = new Agent()
 
 describe('People', () => {
   const origName = 'First Member'
@@ -18,34 +12,28 @@ describe('People', () => {
   const testName = 'test-' + (Math.random().toString(36) + '000000').slice(2, 7)
 
   let id = null
-  before(() => {
-    const email = 'member@example.com'
-    const key = 'key'
-    return member
-      .get('/api/login')
-      .query({ email, key })
+  before(() =>
+    member
+      .loginAsMember()
       .expect('set-cookie', /w75/)
-      .expect(200, { status: 'success', email })
+      .expect(200, { status: 'success', email: 'member@example.com' })
       .then(() => member.get('/api/user'))
       .then(res => {
         id = res.body.people[0].id
         assert.equal(typeof id, 'number')
       })
-  })
+  )
 
-  before(() => {
-    const email = 'admin@example.com'
-    const key = 'key'
-    return admin
-      .get('/api/login')
-      .query({ email, key })
+  before(() =>
+    admin
+      .loginAsAdmin()
       .expect('set-cookie', /w75/)
-      .expect(200, { status: 'success', email })
+      .expect(200, { status: 'success', email: 'admin@example.com' })
       .then(() => admin.get('/api/user'))
       .then(res => {
         assert.notEqual(res.body.roles.indexOf('hugo_admin'), -1)
       })
-  })
+  )
 
   describe('Member access', () => {
     it('get own data', () =>
@@ -115,11 +103,7 @@ describe('People', () => {
       member.get(`/api/people/member-emails`).expect(401))
 
     it('fail to open WebSocket connection for people updates', done => {
-      const sessionCookie = member.jar.getCookie(config.id, { path: '/' })
-      const ws = new WebSocket(`wss://${host}/api/people/updates`, {
-        ca,
-        headers: { Cookie: String(sessionCookie) }
-      })
+      const ws = member.webSocket('/api/people/updates')
       ws.onclose = ev => {
         if (ev.code === 4001) done()
         else done(new Error(`Unexpected close event ${ev.code} ${ev.reason}`))
@@ -221,11 +205,7 @@ describe('People', () => {
         .expect('Content-Type', 'text/csv; charset=utf-8'))
 
     it('WebSocket: people updates', done => {
-      const sessionCookie = admin.jar.getCookie(config.id, { path: '/' })
-      const ws = new WebSocket(`wss://${host}/api/people/updates`, {
-        ca,
-        headers: { Cookie: String(sessionCookie) }
-      })
+      const ws = admin.webSocket('/api/people/updates')
       let ok = false
       ws.onclose = () => {
         if (ok) done()

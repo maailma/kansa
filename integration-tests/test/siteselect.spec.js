@@ -1,46 +1,33 @@
 const assert = require('assert')
-const fs = require('fs')
-const request = require('supertest')
-const YAML = require('yaml').default
+const config = require('../kansa-config')
+const Agent = require('../test-agent')
 
-const config = YAML.parse(fs.readFileSync('../config/kansa.yaml', 'utf8'))
-const ca = fs.readFileSync('../proxy/ssl/localhost.cert', 'utf8')
-const host = 'localhost:4430'
-const admin = request.agent(`https://${host}`, { ca })
-const member = request.agent(`https://${host}`, { ca })
+const admin = new Agent()
+const member = new Agent()
 
 if (!config.modules.siteselect) return
 
 describe('Site selection', () => {
   let id = null
-  before(() => {
-    const email = 'member@example.com'
-    const key = 'key'
-    return member
-      .get('/api/login')
-      .query({ email, key })
-      .expect('set-cookie', /w75/)
-      .expect(200, { status: 'success', email })
+  before(() =>
+    member
+      .loginAsMember()
+      .expect(200)
       .then(() => member.get('/api/user'))
       .then(res => {
         id = res.body.people[0].id
-        assert.equal(typeof id, 'number')
       })
-  })
+  )
 
-  before(() => {
-    const email = 'site-select@example.com'
-    const key = 'key'
-    return admin
-      .get('/api/login')
-      .query({ email, key })
-      .expect('set-cookie', /w75/)
-      .expect(200, { status: 'success', email })
+  before(() =>
+    admin
+      .loginAsSiteSelectAdmin()
+      .expect(200)
       .then(() => admin.get('/api/user'))
       .then(res => {
         assert.notEqual(res.body.roles.indexOf('siteselection'), -1)
       })
-  })
+  )
 
   it('member: get own ballot', () =>
     member

@@ -1,19 +1,11 @@
-const request = require('supertest')
-const fs = require('fs')
-const stripe = require('stripe')(
-  process.env.STRIPE_SECRET_APIKEY || 'sk_test_zq022Drx7npYPVEtXAVMaOJT'
-)
-
-const cert = fs.readFileSync('../proxy/ssl/localhost.cert', 'utf8')
-const host = 'https://localhost:4430'
-const adminLoginParams = { email: 'admin@example.com', key: 'key' }
+const { card, stripe } = require('../dev-stripe')
+const Agent = require('../test-agent')
 
 describe('Membership purchases', () => {
-  let agent
+  const agent = new Agent()
   let config
   const prices = { adult: 0, supporter: 0, paperPubs: 0 }
   before(done => {
-    agent = request.agent(host, { ca: cert })
     agent
       .get('/api/shop/data')
       .expect(({ body }) => {
@@ -101,166 +93,127 @@ describe('Membership purchases', () => {
 
   context('New members (using Stripe API)', function() {
     this.timeout(10000)
-    const agent = request.agent(host, { ca: cert })
     const testName =
       'test-' + (Math.random().toString(36) + '00000000000000000').slice(2, 7)
 
-    it('should add new memberships', done => {
-      stripe.tokens
-        .create({
-          card: {
-            number: '4242424242424242',
-            exp_month: 12,
-            exp_year: 2020,
-            cvc: '123'
-          }
-        })
-        .then(source => {
-          agent
-            .post('/api/shop/buy-membership')
-            .send({
-              amount:
-                prices.supporter +
-                prices.adult +
-                (config.paid_paper_pubs ? prices.paperPubs : 0),
-              email: `${testName}@example.com`,
-              source,
-              new_members: [
-                {
-                  membership: 'Supporter',
-                  email: `${testName}@example.com`,
-                  legal_name: `s-${testName}`
-                },
-                {
-                  membership: 'Adult',
-                  email: `${testName}@example.com`,
-                  legal_name: `a-${testName}`,
-                  paper_pubs: {
-                    name: testName,
-                    address: 'address',
-                    country: 'land'
-                  }
+    it('should add new memberships', () =>
+      stripe.tokens.create({ card }).then(source =>
+        new Agent()
+          .post('/api/shop/buy-membership')
+          .send({
+            amount:
+              prices.supporter +
+              prices.adult +
+              (config.paid_paper_pubs ? prices.paperPubs : 0),
+            email: `${testName}@example.com`,
+            source,
+            new_members: [
+              {
+                membership: 'Supporter',
+                email: `${testName}@example.com`,
+                legal_name: `s-${testName}`
+              },
+              {
+                membership: 'Adult',
+                email: `${testName}@example.com`,
+                legal_name: `a-${testName}`,
+                paper_pubs: {
+                  name: testName,
+                  address: 'address',
+                  country: 'land'
                 }
-              ]
-            })
-            .expect(res => {
-              if (res.status !== 200)
-                throw new Error(`Purchase failed! ${JSON.stringify(res.body)}`)
-              if (!res.body.charge_id) {
-                throw new Error(`Bad response! ${JSON.stringify(res.body)}`)
               }
-            })
-            .end(done)
-        })
-    })
+            ]
+          })
+          .expect(res => {
+            if (res.status !== 200)
+              throw new Error(`Purchase failed! ${JSON.stringify(res.body)}`)
+            if (!res.body.charge_id) {
+              throw new Error(`Bad response! ${JSON.stringify(res.body)}`)
+            }
+          })
+      ))
   })
 
   context('Upgrades (using Stripe API)', function() {
     this.timeout(10000)
-    const admin = request.agent(host, { ca: cert })
-    const agent = request.agent(host, { ca: cert })
+    const agent = new Agent()
     const testName =
       'test-' + (Math.random().toString(36) + '00000000000000000').slice(2, 7)
     let testId
 
-    before(done => {
-      admin
-        .get('/api/login')
-        .query(adminLoginParams)
-        .end(() => {
-          admin
-            .post('/api/people')
-            .send({
-              membership: 'Supporter',
-              email: `${testName}@example.com`,
-              legal_name: testName
-            })
-            .expect(res => {
+    before(() => {
+      const admin = new Agent()
+      return admin
+        .loginAsAdmin()
+        .expect(200)
+        .then(() =>
+          admin.post('/api/people').send({
+            membership: 'Supporter',
+            email: `${testName}@example.com`,
+            legal_name: testName
+          })
+        )
+        .then(res => {
+          if (res.status !== 200)
+            throw new Error(`Member init failed! ${JSON.stringify(res.body)}`)
+          testId = res.body.id
+        })
+    })
+
+    it('should apply an upgrade', () =>
+      stripe.tokens.create({ card }).then(source =>
+        agent
+          .post('/api/shop/buy-membership')
+          .send({
+            amount: prices.adult - prices.supporter,
+            email: `${testName}@example.com`,
+            source,
+            upgrades: [{ id: testId, membership: 'Adult' }]
+          })
+          .expect(res => {
+            if (res.status !== 200)
+              throw new Error(`Upgrade failed! ${JSON.stringify(res.body)}`)
+            if (!res.body.charge_id) {
+              throw new Error(`Bad response! ${JSON.stringify(res.body)}`)
+            }
+          })
+      ))
+
+    it('should handle paid paper publications upgrade', () =>
+      stripe.tokens.create({ card }).then(source =>
+        agent
+          .post('/api/shop/buy-membership')
+          .send({
+            amount: prices.paperPubs,
+            email: `${testName}@example.com`,
+            source,
+            upgrades: [
+              {
+                id: testId,
+                paper_pubs: {
+                  name: 'name',
+                  address: 'multi\n-line\n-address',
+                  country: 'land'
+                }
+              }
+            ]
+          })
+          .expect(res => {
+            if (config.paid_paper_pubs) {
               if (res.status !== 200)
                 throw new Error(
-                  `Member init failed! ${JSON.stringify(res.body)}`
+                  `Paper pubs purchase failed! ${JSON.stringify(res.body)}`
                 )
-              testId = res.body.id
-            })
-            .end(done)
-        })
-    })
-
-    it('should apply an upgrade', done => {
-      stripe.tokens
-        .create({
-          card: {
-            number: '4242424242424242',
-            exp_month: 12,
-            exp_year: 2020,
-            cvc: '123'
-          }
-        })
-        .then(source => {
-          agent
-            .post('/api/shop/buy-membership')
-            .send({
-              amount: prices.adult - prices.supporter,
-              email: `${testName}@example.com`,
-              source,
-              upgrades: [{ id: testId, membership: 'Adult' }]
-            })
-            .expect(res => {
-              if (res.status !== 200)
-                throw new Error(`Upgrade failed! ${JSON.stringify(res.body)}`)
-              if (!res.body.charge_id) {
-                throw new Error(`Bad response! ${JSON.stringify(res.body)}`)
-              }
-            })
-            .end(done)
-        })
-    })
-
-    it('should handle paid paper publications upgrade', done => {
-      stripe.tokens
-        .create({
-          card: {
-            number: '4242424242424242',
-            exp_month: 12,
-            exp_year: 2020,
-            cvc: '123'
-          }
-        })
-        .then(source => {
-          agent
-            .post('/api/shop/buy-membership')
-            .send({
-              amount: prices.paperPubs,
-              email: `${testName}@example.com`,
-              source,
-              upgrades: [
-                {
-                  id: testId,
-                  paper_pubs: {
-                    name: 'name',
-                    address: 'multi\n-line\n-address',
-                    country: 'land'
-                  }
-                }
-              ]
-            })
-            .expect(res => {
-              if (config.paid_paper_pubs) {
-                if (res.status !== 200)
-                  throw new Error(
-                    `Paper pubs purchase failed! ${JSON.stringify(res.body)}`
-                  )
-              } else {
-                if (res.status < 400)
-                  throw new Error(
-                    `Paper pubs purchase should have failed! ${JSON.stringify(
-                      res.body
-                    )}`
-                  )
-              }
-            })
-            .end(done)
-        })
-    })
+            } else {
+              if (res.status < 400)
+                throw new Error(
+                  `Paper pubs purchase should have failed! ${JSON.stringify(
+                    res.body
+                  )}`
+                )
+            }
+          })
+      ))
   })
 })

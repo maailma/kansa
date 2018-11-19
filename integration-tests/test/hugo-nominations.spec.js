@@ -1,14 +1,9 @@
 const assert = require('assert')
-const fs = require('fs')
-const request = require('supertest')
-const WebSocket = require('ws')
-const YAML = require('yaml').default
+const config = require('../kansa-config')
+const Agent = require('../test-agent')
 
-const config = YAML.parse(fs.readFileSync('../config/kansa.yaml', 'utf8'))
-const ca = fs.readFileSync('../proxy/ssl/localhost.cert', 'utf8')
-const host = 'localhost:4430'
-const admin = request.agent(`https://${host}`, { ca })
-const nominator = request.agent(`https://${host}`, { ca })
+const admin = new Agent()
+const nominator = new Agent()
 
 if (!config.modules.hugo) return
 
@@ -21,34 +16,25 @@ describe('Hugo nominations', () => {
   const otherAuthor = randomString()
 
   let id = null
-  before(() => {
-    const email = 'member@example.com'
-    const key = 'key'
-    return nominator
-      .get('/api/login')
-      .query({ email, key })
-      .expect('set-cookie', /w75/)
-      .expect(200, { status: 'success', email })
+  before(() =>
+    nominator
+      .loginAsMember()
+      .expect(200)
       .then(() => nominator.get('/api/user'))
       .then(res => {
         id = res.body.people[0].id
-        assert.equal(typeof id, 'number')
       })
-  })
+  )
 
-  before(() => {
-    const email = 'admin@example.com'
-    const key = 'key'
-    return admin
-      .get('/api/login')
-      .query({ email, key })
-      .expect('set-cookie', /w75/)
-      .expect(200, { status: 'success', email })
+  before(() =>
+    admin
+      .loginAsAdmin()
+      .expect(200)
       .then(() => admin.get('/api/user'))
       .then(res => {
         assert.notEqual(res.body.roles.indexOf('hugo_admin'), -1)
       })
-  })
+  )
 
   it('nominator: add nomination', () => {
     return nominator
@@ -188,11 +174,7 @@ describe('Hugo nominations', () => {
       }))
 
   it('admin: WebSocket connection to unhandled path', done => {
-    const sessionCookie = admin.jar.getCookie(config.id, { path: '/' })
-    const ws = new WebSocket(`wss://${host}/api/hugo/admin/nosuchpath`, {
-      ca,
-      headers: { Cookie: String(sessionCookie) }
-    })
+    const ws = admin.webSocket('/api/hugo/admin/nosuchpath')
     let ok = false
     ws.onclose = () => {
       if (ok) done()
@@ -212,11 +194,7 @@ describe('Hugo nominations', () => {
   })
 
   it('admin: WebSocket client', done => {
-    const sessionCookie = admin.jar.getCookie(config.id, { path: '/' })
-    const ws = new WebSocket(`wss://${host}/api/hugo/admin/canon-updates`, {
-      ca,
-      headers: { Cookie: String(sessionCookie) }
-    })
+    const ws = admin.webSocket('/api/hugo/admin/canon-updates')
     let ok = false
     ws.onclose = () => {
       if (ok) done()

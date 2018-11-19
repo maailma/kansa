@@ -1,12 +1,9 @@
 const assert = require('assert')
-const fs = require('fs')
-const request = require('supertest')
-
-const ca = fs.readFileSync('../proxy/ssl/localhost.cert', 'utf8')
-const host = 'localhost:4430'
-const agent = request.agent(`https://${host}`, { ca })
+const Agent = require('../test-agent')
 
 describe('Public data', () => {
+  const agent = new Agent()
+
   it('Member list is an array', () =>
     agent
       .get('/api/public/people')

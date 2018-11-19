@@ -1,13 +1,7 @@
-const assert = require('assert')
-const fs = require('fs')
-const request = require('supertest')
-const YAML = require('yaml').default
+const config = require('../kansa-config')
+const Agent = require('../test-agent')
 
-const config = YAML.parse(fs.readFileSync('../config/kansa.yaml', 'utf8'))
 if (!config.modules.barcode) return
-
-const ca = fs.readFileSync('../proxy/ssl/localhost.cert', 'utf8')
-const host = 'localhost:4430'
 
 let pdfType = 'application/pdf'
 let pngType = 'image/png'
@@ -25,21 +19,17 @@ describe('Barcodes', () => {
   let id = null
 
   describe('member access', () => {
-    const member = request.agent(`https://${host}`, { ca })
+    const member = new Agent()
 
-    before(() => {
-      const email = 'member@example.com'
-      return member
-        .get('/api/login')
-        .query({ email, key })
-        .expect('set-cookie', /w75/)
-        .expect(200, { status: 'success', email })
+    before(() =>
+      member
+        .loginAsMember()
+        .expect(200)
         .then(() => member.get('/api/user'))
         .then(res => {
           id = res.body.people[0].id
-          assert.equal(typeof id, 'number')
         })
-    })
+    )
 
     it('get own barcode with id as PNG', () =>
       member
@@ -61,7 +51,7 @@ describe('Barcodes', () => {
   })
 
   describe('anonymous access', () => {
-    const anonymous = request.agent(`https://${host}`, { ca })
+    const anonymous = new Agent()
 
     it("get member's barcode with key as PNG", () =>
       anonymous
@@ -80,19 +70,8 @@ describe('Barcodes', () => {
   })
 
   describe('admin access', () => {
-    const admin = request.agent(`https://${host}`, { ca })
-    before(() => {
-      const email = 'admin@example.com'
-      return admin
-        .get('/api/login')
-        .query({ email, key })
-        .expect('set-cookie', /w75/)
-        .expect(200, { status: 'success', email })
-        .then(() => admin.get('/api/user'))
-        .then(res => {
-          assert.notEqual(res.body.roles.indexOf('member_admin'), -1)
-        })
-    })
+    const admin = new Agent()
+    before(() => admin.loginAsAdmin().expect(200))
 
     it("get member's barcode with id as PNG", () =>
       admin

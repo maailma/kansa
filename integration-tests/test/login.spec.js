@@ -1,12 +1,9 @@
 const assert = require('assert')
-const fs = require('fs')
-const request = require('supertest')
+const Agent = require('../test-agent')
 
-const ca = fs.readFileSync('../proxy/ssl/localhost.cert', 'utf8')
-const host = 'https://localhost:4430'
-const unlogged = request.agent(host, { ca })
-const admin = request.agent(host, { ca })
-const loginparams = { email: 'admin@example.com', key: 'key' }
+const unlogged = new Agent()
+const admin = new Agent()
+const email = 'admin@example.com'
 
 describe('Configuration', () => {
   it('Configuration is an object with id, name', () =>
@@ -23,44 +20,31 @@ describe('Login', () => {
   context('Successful login', () => {
     it('gets a session cookie or it gets the hose again.', () =>
       admin
-        .get('/api/login')
-        .query(loginparams)
+        .loginAsAdmin()
         .expect('set-cookie', /w75/)
-        .expect(200, { status: 'success', email: loginparams.email }))
+        .expect(200, { status: 'success', email }))
 
     it('gets user information', () => admin.get('/api/user').expect(200))
   })
 
   context('Login with wrong email', () => {
     it('gets 401 response', () =>
-      unlogged
-        .get('/api/login')
-        .query({ email: 'foo@doo.com', key: loginparams.key })
-        .expect(401))
+      unlogged.login('foo@doo.com', 'key').expect(401))
 
     it('gets unauthorized from /api/user', () =>
       unlogged.get('/api/user').expect(401))
   })
 
   context('Login with wrong key', () => {
-    it('gets 401 response', () =>
-      unlogged
-        .get('/api/login')
-        .query({ email: loginparams.email, key: 'foo' })
-        .expect(401))
+    it('gets 401 response', () => unlogged.login(email, 'foo').expect(401))
 
     it('gets unauthorized from /api/user', () =>
       unlogged.get('/api/user').expect(401))
   })
 
   context('Login with expired key', () => {
-    it('gets 403 response', () => {
-      const email = 'expired@example.com'
-      return unlogged
-        .get('/api/login')
-        .query({ email, key: 'key' })
-        .expect(403)
-    })
+    it('gets 403 response', () =>
+      unlogged.login('expired@example.com', 'key').expect(403))
 
     it('gets unauthorized from /api/user', () =>
       unlogged.get('/api/user').expect(401))
@@ -68,24 +52,21 @@ describe('Login', () => {
 })
 
 describe('Logout', () => {
-  const testagent = request.agent(host, { ca })
+  const agent = new Agent()
 
   before(() =>
-    testagent
-      .get('/api/login')
-      .query(loginparams)
+    agent
+      .loginAsAdmin()
       .expect('set-cookie', /w75/)
-      .expect(200, { status: 'success', email: loginparams.email })
+      .expect(200, { status: 'success', email })
   )
 
   context('Successful logout', () => {
     it('should be successful', () =>
-      testagent
-        .get('/api/logout')
-        .expect(200, { status: 'success', email: loginparams.email }))
+      agent.get('/api/logout').expect(200, { status: 'success', email }))
 
     it('gets unauthorized from /api/user', () =>
-      testagent.get('/api/user').expect(401))
+      agent.get('/api/user').expect(401))
   })
 
   context('Not logged in', () => {
@@ -93,34 +74,31 @@ describe('Logout', () => {
       unlogged.get('/api/logout').expect(401))
 
     it('gets unauthorized from /api/user', () =>
-      testagent.get('/api/user').expect(401))
+      agent.get('/api/user').expect(401))
   })
 })
 
 describe('Key request', () => {
   before(() =>
-    admin
-      .get('/api/logout')
-      .expect(200, { status: 'success', email: loginparams.email })
+    admin.get('/api/logout').expect(200, { status: 'success', email })
   )
 
   context('Should not reset by default', () => {
     it('should be successful', () =>
       admin
         .post('/api/key')
-        .send({ email: loginparams.email })
-        .expect(200, { status: 'success', email: loginparams.email }))
+        .send({ email })
+        .expect(200, { status: 'success', email }))
 
     it('should still be able to login', () =>
       admin
-        .get('/api/login')
-        .query(loginparams)
+        .loginAsAdmin()
         .expect('set-cookie', /w75/)
-        .expect(200, { status: 'success', email: loginparams.email }))
+        .expect(200, { status: 'success', email }))
   })
 
   context('Account creation', () => {
-    const agent = request.agent(host, { ca })
+    const agent = new Agent()
     const testName =
       'test-' + (Math.random().toString(36) + '00000000000000000').slice(2, 7)
     const testEmail = testName + '@example.com'

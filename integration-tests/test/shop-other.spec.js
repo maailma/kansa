@@ -1,15 +1,8 @@
-const request = require('supertest')
-const fs = require('fs')
-const stripe = require('stripe')(
-  process.env.STRIPE_SECRET_APIKEY || 'sk_test_zq022Drx7npYPVEtXAVMaOJT'
-)
-
-const cert = fs.readFileSync('../proxy/ssl/localhost.cert', 'utf8')
-const host = 'https://localhost:4430'
-const adminLoginParams = { email: 'admin@example.com', key: 'key' }
+const { card, stripe } = require('../dev-stripe')
+const Agent = require('../test-agent')
 
 describe('Other purchases', () => {
-  const agent = request.agent(host, { ca: cert })
+  const agent = new Agent()
 
   context('Parameters', () => {
     it('should require required parameters', done => {
@@ -138,11 +131,9 @@ describe('Other purchases', () => {
     })
   })
 
-  context('Purchase data', function() {
-    const agent = request.agent(host, { ca: cert })
-
-    it('should get data', done => {
-      agent
+  context('Purchase data', () => {
+    it('should get data', () =>
+      new Agent()
         .get('/api/shop/data')
         .expect(200)
         .expect(({ body }) => {
@@ -154,22 +145,19 @@ describe('Other purchases', () => {
             types.every(({ key }) => key !== 'Adult')
           )
             throw new Error(`Bad response! ${JSON.stringify(body)}`)
-        })
-        .end(done)
-    })
+        }))
   })
 
   context('Sponsorships (using Stripe API)', function() {
     this.timeout(10000)
-    const admin = request.agent(host, { ca: cert })
-    const agent = request.agent(host, { ca: cert })
+    const admin = new Agent()
     const testName =
       'test-' + (Math.random().toString(36) + '00000000000000000').slice(2, 7)
 
     before(done => {
       admin
-        .get('/api/login')
-        .query(adminLoginParams)
+        .loginAsAdmin()
+        .expect(200)
         .end(() => {
           admin
             .post('/api/people')
@@ -178,50 +166,36 @@ describe('Other purchases', () => {
               email: `${testName}@example.com`,
               legal_name: testName
             })
-            .expect(res => {
-              if (res.status !== 200)
-                throw new Error(
-                  `Member init failed! ${JSON.stringify(res.body)}`
-                )
+            .expect(200)
+            .end((err, res) => {
               testId = res.body.id
+              done(err)
             })
-            .end(done)
         })
     })
 
-    it('purchase should succeed', done => {
-      stripe.tokens
-        .create({
-          card: {
-            number: '4242424242424242',
-            exp_month: 12,
-            exp_year: 2020,
-            cvc: '123'
-          }
-        })
-        .then(source => {
-          agent
-            .post('/api/shop/buy-other')
-            .send({
-              email: `${testName}@example.com`,
-              source,
-              items: [
-                {
-                  amount: 4200,
-                  category: 'sponsor',
-                  type: 'bench',
-                  data: { sponsor: testName }
-                }
-              ]
-            })
-            .expect(200)
-            .expect(({ body }) => {
-              if (!body || body.status !== 'succeeded' || !body.charge_id)
-                throw new Error(`Bad response! ${JSON.stringify(body)}`)
-            })
-            .end(done)
-        })
-    })
+    it('purchase should succeed', () =>
+      stripe.tokens.create({ card }).then(source =>
+        new Agent()
+          .post('/api/shop/buy-other')
+          .send({
+            email: `${testName}@example.com`,
+            source,
+            items: [
+              {
+                amount: 4200,
+                category: 'sponsor',
+                type: 'bench',
+                data: { sponsor: testName }
+              }
+            ]
+          })
+          .expect(200)
+          .expect(({ body }) => {
+            if (!body || body.status !== 'succeeded' || !body.charge_id)
+              throw new Error(`Bad response! ${JSON.stringify(body)}`)
+          })
+      ))
 
     it('should be listed', done => {
       admin
@@ -255,22 +229,17 @@ describe('Other purchases', () => {
 
   context('Invoices (using Stripe API)', function() {
     this.timeout(10000)
-    const admin = request.agent(host, { ca: cert })
-    const { email } = adminLoginParams
+    const admin = new Agent()
+    const email = 'admin@example.com'
     const testData = {
       sponsor:
         'test-' + (Math.random().toString(36) + '00000000000000000').slice(2, 7)
     }
     let item
 
-    before(done => {
-      admin
-        .get('/api/login')
-        .query(adminLoginParams)
-        .end(done)
-    })
+    before(() => admin.loginAsAdmin().expect(200))
 
-    it('invoice should be created', done => {
+    it('invoice should be created', () =>
       admin
         .post('/api/shop/invoice')
         .send({
@@ -288,11 +257,9 @@ describe('Other purchases', () => {
         .expect(({ body }) => {
           if (!body || body.status !== 'success' || !body.email)
             throw new Error(`Bad response! ${JSON.stringify(body)}`)
-        })
-        .end(done)
-    })
+        }))
 
-    it('invoice should be listed', done => {
+    it('invoice should be listed', () =>
       admin
         .get('/api/shop/list')
         .expect(200)
@@ -303,35 +270,22 @@ describe('Other purchases', () => {
             it => it.data && it.data.sponsor === testData.sponsor
           )
           if (!item) throw new Error(`Missing item! ${JSON.stringify(body)}`)
-        })
-        .end(done)
-    })
+        }))
 
-    it('invoice should be payable', done => {
-      stripe.tokens
-        .create({
-          card: {
-            number: '4242424242424242',
-            exp_month: 12,
-            exp_year: 2020,
-            cvc: '123'
-          }
-        })
-        .then(source => {
-          agent
-            .post('/api/shop/buy-other')
-            .send({
-              email,
-              source,
-              items: [{ id: item.id }]
-            })
-            .expect(200)
-            .expect(({ body }) => {
-              if (!body || body.status !== 'succeeded' || !body.charge_id)
-                throw new Error(`Bad response! ${JSON.stringify(body)}`)
-            })
-            .end(done)
-        })
-    })
+    it('invoice should be payable', () =>
+      stripe.tokens.create({ card }).then(source =>
+        agent
+          .post('/api/shop/buy-other')
+          .send({
+            email,
+            source,
+            items: [{ id: item.id }]
+          })
+          .expect(200)
+          .expect(({ body }) => {
+            if (!body || body.status !== 'succeeded' || !body.charge_id)
+              throw new Error(`Bad response! ${JSON.stringify(body)}`)
+          })
+      ))
   })
 })
