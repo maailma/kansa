@@ -27,10 +27,13 @@ services:
       JWT_SECRET: dev secret
       SESSION_SECRET: dev secret
       HUGO_PG_URL: postgres://hugo:pwd@postgres:5432/api
+      NODE_ENV: development
       RAAMI_PG_URL: postgres://raami:pwd@postgres:5432/api
       SLACK_TOKEN: ''
       STRIPE_SECRET_APIKEY: sk_test_zq022Drx7npYPVEtXAVMaOJT
       STRIPE_SECRET_APIKEY_siteselect: sk_test_35SiP34s6qovtenwPPLguIyY
+    ports:
+      - '8080:80'
     volumes:
       - ../modules/events/schema.graphql:/events-schema.graphql
 

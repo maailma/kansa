@@ -45,11 +45,11 @@ modules:
 
   # Badge previews and print logging. Uses tarra, the badge-printer, which in
   # turn will need to have the proper fonts included.
-  badge: false
+  badge: true
 
   # Barcodes to help speed up registration. Uses tarra, the badge-printer, which
   # in turn will need to have the proper fonts included.
-  barcode: false
+  barcode: true
 
   # Event programme development and management
   events:
