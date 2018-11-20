@@ -1,0 +1,5743 @@
+"""A connection to a list of `Availability` values."""
+type AvailabilitiesConnection {
+  """A list of `Availability` objects."""
+  nodes: [Availability]!
+
+  """
+  A list of edges which contains the `Availability` and cursor to aid in pagination.
+  """
+  edges: [AvailabilitiesEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Availability` you could get from the connection."""
+  totalCount: Int
+}
+
+"""A `Availability` edge in the connection."""
+type AvailabilitiesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Availability` at the end of the edge."""
+  node: Availability
+}
+
+"""Methods to use when ordering `Availability`."""
+enum AvailabilitiesOrderBy {
+  NATURAL
+  PERSON_ID_ASC
+  PERSON_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+type Availability implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  personId: Int!
+  date: Date!
+  startTime: Datetime!
+  endTime: Datetime
+}
+
+"""
+A condition to be used against `Availability` object types. All fields are
+tested for equality and combined with a logical ‘and.’
+"""
+input AvailabilityCondition {
+  """Checks for equality with the object’s `personId` field."""
+  personId: Int
+}
+
+"""An input for mutations affecting `Availability`"""
+input AvailabilityInput {
+  personId: Int!
+  date: Date!
+  startTime: Datetime!
+  endTime: Datetime
+}
+
+"""
+Represents an update to a `Availability`. Fields that are set will be updated.
+"""
+input AvailabilityPatch {
+  personId: Int
+  date: Date
+  startTime: Datetime
+  endTime: Datetime
+}
+
+"""
+A signed eight-byte integer. The upper big integer values are greater then the
+max value for a JavaScript number. Therefore all big integers will be output as
+strings and not numbers.
+"""
+scalar BigInt
+
+"""All input for the create `Availability` mutation."""
+input CreateAvailabilityInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Availability` to be created by this mutation."""
+  availability: AvailabilityInput!
+}
+
+"""The output of our create `Availability` mutation."""
+type CreateAvailabilityPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Availability` that was created by this mutation."""
+  availability: Availability
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Availability`. May be used by Relay 1."""
+  availabilityEdge(
+    """The method to use when ordering `Availability`."""
+    orderBy: [AvailabilitiesOrderBy!] = PRIMARY_KEY_ASC
+  ): AvailabilitiesEdge
+}
+
+"""All input for the create `EventComment` mutation."""
+input CreateEventCommentInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `EventComment` to be created by this mutation."""
+  eventComment: EventCommentInput!
+}
+
+"""The output of our create `EventComment` mutation."""
+type CreateEventCommentPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `EventComment` that was created by this mutation."""
+  eventComment: EventComment
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `EventComment`. May be used by Relay 1."""
+  eventCommentEdge(
+    """The method to use when ordering `EventComment`."""
+    orderBy: [EventCommentsOrderBy!] = PRIMARY_KEY_ASC
+  ): EventCommentsEdge
+}
+
+"""All input for the create `Event` mutation."""
+input CreateEventInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Event` to be created by this mutation."""
+  event: EventInput!
+}
+
+"""All input for the create `EventLog` mutation."""
+input CreateEventLogInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `EventLog` to be created by this mutation."""
+  eventLog: EventLogInput!
+}
+
+"""The output of our create `EventLog` mutation."""
+type CreateEventLogPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `EventLog` that was created by this mutation."""
+  eventLog: EventLog
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `EventLog`. May be used by Relay 1."""
+  eventLogEdge(
+    """The method to use when ordering `EventLog`."""
+    orderBy: [EventLogsOrderBy!] = PRIMARY_KEY_ASC
+  ): EventLogsEdge
+}
+
+"""The output of our create `Event` mutation."""
+type CreateEventPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Event` that was created by this mutation."""
+  event: Event
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Event`. May be used by Relay 1."""
+  eventEdge(
+    """The method to use when ordering `Event`."""
+    orderBy: [EventsOrderBy!] = PRIMARY_KEY_ASC
+  ): EventsEdge
+}
+
+"""All input for the create `EventStatusTransition` mutation."""
+input CreateEventStatusTransitionInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `EventStatusTransition` to be created by this mutation."""
+  eventStatusTransition: EventStatusTransitionInput!
+}
+
+"""The output of our create `EventStatusTransition` mutation."""
+type CreateEventStatusTransitionPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `EventStatusTransition` that was created by this mutation."""
+  eventStatusTransition: EventStatusTransition
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `EventStatusTransition`. May be used by Relay 1."""
+  eventStatusTransitionEdge(
+    """The method to use when ordering `EventStatusTransition`."""
+    orderBy: [EventStatusTransitionsOrderBy!] = PRIMARY_KEY_ASC
+  ): EventStatusTransitionsEdge
+}
+
+"""All input for the create `EventType` mutation."""
+input CreateEventTypeInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `EventType` to be created by this mutation."""
+  eventType: EventTypeInput!
+}
+
+"""The output of our create `EventType` mutation."""
+type CreateEventTypePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `EventType` that was created by this mutation."""
+  eventType: EventType
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `EventType`. May be used by Relay 1."""
+  eventTypeEdge(
+    """The method to use when ordering `EventType`."""
+    orderBy: [EventTypesOrderBy!] = PRIMARY_KEY_ASC
+  ): EventTypesEdge
+}
+
+"""All input for the create `Feature` mutation."""
+input CreateFeatureInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Feature` to be created by this mutation."""
+  feature: FeatureInput!
+}
+
+"""The output of our create `Feature` mutation."""
+type CreateFeaturePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Feature` that was created by this mutation."""
+  feature: Feature
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Feature`. May be used by Relay 1."""
+  featureEdge(
+    """The method to use when ordering `Feature`."""
+    orderBy: [FeaturesOrderBy!] = PRIMARY_KEY_ASC
+  ): FeaturesEdge
+}
+
+"""All input for the create `MessageHistory` mutation."""
+input CreateMessageHistoryInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `MessageHistory` to be created by this mutation."""
+  messageHistory: MessageHistoryInput!
+}
+
+"""The output of our create `MessageHistory` mutation."""
+type CreateMessageHistoryPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `MessageHistory` that was created by this mutation."""
+  messageHistory: MessageHistory
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `MessageHistory`. May be used by Relay 1."""
+  messageHistoryEdge(
+    """The method to use when ordering `MessageHistory`."""
+    orderBy: [MessageHistoriesOrderBy!] = PRIMARY_KEY_ASC
+  ): MessageHistoriesEdge
+}
+
+"""All input for the create `Participant` mutation."""
+input CreateParticipantInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Participant` to be created by this mutation."""
+  participant: ParticipantInput!
+}
+
+"""The output of our create `Participant` mutation."""
+type CreateParticipantPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Participant` that was created by this mutation."""
+  participant: Participant
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `Event` that is related to this `Participant`."""
+  event: Event
+
+  """An edge for our `Participant`. May be used by Relay 1."""
+  participantEdge(
+    """The method to use when ordering `Participant`."""
+    orderBy: [ParticipantsOrderBy!] = PRIMARY_KEY_ASC
+  ): ParticipantsEdge
+}
+
+"""All input for the create `ParticipantRole` mutation."""
+input CreateParticipantRoleInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `ParticipantRole` to be created by this mutation."""
+  participantRole: ParticipantRoleInput!
+}
+
+"""The output of our create `ParticipantRole` mutation."""
+type CreateParticipantRolePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `ParticipantRole` that was created by this mutation."""
+  participantRole: ParticipantRole
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `ParticipantRole`. May be used by Relay 1."""
+  participantRoleEdge(
+    """The method to use when ordering `ParticipantRole`."""
+    orderBy: [ParticipantRolesOrderBy!] = PRIMARY_KEY_ASC
+  ): ParticipantRolesEdge
+}
+
+"""All input for the create `ParticipantStatus` mutation."""
+input CreateParticipantStatusInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `ParticipantStatus` to be created by this mutation."""
+  participantStatus: ParticipantStatusInput!
+}
+
+"""The output of our create `ParticipantStatus` mutation."""
+type CreateParticipantStatusPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `ParticipantStatus` that was created by this mutation."""
+  participantStatus: ParticipantStatus
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `ParticipantStatus`. May be used by Relay 1."""
+  participantStatusEdge(
+    """The method to use when ordering `ParticipantStatus`."""
+    orderBy: [ParticipantStatusesOrderBy!] = PRIMARY_KEY_ASC
+  ): ParticipantStatusesEdge
+}
+
+"""All input for the create `Permission` mutation."""
+input CreatePermissionInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Permission` to be created by this mutation."""
+  permission: PermissionInput!
+}
+
+"""The output of our create `Permission` mutation."""
+type CreatePermissionPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Permission` that was created by this mutation."""
+  permission: Permission
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Permission`. May be used by Relay 1."""
+  permissionEdge(
+    """The method to use when ordering `Permission`."""
+    orderBy: [PermissionsOrderBy!] = PRIMARY_KEY_ASC
+  ): PermissionsEdge
+}
+
+"""All input for the create `Preference` mutation."""
+input CreatePreferenceInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Preference` to be created by this mutation."""
+  preference: PreferenceInput!
+}
+
+"""The output of our create `Preference` mutation."""
+type CreatePreferencePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Preference` that was created by this mutation."""
+  preference: Preference
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `Event` that is related to this `Preference`."""
+  event: Event
+
+  """An edge for our `Preference`. May be used by Relay 1."""
+  preferenceEdge(
+    """The method to use when ordering `Preference`."""
+    orderBy: [PreferencesOrderBy!] = PRIMARY_KEY_ASC
+  ): PreferencesEdge
+}
+
+"""All input for the create `SentMessage` mutation."""
+input CreateSentMessageInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `SentMessage` to be created by this mutation."""
+  sentMessage: SentMessageInput!
+}
+
+"""The output of our create `SentMessage` mutation."""
+type CreateSentMessagePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `SentMessage` that was created by this mutation."""
+  sentMessage: SentMessage
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """
+  Reads a single `MessageHistory` that is related to this `SentMessage`.
+  """
+  draft: MessageHistory
+
+  """An edge for our `SentMessage`. May be used by Relay 1."""
+  sentMessageEdge(
+    """The method to use when ordering `SentMessage`."""
+    orderBy: [SentMessagesOrderBy!] = PRIMARY_KEY_ASC
+  ): SentMessagesEdge
+}
+
+"""All input for the create `Space` mutation."""
+input CreateSpaceInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Space` to be created by this mutation."""
+  space: SpaceInput!
+}
+
+"""The output of our create `Space` mutation."""
+type CreateSpacePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Space` that was created by this mutation."""
+  space: Space
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Space`. May be used by Relay 1."""
+  spaceEdge(
+    """The method to use when ordering `Space`."""
+    orderBy: [SpacesOrderBy!] = PRIMARY_KEY_ASC
+  ): SpacesEdge
+}
+
+"""All input for the create `Tag` mutation."""
+input CreateTagInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Tag` to be created by this mutation."""
+  tag: TagInput!
+}
+
+"""The output of our create `Tag` mutation."""
+type CreateTagPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Tag` that was created by this mutation."""
+  tag: Tag
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Tag`. May be used by Relay 1."""
+  tagEdge(
+    """The method to use when ordering `Tag`."""
+    orderBy: [TagsOrderBy!] = PRIMARY_KEY_ASC
+  ): TagsEdge
+}
+
+"""All input for the create `Track` mutation."""
+input CreateTrackInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Track` to be created by this mutation."""
+  track: TrackInput!
+}
+
+"""The output of our create `Track` mutation."""
+type CreateTrackPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Track` that was created by this mutation."""
+  track: Track
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Track`. May be used by Relay 1."""
+  trackEdge(
+    """The method to use when ordering `Track`."""
+    orderBy: [TracksOrderBy!] = PRIMARY_KEY_ASC
+  ): TracksEdge
+}
+
+"""All input for the create `TrackPermission` mutation."""
+input CreateTrackPermissionInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `TrackPermission` to be created by this mutation."""
+  trackPermission: TrackPermissionInput!
+}
+
+"""The output of our create `TrackPermission` mutation."""
+type CreateTrackPermissionPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `TrackPermission` that was created by this mutation."""
+  trackPermission: TrackPermission
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `Track` that is related to this `TrackPermission`."""
+  track: Track
+
+  """An edge for our `TrackPermission`. May be used by Relay 1."""
+  trackPermissionEdge(
+    """The method to use when ordering `TrackPermission`."""
+    orderBy: [TrackPermissionsOrderBy!] = PRIMARY_KEY_ASC
+  ): TrackPermissionsEdge
+}
+
+type CurrentMessage {
+  messageId: Int
+  modTime: Datetime
+  modUserEmail: String
+  status: MessageStatus
+  subject: String
+  body: String
+  recipientFilter: JSON
+}
+
+"""A connection to a list of `CurrentMessage` values."""
+type CurrentMessagesConnection {
+  """A list of `CurrentMessage` objects."""
+  nodes: [CurrentMessage]!
+
+  """
+  A list of edges which contains the `CurrentMessage` and cursor to aid in pagination.
+  """
+  edges: [CurrentMessagesEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `CurrentMessage` you could get from the connection.
+  """
+  totalCount: Int
+}
+
+"""A `CurrentMessage` edge in the connection."""
+type CurrentMessagesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `CurrentMessage` at the end of the edge."""
+  node: CurrentMessage
+}
+
+"""A location in a connection that can be used for resuming pagination."""
+scalar Cursor
+
+"""The day, does not include a time."""
+scalar Date
+
+"""
+A point in time as described by the [ISO
+8601](https://en.wikipedia.org/wiki/ISO_8601) standard. May or may not include a timezone.
+"""
+scalar Datetime
+
+"""
+All input for the `deleteAvailabilityByPersonIdAndDateAndStartTime` mutation.
+"""
+input DeleteAvailabilityByPersonIdAndDateAndStartTimeInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  personId: Int!
+  date: Date!
+  startTime: Datetime!
+}
+
+"""All input for the `deleteAvailability` mutation."""
+input DeleteAvailabilityInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Availability` to be deleted.
+  """
+  id: ID!
+}
+
+"""The output of our delete `Availability` mutation."""
+type DeleteAvailabilityPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Availability` that was deleted by this mutation."""
+  availability: Availability
+  deletedAvailabilityId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Availability`. May be used by Relay 1."""
+  availabilityEdge(
+    """The method to use when ordering `Availability`."""
+    orderBy: [AvailabilitiesOrderBy!] = PRIMARY_KEY_ASC
+  ): AvailabilitiesEdge
+}
+
+"""All input for the `deleteEventByEventId` mutation."""
+input DeleteEventByEventIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  eventId: Int!
+}
+
+"""All input for the `deleteEventCommentByCommentId` mutation."""
+input DeleteEventCommentByCommentIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  commentId: Int!
+}
+
+"""All input for the `deleteEventComment` mutation."""
+input DeleteEventCommentInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `EventComment` to be deleted.
+  """
+  id: ID!
+}
+
+"""The output of our delete `EventComment` mutation."""
+type DeleteEventCommentPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `EventComment` that was deleted by this mutation."""
+  eventComment: EventComment
+  deletedEventCommentId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `EventComment`. May be used by Relay 1."""
+  eventCommentEdge(
+    """The method to use when ordering `EventComment`."""
+    orderBy: [EventCommentsOrderBy!] = PRIMARY_KEY_ASC
+  ): EventCommentsEdge
+}
+
+"""All input for the `deleteEvent` mutation."""
+input DeleteEventInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Event` to be deleted.
+  """
+  id: ID!
+}
+
+"""All input for the `deleteEventLogByRowId` mutation."""
+input DeleteEventLogByRowIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  rowId: BigInt!
+}
+
+"""All input for the `deleteEventLog` mutation."""
+input DeleteEventLogInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `EventLog` to be deleted.
+  """
+  id: ID!
+}
+
+"""The output of our delete `EventLog` mutation."""
+type DeleteEventLogPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `EventLog` that was deleted by this mutation."""
+  eventLog: EventLog
+  deletedEventLogId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `EventLog`. May be used by Relay 1."""
+  eventLogEdge(
+    """The method to use when ordering `EventLog`."""
+    orderBy: [EventLogsOrderBy!] = PRIMARY_KEY_ASC
+  ): EventLogsEdge
+}
+
+"""The output of our delete `Event` mutation."""
+type DeleteEventPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Event` that was deleted by this mutation."""
+  event: Event
+  deletedEventId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Event`. May be used by Relay 1."""
+  eventEdge(
+    """The method to use when ordering `Event`."""
+    orderBy: [EventsOrderBy!] = PRIMARY_KEY_ASC
+  ): EventsEdge
+}
+
+"""
+All input for the `deleteEventStatusTransitionByStatusAndNext` mutation.
+"""
+input DeleteEventStatusTransitionByStatusAndNextInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  status: EventStatus!
+  next: EventStatus!
+}
+
+"""All input for the `deleteEventStatusTransition` mutation."""
+input DeleteEventStatusTransitionInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `EventStatusTransition` to be deleted.
+  """
+  id: ID!
+}
+
+"""The output of our delete `EventStatusTransition` mutation."""
+type DeleteEventStatusTransitionPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `EventStatusTransition` that was deleted by this mutation."""
+  eventStatusTransition: EventStatusTransition
+  deletedEventStatusTransitionId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `EventStatusTransition`. May be used by Relay 1."""
+  eventStatusTransitionEdge(
+    """The method to use when ordering `EventStatusTransition`."""
+    orderBy: [EventStatusTransitionsOrderBy!] = PRIMARY_KEY_ASC
+  ): EventStatusTransitionsEdge
+}
+
+"""All input for the `deleteEventTypeByTypeId` mutation."""
+input DeleteEventTypeByTypeIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  typeId: Int!
+}
+
+"""All input for the `deleteEventType` mutation."""
+input DeleteEventTypeInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `EventType` to be deleted.
+  """
+  id: ID!
+}
+
+"""The output of our delete `EventType` mutation."""
+type DeleteEventTypePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `EventType` that was deleted by this mutation."""
+  eventType: EventType
+  deletedEventTypeId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `EventType`. May be used by Relay 1."""
+  eventTypeEdge(
+    """The method to use when ordering `EventType`."""
+    orderBy: [EventTypesOrderBy!] = PRIMARY_KEY_ASC
+  ): EventTypesEdge
+}
+
+"""All input for the `deleteFeatureByFeatureId` mutation."""
+input DeleteFeatureByFeatureIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  featureId: Int!
+}
+
+"""All input for the `deleteFeature` mutation."""
+input DeleteFeatureInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Feature` to be deleted.
+  """
+  id: ID!
+}
+
+"""The output of our delete `Feature` mutation."""
+type DeleteFeaturePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Feature` that was deleted by this mutation."""
+  feature: Feature
+  deletedFeatureId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Feature`. May be used by Relay 1."""
+  featureEdge(
+    """The method to use when ordering `Feature`."""
+    orderBy: [FeaturesOrderBy!] = PRIMARY_KEY_ASC
+  ): FeaturesEdge
+}
+
+"""All input for the `deleteMessageHistoryByDraftId` mutation."""
+input DeleteMessageHistoryByDraftIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  draftId: Int!
+}
+
+"""All input for the `deleteMessageHistory` mutation."""
+input DeleteMessageHistoryInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `MessageHistory` to be deleted.
+  """
+  id: ID!
+}
+
+"""The output of our delete `MessageHistory` mutation."""
+type DeleteMessageHistoryPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `MessageHistory` that was deleted by this mutation."""
+  messageHistory: MessageHistory
+  deletedMessageHistoryId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `MessageHistory`. May be used by Relay 1."""
+  messageHistoryEdge(
+    """The method to use when ordering `MessageHistory`."""
+    orderBy: [MessageHistoriesOrderBy!] = PRIMARY_KEY_ASC
+  ): MessageHistoriesEdge
+}
+
+"""All input for the `deleteParticipantByEventIdAndPersonId` mutation."""
+input DeleteParticipantByEventIdAndPersonIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  eventId: Int!
+  personId: Int!
+}
+
+"""All input for the `deleteParticipant` mutation."""
+input DeleteParticipantInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Participant` to be deleted.
+  """
+  id: ID!
+}
+
+"""The output of our delete `Participant` mutation."""
+type DeleteParticipantPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Participant` that was deleted by this mutation."""
+  participant: Participant
+  deletedParticipantId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `Event` that is related to this `Participant`."""
+  event: Event
+
+  """An edge for our `Participant`. May be used by Relay 1."""
+  participantEdge(
+    """The method to use when ordering `Participant`."""
+    orderBy: [ParticipantsOrderBy!] = PRIMARY_KEY_ASC
+  ): ParticipantsEdge
+}
+
+"""All input for the `deleteParticipantRoleByRoleId` mutation."""
+input DeleteParticipantRoleByRoleIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  roleId: Int!
+}
+
+"""All input for the `deleteParticipantRole` mutation."""
+input DeleteParticipantRoleInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `ParticipantRole` to be deleted.
+  """
+  id: ID!
+}
+
+"""The output of our delete `ParticipantRole` mutation."""
+type DeleteParticipantRolePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `ParticipantRole` that was deleted by this mutation."""
+  participantRole: ParticipantRole
+  deletedParticipantRoleId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `ParticipantRole`. May be used by Relay 1."""
+  participantRoleEdge(
+    """The method to use when ordering `ParticipantRole`."""
+    orderBy: [ParticipantRolesOrderBy!] = PRIMARY_KEY_ASC
+  ): ParticipantRolesEdge
+}
+
+"""All input for the `deleteParticipantStatusByStatusId` mutation."""
+input DeleteParticipantStatusByStatusIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  statusId: Int!
+}
+
+"""All input for the `deleteParticipantStatus` mutation."""
+input DeleteParticipantStatusInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `ParticipantStatus` to be deleted.
+  """
+  id: ID!
+}
+
+"""The output of our delete `ParticipantStatus` mutation."""
+type DeleteParticipantStatusPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `ParticipantStatus` that was deleted by this mutation."""
+  participantStatus: ParticipantStatus
+  deletedParticipantStatusId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `ParticipantStatus`. May be used by Relay 1."""
+  participantStatusEdge(
+    """The method to use when ordering `ParticipantStatus`."""
+    orderBy: [ParticipantStatusesOrderBy!] = PRIMARY_KEY_ASC
+  ): ParticipantStatusesEdge
+}
+
+"""All input for the `deletePermissionByUserEmail` mutation."""
+input DeletePermissionByUserEmailInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  userEmail: String!
+}
+
+"""All input for the `deletePermission` mutation."""
+input DeletePermissionInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Permission` to be deleted.
+  """
+  id: ID!
+}
+
+"""The output of our delete `Permission` mutation."""
+type DeletePermissionPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Permission` that was deleted by this mutation."""
+  permission: Permission
+  deletedPermissionId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Permission`. May be used by Relay 1."""
+  permissionEdge(
+    """The method to use when ordering `Permission`."""
+    orderBy: [PermissionsOrderBy!] = PRIMARY_KEY_ASC
+  ): PermissionsEdge
+}
+
+"""All input for the `deletePreferenceByEventIdAndPersonId` mutation."""
+input DeletePreferenceByEventIdAndPersonIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  eventId: Int!
+  personId: Int!
+}
+
+"""All input for the `deletePreference` mutation."""
+input DeletePreferenceInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Preference` to be deleted.
+  """
+  id: ID!
+}
+
+"""The output of our delete `Preference` mutation."""
+type DeletePreferencePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Preference` that was deleted by this mutation."""
+  preference: Preference
+  deletedPreferenceId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `Event` that is related to this `Preference`."""
+  event: Event
+
+  """An edge for our `Preference`. May be used by Relay 1."""
+  preferenceEdge(
+    """The method to use when ordering `Preference`."""
+    orderBy: [PreferencesOrderBy!] = PRIMARY_KEY_ASC
+  ): PreferencesEdge
+}
+
+"""All input for the `deleteSentMessageByDraftIdAndPersonId` mutation."""
+input DeleteSentMessageByDraftIdAndPersonIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  draftId: Int!
+  personId: Int!
+}
+
+"""All input for the `deleteSentMessage` mutation."""
+input DeleteSentMessageInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `SentMessage` to be deleted.
+  """
+  id: ID!
+}
+
+"""The output of our delete `SentMessage` mutation."""
+type DeleteSentMessagePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `SentMessage` that was deleted by this mutation."""
+  sentMessage: SentMessage
+  deletedSentMessageId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """
+  Reads a single `MessageHistory` that is related to this `SentMessage`.
+  """
+  draft: MessageHistory
+
+  """An edge for our `SentMessage`. May be used by Relay 1."""
+  sentMessageEdge(
+    """The method to use when ordering `SentMessage`."""
+    orderBy: [SentMessagesOrderBy!] = PRIMARY_KEY_ASC
+  ): SentMessagesEdge
+}
+
+"""All input for the `deleteSpaceBySpaceId` mutation."""
+input DeleteSpaceBySpaceIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  spaceId: Int!
+}
+
+"""All input for the `deleteSpace` mutation."""
+input DeleteSpaceInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Space` to be deleted.
+  """
+  id: ID!
+}
+
+"""The output of our delete `Space` mutation."""
+type DeleteSpacePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Space` that was deleted by this mutation."""
+  space: Space
+  deletedSpaceId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Space`. May be used by Relay 1."""
+  spaceEdge(
+    """The method to use when ordering `Space`."""
+    orderBy: [SpacesOrderBy!] = PRIMARY_KEY_ASC
+  ): SpacesEdge
+}
+
+"""All input for the `deleteTagByTagId` mutation."""
+input DeleteTagByTagIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  tagId: Int!
+}
+
+"""All input for the `deleteTag` mutation."""
+input DeleteTagInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Tag` to be deleted.
+  """
+  id: ID!
+}
+
+"""The output of our delete `Tag` mutation."""
+type DeleteTagPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Tag` that was deleted by this mutation."""
+  tag: Tag
+  deletedTagId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Tag`. May be used by Relay 1."""
+  tagEdge(
+    """The method to use when ordering `Tag`."""
+    orderBy: [TagsOrderBy!] = PRIMARY_KEY_ASC
+  ): TagsEdge
+}
+
+"""All input for the `deleteTrackByTrackId` mutation."""
+input DeleteTrackByTrackIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  trackId: Int!
+}
+
+"""All input for the `deleteTrack` mutation."""
+input DeleteTrackInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Track` to be deleted.
+  """
+  id: ID!
+}
+
+"""The output of our delete `Track` mutation."""
+type DeleteTrackPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Track` that was deleted by this mutation."""
+  track: Track
+  deletedTrackId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Track`. May be used by Relay 1."""
+  trackEdge(
+    """The method to use when ordering `Track`."""
+    orderBy: [TracksOrderBy!] = PRIMARY_KEY_ASC
+  ): TracksEdge
+}
+
+"""
+All input for the `deleteTrackPermissionByTrackIdAndUserEmail` mutation.
+"""
+input DeleteTrackPermissionByTrackIdAndUserEmailInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  trackId: Int!
+  userEmail: String!
+}
+
+"""All input for the `deleteTrackPermission` mutation."""
+input DeleteTrackPermissionInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `TrackPermission` to be deleted.
+  """
+  id: ID!
+}
+
+"""The output of our delete `TrackPermission` mutation."""
+type DeleteTrackPermissionPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `TrackPermission` that was deleted by this mutation."""
+  trackPermission: TrackPermission
+  deletedTrackPermissionId: ID
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `Track` that is related to this `TrackPermission`."""
+  track: Track
+
+  """An edge for our `TrackPermission`. May be used by Relay 1."""
+  trackPermissionEdge(
+    """The method to use when ordering `TrackPermission`."""
+    orderBy: [TrackPermissionsOrderBy!] = PRIMARY_KEY_ASC
+  ): TrackPermissionsEdge
+}
+
+type Event implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  eventId: Int!
+  trackId: Int!
+  status: EventStatus!
+  typeId: Int
+  name: String!
+  description: String
+  presenterNotes: String
+  publicAfter: Datetime
+  parentId: Int
+  spaceId: Int
+  requiredFeatureIds: [Int]
+  tagIds: [Int]
+  minSize: Int
+  maxSize: Int
+  startTime: Datetime
+  duration: Interval
+
+  """Reads and enables pagination through a set of `Participant`."""
+  participants(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Participant`."""
+    orderBy: [ParticipantsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ParticipantCondition
+  ): ParticipantsConnection!
+
+  """Reads and enables pagination through a set of `Preference`."""
+  preferences(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Preference`."""
+    orderBy: [PreferencesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PreferenceCondition
+  ): PreferencesConnection!
+}
+
+type EventComment implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  commentId: Int!
+  eventId: Int!
+  userEmail: String!
+  createTime: Datetime!
+  editTime: Datetime
+  comment: String
+}
+
+"""
+A condition to be used against `EventComment` object types. All fields are
+tested for equality and combined with a logical ‘and.’
+"""
+input EventCommentCondition {
+  """Checks for equality with the object’s `commentId` field."""
+  commentId: Int
+}
+
+"""An input for mutations affecting `EventComment`"""
+input EventCommentInput {
+  commentId: Int
+  eventId: Int!
+  userEmail: String!
+  createTime: Datetime
+  editTime: Datetime
+  comment: String
+}
+
+"""
+Represents an update to a `EventComment`. Fields that are set will be updated.
+"""
+input EventCommentPatch {
+  commentId: Int
+  eventId: Int
+  userEmail: String
+  createTime: Datetime
+  editTime: Datetime
+  comment: String
+}
+
+"""A connection to a list of `EventComment` values."""
+type EventCommentsConnection {
+  """A list of `EventComment` objects."""
+  nodes: [EventComment]!
+
+  """
+  A list of edges which contains the `EventComment` and cursor to aid in pagination.
+  """
+  edges: [EventCommentsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `EventComment` you could get from the connection."""
+  totalCount: Int
+}
+
+"""A `EventComment` edge in the connection."""
+type EventCommentsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `EventComment` at the end of the edge."""
+  node: EventComment
+}
+
+"""Methods to use when ordering `EventComment`."""
+enum EventCommentsOrderBy {
+  NATURAL
+  COMMENT_ID_ASC
+  COMMENT_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+A condition to be used against `Event` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input EventCondition {
+  """Checks for equality with the object’s `eventId` field."""
+  eventId: Int
+}
+
+"""An input for mutations affecting `Event`"""
+input EventInput {
+  eventId: Int
+  trackId: Int!
+  status: EventStatus!
+  typeId: Int
+  name: String!
+  description: String
+  presenterNotes: String
+  publicAfter: Datetime
+  parentId: Int
+  spaceId: Int
+  requiredFeatureIds: [Int]
+  tagIds: [Int]
+  minSize: Int
+  maxSize: Int
+  startTime: Datetime
+  duration: IntervalInput
+}
+
+type EventLog implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  rowId: BigInt!
+  eventId: Int!
+  userEmail: String
+
+  """Transaction start timestamp"""
+  time: Datetime!
+  action: EventLogAction!
+
+  """
+  For INSERT the inserted row, for DELETE and UPDATE the old row, NULL for TRUNCATE
+  """
+  rowData: JSON
+
+  """New values changed by UPDATE, otherwise NULL"""
+  updated: JSON
+}
+
+enum EventLogAction {
+  INSERT
+  UPDATE
+  DELETE
+  TRUNCATE
+}
+
+"""
+A condition to be used against `EventLog` object types. All fields are tested
+for equality and combined with a logical ‘and.’
+"""
+input EventLogCondition {
+  """Checks for equality with the object’s `rowId` field."""
+  rowId: BigInt
+
+  """Checks for equality with the object’s `action` field."""
+  action: EventLogAction
+}
+
+"""An input for mutations affecting `EventLog`"""
+input EventLogInput {
+  rowId: BigInt
+  eventId: Int!
+  userEmail: String
+
+  """Transaction start timestamp"""
+  time: Datetime!
+  action: EventLogAction!
+
+  """
+  For INSERT the inserted row, for DELETE and UPDATE the old row, NULL for TRUNCATE
+  """
+  rowData: JSON
+
+  """New values changed by UPDATE, otherwise NULL"""
+  updated: JSON
+}
+
+"""
+Represents an update to a `EventLog`. Fields that are set will be updated.
+"""
+input EventLogPatch {
+  rowId: BigInt
+  eventId: Int
+  userEmail: String
+
+  """Transaction start timestamp"""
+  time: Datetime
+  action: EventLogAction
+
+  """
+  For INSERT the inserted row, for DELETE and UPDATE the old row, NULL for TRUNCATE
+  """
+  rowData: JSON
+
+  """New values changed by UPDATE, otherwise NULL"""
+  updated: JSON
+}
+
+"""A connection to a list of `EventLog` values."""
+type EventLogsConnection {
+  """A list of `EventLog` objects."""
+  nodes: [EventLog]!
+
+  """
+  A list of edges which contains the `EventLog` and cursor to aid in pagination.
+  """
+  edges: [EventLogsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `EventLog` you could get from the connection."""
+  totalCount: Int
+}
+
+"""A `EventLog` edge in the connection."""
+type EventLogsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `EventLog` at the end of the edge."""
+  node: EventLog
+}
+
+"""Methods to use when ordering `EventLog`."""
+enum EventLogsOrderBy {
+  NATURAL
+  ID_ASC
+  ID_DESC
+  ACTION_ASC
+  ACTION_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+Represents an update to a `Event`. Fields that are set will be updated.
+"""
+input EventPatch {
+  eventId: Int
+  trackId: Int
+  status: EventStatus
+  typeId: Int
+  name: String
+  description: String
+  presenterNotes: String
+  publicAfter: Datetime
+  parentId: Int
+  spaceId: Int
+  requiredFeatureIds: [Int]
+  tagIds: [Int]
+  minSize: Int
+  maxSize: Int
+  startTime: Datetime
+  duration: IntervalInput
+}
+
+"""A connection to a list of `Event` values."""
+type EventsConnection {
+  """A list of `Event` objects."""
+  nodes: [Event]!
+
+  """
+  A list of edges which contains the `Event` and cursor to aid in pagination.
+  """
+  edges: [EventsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Event` you could get from the connection."""
+  totalCount: Int
+}
+
+"""A `Event` edge in the connection."""
+type EventsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Event` at the end of the edge."""
+  node: Event
+}
+
+"""Methods to use when ordering `Event`."""
+enum EventsOrderBy {
+  NATURAL
+  EVENT_ID_ASC
+  EVENT_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+enum EventStatus {
+  IDEA
+  DRAFT
+  READY
+  ARCHIVED
+}
+
+type EventStatusTransition implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  status: EventStatus!
+  next: EventStatus!
+}
+
+"""
+A condition to be used against `EventStatusTransition` object types. All fields
+are tested for equality and combined with a logical ‘and.’
+"""
+input EventStatusTransitionCondition {
+  """Checks for equality with the object’s `status` field."""
+  status: EventStatus
+}
+
+"""An input for mutations affecting `EventStatusTransition`"""
+input EventStatusTransitionInput {
+  status: EventStatus!
+  next: EventStatus!
+}
+
+"""
+Represents an update to a `EventStatusTransition`. Fields that are set will be updated.
+"""
+input EventStatusTransitionPatch {
+  status: EventStatus
+  next: EventStatus
+}
+
+"""A connection to a list of `EventStatusTransition` values."""
+type EventStatusTransitionsConnection {
+  """A list of `EventStatusTransition` objects."""
+  nodes: [EventStatusTransition]!
+
+  """
+  A list of edges which contains the `EventStatusTransition` and cursor to aid in pagination.
+  """
+  edges: [EventStatusTransitionsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `EventStatusTransition` you could get from the connection.
+  """
+  totalCount: Int
+}
+
+"""A `EventStatusTransition` edge in the connection."""
+type EventStatusTransitionsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `EventStatusTransition` at the end of the edge."""
+  node: EventStatusTransition
+}
+
+"""Methods to use when ordering `EventStatusTransition`."""
+enum EventStatusTransitionsOrderBy {
+  NATURAL
+  STATUS_ASC
+  STATUS_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+type EventType implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  typeId: Int!
+  name: String
+}
+
+"""
+A condition to be used against `EventType` object types. All fields are tested
+for equality and combined with a logical ‘and.’
+"""
+input EventTypeCondition {
+  """Checks for equality with the object’s `typeId` field."""
+  typeId: Int
+}
+
+"""An input for mutations affecting `EventType`"""
+input EventTypeInput {
+  typeId: Int
+  name: String
+}
+
+"""
+Represents an update to a `EventType`. Fields that are set will be updated.
+"""
+input EventTypePatch {
+  typeId: Int
+  name: String
+}
+
+"""A connection to a list of `EventType` values."""
+type EventTypesConnection {
+  """A list of `EventType` objects."""
+  nodes: [EventType]!
+
+  """
+  A list of edges which contains the `EventType` and cursor to aid in pagination.
+  """
+  edges: [EventTypesEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `EventType` you could get from the connection."""
+  totalCount: Int
+}
+
+"""A `EventType` edge in the connection."""
+type EventTypesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `EventType` at the end of the edge."""
+  node: EventType
+}
+
+"""Methods to use when ordering `EventType`."""
+enum EventTypesOrderBy {
+  NATURAL
+  TYPE_ID_ASC
+  TYPE_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+type Feature implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  featureId: Int!
+  name: String!
+}
+
+"""
+A condition to be used against `Feature` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input FeatureCondition {
+  """Checks for equality with the object’s `featureId` field."""
+  featureId: Int
+}
+
+"""An input for mutations affecting `Feature`"""
+input FeatureInput {
+  featureId: Int
+  name: String!
+}
+
+"""
+Represents an update to a `Feature`. Fields that are set will be updated.
+"""
+input FeaturePatch {
+  featureId: Int
+  name: String
+}
+
+"""A connection to a list of `Feature` values."""
+type FeaturesConnection {
+  """A list of `Feature` objects."""
+  nodes: [Feature]!
+
+  """
+  A list of edges which contains the `Feature` and cursor to aid in pagination.
+  """
+  edges: [FeaturesEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Feature` you could get from the connection."""
+  totalCount: Int
+}
+
+"""A `Feature` edge in the connection."""
+type FeaturesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Feature` at the end of the edge."""
+  node: Feature
+}
+
+"""Methods to use when ordering `Feature`."""
+enum FeaturesOrderBy {
+  NATURAL
+  FEATURE_ID_ASC
+  FEATURE_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+An interval of time that has passed where the smallest distinct unit is a second.
+"""
+type Interval {
+  """
+  A quantity of seconds. This is the only non-integer field, as all the other
+  fields will dump their overflow into a smaller unit of time. Intervals don’t
+  have a smaller unit than seconds.
+  """
+  seconds: Float
+
+  """A quantity of minutes."""
+  minutes: Int
+
+  """A quantity of hours."""
+  hours: Int
+
+  """A quantity of days."""
+  days: Int
+
+  """A quantity of months."""
+  months: Int
+
+  """A quantity of years."""
+  years: Int
+}
+
+"""
+An interval of time that has passed where the smallest distinct unit is a second.
+"""
+input IntervalInput {
+  """
+  A quantity of seconds. This is the only non-integer field, as all the other
+  fields will dump their overflow into a smaller unit of time. Intervals don’t
+  have a smaller unit than seconds.
+  """
+  seconds: Float
+
+  """A quantity of minutes."""
+  minutes: Int
+
+  """A quantity of hours."""
+  hours: Int
+
+  """A quantity of days."""
+  days: Int
+
+  """A quantity of months."""
+  months: Int
+
+  """A quantity of years."""
+  years: Int
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+"""A connection to a list of `MessageHistory` values."""
+type MessageHistoriesConnection {
+  """A list of `MessageHistory` objects."""
+  nodes: [MessageHistory]!
+
+  """
+  A list of edges which contains the `MessageHistory` and cursor to aid in pagination.
+  """
+  edges: [MessageHistoriesEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `MessageHistory` you could get from the connection.
+  """
+  totalCount: Int
+}
+
+"""A `MessageHistory` edge in the connection."""
+type MessageHistoriesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `MessageHistory` at the end of the edge."""
+  node: MessageHistory
+}
+
+"""Methods to use when ordering `MessageHistory`."""
+enum MessageHistoriesOrderBy {
+  NATURAL
+  DRAFT_ID_ASC
+  DRAFT_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+type MessageHistory implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  draftId: Int!
+  messageId: Int!
+  time: Datetime
+  userEmail: String!
+  status: MessageStatus!
+  subject: String
+  body: String
+  recipientFilter: JSON
+
+  """Reads and enables pagination through a set of `SentMessage`."""
+  sentMessages(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `SentMessage`."""
+    orderBy: [SentMessagesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: SentMessageCondition
+  ): SentMessagesConnection!
+}
+
+"""
+A condition to be used against `MessageHistory` object types. All fields are
+tested for equality and combined with a logical ‘and.’
+"""
+input MessageHistoryCondition {
+  """Checks for equality with the object’s `draftId` field."""
+  draftId: Int
+}
+
+"""An input for mutations affecting `MessageHistory`"""
+input MessageHistoryInput {
+  draftId: Int
+  messageId: Int
+  time: Datetime
+  userEmail: String!
+  status: MessageStatus
+  subject: String
+  body: String
+  recipientFilter: JSON
+}
+
+"""
+Represents an update to a `MessageHistory`. Fields that are set will be updated.
+"""
+input MessageHistoryPatch {
+  draftId: Int
+  messageId: Int
+  time: Datetime
+  userEmail: String
+  status: MessageStatus
+  subject: String
+  body: String
+  recipientFilter: JSON
+}
+
+enum MessageStatus {
+  DRAFT
+  READY
+  SENT
+  ARCHIVED
+}
+
+"""
+The root mutation type which contains root level fields which mutate data.
+"""
+type Mutation {
+  """Creates a single `Availability`."""
+  createAvailability(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateAvailabilityInput!
+  ): CreateAvailabilityPayload
+
+  """Creates a single `Event`."""
+  createEvent(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateEventInput!
+  ): CreateEventPayload
+
+  """Creates a single `EventComment`."""
+  createEventComment(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateEventCommentInput!
+  ): CreateEventCommentPayload
+
+  """Creates a single `EventLog`."""
+  createEventLog(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateEventLogInput!
+  ): CreateEventLogPayload
+
+  """Creates a single `EventStatusTransition`."""
+  createEventStatusTransition(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateEventStatusTransitionInput!
+  ): CreateEventStatusTransitionPayload
+
+  """Creates a single `EventType`."""
+  createEventType(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateEventTypeInput!
+  ): CreateEventTypePayload
+
+  """Creates a single `Feature`."""
+  createFeature(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateFeatureInput!
+  ): CreateFeaturePayload
+
+  """Creates a single `MessageHistory`."""
+  createMessageHistory(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateMessageHistoryInput!
+  ): CreateMessageHistoryPayload
+
+  """Creates a single `Participant`."""
+  createParticipant(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateParticipantInput!
+  ): CreateParticipantPayload
+
+  """Creates a single `ParticipantRole`."""
+  createParticipantRole(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateParticipantRoleInput!
+  ): CreateParticipantRolePayload
+
+  """Creates a single `ParticipantStatus`."""
+  createParticipantStatus(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateParticipantStatusInput!
+  ): CreateParticipantStatusPayload
+
+  """Creates a single `Permission`."""
+  createPermission(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreatePermissionInput!
+  ): CreatePermissionPayload
+
+  """Creates a single `Preference`."""
+  createPreference(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreatePreferenceInput!
+  ): CreatePreferencePayload
+
+  """Creates a single `SentMessage`."""
+  createSentMessage(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateSentMessageInput!
+  ): CreateSentMessagePayload
+
+  """Creates a single `Space`."""
+  createSpace(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateSpaceInput!
+  ): CreateSpacePayload
+
+  """Creates a single `Tag`."""
+  createTag(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateTagInput!
+  ): CreateTagPayload
+
+  """Creates a single `Track`."""
+  createTrack(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateTrackInput!
+  ): CreateTrackPayload
+
+  """Creates a single `TrackPermission`."""
+  createTrackPermission(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateTrackPermissionInput!
+  ): CreateTrackPermissionPayload
+
+  """
+  Updates a single `Availability` using its globally unique id and a patch.
+  """
+  updateAvailability(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateAvailabilityInput!
+  ): UpdateAvailabilityPayload
+
+  """Updates a single `Availability` using a unique key and a patch."""
+  updateAvailabilityByPersonIdAndDateAndStartTime(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateAvailabilityByPersonIdAndDateAndStartTimeInput!
+  ): UpdateAvailabilityPayload
+
+  """Updates a single `Event` using its globally unique id and a patch."""
+  updateEvent(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateEventInput!
+  ): UpdateEventPayload
+
+  """Updates a single `Event` using a unique key and a patch."""
+  updateEventByEventId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateEventByEventIdInput!
+  ): UpdateEventPayload
+
+  """
+  Updates a single `EventComment` using its globally unique id and a patch.
+  """
+  updateEventComment(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateEventCommentInput!
+  ): UpdateEventCommentPayload
+
+  """Updates a single `EventComment` using a unique key and a patch."""
+  updateEventCommentByCommentId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateEventCommentByCommentIdInput!
+  ): UpdateEventCommentPayload
+
+  """Updates a single `EventLog` using its globally unique id and a patch."""
+  updateEventLog(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateEventLogInput!
+  ): UpdateEventLogPayload
+
+  """Updates a single `EventLog` using a unique key and a patch."""
+  updateEventLogByRowId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateEventLogByRowIdInput!
+  ): UpdateEventLogPayload
+
+  """
+  Updates a single `EventStatusTransition` using its globally unique id and a patch.
+  """
+  updateEventStatusTransition(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateEventStatusTransitionInput!
+  ): UpdateEventStatusTransitionPayload
+
+  """
+  Updates a single `EventStatusTransition` using a unique key and a patch.
+  """
+  updateEventStatusTransitionByStatusAndNext(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateEventStatusTransitionByStatusAndNextInput!
+  ): UpdateEventStatusTransitionPayload
+
+  """
+  Updates a single `EventType` using its globally unique id and a patch.
+  """
+  updateEventType(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateEventTypeInput!
+  ): UpdateEventTypePayload
+
+  """Updates a single `EventType` using a unique key and a patch."""
+  updateEventTypeByTypeId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateEventTypeByTypeIdInput!
+  ): UpdateEventTypePayload
+
+  """Updates a single `Feature` using its globally unique id and a patch."""
+  updateFeature(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateFeatureInput!
+  ): UpdateFeaturePayload
+
+  """Updates a single `Feature` using a unique key and a patch."""
+  updateFeatureByFeatureId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateFeatureByFeatureIdInput!
+  ): UpdateFeaturePayload
+
+  """
+  Updates a single `MessageHistory` using its globally unique id and a patch.
+  """
+  updateMessageHistory(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateMessageHistoryInput!
+  ): UpdateMessageHistoryPayload
+
+  """Updates a single `MessageHistory` using a unique key and a patch."""
+  updateMessageHistoryByDraftId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateMessageHistoryByDraftIdInput!
+  ): UpdateMessageHistoryPayload
+
+  """
+  Updates a single `Participant` using its globally unique id and a patch.
+  """
+  updateParticipant(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateParticipantInput!
+  ): UpdateParticipantPayload
+
+  """Updates a single `Participant` using a unique key and a patch."""
+  updateParticipantByEventIdAndPersonId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateParticipantByEventIdAndPersonIdInput!
+  ): UpdateParticipantPayload
+
+  """
+  Updates a single `ParticipantRole` using its globally unique id and a patch.
+  """
+  updateParticipantRole(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateParticipantRoleInput!
+  ): UpdateParticipantRolePayload
+
+  """Updates a single `ParticipantRole` using a unique key and a patch."""
+  updateParticipantRoleByRoleId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateParticipantRoleByRoleIdInput!
+  ): UpdateParticipantRolePayload
+
+  """
+  Updates a single `ParticipantStatus` using its globally unique id and a patch.
+  """
+  updateParticipantStatus(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateParticipantStatusInput!
+  ): UpdateParticipantStatusPayload
+
+  """Updates a single `ParticipantStatus` using a unique key and a patch."""
+  updateParticipantStatusByStatusId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateParticipantStatusByStatusIdInput!
+  ): UpdateParticipantStatusPayload
+
+  """
+  Updates a single `Permission` using its globally unique id and a patch.
+  """
+  updatePermission(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdatePermissionInput!
+  ): UpdatePermissionPayload
+
+  """Updates a single `Permission` using a unique key and a patch."""
+  updatePermissionByUserEmail(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdatePermissionByUserEmailInput!
+  ): UpdatePermissionPayload
+
+  """
+  Updates a single `Preference` using its globally unique id and a patch.
+  """
+  updatePreference(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdatePreferenceInput!
+  ): UpdatePreferencePayload
+
+  """Updates a single `Preference` using a unique key and a patch."""
+  updatePreferenceByEventIdAndPersonId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdatePreferenceByEventIdAndPersonIdInput!
+  ): UpdatePreferencePayload
+
+  """
+  Updates a single `SentMessage` using its globally unique id and a patch.
+  """
+  updateSentMessage(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateSentMessageInput!
+  ): UpdateSentMessagePayload
+
+  """Updates a single `SentMessage` using a unique key and a patch."""
+  updateSentMessageByDraftIdAndPersonId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateSentMessageByDraftIdAndPersonIdInput!
+  ): UpdateSentMessagePayload
+
+  """Updates a single `Space` using its globally unique id and a patch."""
+  updateSpace(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateSpaceInput!
+  ): UpdateSpacePayload
+
+  """Updates a single `Space` using a unique key and a patch."""
+  updateSpaceBySpaceId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateSpaceBySpaceIdInput!
+  ): UpdateSpacePayload
+
+  """Updates a single `Tag` using its globally unique id and a patch."""
+  updateTag(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateTagInput!
+  ): UpdateTagPayload
+
+  """Updates a single `Tag` using a unique key and a patch."""
+  updateTagByTagId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateTagByTagIdInput!
+  ): UpdateTagPayload
+
+  """Updates a single `Track` using its globally unique id and a patch."""
+  updateTrack(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateTrackInput!
+  ): UpdateTrackPayload
+
+  """Updates a single `Track` using a unique key and a patch."""
+  updateTrackByTrackId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateTrackByTrackIdInput!
+  ): UpdateTrackPayload
+
+  """
+  Updates a single `TrackPermission` using its globally unique id and a patch.
+  """
+  updateTrackPermission(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateTrackPermissionInput!
+  ): UpdateTrackPermissionPayload
+
+  """Updates a single `TrackPermission` using a unique key and a patch."""
+  updateTrackPermissionByTrackIdAndUserEmail(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateTrackPermissionByTrackIdAndUserEmailInput!
+  ): UpdateTrackPermissionPayload
+
+  """Deletes a single `Availability` using its globally unique id."""
+  deleteAvailability(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteAvailabilityInput!
+  ): DeleteAvailabilityPayload
+
+  """Deletes a single `Availability` using a unique key."""
+  deleteAvailabilityByPersonIdAndDateAndStartTime(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteAvailabilityByPersonIdAndDateAndStartTimeInput!
+  ): DeleteAvailabilityPayload
+
+  """Deletes a single `Event` using its globally unique id."""
+  deleteEvent(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteEventInput!
+  ): DeleteEventPayload
+
+  """Deletes a single `Event` using a unique key."""
+  deleteEventByEventId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteEventByEventIdInput!
+  ): DeleteEventPayload
+
+  """Deletes a single `EventComment` using its globally unique id."""
+  deleteEventComment(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteEventCommentInput!
+  ): DeleteEventCommentPayload
+
+  """Deletes a single `EventComment` using a unique key."""
+  deleteEventCommentByCommentId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteEventCommentByCommentIdInput!
+  ): DeleteEventCommentPayload
+
+  """Deletes a single `EventLog` using its globally unique id."""
+  deleteEventLog(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteEventLogInput!
+  ): DeleteEventLogPayload
+
+  """Deletes a single `EventLog` using a unique key."""
+  deleteEventLogByRowId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteEventLogByRowIdInput!
+  ): DeleteEventLogPayload
+
+  """
+  Deletes a single `EventStatusTransition` using its globally unique id.
+  """
+  deleteEventStatusTransition(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteEventStatusTransitionInput!
+  ): DeleteEventStatusTransitionPayload
+
+  """Deletes a single `EventStatusTransition` using a unique key."""
+  deleteEventStatusTransitionByStatusAndNext(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteEventStatusTransitionByStatusAndNextInput!
+  ): DeleteEventStatusTransitionPayload
+
+  """Deletes a single `EventType` using its globally unique id."""
+  deleteEventType(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteEventTypeInput!
+  ): DeleteEventTypePayload
+
+  """Deletes a single `EventType` using a unique key."""
+  deleteEventTypeByTypeId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteEventTypeByTypeIdInput!
+  ): DeleteEventTypePayload
+
+  """Deletes a single `Feature` using its globally unique id."""
+  deleteFeature(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteFeatureInput!
+  ): DeleteFeaturePayload
+
+  """Deletes a single `Feature` using a unique key."""
+  deleteFeatureByFeatureId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteFeatureByFeatureIdInput!
+  ): DeleteFeaturePayload
+
+  """Deletes a single `MessageHistory` using its globally unique id."""
+  deleteMessageHistory(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteMessageHistoryInput!
+  ): DeleteMessageHistoryPayload
+
+  """Deletes a single `MessageHistory` using a unique key."""
+  deleteMessageHistoryByDraftId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteMessageHistoryByDraftIdInput!
+  ): DeleteMessageHistoryPayload
+
+  """Deletes a single `Participant` using its globally unique id."""
+  deleteParticipant(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteParticipantInput!
+  ): DeleteParticipantPayload
+
+  """Deletes a single `Participant` using a unique key."""
+  deleteParticipantByEventIdAndPersonId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteParticipantByEventIdAndPersonIdInput!
+  ): DeleteParticipantPayload
+
+  """Deletes a single `ParticipantRole` using its globally unique id."""
+  deleteParticipantRole(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteParticipantRoleInput!
+  ): DeleteParticipantRolePayload
+
+  """Deletes a single `ParticipantRole` using a unique key."""
+  deleteParticipantRoleByRoleId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteParticipantRoleByRoleIdInput!
+  ): DeleteParticipantRolePayload
+
+  """Deletes a single `ParticipantStatus` using its globally unique id."""
+  deleteParticipantStatus(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteParticipantStatusInput!
+  ): DeleteParticipantStatusPayload
+
+  """Deletes a single `ParticipantStatus` using a unique key."""
+  deleteParticipantStatusByStatusId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteParticipantStatusByStatusIdInput!
+  ): DeleteParticipantStatusPayload
+
+  """Deletes a single `Permission` using its globally unique id."""
+  deletePermission(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeletePermissionInput!
+  ): DeletePermissionPayload
+
+  """Deletes a single `Permission` using a unique key."""
+  deletePermissionByUserEmail(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeletePermissionByUserEmailInput!
+  ): DeletePermissionPayload
+
+  """Deletes a single `Preference` using its globally unique id."""
+  deletePreference(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeletePreferenceInput!
+  ): DeletePreferencePayload
+
+  """Deletes a single `Preference` using a unique key."""
+  deletePreferenceByEventIdAndPersonId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeletePreferenceByEventIdAndPersonIdInput!
+  ): DeletePreferencePayload
+
+  """Deletes a single `SentMessage` using its globally unique id."""
+  deleteSentMessage(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteSentMessageInput!
+  ): DeleteSentMessagePayload
+
+  """Deletes a single `SentMessage` using a unique key."""
+  deleteSentMessageByDraftIdAndPersonId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteSentMessageByDraftIdAndPersonIdInput!
+  ): DeleteSentMessagePayload
+
+  """Deletes a single `Space` using its globally unique id."""
+  deleteSpace(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteSpaceInput!
+  ): DeleteSpacePayload
+
+  """Deletes a single `Space` using a unique key."""
+  deleteSpaceBySpaceId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteSpaceBySpaceIdInput!
+  ): DeleteSpacePayload
+
+  """Deletes a single `Tag` using its globally unique id."""
+  deleteTag(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteTagInput!
+  ): DeleteTagPayload
+
+  """Deletes a single `Tag` using a unique key."""
+  deleteTagByTagId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteTagByTagIdInput!
+  ): DeleteTagPayload
+
+  """Deletes a single `Track` using its globally unique id."""
+  deleteTrack(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteTrackInput!
+  ): DeleteTrackPayload
+
+  """Deletes a single `Track` using a unique key."""
+  deleteTrackByTrackId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteTrackByTrackIdInput!
+  ): DeleteTrackPayload
+
+  """Deletes a single `TrackPermission` using its globally unique id."""
+  deleteTrackPermission(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteTrackPermissionInput!
+  ): DeleteTrackPermissionPayload
+
+  """Deletes a single `TrackPermission` using a unique key."""
+  deleteTrackPermissionByTrackIdAndUserEmail(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteTrackPermissionByTrackIdAndUserEmailInput!
+  ): DeleteTrackPermissionPayload
+}
+
+"""An object with a globally unique `ID`."""
+interface Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+}
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: Cursor
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: Cursor
+}
+
+type Participant implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  eventId: Int!
+  personId: Int!
+  public: Boolean!
+  roleId: Int
+  statusId: Int!
+
+  """Reads a single `Event` that is related to this `Participant`."""
+  event: Event
+}
+
+"""
+A condition to be used against `Participant` object types. All fields are tested
+for equality and combined with a logical ‘and.’
+"""
+input ParticipantCondition {
+  """Checks for equality with the object’s `eventId` field."""
+  eventId: Int
+}
+
+"""An input for mutations affecting `Participant`"""
+input ParticipantInput {
+  eventId: Int!
+  personId: Int!
+  public: Boolean
+  roleId: Int
+  statusId: Int!
+}
+
+"""
+Represents an update to a `Participant`. Fields that are set will be updated.
+"""
+input ParticipantPatch {
+  eventId: Int
+  personId: Int
+  public: Boolean
+  roleId: Int
+  statusId: Int
+}
+
+type ParticipantRole implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  roleId: Int!
+  name: String
+}
+
+"""
+A condition to be used against `ParticipantRole` object types. All fields are
+tested for equality and combined with a logical ‘and.’
+"""
+input ParticipantRoleCondition {
+  """Checks for equality with the object’s `roleId` field."""
+  roleId: Int
+}
+
+"""An input for mutations affecting `ParticipantRole`"""
+input ParticipantRoleInput {
+  roleId: Int
+  name: String
+}
+
+"""
+Represents an update to a `ParticipantRole`. Fields that are set will be updated.
+"""
+input ParticipantRolePatch {
+  roleId: Int
+  name: String
+}
+
+"""A connection to a list of `ParticipantRole` values."""
+type ParticipantRolesConnection {
+  """A list of `ParticipantRole` objects."""
+  nodes: [ParticipantRole]!
+
+  """
+  A list of edges which contains the `ParticipantRole` and cursor to aid in pagination.
+  """
+  edges: [ParticipantRolesEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `ParticipantRole` you could get from the connection.
+  """
+  totalCount: Int
+}
+
+"""A `ParticipantRole` edge in the connection."""
+type ParticipantRolesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `ParticipantRole` at the end of the edge."""
+  node: ParticipantRole
+}
+
+"""Methods to use when ordering `ParticipantRole`."""
+enum ParticipantRolesOrderBy {
+  NATURAL
+  ROLE_ID_ASC
+  ROLE_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""A connection to a list of `Participant` values."""
+type ParticipantsConnection {
+  """A list of `Participant` objects."""
+  nodes: [Participant]!
+
+  """
+  A list of edges which contains the `Participant` and cursor to aid in pagination.
+  """
+  edges: [ParticipantsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Participant` you could get from the connection."""
+  totalCount: Int
+}
+
+"""A `Participant` edge in the connection."""
+type ParticipantsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Participant` at the end of the edge."""
+  node: Participant
+}
+
+"""Methods to use when ordering `Participant`."""
+enum ParticipantsOrderBy {
+  NATURAL
+  EVENT_ID_ASC
+  EVENT_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+type ParticipantStatus implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  statusId: Int!
+  name: String
+}
+
+"""
+A condition to be used against `ParticipantStatus` object types. All fields are
+tested for equality and combined with a logical ‘and.’
+"""
+input ParticipantStatusCondition {
+  """Checks for equality with the object’s `statusId` field."""
+  statusId: Int
+}
+
+"""A connection to a list of `ParticipantStatus` values."""
+type ParticipantStatusesConnection {
+  """A list of `ParticipantStatus` objects."""
+  nodes: [ParticipantStatus]!
+
+  """
+  A list of edges which contains the `ParticipantStatus` and cursor to aid in pagination.
+  """
+  edges: [ParticipantStatusesEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `ParticipantStatus` you could get from the connection.
+  """
+  totalCount: Int
+}
+
+"""A `ParticipantStatus` edge in the connection."""
+type ParticipantStatusesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `ParticipantStatus` at the end of the edge."""
+  node: ParticipantStatus
+}
+
+"""Methods to use when ordering `ParticipantStatus`."""
+enum ParticipantStatusesOrderBy {
+  NATURAL
+  STATUS_ID_ASC
+  STATUS_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""An input for mutations affecting `ParticipantStatus`"""
+input ParticipantStatusInput {
+  statusId: Int
+  name: String
+}
+
+"""
+Represents an update to a `ParticipantStatus`. Fields that are set will be updated.
+"""
+input ParticipantStatusPatch {
+  statusId: Int
+  name: String
+}
+
+type Permission implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  userEmail: String!
+  admin: Boolean!
+  read: Boolean!
+  editSpaces: Boolean!
+  sendMessages: Boolean!
+}
+
+"""
+A condition to be used against `Permission` object types. All fields are tested
+for equality and combined with a logical ‘and.’
+"""
+input PermissionCondition {
+  """Checks for equality with the object’s `userEmail` field."""
+  userEmail: String
+}
+
+"""An input for mutations affecting `Permission`"""
+input PermissionInput {
+  userEmail: String!
+  admin: Boolean
+  read: Boolean
+  editSpaces: Boolean
+  sendMessages: Boolean
+}
+
+"""
+Represents an update to a `Permission`. Fields that are set will be updated.
+"""
+input PermissionPatch {
+  userEmail: String
+  admin: Boolean
+  read: Boolean
+  editSpaces: Boolean
+  sendMessages: Boolean
+}
+
+"""A connection to a list of `Permission` values."""
+type PermissionsConnection {
+  """A list of `Permission` objects."""
+  nodes: [Permission]!
+
+  """
+  A list of edges which contains the `Permission` and cursor to aid in pagination.
+  """
+  edges: [PermissionsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Permission` you could get from the connection."""
+  totalCount: Int
+}
+
+"""A `Permission` edge in the connection."""
+type PermissionsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Permission` at the end of the edge."""
+  node: Permission
+}
+
+"""Methods to use when ordering `Permission`."""
+enum PermissionsOrderBy {
+  NATURAL
+  USER_EMAIL_ASC
+  USER_EMAIL_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+type Preference implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  eventId: Int!
+  personId: Int!
+  attend: Int
+  participate: Int
+  organise: Int
+  comment: String
+
+  """Reads a single `Event` that is related to this `Preference`."""
+  event: Event
+}
+
+"""
+A condition to be used against `Preference` object types. All fields are tested
+for equality and combined with a logical ‘and.’
+"""
+input PreferenceCondition {
+  """Checks for equality with the object’s `eventId` field."""
+  eventId: Int
+}
+
+"""An input for mutations affecting `Preference`"""
+input PreferenceInput {
+  eventId: Int!
+  personId: Int!
+  attend: Int
+  participate: Int
+  organise: Int
+  comment: String
+}
+
+"""
+Represents an update to a `Preference`. Fields that are set will be updated.
+"""
+input PreferencePatch {
+  eventId: Int
+  personId: Int
+  attend: Int
+  participate: Int
+  organise: Int
+  comment: String
+}
+
+"""A connection to a list of `Preference` values."""
+type PreferencesConnection {
+  """A list of `Preference` objects."""
+  nodes: [Preference]!
+
+  """
+  A list of edges which contains the `Preference` and cursor to aid in pagination.
+  """
+  edges: [PreferencesEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Preference` you could get from the connection."""
+  totalCount: Int
+}
+
+"""A `Preference` edge in the connection."""
+type PreferencesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Preference` at the end of the edge."""
+  node: Preference
+}
+
+"""Methods to use when ordering `Preference`."""
+enum PreferencesOrderBy {
+  NATURAL
+  EVENT_ID_ASC
+  EVENT_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""The root query type which gives access points into the data universe."""
+type Query implements Node {
+  """
+  Exposes the root query type nested one level down. This is helpful for Relay 1
+  which can only query top level fields if they are in a particular form.
+  """
+  query: Query!
+
+  """
+  The root query type must be a `Node` to work well with Relay 1 mutations. This just resolves to `query`.
+  """
+  id: ID!
+
+  """Fetches an object given its globally unique `ID`."""
+  node(
+    """The globally unique `ID`."""
+    id: ID!
+  ): Node
+
+  """Reads and enables pagination through a set of `Availability`."""
+  availabilities(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Availability`."""
+    orderBy: [AvailabilitiesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: AvailabilityCondition
+  ): AvailabilitiesConnection
+
+  """Reads and enables pagination through a set of `Event`."""
+  events(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Event`."""
+    orderBy: [EventsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: EventCondition
+  ): EventsConnection
+
+  """Reads and enables pagination through a set of `EventComment`."""
+  eventComments(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `EventComment`."""
+    orderBy: [EventCommentsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: EventCommentCondition
+  ): EventCommentsConnection
+
+  """Reads and enables pagination through a set of `EventLog`."""
+  eventLogs(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `EventLog`."""
+    orderBy: [EventLogsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: EventLogCondition
+  ): EventLogsConnection
+
+  """
+  Reads and enables pagination through a set of `EventStatusTransition`.
+  """
+  eventStatusTransitions(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `EventStatusTransition`."""
+    orderBy: [EventStatusTransitionsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: EventStatusTransitionCondition
+  ): EventStatusTransitionsConnection
+
+  """Reads and enables pagination through a set of `EventType`."""
+  eventTypes(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `EventType`."""
+    orderBy: [EventTypesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: EventTypeCondition
+  ): EventTypesConnection
+
+  """Reads and enables pagination through a set of `Feature`."""
+  features(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Feature`."""
+    orderBy: [FeaturesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: FeatureCondition
+  ): FeaturesConnection
+
+  """Reads and enables pagination through a set of `MessageHistory`."""
+  messageHistories(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `MessageHistory`."""
+    orderBy: [MessageHistoriesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MessageHistoryCondition
+  ): MessageHistoriesConnection
+
+  """Reads and enables pagination through a set of `Participant`."""
+  participants(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Participant`."""
+    orderBy: [ParticipantsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ParticipantCondition
+  ): ParticipantsConnection
+
+  """Reads and enables pagination through a set of `ParticipantRole`."""
+  participantRoles(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `ParticipantRole`."""
+    orderBy: [ParticipantRolesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ParticipantRoleCondition
+  ): ParticipantRolesConnection
+
+  """Reads and enables pagination through a set of `ParticipantStatus`."""
+  participantStatuses(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `ParticipantStatus`."""
+    orderBy: [ParticipantStatusesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: ParticipantStatusCondition
+  ): ParticipantStatusesConnection
+
+  """Reads and enables pagination through a set of `Permission`."""
+  permissions(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Permission`."""
+    orderBy: [PermissionsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PermissionCondition
+  ): PermissionsConnection
+
+  """Reads and enables pagination through a set of `Preference`."""
+  preferences(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Preference`."""
+    orderBy: [PreferencesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: PreferenceCondition
+  ): PreferencesConnection
+
+  """Reads and enables pagination through a set of `SentMessage`."""
+  sentMessages(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `SentMessage`."""
+    orderBy: [SentMessagesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: SentMessageCondition
+  ): SentMessagesConnection
+
+  """Reads and enables pagination through a set of `Space`."""
+  spaces(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Space`."""
+    orderBy: [SpacesOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: SpaceCondition
+  ): SpacesConnection
+
+  """Reads and enables pagination through a set of `Tag`."""
+  tags(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Tag`."""
+    orderBy: [TagsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: TagCondition
+  ): TagsConnection
+
+  """Reads and enables pagination through a set of `Track`."""
+  tracks(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `Track`."""
+    orderBy: [TracksOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: TrackCondition
+  ): TracksConnection
+
+  """Reads and enables pagination through a set of `TrackPermission`."""
+  trackPermissions(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `TrackPermission`."""
+    orderBy: [TrackPermissionsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: TrackPermissionCondition
+  ): TrackPermissionsConnection
+  availabilityByPersonIdAndDateAndStartTime(personId: Int!, date: Date!, startTime: Datetime!): Availability
+  eventByEventId(eventId: Int!): Event
+  eventCommentByCommentId(commentId: Int!): EventComment
+  eventLogByRowId(rowId: BigInt!): EventLog
+  eventStatusTransitionByStatusAndNext(status: EventStatus!, next: EventStatus!): EventStatusTransition
+  eventTypeByTypeId(typeId: Int!): EventType
+  featureByFeatureId(featureId: Int!): Feature
+  messageHistoryByDraftId(draftId: Int!): MessageHistory
+  participantByEventIdAndPersonId(eventId: Int!, personId: Int!): Participant
+  participantRoleByRoleId(roleId: Int!): ParticipantRole
+  participantStatusByStatusId(statusId: Int!): ParticipantStatus
+  permissionByUserEmail(userEmail: String!): Permission
+  preferenceByEventIdAndPersonId(eventId: Int!, personId: Int!): Preference
+  sentMessageByDraftIdAndPersonId(draftId: Int!, personId: Int!): SentMessage
+  spaceBySpaceId(spaceId: Int!): Space
+  tagByTagId(tagId: Int!): Tag
+  trackByTrackId(trackId: Int!): Track
+  trackPermissionByTrackIdAndUserEmail(trackId: Int!, userEmail: String!): TrackPermission
+  canEditEvents(trackId: Int): Boolean
+  canEditSpaces: Boolean
+  currentUserEmail: String
+  currentUserHasId(personId: Int): Boolean
+  getCurrentMessage(m: Int): CurrentMessage
+
+  """Reads and enables pagination through a set of `CurrentMessage`."""
+  getCurrentMessages(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+  ): CurrentMessagesConnection!
+  messageBody(m: Int): String
+  messageRecipientFilter(m: Int): JSON
+  messageSubject(m: Int): String
+
+  """Reads a single `Availability` using its globally unique `ID`."""
+  availability(
+    """
+    The globally unique `ID` to be used in selecting a single `Availability`.
+    """
+    id: ID!
+  ): Availability
+
+  """Reads a single `Event` using its globally unique `ID`."""
+  event(
+    """The globally unique `ID` to be used in selecting a single `Event`."""
+    id: ID!
+  ): Event
+
+  """Reads a single `EventComment` using its globally unique `ID`."""
+  eventComment(
+    """
+    The globally unique `ID` to be used in selecting a single `EventComment`.
+    """
+    id: ID!
+  ): EventComment
+
+  """Reads a single `EventLog` using its globally unique `ID`."""
+  eventLog(
+    """The globally unique `ID` to be used in selecting a single `EventLog`."""
+    id: ID!
+  ): EventLog
+
+  """
+  Reads a single `EventStatusTransition` using its globally unique `ID`.
+  """
+  eventStatusTransition(
+    """
+    The globally unique `ID` to be used in selecting a single `EventStatusTransition`.
+    """
+    id: ID!
+  ): EventStatusTransition
+
+  """Reads a single `EventType` using its globally unique `ID`."""
+  eventType(
+    """
+    The globally unique `ID` to be used in selecting a single `EventType`.
+    """
+    id: ID!
+  ): EventType
+
+  """Reads a single `Feature` using its globally unique `ID`."""
+  feature(
+    """The globally unique `ID` to be used in selecting a single `Feature`."""
+    id: ID!
+  ): Feature
+
+  """Reads a single `MessageHistory` using its globally unique `ID`."""
+  messageHistory(
+    """
+    The globally unique `ID` to be used in selecting a single `MessageHistory`.
+    """
+    id: ID!
+  ): MessageHistory
+
+  """Reads a single `Participant` using its globally unique `ID`."""
+  participant(
+    """
+    The globally unique `ID` to be used in selecting a single `Participant`.
+    """
+    id: ID!
+  ): Participant
+
+  """Reads a single `ParticipantRole` using its globally unique `ID`."""
+  participantRole(
+    """
+    The globally unique `ID` to be used in selecting a single `ParticipantRole`.
+    """
+    id: ID!
+  ): ParticipantRole
+
+  """Reads a single `ParticipantStatus` using its globally unique `ID`."""
+  participantStatus(
+    """
+    The globally unique `ID` to be used in selecting a single `ParticipantStatus`.
+    """
+    id: ID!
+  ): ParticipantStatus
+
+  """Reads a single `Permission` using its globally unique `ID`."""
+  permission(
+    """
+    The globally unique `ID` to be used in selecting a single `Permission`.
+    """
+    id: ID!
+  ): Permission
+
+  """Reads a single `Preference` using its globally unique `ID`."""
+  preference(
+    """
+    The globally unique `ID` to be used in selecting a single `Preference`.
+    """
+    id: ID!
+  ): Preference
+
+  """Reads a single `SentMessage` using its globally unique `ID`."""
+  sentMessage(
+    """
+    The globally unique `ID` to be used in selecting a single `SentMessage`.
+    """
+    id: ID!
+  ): SentMessage
+
+  """Reads a single `Space` using its globally unique `ID`."""
+  space(
+    """The globally unique `ID` to be used in selecting a single `Space`."""
+    id: ID!
+  ): Space
+
+  """Reads a single `Tag` using its globally unique `ID`."""
+  tag(
+    """The globally unique `ID` to be used in selecting a single `Tag`."""
+    id: ID!
+  ): Tag
+
+  """Reads a single `Track` using its globally unique `ID`."""
+  track(
+    """The globally unique `ID` to be used in selecting a single `Track`."""
+    id: ID!
+  ): Track
+
+  """Reads a single `TrackPermission` using its globally unique `ID`."""
+  trackPermission(
+    """
+    The globally unique `ID` to be used in selecting a single `TrackPermission`.
+    """
+    id: ID!
+  ): TrackPermission
+}
+
+type SentMessage implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  draftId: Int!
+  personId: Int!
+  deliveryStatus: String
+
+  """
+  Reads a single `MessageHistory` that is related to this `SentMessage`.
+  """
+  draft: MessageHistory
+}
+
+"""
+A condition to be used against `SentMessage` object types. All fields are tested
+for equality and combined with a logical ‘and.’
+"""
+input SentMessageCondition {
+  """Checks for equality with the object’s `draftId` field."""
+  draftId: Int
+}
+
+"""An input for mutations affecting `SentMessage`"""
+input SentMessageInput {
+  draftId: Int!
+  personId: Int!
+  deliveryStatus: String
+}
+
+"""
+Represents an update to a `SentMessage`. Fields that are set will be updated.
+"""
+input SentMessagePatch {
+  draftId: Int
+  personId: Int
+  deliveryStatus: String
+}
+
+"""A connection to a list of `SentMessage` values."""
+type SentMessagesConnection {
+  """A list of `SentMessage` objects."""
+  nodes: [SentMessage]!
+
+  """
+  A list of edges which contains the `SentMessage` and cursor to aid in pagination.
+  """
+  edges: [SentMessagesEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `SentMessage` you could get from the connection."""
+  totalCount: Int
+}
+
+"""A `SentMessage` edge in the connection."""
+type SentMessagesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `SentMessage` at the end of the edge."""
+  node: SentMessage
+}
+
+"""Methods to use when ordering `SentMessage`."""
+enum SentMessagesOrderBy {
+  NATURAL
+  DRAFT_ID_ASC
+  DRAFT_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+type Space implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  spaceId: Int!
+  parentId: Int
+  name: String!
+  description: String
+  featureIds: [Int]
+  size: Int
+}
+
+"""
+A condition to be used against `Space` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input SpaceCondition {
+  """Checks for equality with the object’s `spaceId` field."""
+  spaceId: Int
+}
+
+"""An input for mutations affecting `Space`"""
+input SpaceInput {
+  spaceId: Int
+  parentId: Int
+  name: String!
+  description: String
+  featureIds: [Int]
+  size: Int
+}
+
+"""
+Represents an update to a `Space`. Fields that are set will be updated.
+"""
+input SpacePatch {
+  spaceId: Int
+  parentId: Int
+  name: String
+  description: String
+  featureIds: [Int]
+  size: Int
+}
+
+"""A connection to a list of `Space` values."""
+type SpacesConnection {
+  """A list of `Space` objects."""
+  nodes: [Space]!
+
+  """
+  A list of edges which contains the `Space` and cursor to aid in pagination.
+  """
+  edges: [SpacesEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Space` you could get from the connection."""
+  totalCount: Int
+}
+
+"""A `Space` edge in the connection."""
+type SpacesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Space` at the end of the edge."""
+  node: Space
+}
+
+"""Methods to use when ordering `Space`."""
+enum SpacesOrderBy {
+  NATURAL
+  SPACE_ID_ASC
+  SPACE_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+type Tag implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  tagId: Int!
+  name: String!
+  parentId: Int
+  public: Boolean!
+}
+
+"""
+A condition to be used against `Tag` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input TagCondition {
+  """Checks for equality with the object’s `tagId` field."""
+  tagId: Int
+}
+
+"""An input for mutations affecting `Tag`"""
+input TagInput {
+  tagId: Int
+  name: String!
+  parentId: Int
+  public: Boolean
+}
+
+"""Represents an update to a `Tag`. Fields that are set will be updated."""
+input TagPatch {
+  tagId: Int
+  name: String
+  parentId: Int
+  public: Boolean
+}
+
+"""A connection to a list of `Tag` values."""
+type TagsConnection {
+  """A list of `Tag` objects."""
+  nodes: [Tag]!
+
+  """
+  A list of edges which contains the `Tag` and cursor to aid in pagination.
+  """
+  edges: [TagsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Tag` you could get from the connection."""
+  totalCount: Int
+}
+
+"""A `Tag` edge in the connection."""
+type TagsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Tag` at the end of the edge."""
+  node: Tag
+}
+
+"""Methods to use when ordering `Tag`."""
+enum TagsOrderBy {
+  NATURAL
+  TAG_ID_ASC
+  TAG_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+type Track implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  trackId: Int!
+  name: String
+
+  """Reads and enables pagination through a set of `TrackPermission`."""
+  trackPermissions(
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """The method to use when ordering `TrackPermission`."""
+    orderBy: [TrackPermissionsOrderBy!] = [PRIMARY_KEY_ASC]
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: TrackPermissionCondition
+  ): TrackPermissionsConnection!
+}
+
+"""
+A condition to be used against `Track` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input TrackCondition {
+  """Checks for equality with the object’s `trackId` field."""
+  trackId: Int
+}
+
+"""An input for mutations affecting `Track`"""
+input TrackInput {
+  trackId: Int
+  name: String
+}
+
+"""
+Represents an update to a `Track`. Fields that are set will be updated.
+"""
+input TrackPatch {
+  trackId: Int
+  name: String
+}
+
+type TrackPermission implements Node {
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  id: ID!
+  trackId: Int!
+  userEmail: String!
+  admin: Boolean!
+  editEvents: Boolean!
+
+  """Reads a single `Track` that is related to this `TrackPermission`."""
+  track: Track
+}
+
+"""
+A condition to be used against `TrackPermission` object types. All fields are
+tested for equality and combined with a logical ‘and.’
+"""
+input TrackPermissionCondition {
+  """Checks for equality with the object’s `trackId` field."""
+  trackId: Int
+}
+
+"""An input for mutations affecting `TrackPermission`"""
+input TrackPermissionInput {
+  trackId: Int!
+  userEmail: String!
+  admin: Boolean
+  editEvents: Boolean
+}
+
+"""
+Represents an update to a `TrackPermission`. Fields that are set will be updated.
+"""
+input TrackPermissionPatch {
+  trackId: Int
+  userEmail: String
+  admin: Boolean
+  editEvents: Boolean
+}
+
+"""A connection to a list of `TrackPermission` values."""
+type TrackPermissionsConnection {
+  """A list of `TrackPermission` objects."""
+  nodes: [TrackPermission]!
+
+  """
+  A list of edges which contains the `TrackPermission` and cursor to aid in pagination.
+  """
+  edges: [TrackPermissionsEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `TrackPermission` you could get from the connection.
+  """
+  totalCount: Int
+}
+
+"""A `TrackPermission` edge in the connection."""
+type TrackPermissionsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `TrackPermission` at the end of the edge."""
+  node: TrackPermission
+}
+
+"""Methods to use when ordering `TrackPermission`."""
+enum TrackPermissionsOrderBy {
+  NATURAL
+  TRACK_ID_ASC
+  TRACK_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""A connection to a list of `Track` values."""
+type TracksConnection {
+  """A list of `Track` objects."""
+  nodes: [Track]!
+
+  """
+  A list of edges which contains the `Track` and cursor to aid in pagination.
+  """
+  edges: [TracksEdge!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Track` you could get from the connection."""
+  totalCount: Int
+}
+
+"""A `Track` edge in the connection."""
+type TracksEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Track` at the end of the edge."""
+  node: Track
+}
+
+"""Methods to use when ordering `Track`."""
+enum TracksOrderBy {
+  NATURAL
+  TRACK_ID_ASC
+  TRACK_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+"""
+All input for the `updateAvailabilityByPersonIdAndDateAndStartTime` mutation.
+"""
+input UpdateAvailabilityByPersonIdAndDateAndStartTimeInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Availability` being updated.
+  """
+  patch: AvailabilityPatch!
+  personId: Int!
+  date: Date!
+  startTime: Datetime!
+}
+
+"""All input for the `updateAvailability` mutation."""
+input UpdateAvailabilityInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Availability` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the `Availability` being updated.
+  """
+  patch: AvailabilityPatch!
+}
+
+"""The output of our update `Availability` mutation."""
+type UpdateAvailabilityPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Availability` that was updated by this mutation."""
+  availability: Availability
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Availability`. May be used by Relay 1."""
+  availabilityEdge(
+    """The method to use when ordering `Availability`."""
+    orderBy: [AvailabilitiesOrderBy!] = PRIMARY_KEY_ASC
+  ): AvailabilitiesEdge
+}
+
+"""All input for the `updateEventByEventId` mutation."""
+input UpdateEventByEventIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Event` being updated.
+  """
+  patch: EventPatch!
+  eventId: Int!
+}
+
+"""All input for the `updateEventCommentByCommentId` mutation."""
+input UpdateEventCommentByCommentIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `EventComment` being updated.
+  """
+  patch: EventCommentPatch!
+  commentId: Int!
+}
+
+"""All input for the `updateEventComment` mutation."""
+input UpdateEventCommentInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `EventComment` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the `EventComment` being updated.
+  """
+  patch: EventCommentPatch!
+}
+
+"""The output of our update `EventComment` mutation."""
+type UpdateEventCommentPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `EventComment` that was updated by this mutation."""
+  eventComment: EventComment
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `EventComment`. May be used by Relay 1."""
+  eventCommentEdge(
+    """The method to use when ordering `EventComment`."""
+    orderBy: [EventCommentsOrderBy!] = PRIMARY_KEY_ASC
+  ): EventCommentsEdge
+}
+
+"""All input for the `updateEvent` mutation."""
+input UpdateEventInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Event` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the `Event` being updated.
+  """
+  patch: EventPatch!
+}
+
+"""All input for the `updateEventLogByRowId` mutation."""
+input UpdateEventLogByRowIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `EventLog` being updated.
+  """
+  patch: EventLogPatch!
+  rowId: BigInt!
+}
+
+"""All input for the `updateEventLog` mutation."""
+input UpdateEventLogInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `EventLog` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the `EventLog` being updated.
+  """
+  patch: EventLogPatch!
+}
+
+"""The output of our update `EventLog` mutation."""
+type UpdateEventLogPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `EventLog` that was updated by this mutation."""
+  eventLog: EventLog
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `EventLog`. May be used by Relay 1."""
+  eventLogEdge(
+    """The method to use when ordering `EventLog`."""
+    orderBy: [EventLogsOrderBy!] = PRIMARY_KEY_ASC
+  ): EventLogsEdge
+}
+
+"""The output of our update `Event` mutation."""
+type UpdateEventPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Event` that was updated by this mutation."""
+  event: Event
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Event`. May be used by Relay 1."""
+  eventEdge(
+    """The method to use when ordering `Event`."""
+    orderBy: [EventsOrderBy!] = PRIMARY_KEY_ASC
+  ): EventsEdge
+}
+
+"""
+All input for the `updateEventStatusTransitionByStatusAndNext` mutation.
+"""
+input UpdateEventStatusTransitionByStatusAndNextInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `EventStatusTransition` being updated.
+  """
+  patch: EventStatusTransitionPatch!
+  status: EventStatus!
+  next: EventStatus!
+}
+
+"""All input for the `updateEventStatusTransition` mutation."""
+input UpdateEventStatusTransitionInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `EventStatusTransition` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the `EventStatusTransition` being updated.
+  """
+  patch: EventStatusTransitionPatch!
+}
+
+"""The output of our update `EventStatusTransition` mutation."""
+type UpdateEventStatusTransitionPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `EventStatusTransition` that was updated by this mutation."""
+  eventStatusTransition: EventStatusTransition
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `EventStatusTransition`. May be used by Relay 1."""
+  eventStatusTransitionEdge(
+    """The method to use when ordering `EventStatusTransition`."""
+    orderBy: [EventStatusTransitionsOrderBy!] = PRIMARY_KEY_ASC
+  ): EventStatusTransitionsEdge
+}
+
+"""All input for the `updateEventTypeByTypeId` mutation."""
+input UpdateEventTypeByTypeIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `EventType` being updated.
+  """
+  patch: EventTypePatch!
+  typeId: Int!
+}
+
+"""All input for the `updateEventType` mutation."""
+input UpdateEventTypeInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `EventType` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the `EventType` being updated.
+  """
+  patch: EventTypePatch!
+}
+
+"""The output of our update `EventType` mutation."""
+type UpdateEventTypePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `EventType` that was updated by this mutation."""
+  eventType: EventType
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `EventType`. May be used by Relay 1."""
+  eventTypeEdge(
+    """The method to use when ordering `EventType`."""
+    orderBy: [EventTypesOrderBy!] = PRIMARY_KEY_ASC
+  ): EventTypesEdge
+}
+
+"""All input for the `updateFeatureByFeatureId` mutation."""
+input UpdateFeatureByFeatureIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Feature` being updated.
+  """
+  patch: FeaturePatch!
+  featureId: Int!
+}
+
+"""All input for the `updateFeature` mutation."""
+input UpdateFeatureInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Feature` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the `Feature` being updated.
+  """
+  patch: FeaturePatch!
+}
+
+"""The output of our update `Feature` mutation."""
+type UpdateFeaturePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Feature` that was updated by this mutation."""
+  feature: Feature
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Feature`. May be used by Relay 1."""
+  featureEdge(
+    """The method to use when ordering `Feature`."""
+    orderBy: [FeaturesOrderBy!] = PRIMARY_KEY_ASC
+  ): FeaturesEdge
+}
+
+"""All input for the `updateMessageHistoryByDraftId` mutation."""
+input UpdateMessageHistoryByDraftIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `MessageHistory` being updated.
+  """
+  patch: MessageHistoryPatch!
+  draftId: Int!
+}
+
+"""All input for the `updateMessageHistory` mutation."""
+input UpdateMessageHistoryInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `MessageHistory` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the `MessageHistory` being updated.
+  """
+  patch: MessageHistoryPatch!
+}
+
+"""The output of our update `MessageHistory` mutation."""
+type UpdateMessageHistoryPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `MessageHistory` that was updated by this mutation."""
+  messageHistory: MessageHistory
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `MessageHistory`. May be used by Relay 1."""
+  messageHistoryEdge(
+    """The method to use when ordering `MessageHistory`."""
+    orderBy: [MessageHistoriesOrderBy!] = PRIMARY_KEY_ASC
+  ): MessageHistoriesEdge
+}
+
+"""All input for the `updateParticipantByEventIdAndPersonId` mutation."""
+input UpdateParticipantByEventIdAndPersonIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Participant` being updated.
+  """
+  patch: ParticipantPatch!
+  eventId: Int!
+  personId: Int!
+}
+
+"""All input for the `updateParticipant` mutation."""
+input UpdateParticipantInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Participant` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the `Participant` being updated.
+  """
+  patch: ParticipantPatch!
+}
+
+"""The output of our update `Participant` mutation."""
+type UpdateParticipantPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Participant` that was updated by this mutation."""
+  participant: Participant
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `Event` that is related to this `Participant`."""
+  event: Event
+
+  """An edge for our `Participant`. May be used by Relay 1."""
+  participantEdge(
+    """The method to use when ordering `Participant`."""
+    orderBy: [ParticipantsOrderBy!] = PRIMARY_KEY_ASC
+  ): ParticipantsEdge
+}
+
+"""All input for the `updateParticipantRoleByRoleId` mutation."""
+input UpdateParticipantRoleByRoleIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `ParticipantRole` being updated.
+  """
+  patch: ParticipantRolePatch!
+  roleId: Int!
+}
+
+"""All input for the `updateParticipantRole` mutation."""
+input UpdateParticipantRoleInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `ParticipantRole` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the `ParticipantRole` being updated.
+  """
+  patch: ParticipantRolePatch!
+}
+
+"""The output of our update `ParticipantRole` mutation."""
+type UpdateParticipantRolePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `ParticipantRole` that was updated by this mutation."""
+  participantRole: ParticipantRole
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `ParticipantRole`. May be used by Relay 1."""
+  participantRoleEdge(
+    """The method to use when ordering `ParticipantRole`."""
+    orderBy: [ParticipantRolesOrderBy!] = PRIMARY_KEY_ASC
+  ): ParticipantRolesEdge
+}
+
+"""All input for the `updateParticipantStatusByStatusId` mutation."""
+input UpdateParticipantStatusByStatusIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `ParticipantStatus` being updated.
+  """
+  patch: ParticipantStatusPatch!
+  statusId: Int!
+}
+
+"""All input for the `updateParticipantStatus` mutation."""
+input UpdateParticipantStatusInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `ParticipantStatus` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the `ParticipantStatus` being updated.
+  """
+  patch: ParticipantStatusPatch!
+}
+
+"""The output of our update `ParticipantStatus` mutation."""
+type UpdateParticipantStatusPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `ParticipantStatus` that was updated by this mutation."""
+  participantStatus: ParticipantStatus
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `ParticipantStatus`. May be used by Relay 1."""
+  participantStatusEdge(
+    """The method to use when ordering `ParticipantStatus`."""
+    orderBy: [ParticipantStatusesOrderBy!] = PRIMARY_KEY_ASC
+  ): ParticipantStatusesEdge
+}
+
+"""All input for the `updatePermissionByUserEmail` mutation."""
+input UpdatePermissionByUserEmailInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Permission` being updated.
+  """
+  patch: PermissionPatch!
+  userEmail: String!
+}
+
+"""All input for the `updatePermission` mutation."""
+input UpdatePermissionInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Permission` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the `Permission` being updated.
+  """
+  patch: PermissionPatch!
+}
+
+"""The output of our update `Permission` mutation."""
+type UpdatePermissionPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Permission` that was updated by this mutation."""
+  permission: Permission
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Permission`. May be used by Relay 1."""
+  permissionEdge(
+    """The method to use when ordering `Permission`."""
+    orderBy: [PermissionsOrderBy!] = PRIMARY_KEY_ASC
+  ): PermissionsEdge
+}
+
+"""All input for the `updatePreferenceByEventIdAndPersonId` mutation."""
+input UpdatePreferenceByEventIdAndPersonIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Preference` being updated.
+  """
+  patch: PreferencePatch!
+  eventId: Int!
+  personId: Int!
+}
+
+"""All input for the `updatePreference` mutation."""
+input UpdatePreferenceInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Preference` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the `Preference` being updated.
+  """
+  patch: PreferencePatch!
+}
+
+"""The output of our update `Preference` mutation."""
+type UpdatePreferencePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Preference` that was updated by this mutation."""
+  preference: Preference
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `Event` that is related to this `Preference`."""
+  event: Event
+
+  """An edge for our `Preference`. May be used by Relay 1."""
+  preferenceEdge(
+    """The method to use when ordering `Preference`."""
+    orderBy: [PreferencesOrderBy!] = PRIMARY_KEY_ASC
+  ): PreferencesEdge
+}
+
+"""All input for the `updateSentMessageByDraftIdAndPersonId` mutation."""
+input UpdateSentMessageByDraftIdAndPersonIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `SentMessage` being updated.
+  """
+  patch: SentMessagePatch!
+  draftId: Int!
+  personId: Int!
+}
+
+"""All input for the `updateSentMessage` mutation."""
+input UpdateSentMessageInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `SentMessage` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the `SentMessage` being updated.
+  """
+  patch: SentMessagePatch!
+}
+
+"""The output of our update `SentMessage` mutation."""
+type UpdateSentMessagePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `SentMessage` that was updated by this mutation."""
+  sentMessage: SentMessage
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """
+  Reads a single `MessageHistory` that is related to this `SentMessage`.
+  """
+  draft: MessageHistory
+
+  """An edge for our `SentMessage`. May be used by Relay 1."""
+  sentMessageEdge(
+    """The method to use when ordering `SentMessage`."""
+    orderBy: [SentMessagesOrderBy!] = PRIMARY_KEY_ASC
+  ): SentMessagesEdge
+}
+
+"""All input for the `updateSpaceBySpaceId` mutation."""
+input UpdateSpaceBySpaceIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Space` being updated.
+  """
+  patch: SpacePatch!
+  spaceId: Int!
+}
+
+"""All input for the `updateSpace` mutation."""
+input UpdateSpaceInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Space` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the `Space` being updated.
+  """
+  patch: SpacePatch!
+}
+
+"""The output of our update `Space` mutation."""
+type UpdateSpacePayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Space` that was updated by this mutation."""
+  space: Space
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Space`. May be used by Relay 1."""
+  spaceEdge(
+    """The method to use when ordering `Space`."""
+    orderBy: [SpacesOrderBy!] = PRIMARY_KEY_ASC
+  ): SpacesEdge
+}
+
+"""All input for the `updateTagByTagId` mutation."""
+input UpdateTagByTagIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Tag` being updated.
+  """
+  patch: TagPatch!
+  tagId: Int!
+}
+
+"""All input for the `updateTag` mutation."""
+input UpdateTagInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Tag` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the `Tag` being updated.
+  """
+  patch: TagPatch!
+}
+
+"""The output of our update `Tag` mutation."""
+type UpdateTagPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Tag` that was updated by this mutation."""
+  tag: Tag
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Tag`. May be used by Relay 1."""
+  tagEdge(
+    """The method to use when ordering `Tag`."""
+    orderBy: [TagsOrderBy!] = PRIMARY_KEY_ASC
+  ): TagsEdge
+}
+
+"""All input for the `updateTrackByTrackId` mutation."""
+input UpdateTrackByTrackIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `Track` being updated.
+  """
+  patch: TrackPatch!
+  trackId: Int!
+}
+
+"""All input for the `updateTrack` mutation."""
+input UpdateTrackInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Track` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the `Track` being updated.
+  """
+  patch: TrackPatch!
+}
+
+"""The output of our update `Track` mutation."""
+type UpdateTrackPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Track` that was updated by this mutation."""
+  track: Track
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """An edge for our `Track`. May be used by Relay 1."""
+  trackEdge(
+    """The method to use when ordering `Track`."""
+    orderBy: [TracksOrderBy!] = PRIMARY_KEY_ASC
+  ): TracksEdge
+}
+
+"""
+All input for the `updateTrackPermissionByTrackIdAndUserEmail` mutation.
+"""
+input UpdateTrackPermissionByTrackIdAndUserEmailInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  An object where the defined keys will be set on the `TrackPermission` being updated.
+  """
+  patch: TrackPermissionPatch!
+  trackId: Int!
+  userEmail: String!
+}
+
+"""All input for the `updateTrackPermission` mutation."""
+input UpdateTrackPermissionInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `TrackPermission` to be updated.
+  """
+  id: ID!
+
+  """
+  An object where the defined keys will be set on the `TrackPermission` being updated.
+  """
+  patch: TrackPermissionPatch!
+}
+
+"""The output of our update `TrackPermission` mutation."""
+type UpdateTrackPermissionPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `TrackPermission` that was updated by this mutation."""
+  trackPermission: TrackPermission
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+
+  """Reads a single `Track` that is related to this `TrackPermission`."""
+  track: Track
+
+  """An edge for our `TrackPermission`. May be used by Relay 1."""
+  trackPermissionEdge(
+    """The method to use when ordering `TrackPermission`."""
+    orderBy: [TrackPermissionsOrderBy!] = PRIMARY_KEY_ASC
+  ): TrackPermissionsEdge
+}

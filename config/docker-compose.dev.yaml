@@ -31,6 +31,8 @@ services:
       SLACK_TOKEN: ''
       STRIPE_SECRET_APIKEY: sk_test_zq022Drx7npYPVEtXAVMaOJT
       STRIPE_SECRET_APIKEY_siteselect: sk_test_35SiP34s6qovtenwPPLguIyY
+    volumes:
+      - ../modules/events/schema.graphql:/events-schema.graphql
 
   tarra:
     volumes:
