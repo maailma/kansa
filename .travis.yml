@@ -8,14 +8,17 @@ node_js:
   - 'node'
 
 before_install:
-  - mv common/$(cd common && npm pack) server/kansa-common.tgz
   - docker-compose
     -f config/docker-compose.base.yaml
     -f config/docker-compose.dev.yaml
     -p kansa
     up --build -d
   - sleep 10 # allow time for postgres db init
+
+install:
+  - echo $(cd modules/shop/server && npm install) # Shop tests have dependencies
   - cd integration-tests
+  - npm install
 
 after_failure:
   - docker-compose
