@@ -4,7 +4,8 @@ DEV_CFG = config/docker-compose.dev.yaml
 PROD_CFG = config/docker-compose.prod.yaml
 PROD_CFG_TMPL = config/docker-compose.prod-template.yaml
 
-DC = docker-compose -f $(BASE_CFG) -f $(DEV_CFG) -p $(NAME)
+DC = docker-compose -f $(CURDIR)/$(BASE_CFG) -f $(CURDIR)/$(DEV_CFG) -p $(NAME)
+DC_PROD = docker-compose -f $(CURDIR)/$(BASE_CFG) -f $(CURDIR)/$(PROD_CFG) -p $(NAME)
 
 start:
 	$(DC) up --build
@@ -32,7 +33,7 @@ integration-tests/node_modules:
 	cd integration-tests && npm install
 
 prod: prod-check
-	$(DC) up -d --build
+	$(DC_PROD) up -d --build
 
 prod-check: | $(PROD_CFG)
 	@grep '^\s\+[A-Z_]\+:\s*$$' $(PROD_CFG) ;\
@@ -43,3 +44,9 @@ prod-check: | $(PROD_CFG)
 
 $(PROD_CFG): $(PROD_CFG_TMPL)
 	cp $(PROD_CFG_TMPL) $(PROD_CFG)
+
+dev-env:
+	@echo alias kansa="'$(DC)'"
+
+prod-env: prod-check
+	@echo alias kansa="'$(DC_PROD)'"

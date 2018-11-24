@@ -56,14 +56,26 @@ configurable and customisable, so fewer changes in code are required for convent
 ### Getting Started
 
 To get a dev environment up and running, first clone this repo. Then you'll need to have
-[Docker Compose](https://docs.docker.com/compose/) available, as that's used by default for
-container orchestration. To start, run `make start` or call `docker-compose` directly:
+[Docker Compose](https://docs.docker.com/compose/) available, as that's used by default for container
+orchestration. Kansa uses a couple of layers of config files, so it's easiest to first define an
+alias for it, from the Kansa root:
 
 ```
-docker-compose \
-  -f config/docker-compose.base.yaml -f config/docker-compose.dev.yaml \
-  -p api up --build -d  # leave out the -d to not detach
+alias kansa="docker-compose \
+  -f $(pwd)/config/docker-compose.base.yaml \
+  -f $(pwd)/config/docker-compose.dev.yaml \
+  -p kansa"
 ```
+
+Then start the services with:
+
+```
+kansa up --build -d  # leave out the -d to not detach
+```
+
+A `Makefile` is also included for your convenience, including a `make dev-env` target that'll print
+an appropriate `alias` command. To always have the alias available, add something like this to your
+`.bashrc` or where appropriate: `eval $(make -C path/to/kansa dev-env)`
 
 Once you have all the services up and running, your development server should be available at
 `https://localhost:4430/`, including a relatively recent front-end client (with code hosted under
