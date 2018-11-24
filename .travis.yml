@@ -12,9 +12,11 @@ before_install:
   - sleep 10 # allow time for postgres db init
 
 install:
-  - echo $(cd modules/shop/server && npm install) # Shop tests have dependencies
-  - cd integration-tests
-  - npm install
+  - (cd modules/shop/server && npm install) # Shop tests have dependencies
+  - (cd integration-tests && npm install)
+
+script:
+  - (cd integration-tests && npm test)
 
 after_failure:
   - docker-compose
