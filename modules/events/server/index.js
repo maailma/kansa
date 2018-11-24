@@ -31,15 +31,13 @@ const options = {
 
 if (process.env.NODE_ENV === 'development') {
   Object.assign(options, {
-    absoluteRoutes: true,
     disableQueryLog: false,
     enableCors: true,
     enhanceGraphiql: true,
     exportGqlSchemaPath: '/events-schema.graphql',
     extendedErrors: ['hint', 'detail', 'errcode'],
+    externalUrlBase: '/api/events',
     graphiql: true,
-    graphiqlRoute: '/events/graphiql',
-    graphqlRoute: '/events/graphql',
     showErrorStack: true
   })
 }

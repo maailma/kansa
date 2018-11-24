@@ -7,7 +7,7 @@
   "repository": "maailma/kansa",
   "dependencies": {
     "@graphile-contrib/pg-simplify-inflector": "^3.0.0",
-    "postgraphile": "^4.1.0-rc.1"
+    "postgraphile": "^4.1.0-rc.2"
   },
   "peerDependencies": {
     "@kansa/common": "^1.1.0",
