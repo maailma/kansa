@@ -8,11 +8,7 @@ node_js:
   - 'node'
 
 before_install:
-  - alias kansa='docker-compose
-    -f config/docker-compose.base.yaml
-    -f config/docker-compose.dev.yaml
-    -p kansa'
-  - kansa up --build -d
+  - make start-detached
   - sleep 10 # allow time for postgres db init
 
 install:
@@ -21,7 +17,11 @@ install:
   - npm install
 
 after_failure:
-  - kansa logs
+  - docker-compose
+    -f config/docker-compose.base.yaml
+    -f config/docker-compose.dev.yaml
+    -p kansa
+    logs
 
 after_script:
-  - kansa down
+  - make stop
